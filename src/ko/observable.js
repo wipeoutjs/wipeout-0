@@ -1,10 +1,7 @@
-﻿
-var Quest = Quest || {};
-Quest.KnockoutExtensions = Quest.KnockoutExtensions || {};
-Quest.KnockoutExtensions.Observable = Quest.KnockoutExtensions.Observable || {};
-
-
-$.extend(Quest.KnockoutExtensions.Observable, (function () {
+(function () {
+    
+    window.wpfko = window.wpfko || {};
+    wpfko.ko = wpfko.ko || {};
 
     var deepSubscribe = function (subscribeFunction, context /*optional*/) {
         ///<summary>ko subscribe function, however gives the callback the old and new values</summary>
@@ -18,11 +15,15 @@ $.extend(Quest.KnockoutExtensions.Observable, (function () {
             }
         }, context);
     };
-
-    ko.observable.fn.deepSubscribe = deepSubscribe;
-
-    return {
-        // exposed for unit testing purposes
-        DeepSubscribe: deepSubscribe
+    
+    wpfko.ko.observable = {
+        deepSubscribe: deepSubscribe,
+        utils: {}
     };
-})());
+    
+    for(var i in wpfko.ko.observable) {
+        if(i !== "utils") {
+            ko.observable.fn[i] = wpfko.ko.observable[i];
+        }
+    }
+})();

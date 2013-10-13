@@ -1,10 +1,8 @@
-﻿
-var Quest = Quest || {};
-Quest.KnockoutExtensions = Quest.KnockoutExtensions || {};
-Quest.KnockoutExtensions.ObservableArray = Quest.KnockoutExtensions.ObservableArray || {};
 
-
-$.extend(Quest.KnockoutExtensions.ObservableArray, (function () {
+(function () {
+    
+    window.wpfko = window.wpfko || {};
+    wpfko.ko = wpfko.ko || {};
 
     var copyArray = function (array) {
         var output = [];
@@ -94,14 +92,19 @@ $.extend(Quest.KnockoutExtensions.ObservableArray, (function () {
             initial = Quest.KnockoutExtensions.ObservableArray.CopyArray(values);
             subscribeFunction.call(this, removedValues, addedValues);
         }, context);
+    };    
+    
+    wpfko.ko.observableArray = {
+        deepSubscribe: deepSubscribe,
+        utils: {
+            copyArray: copyArray,
+            getCount: getCount
+        }
     };
-
-    ko.observableArray.fn.deepSubscribe = deepSubscribe;
-
-    return {
-        // exposed for unit testing purposes
-        CopyArray: copyArray,
-        GetCount: getCount,
-        DeepSubscribe: deepSubscribe
-    };
-})());
+    
+    for(var i in wpfko.ko.observableArray) {
+        if(i !== "utils") {
+            ko.observableArray.fn[i] = wpfko.ko.observableArray[i];
+        }
+    }
+})();

@@ -1,11 +1,11 @@
-﻿var Quest = Quest || {};
-Quest.KnockoutExtensions = Quest.KnockoutExtensions || {};
 
-$.extend(Quest.KnockoutExtensions, (function () {
-
-    var Model = Quest.KnockoutExtensions.Object.extend(function () {
+(function () {
+    
+    window.wpfko = window.wpfko || {};
+    wpfko.base = wpfko.base || {};
+    
+    var model = wpfko.base.object.extend(function () {
     });
 
-    return {Model:Model};
-
-})());
+    wpfko.base.model = model;
+})();

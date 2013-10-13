@@ -1,9 +1,10 @@
-﻿var Quest = Quest || {};
-Quest.KnockoutExtensions = Quest.KnockoutExtensions || {};
 
-$.extend(Quest.KnockoutExtensions, (function () {
+(function () {
 
-    var Object = function (values) {
+        ﻿window.wpfko = window.wpfko || {};
+wpfko.base = wpfko.base || {};
+    
+    var object = function (values) {
         this._events = {};
 
         if (values) {
@@ -11,7 +12,7 @@ $.extend(Quest.KnockoutExtensions, (function () {
         }
     };
 
-    Object.create = function (value) {
+    object.create = function (value) {
 
         var alreadyDone = [];
 
@@ -42,7 +43,7 @@ $.extend(Quest.KnockoutExtensions, (function () {
         return recursion(value);
     };
 
-    Object.extend = function (childClass) {
+    object.extend = function (childClass) {
 
         var _this = this;
         var newConstructor = function () {
@@ -83,6 +84,7 @@ $.extend(Quest.KnockoutExtensions, (function () {
         return newConstructor;
     };
 
+    
     Object.prototype._generateEventNamespace = (function () {
         var id = Math.floor(Math.random() * 1000);
         return function (eventName) {
@@ -105,21 +107,5 @@ $.extend(Quest.KnockoutExtensions, (function () {
         $(this._events).trigger(eventName, eventData);
     };
 
-    Object.prototype.subscribeToObservable = function (observableName, onObservableChangedMethod) {
-
-        if (!ko.isObservable(this[observableName]))
-            throw "Input value must be an observable";
-
-        var oldValue = this[observableName]();
-        this[observableName].subscribe(function (newValue) {
-            try {
-                if (oldValue !== newValue)
-                    this[onObservableChangedMethod](oldValue, newValue);
-            } finally {
-                oldValue = newValue;
-            }
-        }, this);
-    };
-
-    return { Object: Object };
-})());
+    wpfko.base.object = object;
+})();
