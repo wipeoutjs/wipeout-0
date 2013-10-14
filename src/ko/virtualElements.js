@@ -16,7 +16,7 @@
     };    
     
 
-    append = function (containerElem, nodeToAppend) {
+    var append = function (containerElem, nodeToAppend) {
         var current = ko.virtualElements.firstChild(containerElem);
         if (!current) {
             ko.virtualElements.prepend(containerElem, nodeToAppend);
@@ -39,7 +39,7 @@
     
     for(var i in wpfko.ko.virtualElements) {
         if(i !== "utils") {
-            wpfko.ko.virtualElements[i] = ko.virtualElements.allChildren[i];
+            ko.virtualElements[i] = wpfko.ko.virtualElements[i];
         }
     }
-})());
+})();

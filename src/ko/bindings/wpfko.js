@@ -13,17 +13,18 @@
         
         //TODO: add optional inline properties to binding
         
-        var view = new (valueAccessor())();        
-        view.initialize(bindingContext);
+        var view = new (valueAccessor())();
+        view.model(viewModel);
+        view.initialize(bindingContext.createChildContext(view));
         
         view.nodes.subscribe(function(newValues) {
             ko.virtualElements.emptyNode(element);
-            
+                      
             if(newValues) {
                 // going backwards because there is no append method
                 for(var i = newValues.length - 1; i >= 0; i--) {
                     ko.virtualElements.prepend(element, newValues[i]);
-                }
+                }                
             }
         }, view);        
                 

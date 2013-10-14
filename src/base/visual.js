@@ -13,9 +13,6 @@
         // not observable array, as we do not that functionality here
         this.nodes = ko.observable([]);
         this.bindingContext = ko.observable();
-        this.childBindingContext = ko.observable();
-        
-        this.bindingContext.subscribe(function(newVal) { this.childBindingContext(newVal ? newVal.createChildContext(this) : null); }, this);
         
         // flag to stop progress of recursive code
         var setTemplate = {};
@@ -31,10 +28,19 @@
         }, this);  
         
         this.nodes.deepSubscribe(this.rootHtmlChanged, this);
+        
+        this.templateId.subscribe(this.reGenerate, this);
     });
     
+    visual.prototype.createSubscribableChildBindingContext = function(child) {
+        return ko.computed(function() { 
+            var ctxt = this.bindingContext();
+            return ctxt ? ctxt.createChildContext(child) : null;
+        }, this);
+    };
+    
     visual.prototype.reGenerate = function() {
-        
+        debugger;
         // clean up old nodes which are to be deleted
         var oldNodes = this.nodes();
         if(oldNodes) {
@@ -58,8 +64,10 @@
         }
         
         var xmlTemplate = new DOMParser().parseFromString("<root>" + template.innerHTML + "</root>", "application/xml").documentElement;
+        var id = visual._tempVisualStore.create(this);
         
         var nodes = [];
+        nodes.push(wpfko.util.html.createElement("<!-- ko with: wpfko.base.visual._tempVisualStore[\"" + id  + "\"]() -->"));
         var ser = new XMLSerializer();
         for (var i = 0, ii = xmlTemplate.childNodes.length; i < ii; i++) {
 
@@ -67,7 +75,7 @@
                 
                 var view = wpfko.util.obj.createObject(xmlTemplate.childNodes[i].nodeName);
                 
-                view.initialize(this.childBindingContext, xmlTemplate.childNodes[i]);
+                view.initialize(this.createSubscribableChildBindingContext(view), xmlTemplate.childNodes[i]);
                 view.reGenerate();
                 var n = view.nodes();
                 for(var j = 0, jj = n.length; j < jj; j++) {
@@ -78,6 +86,8 @@
                 nodes.push(wpfko.util.html.createElement(html));
             }
         }
+        
+        nodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
         
         this.nodes(nodes);
     };
@@ -112,6 +122,21 @@
             return visual.$(this.nodes(nodes), jquerySelector);
         };
     }
+        
+    visual._tempVisualStore = {
+        create: (function() {
+            var i = 0;
+            return function(item) {
+                var id = "id_" + (++i);
+                visual._tempVisualStore[id] = function() {
+                    delete visual._tempVisualStore[id];
+                    return item;
+                };
+                
+                return id;
+            };
+        })()
+    };
     
     visual.getDefaultTemplateId = (function () {
         var templateId = null;

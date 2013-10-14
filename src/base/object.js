@@ -85,14 +85,14 @@ wpfko.base = wpfko.base || {};
     };
 
     
-    Object.prototype._generateEventNamespace = (function () {
+    object.prototype._generateEventNamespace = (function () {
         var id = Math.floor(Math.random() * 1000);
         return function (eventName) {
             return "_event" + (++id);
         };
     })();
 
-    Object.prototype.registerEvent = function (eventName, eventHandler) {
+    object.prototype.registerEvent = function (eventName, eventHandler) {
         eventName += ("." + this._generateEventNamespace());
         $(this._events).on(eventName, function () { eventHandler(arguments[1]); });
 
@@ -103,7 +103,7 @@ wpfko.base = wpfko.base || {};
         }
     };
 
-    Object.prototype.triggerEvent = function (eventName, eventData) {
+    object.prototype.triggerEvent = function (eventName, eventData) {
         $(this._events).trigger(eventName, eventData);
     };
 
