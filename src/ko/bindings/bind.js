@@ -20,7 +20,7 @@
     kowpf.bindings.bind = {
         init: init,
         update: update,
-        utls: {}
+        utils: {}
     };
             
     ko.bindingHandlers.bind = {};

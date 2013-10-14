@@ -14,12 +14,12 @@
             if(!context) {
                 throw "Cannot create object \"" + constructorString + "\"";
             }
-            
-            if(context instanceof Function)            
-                return new context();
-            else 
-                throw constructorString + " is not a valid function.";
         }
+        
+        if(context instanceof Function)            
+            return new context();
+        else 
+            throw constructorString + " is not a valid function.";
     };    
     
     wpfko.util.obj = {

@@ -41,7 +41,7 @@
     kowpf.bindings.kowpf = {
         init: init,
         update: update,
-        utls: {
+        utils: {
             createValueAccessor: createValueAccessor
         }
     };

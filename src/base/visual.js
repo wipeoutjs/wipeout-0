@@ -16,6 +16,19 @@
                 
         this.templateId.subscribe(this.reGenerate, this);
         this.reGenerate();
+        
+        // flag to stop progress of recursive code
+        var setTemplate = {};
+    
+        // bind template and template id together
+        this.setTemplate.subscribe(function (newValue) {
+            if (newValue === setTemplate) return;
+    
+            this.templateId(visual.createAnonymousTemplate(newValue));
+    
+            // clear value. there is no reason to have large strings like this in memory
+            this.setTemplate(setTemplate);
+        }, this);
     });
     
     visual.prototype.createSubscribableChildBindingContext = function(child) {
@@ -68,7 +81,7 @@
                 }
                 
                 // set template
-                nodes.push(wpfko.util.html.createElement("<!-- ko template: { name: _htmlTemplateId } -->"));
+                nodes.push(wpfko.util.html.createElement("<!-- ko template: { name: _htmlTemplateId, afterRender: _afterRendered } -->"));
                 nodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
                 nodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
             } else if(xmlNode.nodeType == 1) {
@@ -122,6 +135,12 @@
         
         this._htmlTemplateId(htmlTemplateId);
     };
+    
+    
+    visual.prototype._afterRendered = function(nodes, context) {
+        var old = this.nodes || [];
+        context.rootHtmlChanged(old, nodes);
+    };
         
     // virtual
     visual.prototype.rootHtmlChanged = function (oldValue, newValue) {
@@ -150,7 +169,7 @@
         };
         
         visual.prototype.$ = function (jquerySelector) {
-            return visual.$(this.nodes(nodes), jquerySelector);
+            return visual.$(this.nodes, jquerySelector);
         };
     }
     
@@ -204,7 +223,7 @@
             }
 
             var id = "AnonymousTemplate" + (++i);
-            templateArea.innerHTML += '<script type="text/html" id="' + id + '" data-templatehash="' + hash + '">' + templateString + '</script>';
+            templateArea.innerHTML += '<script type="text/xml" id="' + id + '" data-templatehash="' + hash + '">' + templateString + '</script>';
             return id;
         };
     })();

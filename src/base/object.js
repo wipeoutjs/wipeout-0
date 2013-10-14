@@ -12,37 +12,6 @@ wpfko.base = wpfko.base || {};
         }
     };
 
-    object.create = function (value) {
-
-        var alreadyDone = [];
-
-        // conversion is not fully recursive, it just ensures that $.extend(...) is called on the elements of an array rather than the array itself
-        var recursion = function (val) {
-            if (alreadyDone.indexOf(val) !== -1)
-                throw "Circular reference in arrays detected. Object.create() is meant simple data serialized from JSON";
-
-            alreadyDone.push(val);
-            var newValue;
-            // if the value is an array
-            if (value instanceof Array) {
-                newValue = [];
-                for (var i = 0, ii = val.length; i < ii; i++) {
-                    newValue.push(recursion(val[i]));
-                }
-            } else {
-                newVal = new Object();
-
-                if (values) {
-                    $.extend(newVal, values);
-                }
-            }
-
-            return newVal;
-        };
-
-        return recursion(value);
-    };
-
     object.extend = function (childClass) {
 
         var _this = this;
@@ -63,7 +32,6 @@ wpfko.base = wpfko.base || {};
             if (this.hasOwnProperty(p)) newConstructor[p] = this[p];
 
         // will ensure any subsequent changes to the parent class will reflect in child class
-
         function prototypeTracker() { this.constructor = newConstructor; }
 
         prototypeTracker.prototype = this.prototype;
@@ -82,29 +50,6 @@ wpfko.base = wpfko.base || {};
         //        };
 
         return newConstructor;
-    };
-
-    
-    object.prototype._generateEventNamespace = (function () {
-        var id = Math.floor(Math.random() * 1000);
-        return function (eventName) {
-            return "_event" + (++id);
-        };
-    })();
-
-    object.prototype.registerEvent = function (eventName, eventHandler) {
-        eventName += ("." + this._generateEventNamespace());
-        $(this._events).on(eventName, function () { eventHandler(arguments[1]); });
-
-        // return dispose function
-        var _this = this;
-        return function () {
-            $(_this._events).off(eventName);
-        }
-    };
-
-    object.prototype.triggerEvent = function (eventName, eventData) {
-        $(this._events).trigger(eventName, eventData);
     };
 
     wpfko.base.object = object;

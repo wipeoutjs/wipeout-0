@@ -42,15 +42,26 @@
         
             var val = view.objectParser[type](innerHTML.join(""));
             return function() {
-                _this[child.nodeName] = val;       
+                if(ko.isObservable(_this[child.nodeName])) {
+                    _this[child.nodeName](val);       
+                } else {
+                    _this[child.nodeName] = val;       
+                }
             };
         };
         
-        var bindComplex = function(child, type){                   
+        var bindComplex = function(child, type) { 
             var val = wpfko.util.obj.createObject(type);
-            val.initialize(child);
-            return function() {
-                _this[child.nodeName] = val;
+            var bindings = val.initialize(child);
+            
+            return function() {                
+                if(ko.isObservable(_this[child.nodeName])) {
+                    _this[child.nodeName](val);       
+                } else {
+                    _this[child.nodeName] = val;       
+                }
+                
+                return bindings;
             };
         };
         
@@ -72,8 +83,16 @@
             var child = propertiesXml.children[i];            
             if(properties[child.nodeName])
                 throw "Attempting to set property \"" + child.nodeName + "\" more than once";
-                                    
-            var type =  child.attributes["constructor"] && child.attributes["constructor"].value ? child.attributes["constructor"].value : "string";
+            
+            // default
+            var type = "string";
+            for(var j = 0, jj = child.attributes.length; j < jj; j++) {
+                if(child.attributes[i].nodeName === "constructor" && child.attributes[i].nodeValue) {
+                    type = child.attributes[i].nodeValue;
+                    break;
+                }
+            }
+            
             if (view.objectParser[type]) {
                 properties[child.nodeName] = bindSimple(child, type);
             } else {                            
