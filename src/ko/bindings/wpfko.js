@@ -11,25 +11,12 @@
             throw "##";
         }
         
-        //TODO: add optional inline properties to binding
-        
+        //TODO: add optional inline properties to binding        
         var view = new (valueAccessor())();
-        view.model(viewModel);
-        view.initialize(bindingContext.createChildContext(view));
-        
-        view.nodes.subscribe(function(newValues) {
-            ko.virtualElements.emptyNode(element);
-                      
-            if(newValues) {
-                // going backwards because there is no append method
-                for(var i = newValues.length - 1; i >= 0; i--) {
-                    ko.virtualElements.prepend(element, newValues[i]);
-                }                
-            }
-        }, view);        
-                
+        view.model(viewModel);                
         element.__wpfkoView = view;
-        view.reGenerate();
+        
+        return ko.bindingHandlers.template.init.call(this, element, createValueAccessor(view), allBindingsAccessor, viewModel, bindingContext);
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -39,13 +26,24 @@
             throw "##";
         }
         
-        element.__wpfkoView.bindingContext(bindingContext);
+        return ko.bindingHandlers.template.update.call(this, element, createValueAccessor(element.__wpfkoView), allBindingsAccessor, viewModel, bindingContext);
+    };    
+    
+    var createValueAccessor = function(view) {
+        return function() {
+            return {
+                data: view,
+                name: view._htmlTemplateId
+            };
+        };
     };
     
     kowpf.bindings.kowpf = {
         init: init,
         update: update,
-        utls: {}
+        utls: {
+            createValueAccessor: createValueAccessor
+        }
     };
             
     ko.bindingHandlers.kowpf = {};

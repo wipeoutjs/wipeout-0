@@ -8,28 +8,14 @@
     var visual = wpfko.base.object.extend(function (templateId) {
         this._super();
         
+        this._templateItems = {};
+        
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
         this.setTemplate = ko.observable();
-        // not observable array, as we do not that functionality here
-        this.nodes = ko.observable([]);
-        this.bindingContext = ko.observable();
-        
-        // flag to stop progress of recursive code
-        var setTemplate = {};
-
-        // bind template and template id together
-        this.setTemplate.subscribe(function (newValue) {
-            if (newValue === setTemplate) return;
-
-            this.templateId(visual.createAnonymousTemplate(newValue));
-
-            // clear value. there is no reason to have large strings like this in memory
-            this.setTemplate(setTemplate);
-        }, this);  
-        
-        this.nodes.deepSubscribe(this.rootHtmlChanged, this);
-        
+        this._htmlTemplateId = ko.observable();
+                
         this.templateId.subscribe(this.reGenerate, this);
+        this.reGenerate();
     });
     
     visual.prototype.createSubscribableChildBindingContext = function(child) {
@@ -40,56 +26,101 @@
     };
     
     visual.prototype.reGenerate = function() {
-        debugger;
-        // clean up old nodes which are to be deleted
-        var oldNodes = this.nodes();
-        if(oldNodes) {
-            for(var i = 0, ii = oldNodes.length; i < ii; i++) {
-                if(oldNodes.parentElement) {
-                    oldNodes.parentElement.removeChild(oldNodes);
-                }
-            }            
-        }
+        
+        // delete any items created for the old template
+        for(var i in this._templateItems)
+            delete this._templateItems[i];
         
         var templateId = this.templateId();
         if(!templateId) {
-            this.nodes([]);
+            this._htmlTemplateId(visual.getBlankTemplateId());
             return;
         }            
         
         var template = document.getElementById(this.templateId());   
         if(!template || !template.innerHTML) {
-            this.nodes([]);
+            this._htmlTemplateId(visual.getBlankTemplateId());
             return;
         }
         
-        var xmlTemplate = new DOMParser().parseFromString("<root>" + template.innerHTML + "</root>", "application/xml").documentElement;
-        var id = visual._tempVisualStore.create(this);
-        
         var nodes = [];
-        nodes.push(wpfko.util.html.createElement("<!-- ko with: wpfko.base.visual._tempVisualStore[\"" + id  + "\"]() -->"));
         var ser = new XMLSerializer();
-        for (var i = 0, ii = xmlTemplate.childNodes.length; i < ii; i++) {
-
-            if (xmlTemplate.childNodes[i].nodeType == 1 && visual.reservedTags.indexOf(xmlTemplate.childNodes[i].nodeName.toLowerCase()) === -1) {
+        
+        // parse template into XML
+        var xmlTemplate = new DOMParser().parseFromString("<root>" + template.innerHTML + "</root>", "application/xml").documentElement;
+        
+        var generateHtml = function(xmlNode, nodeId) {
+            var nodes = [];
+            // if element and not html element
+            if (xmlNode.nodeType == 1 && visual.reservedTags.indexOf(xmlNode.nodeName.toLowerCase()) === -1) {
+                // create object
+                this._templateItems[nodeId] = wpfko.util.obj.createObject(xmlNode.nodeName);
                 
-                var view = wpfko.util.obj.createObject(xmlTemplate.childNodes[i].nodeName);
+                // initalize properties and get bound values
+                var bindingNodes = this._templateItems[nodeId].initialize(xmlNode);
                 
-                view.initialize(this.createSubscribableChildBindingContext(view), xmlTemplate.childNodes[i]);
-                view.reGenerate();
-                var n = view.nodes();
-                for(var j = 0, jj = n.length; j < jj; j++) {
-                    nodes.push(n[j]);
+                // switch context
+                nodes.push(wpfko.util.html.createElement("<!-- ko with: _templateItems['" + nodeId + "'] -->"));
+                
+                // add bindings to dom so that knockout can pick them up
+                for(var j = 0, jj = bindingNodes.length; j < jj; j++) {
+                    nodes.push(bindingNodes[j]);                    
                 }
+                
+                // set template
+                nodes.push(wpfko.util.html.createElement("<!-- ko template: { name: _htmlTemplateId } -->"));
+                nodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
+                nodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
+            } else if(xmlNode.nodeType == 1) {
+                var children = []
+                while (xmlNode.childNodes.length) {
+                    children.push(xmlNode.childNodes[0]);
+                    xmlNode.removeChild(xmlNode.childNodes[0]);
+                }
+                
+                var html = wpfko.util.html.createElement(ser.serializeToString(xmlNode));
+                for(var i = 0, ii = children.length; i < ii; i++) {                    
+                    var n = generateHtml.call(this, children[i], nodeId + "_" + i);
+                    for(var j = 0, jj = n.length; j < jj; j++) {
+                        html.appendChild(n[j]);
+                    }
+                }
+                
+                nodes.push(html);                
             } else {
-                var html = ser.serializeToString(xmlTemplate.childNodes[i]);
+                // create html and add to script
+                var html = ser.serializeToString(xmlNode);
                 nodes.push(wpfko.util.html.createElement(html));
+            }
+            
+            return nodes;
+        };
+        
+        for (var i = 0, ii = xmlTemplate.childNodes.length; i < ii; i++) {
+            var n = generateHtml.call(this, xmlTemplate.childNodes[i], i);
+            for(var j = 0, jj = n.length; j < jj; j++) {
+                nodes.push(n[j]);
             }
         }
         
-        nodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
+        // create new html template from compiled nodes
+        var htmlTemplateId = "__html_" + templateId;        
+        if(!document.getElementById(htmlTemplateId)) {
+            var div = document.createElement("div");
+            var script = document.createElement("script");
+            script.setAttribute("id", htmlTemplateId);
+            script.setAttribute("type", "text/html");
+            for (var i = 0, ii = nodes.length; i < ii; i++) {
+                div.appendChild(nodes[i]);
+            }
+            
+            script.innerHTML = div.innerHTML;
+            
+            //TODO: cleanup/standardise
+            document.body.appendChild(script);
+        }
         
-        this.nodes(nodes);
+        this._htmlTemplateId(htmlTemplateId);
     };
         
     // virtual
@@ -122,27 +153,23 @@
             return visual.$(this.nodes(nodes), jquerySelector);
         };
     }
-        
-    visual._tempVisualStore = {
-        create: (function() {
-            var i = 0;
-            return function(item) {
-                var id = "id_" + (++i);
-                visual._tempVisualStore[id] = function() {
-                    delete visual._tempVisualStore[id];
-                    return item;
-                };
-                
-                return id;
-            };
-        })()
-    };
     
     visual.getDefaultTemplateId = (function () {
         var templateId = null;
         return function () {
             if (!templateId) {
                 templateId = visual.createAnonymousTemplate("<span>No template has been specified</span>");
+            }
+
+            return templateId;
+        };
+    })();
+    
+    visual.getBlankTemplateId = (function () {
+        var templateId = null;
+        return function () {
+            if (!templateId) {
+                templateId = visual.createAnonymousTemplate("");
             }
 
             return templateId;
@@ -158,7 +185,7 @@
             // lazy create div to place anonymous templates
             if (!templateArea) {
                 templateArea = wpfko.util.html.createElement("<div style='display: none'></div>");
-                document.getElementsByTagName("body")[0].appendChild(templateArea);
+                document.body.appendChild(templateArea);
             }
 
             templateString = templateString.replace(/^\s+|\s+$/g, '');

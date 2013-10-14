@@ -6,10 +6,12 @@
     wpfko.util = wpfko.util || {};
     
     var createElement = function(htmlString) {
+        //TODO: this
+        if(!htmlString)htmlString = " ";
         var div = document.createElement("div");
         div.innerHTML = htmlString;
         var element = div.firstChild;
-        div.removeChild(element);
+            div.removeChild(element);
         return element;        
     };    
     
