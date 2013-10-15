@@ -12,3 +12,5 @@ Look for template "TemplateId_html"
 	Save crated template to script tag TemplateId_html
 set htmlTemplateId to TemplateId_html
 return ko.bindingHandlers.template...blabla
+
+Visual.js line 140: bug
