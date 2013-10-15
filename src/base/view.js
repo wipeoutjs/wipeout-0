@@ -1,9 +1,8 @@
 
-
-(function () {
-    
-    window.wpfko = window.wpfko || {};
+    var wpfko = wpfko || {};
     wpfko.base = wpfko.base || {};
+
+(function () {    
 
     var view = wpfko.base.visual.extend(function (templateId) {
 

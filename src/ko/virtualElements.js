@@ -1,9 +1,9 @@
 
-(function () {
-    
-    window.wpfko = window.wpfko || {};
+var wpfko = wpfko || {};
     wpfko.ko = wpfko.ko || {};
-    
+
+(function () {
+        
     var allChildren = function (element) {
         var items = [];
         var first = ko.virtualElements.firstChild(element);

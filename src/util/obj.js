@@ -1,10 +1,9 @@
 
+    var wpfko = wpfko || {};
+    wpfko.util = wpfko.util || {};
 
 (function () {
-    
-    window.wpfko = window.wpfko || {};
-    wpfko.util = wpfko.util || {};
-    
+        
     var createObject = function(constructorString, context) {
         if(!context) context = window;
         

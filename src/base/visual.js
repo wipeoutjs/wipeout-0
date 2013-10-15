@@ -1,10 +1,9 @@
 
+    var wpfko = wpfko || {};
+    wpfko.base = wpfko.base || {};
 
 (function () {
     
-    window.wpfko = window.wpfko || {};
-    wpfko.base = wpfko.base || {};
-
     var visual = wpfko.base.object.extend(function (templateId) {
         this._super();
         
@@ -64,7 +63,7 @@
                 nodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
                 nodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
             } else if(xmlNode.nodeType == 1) {
-                var children = []
+                var children = [];
                 while (xmlNode.childNodes.length) {
                     children.push(xmlNode.childNodes[0]);
                     xmlNode.removeChild(xmlNode.childNodes[0]);

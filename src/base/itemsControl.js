@@ -1,8 +1,7 @@
 /*
+    var wpfko = wpfko || {};
+    wpfko.base = wpfko.base || {};  
 (function () {
-    
-    ﻿window.wpfko = window.wpfko || {};
-    wpfko.base = wpfko.base || {};    
     
     var itemsControl = wpfko.base.view.extend(function () {
         this._super("wpfko.base.itemsControl");

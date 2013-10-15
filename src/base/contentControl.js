@@ -1,9 +1,8 @@
 
+var wpfko = wpfko || {};
+wpfko.base = wpfko.base || {};
 
-(function () {
-    
-    window.wpfko = window.wpfko || {};
-    wpfko.base = wpfko.base || {};
+(function () {    
 
     var contentControl = wpfko.base.view.extend(function (templateId) {
         this._super(wpfko.base.visual.getBlankTemplateId());
@@ -62,8 +61,8 @@
         var hash = 0;
         if (str.length == 0) return hash;
         for (i = 0, ii = str.length; i < ii; i++) {
-            char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
+            var ch = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + ch;
             hash = hash & hash; // Convert to 32bit integer
         }
         return hash;

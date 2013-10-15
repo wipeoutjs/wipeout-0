@@ -1,8 +1,9 @@
-(function () {
-    
-    window.wpfko = window.wpfko || {};
+
+var wpfko = wpfko || {};
     wpfko.ko = wpfko.ko || {};
 
+(function () {
+    
     var deepSubscribe = function (subscribeFunction, context /*optional*/) {
         ///<summary>ko subscribe function, however gives the callback the old and new values</summary>
         var oldValue = this();

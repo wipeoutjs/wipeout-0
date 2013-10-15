@@ -1,9 +1,9 @@
 
-(function () {
-    
-    window.wpfko = window.wpfko || {};
+var wpfko = wpfko || {};
     wpfko.ko = wpfko.ko || {};
 
+(function () {
+    
     var copyArray = function (array) {
         var output = [];
         for (var i = 0, ii = array.length; i < ii; i++) {

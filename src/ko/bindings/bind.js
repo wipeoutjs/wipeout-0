@@ -1,9 +1,9 @@
 
-(function () {
-    
-    window.kowpf = window.kowpf || {};
+var kowpf = kowpf || {};
     kowpf.bindings = kowpf.bindings || {};
-    
+
+(function () {
+        
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         return update(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext);       
     };

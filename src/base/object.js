@@ -1,8 +1,8 @@
 
-(function () {
-
-        ﻿window.wpfko = window.wpfko || {};
+var wpfko = wpfko || {};
 wpfko.base = wpfko.base || {};
+
+(function () {
     
     var object = function (values) {
         this._events = {};
