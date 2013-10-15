@@ -10,12 +10,31 @@
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         var values = valueAccessor();
-        if(ko.isObservable(viewModel[values.property])) {
-            viewModel[values.property](ko.utils.unwrapObservable(values.value));
+        if(ko.isObservable(get(viewModel, values.property))) {
+            get(viewModel, values.property)(ko.utils.unwrapObservable(values.value));
         } else {
-            viewModel[values.property] = ko.utils.unwrapObservable(values.value);
+            set(viewModel, values.property, ko.utils.unwrapObservable(values.value));
         }         
     };
+    
+    var get = function(object, property) {
+        property = property.split(".");
+        for(var i = 0, ii = property.length; i < ii; i++) {
+            object = object[property[i]];
+        }
+        
+        return object;
+    }
+    
+    var set = function(object, property, value) {
+        property = property.split(".");
+        var i = 0;
+        for(var ii = property.length - 1; i < ii; i++) {
+            object = object[property[i]];
+        }
+        
+        object[property[i]] = value;
+    }
     
     kowpf.bindings.bind = {
         init: init,

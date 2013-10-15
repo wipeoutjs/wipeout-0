@@ -13,13 +13,20 @@
         this.model.deepSubscribe(this.modelChanged, this);
     });
     
-    view.prototype.initialize = function(propertiesXml) {
+    view.prototype.initialize = function(propertiesXml, bindingsPrefix /* optional */) {
 
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
         
         if(!propertiesXml)
             return;
+        
+        if(bindingsPrefix) {
+            bindingsPrefix += ".";
+        }
+        else {
+            bindingsPrefix = "";
+        }
         
         var bindingNodes = [];
         var _this = this;
@@ -28,7 +35,8 @@
         
         var bindInline = function(propertName, propertyValue) {
             return function() {
-                bindingNodes.push(wpfko.util.html.createElement("<!-- ko bind: { property: '" + propertName + "', value: " + propertyValue + " } -->"));
+                //TODO: prefix before value
+                bindingNodes.push(wpfko.util.html.createElement("<!-- ko bind: { property: '" + bindingsPrefix + propertName + "', value: "  + propertyValue + " } -->"));
                 bindingNodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
             };
         };
@@ -52,7 +60,10 @@
         
         var bindComplex = function(child, type) { 
             var val = wpfko.util.obj.createObject(type);
-            var bindings = val.initialize(child);
+            var bindings = val.initialize(child, child.nodeName);
+            for(var i = 0, ii = bindings.length; i < ii; i++) {
+                bindingNodes.push(bindings[i]);
+            }
             
             return function() {                
                 if(ko.isObservable(_this[child.nodeName])) {
@@ -60,8 +71,6 @@
                 } else {
                     _this[child.nodeName] = val;       
                 }
-                
-                return bindings;
             };
         };
         
@@ -102,6 +111,7 @@
         
         // default to model of perent
         if(!properties["model"])
+            //TODO: $parent.model may not be valid for items set in a template
             properties["model"] = bindInline("model", "$parent.model");
         
         // set priority properties
