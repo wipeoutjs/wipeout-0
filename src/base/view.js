@@ -36,7 +36,7 @@
         var bindInline = function(propertName, propertyValue) {
             return function() {
                 //TODO: prefix before value
-                bindingNodes.push(wpfko.util.html.createElement("<!-- ko bind: { property: '" + bindingsPrefix + propertName + "', value: "  + propertyValue + " } -->"));
+                bindingNodes.push(wpfko.util.html.createElement("<!-- ko bind: { property: '" + propertName + "', value: "  + propertyValue + " } -->"));
                 bindingNodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
             };
         };
@@ -61,8 +61,14 @@
         var bindComplex = function(child, type) { 
             var val = wpfko.util.obj.createObject(type);
             var bindings = val.initialize(child, child.nodeName);
+            if(bindings.length) {
+                bindingNodes.push(wpfko.util.html.createElement("<!-- ko with: " + child.nodeName + " -->"));
+            }
             for(var i = 0, ii = bindings.length; i < ii; i++) {
                 bindingNodes.push(bindings[i]);
+            }
+            if(bindings.length) {
+                bindingNodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
             }
             
             return function() {                
