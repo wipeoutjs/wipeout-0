@@ -36,7 +36,7 @@ var wpfko = wpfko || {};
 
     var deepSubscribe = function (subscribeFunction, context /*optional*/) {
         ///<summary>ko subscribe function, however gives the callback a list of items added and removed from the array</summary>
-        var initial = Quest.KnockoutExtensions.ObservableArray.CopyArray(this() || []);
+        var initial = wpfko.ko.observableArray.utils.copyArray(this() || []);
         
         return this.subscribe(function (values) {
 
@@ -46,8 +46,8 @@ var wpfko = wpfko || {};
             var removedValues = [];
             
             // get unique items in each array with a count
-            var initialCount = Quest.KnockoutExtensions.ObservableArray.GetCount(initial);
-            var valuesCount = Quest.KnockoutExtensions.ObservableArray.GetCount(values);
+            var initialCount = wpfko.ko.observableArray.utils.getCount(initial);
+            var valuesCount = wpfko.ko.observableArray.utils.getCount(values);
 
             for (i = 0, ii = initialCount.length; i < ii; i++) {
                 val = null;
@@ -89,7 +89,7 @@ var wpfko = wpfko || {};
             }
 
             // reset for next call
-            initial = Quest.KnockoutExtensions.ObservableArray.CopyArray(values);
+            initial = wpfko.ko.observableArray.utils.copyArray(values);
             subscribeFunction.call(this, removedValues, addedValues);
         }, context);
     };    

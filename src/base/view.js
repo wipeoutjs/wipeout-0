@@ -12,20 +12,13 @@
         this.model.deepSubscribe(this.modelChanged, this);
     });
     
-    view.prototype.initialize = function(propertiesXml, bindingsPrefix /* optional */) {
+    view.prototype.initialize = function(propertiesXml) {
 
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
         
         if(!propertiesXml)
             return;
-        
-        if(bindingsPrefix) {
-            bindingsPrefix += ".";
-        }
-        else {
-            bindingsPrefix = "";
-        }
         
         var bindingNodes = [];
         var _this = this;
@@ -59,7 +52,7 @@
         
         var bindComplex = function(child, type) { 
             var val = wpfko.util.obj.createObject(type);
-            var bindings = val.initialize(child, child.nodeName);
+            var bindings = val.initialize(child);
             if(bindings.length) {
                 bindingNodes.push(wpfko.util.html.createElement("<!-- ko with: " + child.nodeName + " -->"));
             }
