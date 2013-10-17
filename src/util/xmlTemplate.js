@@ -12,8 +12,19 @@
         
         var xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplateElement.innerHTML + "</root>", "application/xml").documentElement;
         
+        this.xmlTemplateId = xmlTemplateId;
         this.builder = wpfko.util.xmlTemplate.generateBuilder(xmlTemplate);
+        
+        var htmlTemplate = wpfko.util.xmlTemplate.generateTemplate(xmlTemplate);
+        this.saveTemplate(htmlTemplate);
     }
+    
+    var enumerateAttr = function(element, callback) {
+        
+        for(var i = 0, ii = element.attributes.length; i < ii; i++) {
+            callback(element.attributes[i], i);
+        }        
+    };
     
     var enumerate = function(element, callback) {
         
@@ -37,8 +48,8 @@
                     obj._templateItems[itemPrefix + i].initialize(child);
                 });
             } else if(child.nodeType == 1) {
-                builders.push(_xmlTemplate.generateBuilder(child, i));
-            }
+                builders.push(_xmlTemplate.generateBuilder(child, itemPrefix + i));
+            } // non elements have no place here but we do want to enumerate over them to keep index in sync
         });
         
         return function(object) {
@@ -49,6 +60,33 @@
             }
         }
     };
+    
+    _xmlTemplate.generateTemplate = function(xmlTemplate, itemPrefix) {        
+        if(itemPrefix) itemPrefix += ".";
+        else itemPrefix = "";
+        var result = [];
+        var ser = new XMLSerializer();
+        
+        enumerate(xmlTemplate, function(child, i) {            
+            if(_xmlTemplate.isCustomElement(child)) {
+                result.push("<!-- ko with: _templateItems[" + itemPrefix + i + "] -->");
+                enumerateAttr(child, function(attr) {
+                    result.push("<!-- ko bind: { property: " + attr.nodeName + ", value: " + attr.value + " } -->");
+                    result.push("<!-- /ko -->");
+                });
+                
+                result.push("<!-- ko template: { name: _htmlTemplateId -->");
+                result.push("<!-- /ko -->");
+                result.push("<!-- /ko -->");
+                
+            } else if(child.nodeType == 1) {
+                
+                result.push(_xmlTemplate.generateTemplate(child, itemPrefix + i));
+            } else {
+                result.push(ser.serializeToString(child));
+            }
+        });
+    }
     
     
     wpfko.util.xmlTemplate = _xmlTemplate;
