@@ -56,7 +56,6 @@ wpfko.base = wpfko.base || {};
             wpfko.util.xmlTemplate.cache[itemTemplateId] = new wpfko.util.xmlTemplate(itemTemplateId);
         
         var view = new wpfko.base.view(itemTemplateId);
-        wpfko.util.xmlTemplate.cache[itemTemplateId].builder(view);
         
         //TODO: setting model twice
         view.model(model);

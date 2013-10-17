@@ -27,8 +27,7 @@
             delete this._templateItems[i];
         }
         
-        wpfko.util.xmlTemplate.cache[templateId].builder(this);
-        
+        wpfko.util.xmlTemplate.cache[templateId].builder(this);        
         this._htmlTemplateId(wpfko.util.xmlTemplate.cache[templateId].htmlTemplateId);
     };
     
