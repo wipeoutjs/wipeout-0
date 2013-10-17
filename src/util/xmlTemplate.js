@@ -81,11 +81,25 @@
                 
             } else if(child.nodeType == 1) {
                 
-                result.push(_xmlTemplate.generateTemplate(child, itemPrefix + i));
+                var childNodes = [];
+                while (child.childNodes.length) {
+                    childNodes.push(child.childNodes[0]);
+                    child.removeChild(child.childNodes[0]);
+                }
+                
+                var html = wpfko.util.html.createElement(ser.serializeToString(child));
+                for(var i = 0, ii = childNodes.length; i < ii; i++) {
+                    html.innerHTML += wpfko.util.xmlTemplate.generateHtmlTemplate(childNodes[i], itemPrefix + i);
+                }
+                
+                result.push(html.outerHTML);
             } else {
                 result.push(ser.serializeToString(child));
             }
         });
+    }
+    
+    _xmlTemplate.saveTemplate = function() {
     }
     
     
