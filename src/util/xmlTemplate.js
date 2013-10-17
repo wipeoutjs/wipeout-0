@@ -20,24 +20,10 @@
         this.saveTemplate(htmlTemplate);
     }
     
-    var enumerate = function(element, callback) {
+    var enumerate = function(items, callback) {
         
-        for(var i = 0, ii = element.childNodes.length; i < ii; i++) {
-            callback(element.childNodes[i], i);
-        }        
-    };
-    
-    var enumerateEl = function(element, callback) {
-        
-        for(var i = 0, ii = element.children.length; i < ii; i++) {
-            callback(element.children[i], i);
-        }        
-    };
-    
-    var enumerateAttr = function(element, callback) {
-        
-        for(var i = 0, ii = element.attributes.length; i < ii; i++) {
-            callback(element.attributes[i], i);
+        for(var i = 0, ii = items.length; i < ii; i++) {
+            callback(items[i], i);
         }        
     };
     
@@ -49,7 +35,7 @@
         if(itemPrefix) itemPrefix += ".";
         else itemPrefix = "";
         var builders = [];
-        enumerate(xmlTemplate, function(child, i) {
+        enumerate(xmlTemplate.childNodes, function(child, i) {
             if(_xmlTemplate.isCustomElement(child)) {
                 builders.push(function(obj) {
                     obj._templateItems[itemPrefix + i] = wpfko.util.obj.createObject(child.nodeName);
@@ -113,25 +99,25 @@
             if(!_xmlTemplate.elementHasModelBinding(element))
                 addBindingAttributes({ nodeName: "model", value: "$parent.model" });
             
-            enumerateAttr(element, addBindingAttributes);
+            enumerate(element.attributes, addBindingAttributes);
         };
         
-        enumerate(xmlTemplate, function(child, i) {            
+        enumerate(xmlTemplate.childNodes, function(child, i) {            
             if(_xmlTemplate.isCustomElement(child)) {
                 result.push("<!-- ko with: _templateItems[\"" + itemPrefix + i + "\"] -->\n");
                 addBindings(child);
                  
                 var recursive = function(element) {
-                    enumerateEl(element, function(element) {  
+                    enumerate(element.children, function(element) {  
                         var constructorOk = false;
-                        enumerateAttr(element, function(attr) {
+                        enumerate(element.attributes, function(attr) {
                             constructorOk |= attr.nodeName === "constructor" && _xmlTemplate.constructorExists(attr.value);
                         });
                         
                         if(constructorOk) {
                             result.push("<!-- ko with: " + element.nodeName + " -->\n");
                             addBindings(element);                        
-                            enumerateEl(element, recursive);
+                            enumerate(element.children, recursive);
                             result.push("<!-- /ko -->\n");
                         }
                     });                                
