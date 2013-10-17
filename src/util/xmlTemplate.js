@@ -20,17 +20,24 @@
         this.saveTemplate(htmlTemplate);
     }
     
-    var enumerateAttr = function(element, callback) {
-        
-        for(var i = 0, ii = element.attributes.length; i < ii; i++) {
-            callback(element.attributes[i], i);
-        }        
-    };
-    
     var enumerate = function(element, callback) {
         
         for(var i = 0, ii = element.childNodes.length; i < ii; i++) {
             callback(element.childNodes[i], i);
+        }        
+    };
+    
+    var enumerateEl = function(element, callback) {
+        
+        for(var i = 0, ii = element.children.length; i < ii; i++) {
+            callback(element.children[i], i);
+        }        
+    };
+    
+    var enumerateAttr = function(element, callback) {
+        
+        for(var i = 0, ii = element.attributes.length; i < ii; i++) {
+            callback(element.attributes[i], i);
         }        
     };
     
@@ -62,47 +69,57 @@
         }
     };
     
-    _xmlTemplate.generateTemplate = function(xmlTemplate, itemPrefix) {        
+    _xmlTemplate.generateTemplate = function(xmlTemplate, itemPrefix) {   
         if(itemPrefix) itemPrefix += ".";
         else itemPrefix = "";
         var result = [];
         var ser = new XMLSerializer();
         
+        var addBindingAttributes = function(attr) {
+                    // reserved
+                    if(attr.nodeName === "constructor") return;
+                    result.push("<!-- ko bind: { property: '" + attr.nodeName + "', value: " + attr.value + " } -->");
+                    result.push("<!-- /ko -->\n");
+                };
+        
         enumerate(xmlTemplate, function(child, i) {            
             if(_xmlTemplate.isCustomElement(child)) {
-                debugger;
-                result.push("<!-- ko with: _templateItems[\"" + itemPrefix + i + "\"] -->");
-                enumerateAttr(child, function(attr) {
-                // reserved
-                if(attr.nodeName === "constructor") return;
-                    result.push("<!-- ko bind: { property: " + attr.nodeName + ", value: " + attr.value + " } -->");
-                    result.push("<!-- /ko -->");
-                });
+                //result.push("<!-- ko with: (function() debugger; return _templateItems[\"" + itemPrefix + i + "\"]; })() -->");
+                result.push("<!-- ko with: _templateItems[\"" + itemPrefix + i + "\"] -->\n");
+                enumerateAttr(child, addBindingAttributes);
+                 
+                var recursive = function(element) {
+                    enumerateEl(child, function(element) {  
+                        result.push("<!-- ko with: " + element.nodeName + " -->\n");                        
+                        enumerateAttr(element, addBindingAttributes);                        
+                        enumerate(element, recursive);
+                        result.push("<!-- /ko -->\n");
+                    });                                
+                };
                 
-                result.push("<!-- ko template: { name: _htmlTemplateId -->");
-                result.push("<!-- /ko -->");
-                result.push("<!-- /ko -->");
+                recursive(child);
+                
+                result.push("<!-- ko template: { name: _htmlTemplateId } -->");
+                result.push("<!-- /ko -->\n");
+                result.push("<!-- /ko -->\n");
                 
             } else if(child.nodeType == 1) {
                 
-                var childNodes = [];
-                while (child.childNodes.length) {
-                    childNodes.push(child.childNodes[0]);
-                    child.removeChild(child.childNodes[0]);
+                // create copy
+                var ch = new DOMParser().parseFromString(ser.serializeToString(child), "application/xml").documentElement;
+                while (ch.childNodes.length) {
+                    ch.removeChild(ch.childNodes[0]);
                 }
                 
-                var html = wpfko.util.html.createElement(ser.serializeToString(child));
-                for(var i = 0, ii = childNodes.length; i < ii; i++) {
-                    html.innerHTML += wpfko.util.xmlTemplate.generateTemplate(childNodes[i], itemPrefix + i);
-                }
-                
+                var html = wpfko.util.html.createElement(ser.serializeToString(ch));
+                html.innerHTML = wpfko.util.xmlTemplate.generateTemplate(child, itemPrefix + i);                
                 result.push(html.outerHTML);
             } else {
                 result.push(ser.serializeToString(child));
             }
         });
         
-        return result.join("\n");
+        return result.join("");
     }
     
     _xmlTemplate.prototype.saveTemplate = function(templateString) {
