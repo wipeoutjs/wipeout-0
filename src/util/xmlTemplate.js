@@ -22,10 +22,23 @@
         }        
     };
     
-    _xmlTemplate.generateBuilder = function(xmlTemplate) {
+    _xmlTemplate.isCustomElement = function(xmlElement) {
+        return xmlElement.nodeType == 1 && wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName.toLowerCase()) === -1;
+    };
+    
+    _xmlTemplate.generateBuilder = function(xmlTemplate, itemPrefix) {
+        if(itemPrefix) itemPrefix += ".";
+        else itemPrefix = "";
         var builders = [];
         enumerate(xmlTemplate, function(child, i) {
-            if(
+            if(_xmlTemplate.isCustomElement(child)) {
+                builders.push(function(obj) {
+                    obj._templateItems[itemPrefix + i] = wpfko.util.obj.createObject(child.nodeName);
+                    obj._templateItems[itemPrefix + i].initialize(child);
+                });
+            } else if(child.nodeType == 1) {
+                builders.push(_xmlTemplate.generateBuilder(child, i));
+            }
         });
         
         return function(object) {
