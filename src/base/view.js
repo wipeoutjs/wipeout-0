@@ -20,16 +20,12 @@
         if(!propertiesXml)
             return;
         
-        var bindingNodes = [];
         var _this = this;
-        var ser = new XMLSerializer();
         var properties = {};
         
         var bindInline = function(propertName, propertyValue) {
             return function() {
-                //TODO: prefix before value
-                bindingNodes.push(wpfko.util.html.createElement("<!-- ko bind: { property: '" + propertName + "', value: "  + propertyValue + " } -->"));
-                bindingNodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
+            // do nothing, a binding will be added to the template to handle this
             };
         };
         
@@ -52,17 +48,7 @@
         
         var bindComplex = function(child, type) { 
             var val = wpfko.util.obj.createObject(type);
-            var bindings = val.initialize(child);
-            if(bindings.length) {
-                bindingNodes.push(wpfko.util.html.createElement("<!-- ko with: " + child.nodeName + " -->"));
-            }
-            for(var i = 0, ii = bindings.length; i < ii; i++) {
-                bindingNodes.push(bindings[i]);
-            }
-            if(bindings.length) {
-                bindingNodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
-            }
-            
+            val.initialize(child);            
             return function() {                
                 if(ko.isObservable(_this[child.nodeName])) {
                     _this[child.nodeName](val);       
@@ -126,8 +112,6 @@
             properties[i]();
             delete properties[i];
         }
-        
-        return bindingNodes;
     };
     
     view.objectParser = {

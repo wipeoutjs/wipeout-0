@@ -70,8 +70,11 @@
         
         enumerate(xmlTemplate, function(child, i) {            
             if(_xmlTemplate.isCustomElement(child)) {
-                result.push("<!-- ko with: _templateItems[" + itemPrefix + i + "] -->");
+                debugger;
+                result.push("<!-- ko with: _templateItems[\"" + itemPrefix + i + "\"] -->");
                 enumerateAttr(child, function(attr) {
+                // reserved
+                if(attr.nodeName === "constructor") return;
                     result.push("<!-- ko bind: { property: " + attr.nodeName + ", value: " + attr.value + " } -->");
                     result.push("<!-- /ko -->");
                 });
@@ -90,7 +93,7 @@
                 
                 var html = wpfko.util.html.createElement(ser.serializeToString(child));
                 for(var i = 0, ii = childNodes.length; i < ii; i++) {
-                    html.innerHTML += wpfko.util.xmlTemplate.generateHtmlTemplate(childNodes[i], itemPrefix + i);
+                    html.innerHTML += wpfko.util.xmlTemplate.generateTemplate(childNodes[i], itemPrefix + i);
                 }
                 
                 result.push(html.outerHTML);
@@ -102,7 +105,7 @@
         return result.join("\n");
     }
     
-    _xmlTemplate.saveTemplate = function(templateString) {
+    _xmlTemplate.prototype.saveTemplate = function(templateString) {
                 
         var script = document.getElementById(this.htmlTemplateId);
         if(!script) {
@@ -115,6 +118,7 @@
         script.innerHTML = templateString;     
     }
     
+    _xmlTemplate.cache = {};
     
     wpfko.util.xmlTemplate = _xmlTemplate;
 })();

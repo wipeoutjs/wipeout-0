@@ -9,109 +9,27 @@
         
         this._templateItems = {};
         
-        this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
+        this.xmlTemplateId = ko.observable(templateId || visual.getDefaultTemplateId());
         this._htmlTemplateId = ko.observable();
                 
-        this.templateId.subscribe(this.reGenerate, this);
+        this.xmlTemplateId.subscribe(this.reGenerate, this);
         this.reGenerate();
     });
     
     visual.prototype.reGenerate = function() {
         
-        // delete any items created for the old template
-        for(var i in this._templateItems)
+        var templateId = this.xmlTemplateId();
+        if(!wpfko.util.xmlTemplate.cache[templateId]) {
+            wpfko.util.xmlTemplate.cache[templateId] = new wpfko.util.xmlTemplate(templateId);
+        }
+        
+        for(var i in this._templateItems) {
             delete this._templateItems[i];
-        
-        var templateId = this.templateId();
-        if(!templateId) {
-            this._htmlTemplateId(visual.getBlankTemplateId());
-            return;
-        }            
-        
-        var template = document.getElementById(this.templateId());   
-        if(!template || !template.innerHTML) {
-            this._htmlTemplateId(visual.getBlankTemplateId());
-            return;
         }
         
-        var nodes = [];
-        var ser = new XMLSerializer();
+        wpfko.util.xmlTemplate.cache[templateId].builder(this);
         
-        // parse template into XML
-        var xmlTemplate = new DOMParser().parseFromString("<root>" + template.innerHTML + "</root>", "application/xml").documentElement;
-        
-        var generateHtml = function(xmlNode, nodeId) {
-            var nodes = [];
-            // if element and not html element
-            if (xmlNode.nodeType == 1 && visual.reservedTags.indexOf(xmlNode.nodeName.toLowerCase()) === -1) {
-                // create object
-                this._templateItems[nodeId] = wpfko.util.obj.createObject(xmlNode.nodeName);
-                
-                // initalize properties and get bound values
-                var bindingNodes = this._templateItems[nodeId].initialize(xmlNode);
-                
-                // switch context
-                nodes.push(wpfko.util.html.createElement("<!-- ko with: _templateItems['" + nodeId + "'] -->"));
-                
-                // add bindings to dom so that knockout can pick them up
-                for(var j = 0, jj = bindingNodes.length; j < jj; j++) {
-                    nodes.push(bindingNodes[j]);                    
-                }
-                
-                // set template
-                nodes.push(wpfko.util.html.createElement("<!-- ko template: { name: _htmlTemplateId, afterRender: _afterRendered } -->"));
-                nodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
-                nodes.push(wpfko.util.html.createElement("<!-- /ko -->"));
-            } else if(xmlNode.nodeType == 1) {
-                var children = [];
-                while (xmlNode.childNodes.length) {
-                    children.push(xmlNode.childNodes[0]);
-                    xmlNode.removeChild(xmlNode.childNodes[0]);
-                }
-                
-                var html = wpfko.util.html.createElement(ser.serializeToString(xmlNode));
-                for(var i = 0, ii = children.length; i < ii; i++) {                    
-                    var n = generateHtml.call(this, children[i], nodeId + "_" + i);
-                    for(var j = 0, jj = n.length; j < jj; j++) {
-                        html.appendChild(n[j]);
-                    }
-                }
-                
-                nodes.push(html);                
-            } else {
-                // create html and add to script
-                var html = ser.serializeToString(xmlNode);
-                nodes.push(wpfko.util.html.createElement(html));
-            }
-            
-            return nodes;
-        };
-        
-        for (var i = 0, ii = xmlTemplate.childNodes.length; i < ii; i++) {
-            var n = generateHtml.call(this, xmlTemplate.childNodes[i], i);
-            for(var j = 0, jj = n.length; j < jj; j++) {
-                nodes.push(n[j]);
-            }
-        }
-        
-        // create new html template from compiled nodes
-        var htmlTemplateId = "__html_" + templateId;        
-        if(!document.getElementById(htmlTemplateId)) {
-            var div = document.createElement("div");
-            var script = document.createElement("script");
-            script.setAttribute("id", htmlTemplateId);
-            script.setAttribute("type", "text/html");
-            for (var i = 0, ii = nodes.length; i < ii; i++) {
-                div.appendChild(nodes[i]);
-            }
-            
-            script.innerHTML = div.innerHTML;
-            
-            //TODO: cleanup/standardise
-            document.body.appendChild(script);
-        }
-        
-        this._htmlTemplateId(htmlTemplateId);
+        this._htmlTemplateId(wpfko.util.xmlTemplate.cache[templateId].htmlTemplateId);
     };
     
     
