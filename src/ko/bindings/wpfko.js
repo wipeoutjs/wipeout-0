@@ -1,12 +1,12 @@
 
-var kowpf = kowpf || {};
-    kowpf.bindings = kowpf.bindings || {};
+var wpfko = wpfko || {};
+    wpfko.bindings = wpfko.bindings || {};
 
 (function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
 
-        if(element.__kowpfView) {
+        if(element.__wpfkoView) {
             //TODO: knockout standard way of controling element
             throw "##";
         }
@@ -38,7 +38,7 @@ var kowpf = kowpf || {};
         };
     };
     
-    kowpf.bindings.kowpf = {
+    wpfko.bindings.wpfko = {
         init: init,
         update: update,
         utils: {
@@ -46,11 +46,11 @@ var kowpf = kowpf || {};
         }
     };
             
-    ko.bindingHandlers.kowpf = {};
-    ko.virtualElements.allowedBindings.kowpf = true;
-    for(var i in kowpf.bindings.kowpf) {
+    ko.bindingHandlers.wpfko = {};
+    ko.virtualElements.allowedBindings.wpfko = true;
+    for(var i in wpfko.bindings.wpfko) {
         if(i !== "utils") {
-            ko.bindingHandlers.kowpf[i] = kowpf.bindings.kowpf[i];
+            ko.bindingHandlers.wpfko[i] = wpfko.bindings.wpfko[i];
         }
     };
 })();

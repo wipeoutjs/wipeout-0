@@ -1,15 +1,15 @@
 
-var kowpf = kowpf || {};
-    kowpf.bindings = kowpf.bindings || {};
+var wpfko = wpfko || {};
+    wpfko.bindings = wpfko.bindings || {};
 
 (function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        return ko.bindingHandlers.template.init.call(this, element, kowpf.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
+        return ko.bindingHandlers.template.init.call(this, element, wpfko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        return ko.bindingHandlers.template.update.call(this, element, kowpf.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
+        return ko.bindingHandlers.template.update.call(this, element, wpfko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
     };    
     
     var createValueAccessor = function(oldValueAccessor) {
@@ -22,7 +22,7 @@ var kowpf = kowpf || {};
         };
     };
     
-    kowpf.bindings.renderChild = {
+    wpfko.bindings.renderChild = {
         init: init,
         update: update,
         utils: {
@@ -32,9 +32,9 @@ var kowpf = kowpf || {};
             
     ko.bindingHandlers.renderChild = {};
     ko.virtualElements.allowedBindings.renderChild = true;
-    for(var i in kowpf.bindings.renderChild) {
+    for(var i in wpfko.bindings.renderChild) {
         if(i !== "utils") {
-            ko.bindingHandlers.renderChild[i] = kowpf.bindings.renderChild[i];
+            ko.bindingHandlers.renderChild[i] = wpfko.bindings.renderChild[i];
         }
     };
 })();

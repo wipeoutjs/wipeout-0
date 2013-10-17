@@ -69,6 +69,33 @@
         }
     };
     
+    _xmlTemplate.elementHasModelBinding = function(element) {
+        
+        for(var i = 0, ii = element.attributes.length; i < ii; i++) {
+            if(element.attributes[i].nodeName === "model")
+                return true;
+        }
+        
+        for(var i = 0, ii = element.children.length; i < ii; i++) {
+            if(element.children[i].nodeName === "model")
+                return true;
+        }
+        
+        return false;
+    };
+    
+    _xmlTemplate.constructorExists = function(constructor) {
+        
+        constructor = constructor.split(".");
+        var current = window;
+        for(var i = 0, ii = constructor.length; i < ii; i++) {
+            current = current[constructor[i]];
+            if(!current) return false;
+        }
+        
+        return current instanceof Function;
+    };
+    
     _xmlTemplate.generateTemplate = function(xmlTemplate, itemPrefix) {   
         if(itemPrefix) itemPrefix += ".";
         else itemPrefix = "";
@@ -82,18 +109,31 @@
                     result.push("<!-- /ko -->\n");
                 };
         
+        var addBindings = function(element) {
+            if(!_xmlTemplate.elementHasModelBinding(element))
+                addBindingAttributes({ nodeName: "model", value: "$parent.model" });
+            
+            enumerateAttr(element, addBindingAttributes);
+        };
+        
         enumerate(xmlTemplate, function(child, i) {            
             if(_xmlTemplate.isCustomElement(child)) {
-                //result.push("<!-- ko with: (function() debugger; return _templateItems[\"" + itemPrefix + i + "\"]; })() -->");
                 result.push("<!-- ko with: _templateItems[\"" + itemPrefix + i + "\"] -->\n");
-                enumerateAttr(child, addBindingAttributes);
+                addBindings(child);
                  
                 var recursive = function(element) {
-                    enumerateEl(child, function(element) {  
-                        result.push("<!-- ko with: " + element.nodeName + " -->\n");                        
-                        enumerateAttr(element, addBindingAttributes);                        
-                        enumerate(element, recursive);
-                        result.push("<!-- /ko -->\n");
+                    enumerateEl(element, function(element) {  
+                        var constructorOk = false;
+                        enumerateAttr(element, function(attr) {
+                            constructorOk |= attr.nodeName === "constructor" && _xmlTemplate.constructorExists(attr.value);
+                        });
+                        
+                        if(constructorOk) {
+                            result.push("<!-- ko with: " + element.nodeName + " -->\n");
+                            addBindings(element);                        
+                            enumerateEl(element, recursive);
+                            result.push("<!-- /ko -->\n");
+                        }
                     });                                
                 };
                 

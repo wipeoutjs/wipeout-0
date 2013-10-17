@@ -1,6 +1,6 @@
 
-var kowpf = kowpf || {};
-    kowpf.bindings = kowpf.bindings || {};
+var wpfko = wpfko || {};
+    wpfko.bindings = wpfko.bindings || {};
 
 (function () {
         
@@ -36,7 +36,7 @@ var kowpf = kowpf || {};
         object[property[i]] = value;
     }
     
-    kowpf.bindings.bind = {
+    wpfko.bindings.bind = {
         init: init,
         update: update,
         utils: {}
@@ -44,9 +44,9 @@ var kowpf = kowpf || {};
             
     ko.bindingHandlers.bind = {};
     ko.virtualElements.allowedBindings.bind = true;
-    for(var i in kowpf.bindings.bind) {
+    for(var i in wpfko.bindings.bind) {
         if(i !== "utils") {
-            ko.bindingHandlers.bind[i] = kowpf.bindings.bind[i];
+            ko.bindingHandlers.bind[i] = wpfko.bindings.bind[i];
         }
     };
 })();

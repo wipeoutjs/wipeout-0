@@ -80,8 +80,8 @@
             // default
             var type = "string";
             for(var j = 0, jj = child.attributes.length; j < jj; j++) {
-                if(child.attributes[i].nodeName === "constructor" && child.attributes[i].nodeValue) {
-                    type = child.attributes[i].nodeValue;
+                if(child.attributes[j].nodeName === "constructor" && child.attributes[j].nodeValue) {
+                    type = child.attributes[j].nodeValue;
                     break;
                 }
             }
@@ -94,9 +94,9 @@
         }
         
         // default to model of perent
-        if(!properties["model"])
-            //TODO: $parent.model may not be valid for items set in a template
+        if(!properties["model"]) {
             properties["model"] = bindInline("model", "$parent.model");
+        }
         
         // set priority properties
         var priorities = ["model"];
