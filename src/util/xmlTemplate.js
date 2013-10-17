@@ -13,6 +13,7 @@
         var xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplateElement.innerHTML + "</root>", "application/xml").documentElement;
         
         this.xmlTemplateId = xmlTemplateId;
+        this.htmlTemplateId = "__html_" + xmlTemplateId;
         this.builder = wpfko.util.xmlTemplate.generateBuilder(xmlTemplate);
         
         var htmlTemplate = wpfko.util.xmlTemplate.generateTemplate(xmlTemplate);
@@ -97,9 +98,21 @@
                 result.push(ser.serializeToString(child));
             }
         });
+        
+        return result.join("\n");
     }
     
-    _xmlTemplate.saveTemplate = function() {
+    _xmlTemplate.saveTemplate = function(templateString) {
+                
+        var script = document.getElementById(this.htmlTemplateId);
+        if(!script) {
+            script = document.createElement("script");
+            script.setAttribute("id", this.htmlTemplateId);
+            script.setAttribute("type", "text/html");
+            document.body.appendChild(script);
+        }
+        
+        script.innerHTML = templateString;     
     }
     
     
