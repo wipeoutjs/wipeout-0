@@ -31,10 +31,10 @@
         this._htmlTemplateId(wpfko.util.xmlTemplate.cache[templateId].htmlTemplateId);
     };
     
-    
+    // knockout specific function. The "this" will be window and the context object will be the instance
     visual.prototype._afterRendered = function(nodes, context) {
-        var old = this.nodes || [];
-        this.nodes = nodes;
+        var old = context.nodes || [];
+        context.nodes = nodes;
         context.rootHtmlChanged(old, nodes);
     };
         
@@ -47,7 +47,7 @@
         
         var $ = window.jQuery;
         visual.$ = function(elements, jquerySelector) {
-            if (!elements || elements.length) {
+            if (!elements || !elements.length) {
                 return $();
             }
     

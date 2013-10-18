@@ -125,7 +125,7 @@
                 
                 recursive(child);
                 
-                result.push("<!-- ko template: { name: _htmlTemplateId } -->");
+                result.push("<!-- ko template: { name: _htmlTemplateId, afterRender: _afterRendered } -->");
                 result.push("<!-- /ko -->\n");
                 result.push("<!-- /ko -->\n");
                 

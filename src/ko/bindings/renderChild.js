@@ -17,7 +17,8 @@ var wpfko = wpfko || {};
             var child = oldValueAccessor();
             return {
                 name: ko.utils.unwrapObservable(oldValueAccessor())._htmlTemplateId,
-                data: child
+                data: child,
+                afterRender: wpfko.base.visual.prototype._afterRendered
             }
         };
     };
