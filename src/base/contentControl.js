@@ -46,7 +46,7 @@ wpfko.base = wpfko.base || {};
                 templateArea.children[j].attributes["data-templatehash"] &&
                 templateArea.children[j].attributes["data-templatehash"].nodeValue === hash &&
                 templateArea.children[j].innerHTML === templateString) {
-                    return children[j].id;
+                    return templateArea.children[j].id;
                 }
             }
 
