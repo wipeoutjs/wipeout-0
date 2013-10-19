@@ -36,6 +36,16 @@
         var old = context.nodes || [];
         context.nodes = nodes;
         context.rootHtmlChanged(old, nodes);
+        
+        // if jQuery is availiable
+        if(this.$rootHtmlChanged) {
+            this.$rootHtmlChanged(function(selector) {
+                return visual.$(old, selector);
+            },
+                                  function(selector) {
+                return visual.$(nodes, selector);
+            });
+        }
     };
         
     // virtual
@@ -66,6 +76,10 @@
         
         visual.prototype.$ = function (jquerySelector) {
             return visual.$(this.nodes, jquerySelector);
+        };
+                
+        // virtual
+        visual.prototype.$rootHtmlChanged = function ($oldValue, $newValue) {            
         };
     }
     
