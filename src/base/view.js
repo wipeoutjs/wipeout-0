@@ -9,7 +9,15 @@
         this._super(templateId);
         
         this.model = ko.observable();
-        this.model.deepSubscribe(this.modelChanged, this);
+        
+        var model = null;
+        this.model.subscribe(function(newVal) {
+            try {
+                this.modelChanged(model, newVal);
+            } finally {
+                model = newVal;
+            }                                          
+        }, this);
     });
     
     view.prototype.initialize = function(propertiesXml) {
