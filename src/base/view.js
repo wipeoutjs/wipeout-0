@@ -141,11 +141,15 @@
         },
         "date": function (value) {
             return new Date(value.replace(/^\s+|\s+$/g, ''));
-        },
-        "jquery": function (value) {
-            return $(value);
         }
     };
+    
+    if(window.jQuery) {
+        var $ = jQuery;
+        view.objectParser.jquery = function (value) {
+            return $(value);
+        };
+    }
 
     // virtual
     view.prototype.modelChanged = function (oldValue, newValue) {
