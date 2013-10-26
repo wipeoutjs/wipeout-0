@@ -1,0 +1,56 @@
+<html>
+<head></head>
+<body>
+    <script src="../lib/knockout-2.3.0.debug.js" type="text/javascript"></script>
+
+    <script src="../build/wipeout-0.1.debug.js" type="text/javascript"></script>    
+    <script src="../src/ko/template/engine.js" type="text/javascript"></script>    
+    
+    <div data-bind="wpfko: rootView ">
+    </div>
+    
+    <!----><script id="rootView" type="text/xml"><!---->
+        <h1>Test control</h1>
+        <br />
+        <wo.contentControl>
+            <setTemplate>
+                <div data-bind="html: model().rootTitle"></div>
+                <wo.itemsControl itemSource="$parent.model().items">
+                    <itemTemplateSetter>
+                        <span data-bind="html: model().itemId"></span>:
+                        <span data-bind="html: model().itemName"></span>
+                    </itemTemplateSetter>
+                </wo.itemsControl>
+                <div data-bind="html: model().totalOfIds"></div>
+            </setTemplate>
+        </wo.contentControl>
+        <br/>
+        <wo.contentControl model="$parent.model().deepItem">
+            <setTemplate>
+                <wo.contentControl model="$parent.model().item">
+                    <setTemplate>
+                        <wo.contentControl model="$parent.model().value">
+                            <setTemplate>
+                                <div data-bind="html: model"></div>
+                            </setTemplate>
+                        </wo.contentControl>
+                    </setTemplate>
+                </wo.contentControl>                
+            </setTemplate>
+        </wo.contentControl>        
+        <br/>
+        <br/>
+        <button data-bind="click: next">next</button>
+        <h3>action:</h3>
+        <div data-bind="html: justDone"></div>
+    </script>    
+    
+    <script type="text/xml" id="wpfko.base.itemsControl">
+        <ul data-bind="foreach: items">
+            <li data-bind="template: { name: _htmlTemplateId }"></li>
+        </ul>
+    </script>
+
+    <script src="ShaneTestScript.js" type="text/javascript"></script>
+</body>
+</html>
