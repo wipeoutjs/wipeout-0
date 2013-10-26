@@ -16,7 +16,7 @@ var wpfko = wpfko || {};
         return function () {
             var child = oldValueAccessor();
             return {
-                name: ko.utils.unwrapObservable(oldValueAccessor())._htmlTemplateId,
+                name: ko.utils.unwrapObservable(oldValueAccessor()).xmlTemplateId,
                 data: child,
                 afterRender: wpfko.base.visual.prototype._afterRendered
             }

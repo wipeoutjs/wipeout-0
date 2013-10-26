@@ -33,7 +33,7 @@ var wpfko = wpfko || {};
         return function() {
             return {
                 data: view,
-                name: view._htmlTemplateId,
+                name: view.xmlTemplateId,
                 afterRender: wpfko.base.visual.prototype._afterRendered
             };
         };

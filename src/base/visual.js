@@ -18,6 +18,9 @@
     
     visual.prototype.reGenerate = function() {
         
+        // should be done in template engine
+        return;
+        
         var templateId = this.xmlTemplateId();
         if(!wpfko.util.xmlTemplate.cache[templateId]) {
             wpfko.util.xmlTemplate.cache[templateId] = new wpfko.util.xmlTemplate(templateId);

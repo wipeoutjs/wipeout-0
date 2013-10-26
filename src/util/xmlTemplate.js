@@ -4,20 +4,12 @@
 
 (function () {
     
-    var _xmlTemplate = function(xmlTemplateId) {
+    var _xmlTemplate = function(xmlTemplate) {
+                
+        xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
-        if(!xmlTemplateId) throw "Invalid template";        
-        var xmlTemplateElement = document.getElementById(xmlTemplateId);
-        if(!xmlTemplateElement) throw "Could not find template \"" + xmlTemplateId + "\"";
-        
-        var xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplateElement.innerHTML + "</root>", "application/xml").documentElement;
-        
-        this.xmlTemplateId = xmlTemplateId;
-        this.htmlTemplateId = "__html_" + xmlTemplateId;
         this.builder = wpfko.util.xmlTemplate.generateBuilder(xmlTemplate);
-        
-        var htmlTemplate = wpfko.util.xmlTemplate.generateTemplate(xmlTemplate);
-        this.saveTemplate(htmlTemplate);
+        this.render = wpfko.util.xmlTemplate.generateRender(xmlTemplate);
     }
     
     var enumerate = function(items, callback) {
@@ -81,6 +73,58 @@
         
         return current instanceof Function;
     };
+    var open = "<!-- wpfko_code: {", close = "} -->";
+    
+    _xmlTemplate.generateRender = function(xmlTemplate) {
+        var template = wpfko.util.xmlTemplate.generateTemplate(xmlTemplate);
+                 
+        var startTag, endTag;
+        var result = [];
+        while((startTag = template.indexOf(open)) !== -1) {
+            result.push(template.substr(0, startTag));
+            template = template.substr(startTag);
+            
+            endTag = template.indexOf(close);
+            if(endTag === -1) {
+                throw "##";
+            }
+            
+            result.push((function(scriptId) {
+                return function(bindingContext) {                    
+                    return wpfko.template.engine.scriptCache[scriptId](bindingContext);                    
+                };
+            })(template.substr(open.length, endTag - open.length)));
+                        
+            template = template.substr(endTag + close.length);
+        }
+                
+        result.push(template);
+        
+        var ii = result.length;
+        return function(bindingContext) {
+            debugger;
+            var returnVal = [];
+            for(var i = 0; i < ii; i++) {
+                if(result[i] instanceof Function) {
+                    
+                    var rendered = result[i](bindingContext);
+                    if(rendered instanceof wpfko.util.switchBindingContext) {
+                        bindingContext = rendered.bindingContext;
+                    } else {                    
+                        returnVal.push(rendered);
+                    }
+                }
+                else
+                    returnVal.push(result[i]);
+            }
+            
+            return returnVal.join("");
+        };
+    };
+    
+    wpfko.util.switchBindingContext = function(bindingContext) {
+        this.bindingContext = bindingContext;
+    }
     
     _xmlTemplate.generateTemplate = function(xmlTemplate, itemPrefix) {   
         if(itemPrefix) itemPrefix += ".";
@@ -89,11 +133,11 @@
         var ser = new XMLSerializer();
         
         var addBindingAttributes = function(attr) {
-                    // reserved
-                    if(attr.nodeName === "constructor") return;
-                    result.push("<!-- ko bind: { property: '" + attr.nodeName + "', value: " + attr.value + " } -->");
-                    result.push("<!-- /ko -->\n");
-                };
+            // reserved
+            if(attr.nodeName === "constructor") return;
+            result.push("<!-- ko bind: { property: '" + attr.nodeName + "', value: " + attr.value + " } -->");
+            result.push("<!-- /ko -->\n");
+        };
         
         var addBindings = function(element) {
             if(!_xmlTemplate.elementHasModelBinding(element))
@@ -103,7 +147,33 @@
         };
         
         enumerate(xmlTemplate.childNodes, function(child, i) {            
-            if(_xmlTemplate.isCustomElement(child)) {
+            if(_xmlTemplate.isCustomElement(child)) {                
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext(arguments[0].createChildContext(_templateItems[\"" + itemPrefix + i + "\"]))"));
+                addBindings(child);
+                 
+                var recursive = function(element) {
+                    enumerate(element.children, function(element) {  
+                        var constructorOk = false;
+                        enumerate(element.attributes, function(attr) {
+                            constructorOk |= attr.nodeName === "constructor" && _xmlTemplate.constructorExists(attr.value);
+                        });
+                        
+                        if(constructorOk) {
+                            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext(arguments[0].createChildContext(" + element.nodeName + "))"));
+                            addBindings(element);                        
+                            enumerate(element.children, recursive);
+                            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext($parentContext)"));
+                        }
+                    });                                
+                };
+                
+                recursive(child);
+                
+                result.push("<!-- ko template: { name: xmlTemplateId, afterRender: _afterRendered } -->");
+                result.push("<!-- /ko -->\n");
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext($parentContext)"));
+                
+                /*
                 result.push("<!-- ko with: _templateItems[\"" + itemPrefix + i + "\"] -->\n");
                 addBindings(child);
                  
@@ -125,9 +195,9 @@
                 
                 recursive(child);
                 
-                result.push("<!-- ko template: { name: _htmlTemplateId, afterRender: _afterRendered } -->");
+                result.push("<!-- ko template: { name: xmlTemplateId, afterRender: _afterRendered } -->");
                 result.push("<!-- /ko -->\n");
-                result.push("<!-- /ko -->\n");
+                result.push("<!-- /ko -->\n");*/
                 
             } else if(child.nodeType == 1) {
                 
