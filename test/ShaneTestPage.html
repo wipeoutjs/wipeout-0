@@ -13,8 +13,37 @@
     <!----><script id="rootView" type="text/xml"><!---->
         <h1>Test control</h1>
         <br />
+        <wo.contentControl>
+            <setTemplate>
+                <div data-bind="html: model().rootTitle"></div>
+                <wo.itemsControl itemSource="$parent.model().items">
+                    <itemTemplateSetter>
+                        <span data-bind="html: model().itemId"></span>:
+                        <span data-bind="html: model().itemName"></span>
+                    </itemTemplateSetter>
+                </wo.itemsControl>
+                <div data-bind="html: model().totalOfIds"></div>
+            </setTemplate>
+        </wo.contentControl>
+        <br/>
         <wo.contentControl model="$parent.model().deepItem">
+            <setTemplate>
+                <wo.contentControl model="$parent.model().item">
+                    <setTemplate>
+                        <wo.contentControl model="$parent.model().value">
+                            <setTemplate>
+                                <div data-bind="html: model"></div>
+                            </setTemplate>
+                        </wo.contentControl>
+                    </setTemplate>
+                </wo.contentControl>                
+            </setTemplate>
         </wo.contentControl>        
+        <br/>
+        <br/>
+        <button data-bind="click: next">next</button>
+        <h3>action:</h3>
+        <div data-bind="html: justDone"></div>
     </script>   
     
     <!----><script id="_rootView" type="text/xml"><!---->

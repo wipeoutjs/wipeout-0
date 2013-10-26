@@ -174,7 +174,7 @@
                 
                 recursive(child);
                 
-                result.push("<!-- ko template: { name: xmlTemplateId, afterRender: _afterRendered } -->");
+                result.push("<!-- ko template: { data: _templateItems[\"" + itemPrefix + i + "\"], name: xmlTemplateId, afterRender: _afterRendered } -->");
                 result.push("<!-- /ko -->\n");
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext()"));
                 

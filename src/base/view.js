@@ -31,7 +31,7 @@
     };
     
     view.prototype.bind = function(property, bindTo) {
-        this[property] = ko.utils.unwrapObservable(bindTo); 
+        setObservable(this, property, bindTo); 
         if(ko.isObservable(bindTo)) {
             this._bindings.push(bindTo.subscribe(function(newVal) {
                 setObservable(this, property, newVal);
