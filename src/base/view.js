@@ -18,7 +18,26 @@
                 model = newVal;
             }                                          
         }, this);
+        
+        this._bindings = [];
     });
+    
+    var setObservable = function(obj, property, value) {
+        if(ko.isObservable(obj[property])) {
+            obj[property](ko.utils.unwrapObservable(value));
+        } else {
+            obj[property] = ko.utils.unwrapObservable(value);
+        }
+    };
+    
+    view.prototype.bind = function(property, bindTo) {
+        this[property] = ko.utils.unwrapObservable(bindTo); 
+        if(ko.isObservable(bindTo)) {
+            this._bindings.push(bindTo.subscribe(function(newVal) {
+                setObservable(this, property, newVal);
+            }, this));
+        }                                
+    };
     
     view.prototype.initialize = function(propertiesXml) {
 
