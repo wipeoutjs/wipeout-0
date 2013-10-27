@@ -43,24 +43,10 @@ wpfko.base = wpfko.base || {};
         var values = this.items();
         values.length = models.length;
         for (var i = 0, ii = models.length; i < ii; i++) {
-            values[i] = this.createFromTemplate(models[i]);
+            values[i] = new wpfko.base.view(this.itemTemplateId(), models[i]);
         }
 
         this.items.valueHasMutated();
-    };
-
-    itemsControl.prototype.createFromTemplate = function (model) {
-        
-        var itemTemplateId = this.itemTemplateId();
-        if(!wpfko.util.xmlTemplate.cache[itemTemplateId])
-            wpfko.util.xmlTemplate.cache[itemTemplateId] = new wpfko.util.xmlTemplate(itemTemplateId);
-        
-        var view = new wpfko.base.view(itemTemplateId);
-        
-        //TODO: setting model twice
-        view.model(model);
-        
-        return view;
     };
 
     wpfko.base.itemsControl = itemsControl;

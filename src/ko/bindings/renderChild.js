@@ -5,20 +5,21 @@ var wpfko = wpfko || {};
 (function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        return ko.bindingHandlers.template.init.call(this, element, wpfko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
+        return ko.bindingHandlers.template.init.call(this, element, wpfko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        return ko.bindingHandlers.template.update.call(this, element, wpfko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
+        return ko.bindingHandlers.template.update.call(this, element, wpfko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
     };    
     
     var createValueAccessor = function(oldValueAccessor) {
         return function () {
             var child = oldValueAccessor();
+            var _child = ko.utils.unwrapObservable(child);
             return {
-                name: ko.utils.unwrapObservable(oldValueAccessor()).xmlTemplateId,
-                data: child,
-                afterRender: wpfko.base.visual.prototype._afterRendered
+                name: _child ? _child.xmlTemplateId : "",
+                data: child || {},
+                afterRender: _child ? wpfko.base.visual.prototype._afterRendered : undefined
             }
         };
     };

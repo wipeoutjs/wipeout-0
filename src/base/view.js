@@ -4,11 +4,11 @@
 
 (function () {    
 
-    var view = wpfko.base.visual.extend(function (templateId) {
+    var view = wpfko.base.visual.extend(function (templateId, model /*optional*/) {
 
         this._super(templateId);
         
-        this.model = ko.observable();
+        this.model = ko.observable(model);
         
         var model = null;
         this.model.subscribe(function(newVal) {
@@ -19,7 +19,7 @@
             }                                          
         }, this);
         
-        this._bindings = [];
+        this._bindings = {};
     });
     
     var setObservable = function(obj, property, value) {
@@ -30,12 +30,24 @@
         }
     };
     
+    //TODO: this is a very basic implementation and it is never used. Extend and implement
+    view.prototype.dispose = function() {
+        for(var i in this._bindings)
+            this._bindings[i].dispose();
+    };
+    
     view.prototype.bind = function(property, bindTo) {
-        setObservable(this, property, bindTo); 
+        if(this._bindings[property]) {
+            this._bindings[property].dispose();
+            delete this._bindings[property];
+        }
+        
+        setObservable(this, property, bindTo);
+        
         if(ko.isObservable(bindTo)) {
-            this._bindings.push(bindTo.subscribe(function(newVal) {
+            this._bindings[property] = bindTo.subscribe(function(newVal) {
                 setObservable(this, property, newVal);
-            }, this));
+            }, this);
         }                                
     };
     

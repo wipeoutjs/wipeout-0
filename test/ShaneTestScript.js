@@ -46,6 +46,12 @@ var actions = [
         model.rootTitle("Persons");
         return "Changed title";
     }, function(model) {
+        model.items.push({itemId: ko.observable(66), itemName: ko.observable("Paddy")});
+        return "Added person";
+    }, function(model) {
+        model.items.splice(1, 1);
+        return "Removed person";
+    }, function(model) {
         model.items()[0].itemId(55);
         return "Changed first person id, total ids should also be updated";
     }, function(model) {
@@ -66,7 +72,10 @@ var actions = [
         model.deepItem().item({ value: "value 2" });
         return "Changed value 2";
     }, function(model) {
-        model.deepItem({item: { value: "value 3" }});
+        model.deepItem({item: ko.observable({ value: ko.observable("value 3") })});
         return "Changed value 3";
+    }, function(model) {
+        model.deepItem().item().value("value 4");
+        return "Changed value 4";
     }
 ];
