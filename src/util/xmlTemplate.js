@@ -10,14 +10,14 @@
                 
         xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
-        this.builder = wpfko.util.xmlTemplate.generateBuilder(xmlTemplate);
+        this._addBuilders(xmlTemplate);
         this.render = wpfko.util.xmlTemplate.generateRender(xmlTemplate);
     }
     
-    var enumerate = function(items, callback) {
+    var enumerate = function(items, callback, context) {
         
         for(var i = 0, ii = items.length; i < ii; i++) {
-            callback(items[i], i);
+            callback.call(context, items[i], i);
         }        
     };
     
@@ -25,37 +25,36 @@
         return xmlElement.nodeType == 1 && wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName.toLowerCase()) === -1;
     };
     
-    _xmlTemplate.generateBuilder = function(xmlTemplate, itemPrefix) {
+    _xmlTemplate.prototype.rebuild = function(subject) {
+        subject._templateItems = subject._templateItems || {};    
+        for(var i in subject._templateItems) {
+            if(subject._templateItems[i].dispose) {
+                subject._templateItems[i].dispose();
+            }
+            
+            delete subject._templateItems[i];
+        }
+        
+        for(var i = 0, ii = this._builders.length; i < ii; i++) {
+            this._builders[i](subject);
+        }
+    };
+    
+    _xmlTemplate.prototype._addBuilders = function(xmlTemplate, itemPrefix) {
         if(itemPrefix) itemPrefix += ".";
         else itemPrefix = "";
-        var builders = [];
         enumerate(xmlTemplate.childNodes, function(child, i) {
             if(_xmlTemplate.isCustomElement(child)) {
-                builders.push(function(obj) {
+                this._builders.push(function(obj) {
                     obj._templateItems[itemPrefix + i] = wpfko.util.obj.createObject(child.nodeName);
                     
                     //TODO: take from view and put in this class
                     obj._templateItems[itemPrefix + i].initialize(child);
                 });
             } else if(child.nodeType == 1) {
-                builders.push(_xmlTemplate.generateBuilder(child, itemPrefix + i));
+                this._addBuilders(child, itemPrefix + i);
             } // non elements have no place here but we do want to enumerate over them to keep index in sync
-        });
-        
-        return function(object) {
-            object._templateItems = object._templateItems || {};    
-            /*for(var i in object._templateItems) {
-                if(object._templateItems[i].dispose) {
-                    object._templateItems[i].dispose();
-                }
-                
-                delete object._templateItems[i];
-            }*/
-            
-            for(var i = 0, ii = builders.length; i < ii; i++) {
-                builders[i](object);
-            }
-        }
+        }, this);
     };
     
     _xmlTemplate.elementHasModelBinding = function(element) {
@@ -190,7 +189,7 @@
                 
             } else if(child.nodeType == 1) {
                 
-                // create copy
+                // create copy with no child nodes
                 var ch = new DOMParser().parseFromString(ser.serializeToString(child), "application/xml").documentElement;
                 while (ch.childNodes.length) {
                     ch.removeChild(ch.childNodes[0]);
@@ -205,9 +204,7 @@
         });
         
         return result.join("");
-    }
-    
-    _xmlTemplate.cache = {};
+    };
     
     wpfko.util.xmlTemplate = _xmlTemplate;
 })();

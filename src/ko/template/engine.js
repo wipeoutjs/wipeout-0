@@ -20,16 +20,16 @@ wpfko.template = wpfko.template || {};
         return engine.createJavaScriptEvaluatorBlock(script);
     };
     
+    engine.templateCache = {};
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
         
         var cached;
-        if (!(cached = wpfko.util.xmlTemplate.cache[templateSource.domElement.id])) {
-            cached = wpfko.util.xmlTemplate.cache[templateSource.domElement.id] = new wpfko.util.xmlTemplate(templateSource.text());
+        if (!(cached = engine.templateCache[templateSource.domElement.id])) {
+            cached = engine.templateCache[templateSource.domElement.id] = new wpfko.util.xmlTemplate(templateSource.text());
         }
         
-        cached.builder(bindingContext.$data);
-        var renderedMarkup = cached.render(bindingContext);        
-        return ko.utils.parseHtmlFragment(renderedMarkup);        
+        cached.rebuild(bindingContext.$data);
+        return ko.utils.parseHtmlFragment(cached.render(bindingContext));      
     };
     
     engine.newScriptId = (function() {        
