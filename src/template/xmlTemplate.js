@@ -1,7 +1,6 @@
 
 var wpfko = wpfko || {};
-wpfko.ko = wpfko.ko || {};
-wpfko.ko.template = wpfko.ko.template || {};
+wpfko.template = wpfko.template || {};
 
 (function () {
     
@@ -12,7 +11,7 @@ wpfko.ko.template = wpfko.ko.template || {};
         xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
         this._addBuilders(xmlTemplate);
-        this.render = wpfko.ko.template.xmlTemplate.generateRender(xmlTemplate);
+        this.render = wpfko.template.xmlTemplate.generateRender(xmlTemplate);
     }
     
     var enumerate = function(items, callback, context) {
@@ -89,7 +88,7 @@ wpfko.ko.template = wpfko.ko.template || {};
         var open = wpfko.template.engine.openCodeTag;
         var close = wpfko.template.engine.closeCodeTag;
         
-        var template = wpfko.ko.template.xmlTemplate.generateTemplate(xmlTemplate);
+        var template = wpfko.template.xmlTemplate.generateTemplate(xmlTemplate);
                  
         var startTag, endTag;
         var result = [];
@@ -195,7 +194,7 @@ wpfko.ko.template = wpfko.ko.template || {};
                 }
                 
                 var html = wpfko.util.html.createElement(ser.serializeToString(ch));
-                html.innerHTML = wpfko.ko.template.xmlTemplate.generateTemplate(child, itemPrefix + i);                
+                html.innerHTML = wpfko.template.xmlTemplate.generateTemplate(child, itemPrefix + i);                
                 result.push(html.outerHTML);
             } else {
                 result.push(ser.serializeToString(child));
@@ -205,5 +204,5 @@ wpfko.ko.template = wpfko.ko.template || {};
         return result.join("");
     };
     
-    wpfko.ko.template.xmlTemplate = _xmlTemplate;
+    wpfko.template.xmlTemplate = _xmlTemplate;
 })();
