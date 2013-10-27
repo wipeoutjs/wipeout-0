@@ -25,7 +25,7 @@ wpfko.template = wpfko.template || {};
         
         var cached;
         if (!(cached = engine.templateCache[templateSource.domElement.id])) {
-            cached = engine.templateCache[templateSource.domElement.id] = new wpfko.util.xmlTemplate(templateSource.text());
+            cached = engine.templateCache[templateSource.domElement.id] = new wpfko.ko.template.xmlTemplate(templateSource.text());
         }
         
         cached.rebuild(bindingContext.$data);

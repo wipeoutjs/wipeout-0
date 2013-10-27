@@ -1,6 +1,7 @@
 
-    var wpfko = wpfko || {};
-    wpfko.util = wpfko.util || {};
+var wpfko = wpfko || {};
+wpfko.ko = wpfko.ko || {};
+wpfko.ko.template = wpfko.ko.template || {};
 
 (function () {
     
@@ -11,7 +12,7 @@
         xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
         this._addBuilders(xmlTemplate);
-        this.render = wpfko.util.xmlTemplate.generateRender(xmlTemplate);
+        this.render = wpfko.ko.template.xmlTemplate.generateRender(xmlTemplate);
     }
     
     var enumerate = function(items, callback, context) {
@@ -86,7 +87,7 @@
     var open = "<!-- wpfko_code: {", close = "} -->";
     
     _xmlTemplate.generateRender = function(xmlTemplate) {
-        var template = wpfko.util.xmlTemplate.generateTemplate(xmlTemplate);
+        var template = wpfko.ko.template.xmlTemplate.generateTemplate(xmlTemplate);
                  
         var startTag, endTag;
         var result = [];
@@ -135,10 +136,6 @@
             return returnVal.join("");
         };
     };
-    
-    wpfko.util.switchBindingContext = function(bindingContext) {
-        this.bindingContext = bindingContext;
-    }
     
     _xmlTemplate.generateTemplate = function(xmlTemplate, itemPrefix) {  
         if(itemPrefix) itemPrefix += ".";
@@ -196,7 +193,7 @@
                 }
                 
                 var html = wpfko.util.html.createElement(ser.serializeToString(ch));
-                html.innerHTML = wpfko.util.xmlTemplate.generateTemplate(child, itemPrefix + i);                
+                html.innerHTML = wpfko.ko.template.xmlTemplate.generateTemplate(child, itemPrefix + i);                
                 result.push(html.outerHTML);
             } else {
                 result.push(ser.serializeToString(child));
@@ -206,5 +203,5 @@
         return result.join("");
     };
     
-    wpfko.util.xmlTemplate = _xmlTemplate;
+    wpfko.ko.template.xmlTemplate = _xmlTemplate;
 })();

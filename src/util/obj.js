@@ -1,6 +1,6 @@
 
-    var wpfko = wpfko || {};
-    wpfko.util = wpfko.util || {};
+var wpfko = wpfko || {};
+wpfko.util = wpfko.util || {};
 
 (function () {
         
