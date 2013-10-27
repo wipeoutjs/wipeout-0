@@ -26,13 +26,12 @@ wpfko.template = wpfko.template || {};
     };
     
     _xmlTemplate.prototype.rebuild = function(subject) {
-        subject._templateItems = subject._templateItems || {};    
-        for(var i in subject._templateItems) {
-            if(subject._templateItems[i].dispose) {
-                subject._templateItems[i].dispose();
+        for(var i in subject.templateItems) {
+            if(subject.templateItems[i].dispose) {
+                subject.templateItems[i].dispose();
             }
             
-            delete subject._templateItems[i];
+            delete subject.templateItems[i];
         }
         
         for(var i = 0, ii = this._builders.length; i < ii; i++) {
@@ -46,10 +45,10 @@ wpfko.template = wpfko.template || {};
         enumerate(xmlTemplate.childNodes, function(child, i) {
             if(_xmlTemplate.isCustomElement(child)) {
                 this._builders.push(function(obj) {
-                    obj._templateItems[itemPrefix + i] = wpfko.util.obj.createObject(child.nodeName);
+                    obj.templateItems[itemPrefix + i] = wpfko.util.obj.createObject(child.nodeName);
                     
                     //TODO: take from view and put in this class
-                    obj._templateItems[itemPrefix + i].initialize(child);
+                    obj.templateItems[itemPrefix + i].initialize(child);
                 });
             } else if(child.nodeType == 1) {
                 this._addBuilders(child, itemPrefix + i);
@@ -160,7 +159,7 @@ wpfko.template = wpfko.template || {};
         
         enumerate(xmlTemplate.childNodes, function(child, i) {            
             if(_xmlTemplate.isCustomElement(child)) {                
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext(arguments[0].createChildContext(_templateItems[\"" + itemPrefix + i + "\"]))"));
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext(arguments[0].createChildContext(templateItems[\"" + itemPrefix + i + "\"]))"));
                 addBindings(child);
                  
                 var recursive = function(element) {
@@ -181,7 +180,7 @@ wpfko.template = wpfko.template || {};
                 
                 recursive(child);
                 
-                result.push("<!-- ko renderChild: _templateItems[\"" + itemPrefix + i + "\"] --><!-- /ko -->\n");
+                result.push("<!-- ko renderChild: templateItems[\"" + itemPrefix + i + "\"] --><!-- /ko -->\n");
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext()"));
                 
             } else if(child.nodeType == 1) {

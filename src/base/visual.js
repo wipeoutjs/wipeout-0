@@ -5,12 +5,9 @@
 (function () {
     
     var visual = wpfko.base.object.extend(function (templateId) {
-        this._super();
-        
-        this._templateItems = {};
-        
+        this._super();        
+        this.templateItems = {};        
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
-        this._htmlTemplateId = ko.observable();
     });
     
     // knockout specific function. The "this" will be window and the context object will be the instance
