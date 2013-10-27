@@ -4,8 +4,6 @@ wpfko.template = wpfko.template || {};
 
 (function () {
     
-    var open = "<!-- wpfko_code: {", close = "} -->";
-    
     var engine = function() { };
     engine.prototype = new ko.templateEngine();
     
@@ -13,14 +11,13 @@ wpfko.template = wpfko.template || {};
         var scriptId = engine.newScriptId();
         
         engine.scriptCache[scriptId] = new Function("with(arguments[0]) { with($data) { return " + script + "; } }");        
-        return open + scriptId + close;
+        return engine.openCodeTag + scriptId + engine.closeCodeTag;
     };
     
     engine.prototype.createJavaScriptEvaluatorBlock = function(script) {
         return engine.createJavaScriptEvaluatorBlock(script);
     };
     
-    engine.templateCache = {};
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
         
         var cached;
@@ -39,32 +36,13 @@ wpfko.template = wpfko.template || {};
         };
     })();
     
-    wpfko.template.engine = engine;    
-    ko.setTemplateEngine(new engine());
-    
-    var rrr = function(template, bindingContext) {   
-        var startTax, endTag;
-        var result = [];
-        while((startTax = template.indexOf(open)) !== -1) {
-            result.push(template.substr(0, startTax));
-            template = template.substr(startTax);
-            
-            endTag = template.indexOf(close);
-            if(endTag === -1) {
-                throw "##";
-            }
-            
-            result.push(engine.scriptCache[template.substr(open.length, endTag - open.length)](bindingContext.$data.model(), bindingContext));
-            
-            
-            template = template.substr(endTag + close.length);
-        }
-                
-        result.push(template);
-        return result.join("");
-    }
-    
+    engine.templateCache = {};
     engine.scriptCache = {};
+    engine.openCodeTag = "<!-- wpfko_code: {"
+    engine.closeCodeTag = "} -->";
+    
+    wpfko.template.engine = engine;    
+    ko.setTemplateEngine(new engine());    
 })();
 
 /*

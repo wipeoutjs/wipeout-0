@@ -84,9 +84,11 @@ wpfko.ko.template = wpfko.ko.template || {};
         
         return current instanceof Function;
     };
-    var open = "<!-- wpfko_code: {", close = "} -->";
     
     _xmlTemplate.generateRender = function(xmlTemplate) {
+        var open = wpfko.template.engine.openCodeTag;
+        var close = wpfko.template.engine.closeCodeTag;
+        
         var template = wpfko.ko.template.xmlTemplate.generateTemplate(xmlTemplate);
                  
         var startTag, endTag;
@@ -97,7 +99,7 @@ wpfko.ko.template = wpfko.ko.template || {};
             
             endTag = template.indexOf(close);
             if(endTag === -1) {
-                throw "##";
+                throw "##"; //TODO
             }
             
             result.push((function(scriptId) {
