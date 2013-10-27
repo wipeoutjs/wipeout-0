@@ -11,28 +11,7 @@
         
         this.xmlTemplateId = ko.observable(templateId || visual.getDefaultTemplateId());
         this._htmlTemplateId = ko.observable();
-                
-        this.xmlTemplateId.subscribe(this.reGenerate, this);
-        this.reGenerate();
     });
-    
-    visual.prototype.reGenerate = function() {
-        
-        // should be done in template engine
-        return;
-        
-        var templateId = this.xmlTemplateId();
-        if(!wpfko.util.xmlTemplate.cache[templateId]) {
-            wpfko.util.xmlTemplate.cache[templateId] = new wpfko.util.xmlTemplate(templateId);
-        }
-        
-        for(var i in this._templateItems) {
-            delete this._templateItems[i];
-        }
-        
-        wpfko.util.xmlTemplate.cache[templateId].builder(this);        
-        this._htmlTemplateId(wpfko.util.xmlTemplate.cache[templateId].htmlTemplateId);
-    };
     
     // knockout specific function. The "this" will be window and the context object will be the instance
     visual.prototype._afterRendered = function(nodes, context) {

@@ -3,8 +3,18 @@ var wpfko = wpfko || {};
 wpfko.base = wpfko.base || {};
 (function () {
     
-    var itemsControl = wpfko.base.view.extend(function () {   
-        this._super("wpfko.base.itemsControl");
+    var deafaultTemplateId;
+    var staticConstructor = function() {
+        if(deafaultTemplateId) return;
+        
+        deafaultTemplateId = wpfko.base.contentControl.createAnonymousTemplate("<div><!-- ko itemsControl: null --><!-- /ko --></div>");
+    }
+    
+    var itemsControl = wpfko.base.contentControl.extend(function () { 
+        staticConstructor();
+        this._super();
+        
+        this.xmlTemplateId(deafaultTemplateId);
 
         this.itemTemplateSetter = ko.observable();
         this.itemTemplateId = ko.observable();

@@ -5,6 +5,8 @@
 (function () {
     
     var _xmlTemplate = function(xmlTemplate) {
+        
+        this._builders = [];
                 
         xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
@@ -31,6 +33,8 @@
             if(_xmlTemplate.isCustomElement(child)) {
                 builders.push(function(obj) {
                     obj._templateItems[itemPrefix + i] = wpfko.util.obj.createObject(child.nodeName);
+                    
+                    //TODO: take from view and put in this class
                     obj._templateItems[itemPrefix + i].initialize(child);
                 });
             } else if(child.nodeType == 1) {
@@ -39,7 +43,14 @@
         });
         
         return function(object) {
-            object._templateItems = object._templateItems || {};
+            object._templateItems = object._templateItems || {};    
+            /*for(var i in object._templateItems) {
+                if(object._templateItems[i].dispose) {
+                    object._templateItems[i].dispose();
+                }
+                
+                delete object._templateItems[i];
+            }*/
             
             for(var i = 0, ii = builders.length; i < ii; i++) {
                 builders[i](object);
@@ -194,19 +205,6 @@
         });
         
         return result.join("");
-    }
-    
-    _xmlTemplate.prototype.saveTemplate = function(templateString) {
-                
-        var script = document.getElementById(this.htmlTemplateId);
-        if(!script) {
-            script = document.createElement("script");
-            script.setAttribute("id", this.htmlTemplateId);
-            script.setAttribute("type", "text/html");
-            document.body.appendChild(script);
-        }
-        
-        script.innerHTML = templateString;     
     }
     
     _xmlTemplate.cache = {};
