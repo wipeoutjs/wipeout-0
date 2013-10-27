@@ -1,6 +1,11 @@
 
 (function () {
     
+    childView = wpfko.base.contentControl.extend(function() {
+        this._super();
+        this.value = ko.observable("initial");
+    });
+    
     rootView = wpfko.base.view.extend(function() {
         this._super("rootView");
         

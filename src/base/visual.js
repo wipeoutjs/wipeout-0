@@ -20,8 +20,7 @@
         if(this.$rootHtmlChanged) {
             this.$rootHtmlChanged(function(selector) {
                 return visual.$(old, selector);
-            },
-                                  function(selector) {
+            }, function(selector) {
                 return visual.$(nodes, selector);
             });
         }

@@ -19,6 +19,7 @@ wpfko.base = wpfko.base || {};
         });
     });  
     
+    var dataTemplateHash = "data-templatehash";    
     contentControl.createAnonymousTemplate = (function () {
         var templateArea = null;
         var i = Math.floor(Math.random() * 1000000000);
@@ -39,28 +40,28 @@ wpfko.base = wpfko.base || {};
                 if (templateArea.children[j].nodeName === "SCRIPT" &&
                 templateArea.children[j].id &&
                 // first use a hash to avoid computationally expensive string compare if possible
-                templateArea.children[j].attributes["data-templatehash"] &&
-                templateArea.children[j].attributes["data-templatehash"].nodeValue === hash &&
+                templateArea.children[j].attributes[dataTemplateHash] &&
+                templateArea.children[j].attributes[dataTemplateHash].nodeValue === hash &&
                 templateArea.children[j].innerHTML === templateString) {
                     return templateArea.children[j].id;
                 }
             }
 
             var id = "AnonymousTemplate" + (++i);
-            templateArea.innerHTML += '<script type="text/xml" id="' + id + '" data-templatehash="' + hash + '">' + templateString + '</script>';
+            templateArea.innerHTML += '<script type="text/xml" id="' + id + '" ' + dataTemplateHash + '="' + hash + '">' + templateString + '</script>';
             return id;
         };
     })();
 
     //http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
-    contentControl.hashCode = function (str) {
+    contentControl.hashCode = function (str) {        
         var hash = 0;
-        if (str.length == 0) return hash;
-        for (i = 0, ii = str.length; i < ii; i++) {
+        for (var i = 0, ii = str.length; i < ii; i++) {
             var ch = str.charCodeAt(i);
             hash = ((hash << 5) - hash) + ch;
             hash = hash & hash; // Convert to 32bit integer
         }
+        
         return hash;
     };
     

@@ -52,69 +52,15 @@
     };
     
     view.prototype.initialize = function(propertiesXml) {
-
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
         
         if(!propertiesXml)
             return;
         
-        var _this = this;
-        var properties = {};
-        
-        var bindInline = function(propertName, propertyValue) {
-            return function() {
-            // do nothing, a binding will be added to the template to handle this
-            };
-        };
-        
-        var bindSimple = function(child, type){            
-            var innerHTML = [];
-            var ser = new XMLSerializer();
-            for (var j = 0, jj = child.childNodes.length; j < jj; j++) {
-                innerHTML.push(ser.serializeToString(child.childNodes[j]));
-            }
-        
-            var val = view.objectParser[type](innerHTML.join(""));
-            return function() {
-                if(ko.isObservable(_this[child.nodeName])) {
-                    _this[child.nodeName](val);       
-                } else {
-                    _this[child.nodeName] = val;       
-                }
-            };
-        };
-        
-        var bindComplex = function(child, type) { 
-            var val = wpfko.util.obj.createObject(type);
-            val.initialize(child);            
-            return function() {                
-                if(ko.isObservable(_this[child.nodeName])) {
-                    _this[child.nodeName](val);       
-                } else {
-                    _this[child.nodeName] = val;       
-                }
-            };
-        };
-        
-        for (var i = 0, ii = propertiesXml.attributes.length; i < ii; i++) {
-
-            if(propertiesXml.attributes[i].nodeName === "constructor") {
-                // reserved
-                continue;
-            }
-            
-            if(properties[propertiesXml.attributes[i].nodeName])
-                throw "Attempting to set property \"" + propertiesXml.attributes[i].key + "\" more than once";
-            
-            properties[propertiesXml.attributes[i].nodeName] = bindInline(propertiesXml.attributes[i].nodeName, propertiesXml.attributes[i].value);
-        }
-        
         for (var i = 0, ii = propertiesXml.children.length; i < ii; i++) {
             
-            var child = propertiesXml.children[i];            
-            if(properties[child.nodeName])
-                throw "Attempting to set property \"" + child.nodeName + "\" more than once";
+            var child = propertiesXml.children[i];  
             
             // default
             var type = "string";
@@ -126,30 +72,27 @@
             }
             
             if (view.objectParser[type]) {
-                properties[child.nodeName] = bindSimple(child, type);
-            } else {                            
-                properties[child.nodeName] = bindComplex(child, type);
+                var innerHTML = [];
+                var ser = ser || new XMLSerializer();
+                for (var j = 0, jj = child.childNodes.length; j < jj; j++) {
+                    innerHTML.push(ser.serializeToString(child.childNodes[j]));
+                }
+            
+                var val = view.objectParser[type](innerHTML.join(""));
+                if(ko.isObservable(this[child.nodeName])) {
+                    this[child.nodeName](val);       
+                } else {
+                    this[child.nodeName] = val;       
+                }
+            } else {                   
+                var val = wpfko.util.obj.createObject(type);
+                val.initialize(child);             
+                if(ko.isObservable(this[child.nodeName])) {
+                    this[child.nodeName](val);       
+                } else {
+                    this[child.nodeName] = val;       
+                }
             }
-        }
-        
-        // default to model of perent
-        if(!properties["model"]) {
-            properties["model"] = bindInline("model", "$parent.model");
-        }
-        
-        // set priority properties
-        var priorities = ["model"];
-        for(var i = 0, ii = priorities.length; i < ii; i++) {
-            if(properties[priorities[i]]) {
-                properties[priorities[i]]();
-                delete properties[priorities[i]];   
-            }
-        }
-        
-        // set all properties
-        for(var i in properties) {
-            properties[i]();
-            delete properties[i];
         }
     };
     
