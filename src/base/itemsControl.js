@@ -12,11 +12,8 @@ wpfko.base = wpfko.base || {};
     
     var itemsControl = wpfko.base.contentControl.extend(function () { 
         staticConstructor();
-        this._super();
-        
-        this.templateId(deafaultTemplateId);
+        this._super(deafaultTemplateId);
 
-        this.itemTemplateSetter = ko.observable();
         this.itemTemplateId = ko.observable();
         this.itemSource = ko.observableArray([]);
         this.items = ko.observableArray([]);
@@ -24,17 +21,16 @@ wpfko.base = wpfko.base || {};
         //TODO: hack, destroying and re-creating a lot of view models
         this.itemSource.subscribe(this.reDrawItems, this);
 
-        // flag to stop progress of recursive code
-        var itemTemplateSetter = {};
-
-        // bind template and template id together
-        this.itemTemplateSetter.subscribe(function (newValue) {
-            if (newValue === itemTemplateSetter) return;
-            this.itemTemplateId(wpfko.base.contentControl.createAnonymousTemplate(newValue));
-
-            // clear value. there is no reason to have large strings like this in memory
-            this.itemTemplateSetter(itemTemplateSetter);
-        }, this);
+        this.itemTemplate = ko.computed({
+            read: function () {
+                var script = document.getElementById(this.itemTemplateId());
+                return script ? script.textContent : "";
+            },
+            write: function (newValue) {
+                this.itemTemplateId(wpfko.base.contentControl.createAnonymousTemplate(newValue));
+            },
+            owner: this
+        });
 
         var itemTemplateId = this.itemTemplateId();
         this.itemTemplateId.subscribe(function (newValue) {

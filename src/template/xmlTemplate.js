@@ -181,8 +181,7 @@ wpfko.template = wpfko.template || {};
                 
                 recursive(child);
                 
-                result.push("<!-- ko renderChild: _templateItems[\"" + itemPrefix + i + "\"] -->");
-                result.push("<!-- /ko -->\n");
+                result.push("<!-- ko renderChild: _templateItems[\"" + itemPrefix + i + "\"] --><!-- /ko -->\n");
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext()"));
                 
             } else if(child.nodeType == 1) {

@@ -4,23 +4,19 @@ wpfko.base = wpfko.base || {};
 
 (function () {    
 
-    var contentControl = wpfko.base.view.extend(function () {
-        this._super(wpfko.base.visual.getBlankTemplateId());
-        
-        this.setTemplate = ko.observable();
-        
-        // flag to stop progress of recursive code
-        var setTemplate = {};
-    
-        // bind template and template id together
-        this.setTemplate.subscribe(function (newValue) {
-            if (newValue === setTemplate) return;
-    
-            this.templateId(contentControl.createAnonymousTemplate(newValue));
-    
-            // clear value. there is no reason to have large strings like this in memory
-            this.setTemplate(setTemplate);
-        }, this);
+    var contentControl = wpfko.base.view.extend(function (templateId) {
+        this._super(templateId || wpfko.base.visual.getBlankTemplateId());
+
+        this.template = ko.computed({
+            read: function () {
+                var script = document.getElementById(this.templateId());
+                return script ? script.textContent : "";
+            },
+            write: function (newValue) {
+                this.templateId(wpfko.base.contentControl.createAnonymousTemplate(newValue));
+            },
+            owner: this
+        });
     });  
     
     contentControl.createAnonymousTemplate = (function () {
