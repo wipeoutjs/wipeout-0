@@ -9,7 +9,7 @@
         
         this._templateItems = {};
         
-        this.xmlTemplateId = ko.observable(templateId || visual.getDefaultTemplateId());
+        this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
         this._htmlTemplateId = ko.observable();
     });
     

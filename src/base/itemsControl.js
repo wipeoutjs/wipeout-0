@@ -14,7 +14,7 @@ wpfko.base = wpfko.base || {};
         staticConstructor();
         this._super();
         
-        this.xmlTemplateId(deafaultTemplateId);
+        this.templateId(deafaultTemplateId);
 
         this.itemTemplateSetter = ko.observable();
         this.itemTemplateId = ko.observable();

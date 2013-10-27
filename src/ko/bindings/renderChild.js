@@ -18,7 +18,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
             var child = oldValueAccessor();
             var _child = ko.utils.unwrapObservable(child);
             return {
-                name: _child ? _child.xmlTemplateId : "",
+                name: _child ? _child.templateId : "",
                 data: child || {},
                 afterRender: _child ? wpfko.base.visual.prototype._afterRendered : undefined
             }

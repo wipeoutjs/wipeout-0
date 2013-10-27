@@ -16,7 +16,7 @@ wpfko.base = wpfko.base || {};
         this.setTemplate.subscribe(function (newValue) {
             if (newValue === setTemplate) return;
     
-            this.xmlTemplateId(contentControl.createAnonymousTemplate(newValue));
+            this.templateId(contentControl.createAnonymousTemplate(newValue));
     
             // clear value. there is no reason to have large strings like this in memory
             this.setTemplate(setTemplate);

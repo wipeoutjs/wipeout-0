@@ -34,7 +34,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         return function() {
             return {
                 data: view,
-                name: view.xmlTemplateId,
+                name: view.templateId,
                 afterRender: wpfko.base.visual.prototype._afterRendered
             };
         };
