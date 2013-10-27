@@ -1,6 +1,7 @@
 
 var wpfko = wpfko || {};
-    wpfko.bindings = wpfko.bindings || {};
+wpfko.ko = wpfko.ko || {};
+wpfko.ko.bindings = wpfko.ko.bindings || {};
 
 (function () {
         
@@ -39,7 +40,7 @@ var wpfko = wpfko || {};
         };
     };
     
-    wpfko.bindings.wpfko = {
+    wpfko.ko.bindings.wpfko = {
         init: init,
         update: update,
         utils: {
@@ -49,9 +50,9 @@ var wpfko = wpfko || {};
             
     ko.bindingHandlers.wpfko = {};
     ko.virtualElements.allowedBindings.wpfko = true;
-    for(var i in wpfko.bindings.wpfko) {
+    for(var i in wpfko.ko.bindings.wpfko) {
         if(i !== "utils") {
-            ko.bindingHandlers.wpfko[i] = wpfko.bindings.wpfko[i];
+            ko.bindingHandlers.wpfko[i] = wpfko.ko.bindings.wpfko[i];
         }
     };
 })();

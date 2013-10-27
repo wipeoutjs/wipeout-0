@@ -39,7 +39,7 @@ wpfko.base = wpfko.base || {};
     });
 
     itemsControl.prototype.reDrawItems = function () {
-        var models = this.itemSource();
+        var models = this.itemSource() || [];
         var values = this.items();
         values.length = models.length;
         for (var i = 0, ii = models.length; i < ii; i++) {

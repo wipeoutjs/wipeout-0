@@ -4,7 +4,7 @@ wpfko.base = wpfko.base || {};
 
 (function () {    
 
-    var contentControl = wpfko.base.view.extend(function (templateId) {
+    var contentControl = wpfko.base.view.extend(function () {
         this._super(wpfko.base.visual.getBlankTemplateId());
         
         this.setTemplate = ko.observable();
