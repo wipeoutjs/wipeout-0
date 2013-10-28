@@ -44,11 +44,11 @@ wpfko.template = wpfko.template || {};
         else itemPrefix = "";
         enumerate(xmlTemplate.childNodes, function(child, i) {
             if(_xmlTemplate.isCustomElement(child)) {
+                var id = _xmlTemplate.getId(child) || (itemPrefix + i);
                 this._builders.push(function(obj) {
-                    obj.templateItems[itemPrefix + i] = wpfko.util.obj.createObject(child.nodeName);
-                    
-                    //TODO: take from view and put in this class
-                    obj.templateItems[itemPrefix + i].initialize(child);
+                    debugger;
+                    obj.templateItems[id] = wpfko.util.obj.createObject(child.nodeName);
+                    obj.templateItems[id].initialize(child);
                 });
             } else if(child.nodeType == 1) {
                 this._addBuilders(child, itemPrefix + i);
@@ -81,6 +81,16 @@ wpfko.template = wpfko.template || {};
         }
         
         return current instanceof Function;
+    };
+    
+    _xmlTemplate.getId = function(xmlElement) {
+        for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
+            if(xmlElement.attributes[i].nodeName === "id") {
+                return xmlElement.attributes[i].value;
+            }
+        }
+        
+        return null;
     };
     
     _xmlTemplate.generateRender = function(xmlTemplate) {
@@ -137,6 +147,8 @@ wpfko.template = wpfko.template || {};
         };
     };
     
+    var reserved = ["constructor", "id"];
+    
     _xmlTemplate.generateTemplate = function(xmlTemplate, itemPrefix) {  
         if(itemPrefix) itemPrefix += ".";
         else itemPrefix = "";
@@ -145,7 +157,7 @@ wpfko.template = wpfko.template || {};
         
         var addBindingAttributes = function(attr) {
             // reserved
-            if(attr.nodeName === "constructor") return;
+            if(reserved.indexOf(attr.nodeName) !== -1) return;
             //TODO: dispose of bindings            
             result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("$data.bind('" + attr.nodeName + "', " + attr.value + ")"));
         };
@@ -158,14 +170,16 @@ wpfko.template = wpfko.template || {};
         };
         
         enumerate(xmlTemplate.childNodes, function(child, i) {            
-            if(_xmlTemplate.isCustomElement(child)) {                
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext(arguments[0].createChildContext(templateItems[\"" + itemPrefix + i + "\"]))"));
+            if(_xmlTemplate.isCustomElement(child)) {     
+                var id = _xmlTemplate.getId(child) || (itemPrefix + i);
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext(arguments[0].createChildContext(templateItems[\"" + id + "\"]))"));
                 addBindings(child);
                  
                 var recursive = function(element) {
                     enumerate(element.children, function(element) {  
                         var constructorOk = false;
                         enumerate(element.attributes, function(attr) {
+                            //TODO: and is not complex type
                             constructorOk |= attr.nodeName === "constructor" && _xmlTemplate.constructorExists(attr.value);
                         });
                         
@@ -179,8 +193,8 @@ wpfko.template = wpfko.template || {};
                 };
                 
                 recursive(child);
-                
-                result.push("<!-- ko renderChild: templateItems[\"" + itemPrefix + i + "\"] --><!-- /ko -->\n");
+                var id = _xmlTemplate.getId(child) || (itemPrefix + i);
+                result.push("<!-- ko renderChild: templateItems[\"" + id + "\"] --><!-- /ko -->\n");
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext()"));
                 
             } else if(child.nodeType == 1) {

@@ -11,7 +11,7 @@
     <script id="rootView" type="text/xml">
         <h1>Test control</h1>
         <br />
-        <wo.contentControl>
+        <wo.contentControl id="listTest">
             <template>
                 <div data-bind="html: model().rootTitle"></div>
                 <wo.itemsControl itemSource="$parent.model().items">
@@ -26,7 +26,7 @@
             </template>
         </wo.contentControl>
         <br/>
-        <wo.contentControl model="$parent.model().deepItem">
+        <wo.contentControl model="$parent.model().deepItem" id="multiLevelTest">
             <template>
                 <wo.contentControl model="$parent.model().item">
                     <template>
