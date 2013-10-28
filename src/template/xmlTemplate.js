@@ -7,6 +7,7 @@ wpfko.template = wpfko.template || {};
     var _xmlTemplate = function(xmlTemplate) {
         
         this._builders = [];
+        this._htmlIds = [];
                 
         xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
@@ -39,6 +40,23 @@ wpfko.template = wpfko.template || {};
         }
     };
     
+    _xmlTemplate.prototype.addReferencedElements = function(subject, renderedHtml) {
+        
+        enumerate(this._htmlIds, function(id) {
+            // normalize, input vals will be in an array, not html tree
+            var current = {
+                childNodes: renderedHtml
+            };
+            
+            enumerate(id.split("."), function(val, i) {
+                current = current.childNodes[parseInt(val)];
+            });
+            
+            if(!current.id) throw "Unexpected exception, could not find element id";
+            subject.templateItems[current.id] = current;
+        });
+    }
+    
     _xmlTemplate.prototype._addBuilders = function(xmlTemplate, itemPrefix) {
         if(itemPrefix) itemPrefix += ".";
         else itemPrefix = "";
@@ -46,11 +64,14 @@ wpfko.template = wpfko.template || {};
             if(_xmlTemplate.isCustomElement(child)) {
                 var id = _xmlTemplate.getId(child) || (itemPrefix + i);
                 this._builders.push(function(obj) {
-                    debugger;
                     obj.templateItems[id] = wpfko.util.obj.createObject(child.nodeName);
                     obj.templateItems[id].initialize(child);
                 });
             } else if(child.nodeType == 1) {
+                // if the element has an id, record it so that it can be appended during the building of the object
+                if(_xmlTemplate.getId(child))
+                    this._htmlIds.push(itemPrefix + i);
+                
                 this._addBuilders(child, itemPrefix + i);
             } // non elements have no place here but we do want to enumerate over them to keep index in sync
         }, this);
