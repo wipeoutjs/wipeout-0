@@ -48,11 +48,11 @@
 
 var actions = [
     function(view) {
-    /*    view.model().rootTitle("Persons");
-        return "Changed title";
-    }, function(view) {*/
         view.templateItems.NestedDiv.innerHTML = "this is the nested div";
         return "Added text to nested div";
+    }, function(view) {
+        view.model().rootTitle("Persons");
+        return "Changed title";
     }, function(view) {
         /*view.model().items.push({itemId: ko.observable(66), itemName: ko.observable("Paddy")});
         return "Added person";
