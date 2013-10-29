@@ -1,2 +1,2 @@
-Yui\YuiBuildProcess "../src/base/object.js" "../src/base/visual.js" "../src/base/view.js" "../src" -out "../build/wipeout-0.1.js" -wrap true -compress true -exportVar "wpfko.base, wo"
-Yui\YuiBuildProcess "../src/base/object.js" "../src/base/visual.js" "../src/base/view.js" "../src" -out "../build/wipeout-0.1.debug.js" -wrap true -compress false -exportVar "wpfko, wpfko" -exportVar "wpfko.base, wo"
+Yui\YuiBuildProcess "../src/base/object.js" "../src/base/visual.js" "../src/base/view.js" "../src" -out "../build/wipeout-0.2.js" -wrap true -compress true -exportVar "wpfko.base, wo"
+Yui\YuiBuildProcess "../src/base/object.js" "../src/base/visual.js" "../src/base/view.js" "../src" -out "../build/wipeout-0.2.debug.js" -wrap true -compress false -exportVar "wpfko, wpfko" -exportVar "wpfko.base, wo"
