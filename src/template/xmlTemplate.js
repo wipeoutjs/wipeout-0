@@ -170,6 +170,22 @@ wpfko.template = wpfko.template || {};
     
     var reserved = ["constructor", "id"];
     
+    _xmlTemplate.renderChildFromMemo = function(memo, bindingContext) {
+        
+        var comment1 = document.createComment(' ko ');
+        var comment2 = document.createComment(' /ko ');
+        memo.nextSibling ? memo.parentElement.insertBefore(comment2, memo.nextSibling) : memo.parentElement.appendChild(comment2);
+        memo.parentElement.insertBefore(comment1, comment2);
+                  
+            
+        var acc = function() {
+            return bindingContext.$data;
+        };
+        
+        wpfko.ko.bindings.renderChild.init(comment1, acc, acc, ko.utils.unwrapObservable(bindingContext.$data), bindingContext);
+        wpfko.ko.bindings.renderChild.update(comment1, acc, acc, ko.utils.unwrapObservable(bindingContext.$data), bindingContext);
+    };
+    
     _xmlTemplate.generateTemplate = function(xmlTemplate, itemPrefix) {  
         if(itemPrefix) itemPrefix += ".";
         else itemPrefix = "";
@@ -180,7 +196,7 @@ wpfko.template = wpfko.template || {};
             // reserved
             if(reserved.indexOf(attr.nodeName) !== -1) return;
             //TODO: dispose of bindings            
-            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { $data.bind('" + attr.nodeName + "', " + attr.value + "); })"));
+            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { $data.bind('" + attr.nodeName + "', ko.dependentObservable(function() { return " + attr.value + "; })); })"));
         };
         
         var addBindings = function(element) {
@@ -215,7 +231,8 @@ wpfko.template = wpfko.template || {};
                 
                 recursive(child);
                 var id = _xmlTemplate.getId(child) || (itemPrefix + i);
-                result.push("<!-- ko renderChild: templateItems[\"" + id + "\"] --><!-- /ko -->\n");
+                // do not use binding context from memo, use context passed in when memo is created (from create javascript evaluator block)
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function(memo) { wpfko.template.xmlTemplate.renderChildFromMemo(memo, bindingContext); })"));
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext()"));
                 
             } else if(child.nodeType == 1) {

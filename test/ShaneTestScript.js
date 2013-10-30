@@ -54,7 +54,7 @@ var actions = [
         view.model().rootTitle("Persons");
         return "Changed title";
     }, function(view) {
-        /*view.model().items.push({itemId: ko.observable(66), itemName: ko.observable("Paddy")});
+        view.model().items.push({itemId: ko.observable(66), itemName: ko.observable("Paddy")});
         return "Added person";
     }, function(view) {
         view.model().items.splice(1, 1);
@@ -79,11 +79,11 @@ var actions = [
     }, function(view) {
         view.model().deepItem().item({ value: "value 2" });
         return "Changed value 2";
-    }, function(view) {*/
+    }, function(view) {
         view.model().deepItem({item: ko.observable({ value: ko.observable("value 3") })});
         return "Changed value 3";
-    /*}, function(view) {
+    }, function(view) {
         view.model().deepItem().item().value("value 4");
-        return "Changed value 4";*/
+        return "Changed value 4";
     }
 ];
