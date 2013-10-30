@@ -10,7 +10,7 @@ wpfko.template = wpfko.template || {};
     engine.createJavaScriptEvaluatorBlock = function(script) {
         var scriptId = engine.newScriptId();
         
-        engine.scriptCache[scriptId] = new Function("with(arguments[0]) { with($data) { return " + script + "; } }");        
+        engine.scriptCache[scriptId] = new Function("bindingContext", "with(bindingContext) { with($data) { return " + script + "; } }");        
         return engine.openCodeTag + scriptId + engine.closeCodeTag;
     };
     
@@ -20,8 +20,9 @@ wpfko.template = wpfko.template || {};
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
         var cached;
-        if (!(cached = engine.templateCache[templateSource.domElement.id])) {
-            cached = engine.templateCache[templateSource.domElement.id] = new wpfko.template.xmlTemplate(templateSource.text());
+        var domElement = templateSource.domElement || templateSource.i; //TODO: non debug version of ko has no domElement
+        if (!(cached = engine.templateCache[domElement.id])) {
+            cached = engine.templateCache[domElement.id] = new wpfko.template.xmlTemplate(templateSource.text());
         }
         
         cached.rebuild(bindingContext.$data);
