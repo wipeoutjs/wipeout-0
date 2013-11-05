@@ -167,6 +167,19 @@ wpfko.template = wpfko.template || {};
             return returnVal.join("");
         };
     };
+        
+    var parentElement = function(element) {
+        var current = element.previousSibling;
+        while(current) {
+            if(current.nodeType === 8 && current.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0) {
+                return current;
+            }
+            
+            current = current.previousSibling;
+        }
+        
+        return element.parentElement;
+    };
     
     var reserved = ["constructor", "id"];
     
@@ -174,9 +187,9 @@ wpfko.template = wpfko.template || {};
         
         var comment1 = document.createComment(' ko ');
         var comment2 = document.createComment(' /ko ');
-        memo.nextSibling ? memo.parentElement.insertBefore(comment2, memo.nextSibling) : memo.parentElement.appendChild(comment2);
-        memo.parentElement.insertBefore(comment1, comment2);
-                  
+        var p = parentElement(memo);
+        ko.virtualElements.insertAfter(p, comment1, memo);
+        ko.virtualElements.insertAfter(p, comment2, comment1);
             
         var acc = function() {
             return bindingContext.$data;
@@ -184,6 +197,9 @@ wpfko.template = wpfko.template || {};
         
         wpfko.ko.bindings.renderChild.init(comment1, acc, acc, ko.utils.unwrapObservable(bindingContext.$data), bindingContext);
         wpfko.ko.bindings.renderChild.update(comment1, acc, acc, ko.utils.unwrapObservable(bindingContext.$data), bindingContext);
+        
+        comment1.parentElement.removeChild(comment1);
+        comment2.parentElement.removeChild(comment2);
     };
     
     _xmlTemplate.generateTemplate = function(xmlTemplate, itemPrefix) {  
@@ -195,8 +211,8 @@ wpfko.template = wpfko.template || {};
         var addBindingAttributes = function(attr) {
             // reserved
             if(reserved.indexOf(attr.nodeName) !== -1) return;
-            //TODO: dispose of bindings            
-            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { $data.bind('" + attr.nodeName + "', ko.dependentObservable(function() { return " + attr.value + "; })); })"));
+            //TODO: dispose of bindings 
+            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { $data.bind('" + attr.nodeName + "', ko.dependentObservable(function() { return ko.utils.unwrapObservable(" + attr.value + "); }))})"));
         };
         
         var addBindings = function(element) {
