@@ -13,22 +13,8 @@ wpfko.template = wpfko.template || {};
         return engine.openCodeTag + scriptId + engine.closeCodeTag;
     };
     
-    //TODO: this is temporary
-    var ttttt = 9;    
-    engine.rrr = function(renderedTag, placeholderId, bindingContext) {
-        debugger;
-        var node = document.getElementById(placeholderId);
-        var renderedTag = wpfko.util.html.createElement(renderedTag);
-        node.parentElement.insertBefore(renderedTag, node);
-        node.parentElement.removeChild(node);
-        ko.memoization.unmemoizeDomNodeAndDescendants(renderedTag, [bindingContext]); 
-    };
-    
-    
-    
     engine.prototype.createJavaScriptEvaluatorBlock = function(script) {
-        var id = "sssss" + (++ttttt);
-        return engine.createJavaScriptEvaluatorBlock("(function() { $data._koBindingQueue.push(function() { wpfko.template.engine.rrr(" + script + ", '" + id + "', bindingContext); }); return '<div id=\"" + id + "\">rwe</div>'; })()");
+        return engine.createJavaScriptEvaluatorBlock(script);
     };
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
