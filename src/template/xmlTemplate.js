@@ -219,7 +219,8 @@ wpfko.template = wpfko.template || {};
         
         var addBindings = function(element) {
             if(!_xmlTemplate.elementHasModelBinding(element))
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { if(ko.utils.unwrapObservable($data.model) == null) $data.bind('model', $parent.model); })"));
+                //TODO: this is invalid. Need to check if existing model is null first
+                addBindingAttributes({nodeName: "model", value: "$parent.model"});
             
             enumerate(element.attributes, addBindingAttributes);
         };
