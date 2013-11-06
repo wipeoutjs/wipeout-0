@@ -212,12 +212,12 @@ wpfko.template = wpfko.template || {};
             // reserved
             if(reserved.indexOf(attr.nodeName) !== -1) return;
             //TODO: dispose of bindings 
-            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { $data.bind('" + attr.nodeName + "', ko.dependentObservable(function() { return ko.utils.unwrapObservable(" + attr.value + "); }))})"));
+            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { setTimeout(function() { $data.bind('" + attr.nodeName + "', ko.dependentObservable(function() { return ko.utils.unwrapObservable(" + attr.value + "); }));}, 0);})"));
         };
         
         var addBindings = function(element) {
             if(!_xmlTemplate.elementHasModelBinding(element))
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { ko.utils.unwrapObservable($data.model) == null ? $data.bind('model', $parent.model) : null; })"));
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { if(ko.utils.unwrapObservable($data.model) == null) $data.bind('model', $parent.model); })"));
             
             enumerate(element.attributes, addBindingAttributes);
         };
