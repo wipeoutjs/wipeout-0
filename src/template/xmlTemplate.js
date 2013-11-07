@@ -211,13 +211,14 @@ wpfko.template = wpfko.template || {};
         var addBindingAttributes = function(attr) {
             // reserved
             if(reserved.indexOf(attr.nodeName) !== -1) return;
-            //TODO: dispose of bindings 
-            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("$data.bind('" + attr.nodeName + "', ko.dependentObservable(function() { return ko.utils.unwrapObservable(" + attr.value + "); }))"));
+            //TODO: dispose of bindings
+            //TODO: create dependant observable in binding function (so it can be disposed)
+            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("(function() { $data.bind('" + attr.nodeName + "', ko.dependentObservable(function() { return ko.utils.unwrapObservable(" + attr.value + "); })); return ''; })()"));
         };
         
         var addBindings = function(element) {
             if(!_xmlTemplate.elementHasModelBinding(element))
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.utils.unwrapObservable($data.model) == null ? $data.bind('model', $parent.model) : null"));
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("(function() { var m = ko.isObservable($data.model) ? $data.model.peek() : $data.model; if(m == null) $data.bind('model', $parent.model); return ''; })()"));
             
             enumerate(element.attributes, addBindingAttributes);
         };
@@ -237,7 +238,7 @@ wpfko.template = wpfko.template || {};
                         });
                         
                         if(constructorOk) {
-                            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext(bindingContext.createChildContext(" + element.nodeName + "))"));
+                            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext(bindingContext.createChildContext(ko.isObservable(" + element.nodeName + ") ? " + element.nodeName + ".peek() : " + element.nodeName + "))"));
                             addBindings(element);                        
                             enumerate(element.children, recursive);
                             result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext()"));
@@ -246,7 +247,6 @@ wpfko.template = wpfko.template || {};
                 };
                 
                 recursive(child);
-                var id = _xmlTemplate.getId(child) || (itemPrefix + i);
                 // do not use binding context from memo, use context passed in when memo is created (from create javascript evaluator block)
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function(memo) { wpfko.template.xmlTemplate.renderChildFromMemo(memo, bindingContext); })"));
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.util.switchBindingContext()"));
