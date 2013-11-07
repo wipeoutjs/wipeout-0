@@ -7,7 +7,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         // update template if template id changes
-        var val = ko.utils.unwrapObservable(valueAccessor());
+        var val = valueAccessor();
         if (val && ko.isObservable(val.templateId)) {
             //TODO: dispose
             val.templateId.subscribe(function () {
