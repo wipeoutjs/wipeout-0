@@ -65,7 +65,7 @@ wpfko.template = wpfko.template || {};
                 var id = _xmlTemplate.getId(child) || (itemPrefix + i);
                 this._builders.push(function(obj) {
                     obj.templateItems[id] = wpfko.util.obj.createObject(child.nodeName);
-                    obj.templateItems[id].initialize(child, obj);
+                    obj.templateItems[id].initialize(child);
                 });
             } else if(child.nodeType == 1) {
                 // if the element has an id, record it so that it can be appended during the building of the object
@@ -211,10 +211,8 @@ wpfko.template = wpfko.template || {};
         var addBindingAttributes = function(attr) {
             // reserved
             if(reserved.indexOf(attr.nodeName) !== -1) return;
-            //TODO: dispose of bindings
-            //TODO: dispose of this and all created dependantObservables
-            //TODO: remove memoization???
-            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { ko.utils.unwrapObservable($data)._bindingQueue['" + attr.nodeName + "'] = function() { return ko.dependentObservable(function() { return ko.utils.unwrapObservable(" + attr.value + "); }); }; })"));
+            //TODO: dispose of bindings 
+            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function() { setTimeout(function() { $data.bind('" + attr.nodeName + "', ko.dependentObservable(function() { return ko.utils.unwrapObservable(" + attr.value + "); }));}, 0);})"));
         };
         
         var addBindings = function(element) {

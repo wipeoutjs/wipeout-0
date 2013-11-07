@@ -9,6 +9,7 @@ wpfko.template = wpfko.template || {};
     
     engine.createJavaScriptEvaluatorBlock = function(script) {
         var scriptId = engine.newScriptId();
+        
         engine.scriptCache[scriptId] = new Function("bindingContext", "with(bindingContext) { with($data) { return " + script + "; } }");        
         return engine.openCodeTag + scriptId + engine.closeCodeTag;
     };

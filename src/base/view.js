@@ -19,9 +19,7 @@
             }                                          
         }, this);
         
-        this._bindings = {};  
-        this._bindingQueue = {};        
-        this.parentView = null;
+        this._bindings = {};
     });
     
     var setObservable = function(obj, property, value) {
@@ -53,34 +51,9 @@
         }                                
     };
     
-    view.prototype.applyQueuedBindings = function() {
-        if(this.parentView && this.parentView.applyQueuedBindings) this.parentView.applyQueuedBindings();
-        
-        var priorities = ["model"];
-        for(var i = 0, ii = priorities.length; i < ii; i++) {
-            if(this._bindingQueue[priorities[i]]) {
-                this.bind(priorities[i], this._bindingQueue[priorities[i]]());
-                delete this._bindingQueue[priorities[i]];
-            }
-        }
-        
-        for(i in this._bindingQueue) {
-            this.bind(i, this._bindingQueue[i]());
-            delete this._bindingQueue[i];
-        }
-    };
-    
-    view.prototype.rootHtmlChanged = function (oldValue, newValue) {
-        wpfko.base.visual.prototype.rootHtmlChanged.apply(this, arguments);
-        
-        this.applyQueuedBindings();
-    };
-    
-    view.prototype.initialize = function(propertiesXml, parentView) {
+    view.prototype.initialize = function(propertiesXml) {
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
-        
-        this.parentView = parentView;
         
         if(!propertiesXml)
             return;
@@ -113,7 +86,7 @@
                 }
             } else {                   
                 var val = wpfko.util.obj.createObject(type);
-                val.initialize(child, this);             
+                val.initialize(child);             
                 if(ko.isObservable(this[child.nodeName])) {
                     this[child.nodeName](val);       
                 } else {

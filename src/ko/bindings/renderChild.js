@@ -6,15 +6,6 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
 (function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        // update template if template id changes
-        var val = valueAccessor();
-        if (val && ko.isObservable(val.templateId)) {
-            //TODO: dispose
-            val.templateId.subscribe(function () {
-                ko.bindingHandlers.template.update.call(this, element, wpfko.ko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
-            });
-        }
-        
         return ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
     };
     
