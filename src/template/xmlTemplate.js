@@ -212,7 +212,6 @@ wpfko.template = wpfko.template || {};
             // reserved
             if(reserved.indexOf(attr.nodeName) !== -1) return;
             //TODO: dispose of bindings
-            //TODO: create dependant observable in binding function (so it can be disposed)
             result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("(function() { $data.bind('" + attr.nodeName + "', function() { return ko.utils.unwrapObservable(" + attr.value + "); }); return ''; })()"));
         };
         

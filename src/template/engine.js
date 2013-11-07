@@ -25,6 +25,10 @@ wpfko.template = wpfko.template || {};
         //    cached = engine.templateCache[domElement.id] = new wpfko.template.xmlTemplate(templateSource.text());
         //}
         
+        // if data is not a view, cannot render.
+        if (!(bindingContext.$data instanceof wpfko.base.view))
+            return [];
+        
         var cached = templateSource['data']('precompiled');
         if (!cached) {
             cached = new wpfko.template.xmlTemplate(templateSource.text());
