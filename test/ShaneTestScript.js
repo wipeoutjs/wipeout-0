@@ -4,7 +4,7 @@
     var i= ko.bindingHandlers.template.init;
     var u= ko.bindingHandlers.template.update;
     
-    /**ko.bindingHandlers.template.init = function(){
+    /**/ko.bindingHandlers.template.init = function(){
         debugger;
         return i.apply(this, arguments);
     };
@@ -63,7 +63,7 @@ var actions = [
     function(view) {
         view.templateItems.NestedDiv.innerHTML = "this is the nested div";
         return "Added text to nested div";
-    }, function(view) {
+    }/*, function(view) {
         view.model().rootTitle("Persons");
         return "Changed title";
     }, function(view) {
@@ -92,14 +92,11 @@ var actions = [
     }, function(view) {
         view.model().deepItem().item({ value: "value 2" });
         return "Changed value 2";
-    }, function(view) {
+    }*/, function(view) {
         view.model().deepItem({item: ko.observable({ value: ko.observable("value 3") })});
         return "Changed value 3";
     }, function(view) {
         view.model().deepItem().item().value("value 4");
-        return "Changed model";
-    }, function(view) {
-        view.model({deepItem:{item:{value:"newModel"}}});
         return "Changed value 4";
     }
 ];
