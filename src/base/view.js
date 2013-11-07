@@ -20,8 +20,7 @@
         }, this);
         
         this._bindings = {};  
-        this._bindingQueue = {};
-        this._koBindingQueue = [];        
+        this._bindingQueue = {};        
         this.parentView = null;
     });
     
@@ -68,10 +67,6 @@
         for(i in this._bindingQueue) {
             this.bind(i, this._bindingQueue[i]());
             delete this._bindingQueue[i];
-        }
-        
-        while(this._koBindingQueue.length) {
-            this._koBindingQueue.splice(0, 1)[0]();
         }
     };
     
