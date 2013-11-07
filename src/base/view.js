@@ -42,7 +42,7 @@
             delete this._bindings[property];
         }
         
-        setObservable(this, property, bindTo);
+        setObservable(this, property, ko.isObservable(bindTo) ? bindTo.peek() : bindTo);
         
         if(ko.isObservable(bindTo)) {
             this._bindings[property] = bindTo.subscribe(function(newVal) {
