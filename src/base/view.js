@@ -36,19 +36,19 @@
             this._bindings[i].dispose();
     };
     
-    view.prototype.bind = function(property, bindTo) {
+    view.prototype.bind = function(property, valueAccessor) {
         if(this._bindings[property]) {
             this._bindings[property].dispose();
             delete this._bindings[property];
         }
         
-        setObservable(this, property, ko.isObservable(bindTo) ? bindTo.peek() : bindTo);
+        //TODO: dispose
+        var bindTo = ko.computed(valueAccessor);
         
-        if(ko.isObservable(bindTo)) {
-            this._bindings[property] = bindTo.subscribe(function(newVal) {
-                setObservable(this, property, newVal);
-            }, this);
-        }                                
+        setObservable(this, property, bindTo.peek());
+        this._bindings[property] = bindTo.subscribe(function(newVal) {
+            setObservable(this, property, newVal);
+        }, this);
     };
     
     view.prototype.initialize = function(propertiesXml) {

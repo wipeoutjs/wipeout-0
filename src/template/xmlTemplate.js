@@ -213,12 +213,12 @@ wpfko.template = wpfko.template || {};
             if(reserved.indexOf(attr.nodeName) !== -1) return;
             //TODO: dispose of bindings
             //TODO: create dependant observable in binding function (so it can be disposed)
-            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("(function() { $data.bind('" + attr.nodeName + "', ko.dependentObservable(function() { return ko.utils.unwrapObservable(" + attr.value + "); })); return ''; })()"));
+            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("(function() { $data.bind('" + attr.nodeName + "', function() { return ko.utils.unwrapObservable(" + attr.value + "); }); return ''; })()"));
         };
         
         var addBindings = function(element) {
             if(!_xmlTemplate.elementHasModelBinding(element))
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("(function() { var m = ko.isObservable($data.model) ? $data.model.peek() : $data.model; if(m == null) $data.bind('model', $parent.model); return ''; })()"));
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("(function() { var m = ko.isObservable($data.model) ? $data.model.peek() : $data.model; if(m == null) $data.bind('model', function() {  return ko.utils.unwrapObservable($parent.model); }); return ''; })()"));
             
             enumerate(element.attributes, addBindingAttributes);
         };
