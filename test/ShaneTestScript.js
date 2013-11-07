@@ -100,6 +100,6 @@ var actions = [
         return "Changed model";
     }, function(view) {
         view.model({deepItem:{item:{value:"newModel"}}});
-        return "Changed value 4";
+        return "Swappedout model to basic model";
     }
 ];
