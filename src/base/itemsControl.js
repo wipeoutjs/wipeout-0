@@ -7,7 +7,6 @@ wpfko.base = wpfko.base || {};
     var staticConstructor = function() {
         if(deafaultTemplateId) return;
         
-        //deafaultTemplateId = wpfko.base.contentControl.createAnonymousTemplate("<div><!-- ko itemsControl: null --><!-- /ko --></div>");
         deafaultTemplateId = wpfko.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");
     }
     

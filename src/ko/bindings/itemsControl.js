@@ -3,7 +3,8 @@ wpfko.ko = wpfko.ko || {};
 wpfko.ko.bindings = wpfko.ko.bindings || {};
 
 (function () {
-    
+    //TODO: be more accurate in what to render
+    //TODO: Dispose of old views
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         ko.virtualElements.emptyNode(element);
         var items = viewModel.items();
