@@ -11,6 +11,56 @@ wpfko.base = wpfko.base || {};
             $.extend(this, values);
         }
     };
+    
+    var cachedBaseMethods = [];
+    object.prototype._superMethod = function() {
+    
+        // try to find a cached version to skip lookup of parent class method
+        var cached = null;
+        for(var i = 0, ii = cachedBaseMethods.length; i < ii; i++) {
+            if(cachedBaseMethods[i].child === arguments.callee.caller) {
+                cached = cachedBaseMethods[i].parent;
+                break;
+            }
+        }
+        
+        if(!cached) {
+            
+            // compile prototype tree into array
+            var inheritanceTree = [];
+            var current = this.constructor.prototype;
+            while(current) {
+                inheritanceTree.push(current);
+                current = Object.getPrototypeOf(current);
+            }
+            
+            // reverse array so that parent classes come before child classes
+            inheritanceTree.reverse();            
+            
+            // find the first instance of the current method in inheritance tree
+            for(var i = 0, ii = inheritanceTree.length; i < ii; i++) {
+                for(var j in inheritanceTree[i]) {
+                    if(inheritanceTree[i][j] === arguments.callee.caller) {
+                        // map the current method to the method it overrides
+                        cachedBaseMethods.push({
+                            parent: inheritanceTree[i - 1][j],
+                            child: arguments.callee.caller
+                        });
+                        
+                        // cache for the next time this is called
+                        cached = inheritanceTree[i - 1][j];
+                        break;
+                    }
+                }
+            }
+            
+            if(!cached)
+                throw "Could not find method in parent class";
+        }
+                
+        // execute parent class method
+        return cached.apply(this, arguments);
+    };
 
     object.extend = function (childClass) {
 
@@ -38,16 +88,6 @@ wpfko.base = wpfko.base || {};
 
         // inherit
         newConstructor.prototype = new prototypeTracker();
-
-        //        //TODO: this cannot go here. Will throw problems if virtual method is inherited from by multiple ancestors
-        //        // call base methods. Argument 1 is method name, subsequent args are method arguments
-        //    newConstructor.prototype._supermethod = function () {
-        //            var args = [];
-        //            for (var i = 1, ii = arguments.length; i < ii; i++)
-        //                args.push(arguments[i]);
-
-        //            return parentClass.prototype[arguments[0]].apply(_this, args);
-        //        };
 
         return newConstructor;
     };
