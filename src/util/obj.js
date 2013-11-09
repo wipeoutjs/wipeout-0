@@ -19,10 +19,20 @@ wpfko.util = wpfko.util || {};
             return new context();
         else 
             throw constructorString + " is not a valid function.";
-    };    
+    };
+
+    var copyArray = function(input) {
+        var output = [];
+        for(var i = 0, ii = input.length; i < ii; i++) {
+            output.push(input[i]);
+        }
+        
+        return output;
+    };
     
     wpfko.util.obj = {
-        createObject: createObject
+        createObject: createObject,
+        copyArray: copyArray
     };
     
 })();

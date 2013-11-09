@@ -18,8 +18,11 @@ wpfko.base = wpfko.base || {};
         this.itemSource = ko.observableArray([]);
         this.items = ko.observableArray([]);
 
-        //TODO: hack, destroying and re-creating a lot of view models
-        this.itemSource.subscribe(this.reDrawItems, this);
+        if(wpfko.util.ko.version()[0] < 3) {
+            itemsControl.subscribeV2.call(this);
+        } else {
+            itemsControl.subscribeV3.call(this);
+        }
 
         this.itemTemplate = ko.computed({
             read: function () {
@@ -32,7 +35,7 @@ wpfko.base = wpfko.base || {};
             owner: this
         });
 
-        var itemTemplateId = this.itemTemplateId();
+        var itemTemplateId = this.itemTemplateId.peek();
         this.itemTemplateId.subscribe(function (newValue) {
             if (itemTemplateId !== newValue) {
                 try {
@@ -43,6 +46,68 @@ wpfko.base = wpfko.base || {};
             }
         }, this);
     });
+    
+    itemsControl.subscribeV2 = function() {
+        ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl<summary>
+        var initial = this.itemSource.peek();
+        this.itemSource.subscribe(function() {
+            try {
+                this.itemsChanged(ko.utils.compareArrays(initial, arguments[0] || []));
+            } finally {
+                initial = wpfko.util.obj.copyArray(arguments[0] || []);
+            }
+        }, this);
+        
+    };
+    
+    itemsControl.subscribeV3 = function() {
+        ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl<summary>
+        this.itemSource.subscribe(this.itemsChanged, this, "arrayChange");
+        
+    };
+
+    var added = "added", deleted = "deleted", retained = "retained";
+    itemsControl.prototype.itemsChanged = function (changes) { 
+        var items = this.items();
+        var del = [], add = [], move = {}, delPadIndex = 0;
+        for(var i = 0, ii = changes.length; i < ii; i++) {
+            if(changes[i].status === retained) continue;
+                if(changes[i].status === deleted) {
+                    del.push((function(change) {
+                        return function() {
+        debugger;
+                            var removed = items.splice(change.index + delPadIndex, 1)[0];
+                            if(change.moved != null)
+                                move[change.moved + "." + change.index] = removed;
+                            else
+                                removed.dispose();
+                            
+                            delPadIndex--;
+                        };
+                    })(changes[i]));
+                } else if(changes[i].status === added) {
+                    add.push((function(change) {
+                        return function() {
+        debugger;
+                            var added = change.moved != null ? move[change.index + "." + change.moved] : new wpfko.base.view(this.itemTemplateId(), change.value);
+                            items.splice(change.index, 0, added);
+                        };
+                    })(changes[i]));
+                } else {
+                    throw "Unsupported status";
+                }
+        }
+        
+        for(i = 0, ii = del.length; i < ii; i++) {
+            del[i].call(this);
+        }
+        
+        for(i = 0, ii = add.length; i < ii; i++) {
+            add[i].call(this);
+        }
+        
+        this.items.valueHasMutated();
+    };
 
     itemsControl.prototype.reDrawItems = function () {
         var models = this.itemSource() || [];

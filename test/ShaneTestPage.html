@@ -8,70 +8,54 @@
     <div data-bind="wpfko: rootView">
     </div>
     
-    <script id="_rootView" type="text/xml">
-        <h1>Test control</h1>
-        <br />
-        <div>
-            <div>
-                <div id="NestedDiv">
-                </div>
-            </div>
-        </div>
-        <br/>
-        <wo.contentControl model="$parent.model().deepItem" id="multiLevelTest">
-        </wo.contentControl>        
-        <br/>
-        <br/>
-        <button data-bind="click: next">next</button>
-        <h3>action:</h3>
-        <div data-bind="html: justDone"></div>
-    </script> 
-    
     <script id="rootView" type="text/xml">
-        <h1>Test control</h1>
-        <br />
-        <div>
+        <div style="height: 300px">
+            <h1>Test control</h1>
+            <br />
             <div>
-                <div id="NestedDiv">
+                <div>
+                    <div id="NestedDiv">
+                    </div>
                 </div>
             </div>
-        </div>
-        <wo.contentControl id="listTest">
-            <template>
-                <div data-bind="html: model().rootTitle"></div>
-                <wo.itemsControl itemSource="$parent.model().items">
-                    <itemTemplate>
-                        <div>
-                            <span data-bind="html: model().itemId"></span>:
-                            <span data-bind="html: model().itemName"></span>
-                        </div>
-                    </itemTemplate>
-                </wo.itemsControl>
-                <div data-bind="html: model().totalOfIds"></div>
-            </template>
-        </wo.contentControl>
-        <br/>
-        <wo.contentControl model="$parent.model().deepItem" id="multiLevelTest">
-            <template>
-                <wo.contentControl model="$parent.model().item">
-                    <template>
-                        <wo.contentControl model="$parent.model().value">
-                            <supplimentaryProp constructor="childView" value="model">
+            <wo.contentControl id="listTest">
+                <template>
+                    <div data-bind="html: model().rootTitle"></div>
+                    <wo.itemsControl id="theInnerItemsControl" itemSource="$parent.model().items">
+                        <itemTemplate>
+                            <div id="stampMe"></div>
+                            <div>
+                                <span data-bind="html: model().itemId"></span>:
+                                <span data-bind="html: model().itemName"></span>
+                            </div>
+                        </itemTemplate>
+                    </wo.itemsControl>
+                    <div data-bind="html: model().totalOfIds"></div>
+                </template>
+            </wo.contentControl>
+            <br/>
+            <wo.contentControl model="$parent.model().deepItem" id="multiLevelTest">
+                <template>
+                    <wo.contentControl model="$parent.model().item">
+                        <template>
+                            <wo.contentControl model="$parent.model().value">
+                                <supplimentaryProp constructor="childView" value="model">
+                                    <template>
+                                        <div data-bind="html: value"></div>
+                                    </template>
+                                </supplimentaryProp>
                                 <template>
-                                    <div data-bind="html: value"></div>
+                                    <div data-bind="html: model"></div>
+                                    <div data-bind="renderChild: supplimentaryProp"></div>
                                 </template>
-                            </supplimentaryProp>
-                            <template>
-                                <div data-bind="html: model"></div>
-                                <div data-bind="renderChild: supplimentaryProp"></div>
-                            </template>
-                        </wo.contentControl>
-                    </template>
-                </wo.contentControl>                
-            </template>
-        </wo.contentControl>        
-        <br/>
-        <br/>
+                            </wo.contentControl>
+                        </template>
+                    </wo.contentControl>                
+                </template>
+            </wo.contentControl>        
+            <br/>
+            <br/>
+        </div>
         <button data-bind="click: next">next</button>
         <h3>action:</h3>
         <div data-bind="html: justDone"></div>
