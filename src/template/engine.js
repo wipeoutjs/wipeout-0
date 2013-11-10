@@ -37,10 +37,7 @@ wpfko.template = wpfko.template || {};
         }
         
         cached.rebuild(bindingContext.$data);
-        var html = ko.utils.parseHtmlFragment(cached.render(bindingContext));
-        cached.addReferencedElements(bindingContext.$data, html);
-        
-        return html;
+        return cached.render(bindingContext);
     };
     
     engine.newScriptId = (function() {        
@@ -50,7 +47,6 @@ wpfko.template = wpfko.template || {};
         };
     })();
     
-    engine.templateCache = {};
     engine.scriptCache = {};
     engine.openCodeTag = "<!-- wpfko_code: {"
     engine.closeCodeTag = "} -->";

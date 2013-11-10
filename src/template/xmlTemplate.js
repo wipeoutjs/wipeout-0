@@ -11,22 +11,13 @@ wpfko.template = wpfko.template || {};
         xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
         this.viewModelBuilder = new wpfko.template.viewModelBuilder(xmlTemplate);
-        this.render = wpfko.template.xmlTemplate.generateRender(xmlTemplate);
+        this.htmlBuilder = new wpfko.template.htmlBuilder(xmlTemplate);
     }
     
-    var enumerate = function(items, callback, context) {
-        
-        for(var i = 0, ii = items.length; i < ii; i++) {
-            callback.call(context, items[i], i);
-        }        
-    };
-    
-    //keep
     _xmlTemplate.isCustomElement = function(xmlElement) {
         return xmlElement.nodeType == 1 && wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName.toLowerCase()) === -1;
     };
     
-    //keep
     _xmlTemplate.getId = function(xmlElement) {
         for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
             if(xmlElement.attributes[i].nodeName === "id") {
@@ -37,202 +28,14 @@ wpfko.template = wpfko.template || {};
         return null;
     };
     
+    _xmlTemplate.prototype.render = function(bindingContext) {
+        var html = this.htmlBuilder.render(bindingContext);
+        this.viewModelBuilder.addReferencedElements(bindingContext.$data, html);
+        return html;
+    };
+    
     _xmlTemplate.prototype.rebuild = function(subject) {
         this.viewModelBuilder.rebuild(subject);
-    };
-    
-    _xmlTemplate.prototype.addReferencedElements = function(subject, renderedHtml) {
-        this.viewModelBuilder.addReferencedElements(subject, renderedHtml);
-    };
-    
-    _xmlTemplate.elementHasModelBinding = function(element) {
-        
-        for(var i = 0, ii = element.attributes.length; i < ii; i++) {
-            if(element.attributes[i].nodeName === "model")
-                return true;
-        }
-        
-        for(var i = 0, ii = element.children.length; i < ii; i++) {
-            if(element.children[i].nodeName === "model")
-                return true;
-        }
-        
-        return false;
-    };
-    
-    _xmlTemplate.constructorExists = function(constructor) {
-        
-        constructor = constructor.split(".");
-        var current = window;
-        for(var i = 0, ii = constructor.length; i < ii; i++) {
-            current = current[constructor[i]];
-            if(!current) return false;
-        }
-        
-        return current instanceof Function;
-    };
-    
-    _xmlTemplate.generateRender = function(xmlTemplate) {
-        var open = wpfko.template.engine.openCodeTag;
-        var close = wpfko.template.engine.closeCodeTag;
-        
-        var template = wpfko.template.xmlTemplate.generateTemplate(xmlTemplate);
-                 
-        var startTag, endTag;
-        var result = [];
-        while((startTag = template.indexOf(open)) !== -1) {
-            result.push(template.substr(0, startTag));
-            template = template.substr(startTag);
-            
-            endTag = template.indexOf(close);
-            if(endTag === -1) {
-                throw "##"; //TODO
-            }
-            
-            result.push((function(scriptId) {
-                return function(bindingContext) {                    
-                    return wpfko.template.engine.scriptCache[scriptId](bindingContext);                    
-                };
-            })(template.substr(open.length, endTag - open.length)));
-                        
-            template = template.substr(endTag + close.length);
-        }
-                
-        result.push(template);
-        
-        var ii = result.length;
-        return function(bindingContext) {
-            var contexts = [];
-            var returnVal = [];
-            for(var i = 0; i < ii; i++) {
-                if(result[i] instanceof Function) {                    
-                    var rendered = result[i](bindingContext);
-                    if(rendered instanceof wpfko.template.switchBindingContext) {
-                        if(rendered.bindingContext) {
-                            contexts.push(bindingContext);
-                            bindingContext = rendered.bindingContext;
-                        } else {
-                            // empty rendered.bindingContext signifies we revert to the parent binding context
-                            bindingContext = contexts.pop();
-                        }
-                    } else {                    
-                        returnVal.push(rendered);
-                    }
-                } else {
-                    returnVal.push(result[i]);
-                }
-            }
-            
-            return returnVal.join("");
-        };
-    };
-    
-    var reserved = ["constructor", "id"];
-    
-    _xmlTemplate.renderChildFromMemo = function(bindingContext) {
-        
-        return ko.memoization.memoize(function(memo) { 
-            var comment1 = document.createComment(' ko ');
-            var comment2 = document.createComment(' /ko ');
-            var p = wpfko.util.ko.virtualElements.parentElement(memo);
-            ko.virtualElements.insertAfter(p, comment1, memo);
-            ko.virtualElements.insertAfter(p, comment2, comment1);
-                
-            var acc = function() {
-                return bindingContext.$data;
-            };
-            
-            wpfko.ko.bindings.renderChild.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$data), bindingContext);
-            wpfko.ko.bindings.renderChild.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$data), bindingContext);
-            
-            comment1.parentElement.removeChild(comment1);
-            comment2.parentElement.removeChild(comment2);
-        });
-    };
-    
-    _xmlTemplate.bindToDefaultModel = function(bindingContext) {
-        var m = wpfko.util.ko.peek(bindingContext.$data.model);
-        if(m == null)
-            bindingContext.$data.bind('model', function() {  return ko.utils.unwrapObservable(bindingContext.$parent.model); });
-        
-        return '';
-    };
-    
-    _xmlTemplate.emptySwitchBindingContext = function(bindingContext) {
-        return new wpfko.template.switchBindingContext();
-    };
-    
-    _xmlTemplate.switchBindingContextToTemplateItem = function(templateItemId) {
-        return function(bindingContext) {
-            return new wpfko.template.switchBindingContext(bindingContext.createChildContext(bindingContext.$data.templateItems[templateItemId]));
-        }
-    };
-    
-    _xmlTemplate.generateTemplate = function(xmlTemplate, itemPrefix) {  
-        if(itemPrefix) itemPrefix += ".";
-        else itemPrefix = "";
-        var result = [];
-        var ser = new XMLSerializer();
-        
-        var addBindingAttributes = function(attr) {
-            // reserved
-            if(reserved.indexOf(attr.nodeName) !== -1) return;
-            //TODO: dispose of bindings
-            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("(function() { $data.bind('" + attr.nodeName + "', function() { return ko.utils.unwrapObservable(" + attr.value + "); }); return ''; })()"));
-        };
-        
-        var addBindings = function(element) {
-            if(!_xmlTemplate.elementHasModelBinding(element))
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(_xmlTemplate.bindToDefaultModel));
-            
-            enumerate(element.attributes, addBindingAttributes);
-        };
-        
-        enumerate(xmlTemplate.childNodes, function(child, i) {            
-            if(_xmlTemplate.isCustomElement(child)) {     
-                var id = _xmlTemplate.getId(child) || (itemPrefix + i);
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(_xmlTemplate.switchBindingContextToTemplateItem(id)));
-                addBindings(child);
-                 
-                var recursive = function(element) {
-                    enumerate(element.children, function(element) {  
-                        var constructorOk = false;
-                        enumerate(element.attributes, function(attr) {
-                            //TODO: and is not complex type
-                            constructorOk |= attr.nodeName === "constructor" && _xmlTemplate.constructorExists(attr.value);
-                        });
-                        
-                        if(constructorOk) {
-                            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.template.switchBindingContext(bindingContext.createChildContext(wpfko.util.ko.peek(" + element.nodeName + ")))"));
-                            addBindings(element);                        
-                            enumerate(element.children, recursive);
-                            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(_xmlTemplate.emptySwitchBindingContext));
-                        }
-                    });                                
-                };
-                
-                recursive(child);
-                // do not use binding context from memo, use context passed in when memo is created (from create javascript evaluator block)
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(_xmlTemplate.renderChildFromMemo));
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(_xmlTemplate.emptySwitchBindingContext));
-                
-            } else if(child.nodeType == 1) {
-                
-                // create copy with no child nodes
-                var ch = new DOMParser().parseFromString(ser.serializeToString(child), "application/xml").documentElement;
-                while (ch.childNodes.length) {
-                    ch.removeChild(ch.childNodes[0]);
-                }
-                
-                var html = wpfko.util.html.createElement(ser.serializeToString(ch));
-                html.innerHTML = wpfko.template.xmlTemplate.generateTemplate(child, itemPrefix + i);                
-                result.push(html.outerHTML);
-            } else {
-                result.push(ser.serializeToString(child));
-            }
-        });
-        
-        return result.join("");
     };
     
     wpfko.template.xmlTemplate = _xmlTemplate;
