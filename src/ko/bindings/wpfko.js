@@ -23,7 +23,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
             return {
                 data: view,
                 name: view.templateId,
-                afterRender: wpfko.base.visual.prototype._afterRendered
+                afterRender: wpfko.base.visual._afterRendered
             };
         };
     };

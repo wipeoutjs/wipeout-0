@@ -20,7 +20,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
             return {
                 name: _child ? _child.templateId : "",
                 data: child || {},
-                afterRender: _child ? wpfko.base.visual.prototype._afterRendered : undefined
+                afterRender: _child ? wpfko.base.visual._afterRendered : undefined
             }
         };
     };

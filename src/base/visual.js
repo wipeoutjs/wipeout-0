@@ -11,7 +11,7 @@
     });
     
     // knockout specific function. The "this" will be window and the context object will be the instance
-    visual.prototype._afterRendered = function(nodes, context) {
+    visual._afterRendered = function(nodes, context) {
         var old = context.nodes || [];
         context.nodes = nodes;
         context.rootHtmlChanged(old, nodes);
