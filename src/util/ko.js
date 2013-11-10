@@ -23,7 +23,7 @@
             return input.peek();
         else
             return input;
-    }
+    };
     
     _ko.virtualElements = {
         parentElement: function(element) {

@@ -7,7 +7,7 @@ wpfko.template = wpfko.template || {};
     var _xmlTemplate = function(xmlTemplate) {
         
         this._builders = [];
-        this._htmlIds = [];
+        this._elementsWithId = [];
                 
         xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
@@ -42,12 +42,13 @@ wpfko.template = wpfko.template || {};
     
     _xmlTemplate.prototype.addReferencedElements = function(subject, renderedHtml) {
         
-        enumerate(this._htmlIds, function(id) {
+        enumerate(this._elementsWithId, function(id) {
             // normalize, input vals will be in an array, not html tree
             var current = {
                 childNodes: renderedHtml
             };
             
+            // get target node using psuedo xPath
             enumerate(id.split("."), function(val, i) {
                 current = current.childNodes[parseInt(val)];
             });
@@ -70,7 +71,7 @@ wpfko.template = wpfko.template || {};
             } else if(child.nodeType == 1) {
                 // if the element has an id, record it so that it can be appended during the building of the object
                 if(_xmlTemplate.getId(child))
-                    this._htmlIds.push(itemPrefix + i);
+                    this._elementsWithId.push(itemPrefix + i);
                 
                 this._addBuilders(child, itemPrefix + i);
             } // non elements have no place here but we do want to enumerate over them to keep index in sync
@@ -184,8 +185,8 @@ wpfko.template = wpfko.template || {};
                 return bindingContext.$data;
             };
             
-            wpfko.ko.bindings.renderChild.init(comment1, acc, acc, ko.utils.unwrapObservable(bindingContext.$data), bindingContext);
-            wpfko.ko.bindings.renderChild.update(comment1, acc, acc, ko.utils.unwrapObservable(bindingContext.$data), bindingContext);
+            wpfko.ko.bindings.renderChild.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$data), bindingContext);
+            wpfko.ko.bindings.renderChild.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$data), bindingContext);
             
             comment1.parentElement.removeChild(comment1);
             comment2.parentElement.removeChild(comment2);
