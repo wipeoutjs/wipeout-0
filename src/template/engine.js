@@ -36,8 +36,15 @@ wpfko.template = wpfko.template || {};
             templateSource['data']('precompiled', cached);
         }
         
-        cached.rebuild(bindingContext.$data);
-        return cached.render(bindingContext);
+        var output;
+        
+        // wrap in a computed so that observable evaluations will not propogate to the template engine
+        ko.computed(function() {
+            cached.rebuild(bindingContext.$data);
+            output = cached.render(bindingContext)
+        }, this).dispose();
+        
+        return output;
     };
     
     engine.newScriptId = (function() {        

@@ -30,7 +30,6 @@
         }
     };
     
-    //TODO: this is a very basic implementation and it is never used. Extend and implement
     view.prototype.dispose = function() {
         this._super();
         
@@ -44,13 +43,26 @@
             delete this._bindings[property];
         }
         
-        //TODO: dispose
-        var bindTo = ko.computed(valueAccessor);
+        var toBind = ko.computed(valueAccessor);
         
-        setObservable(this, property, bindTo.peek());
-        this._bindings[property] = bindTo.subscribe(function(newVal) {
+        setObservable(this, property, toBind.peek());
+        var subscription = toBind.subscribe(function(newVal) {
             setObservable(this, property, newVal);
         }, this);
+        
+        this._bindings[property] = {
+            dispose: function() {
+                if(subscription) {
+                    subscription.dispose();
+                    subscription = null;
+                }
+                
+                if(toBind) {
+                    toBind.dispose();
+                    toBind = null;
+                }
+            }
+        };
     };
     
     view.prototype.initialize = function(propertiesXml) {
@@ -86,14 +98,15 @@
                 } else {
                     this[child.nodeName] = val;       
                 }
-            } else {                   
+            } else {
                 var val = wpfko.util.obj.createObject(type);
-                val.initialize(child);             
+                val.initialize(child);
+                
                 if(ko.isObservable(this[child.nodeName])) {
                     this[child.nodeName](val);       
                 } else {
                     this[child.nodeName] = val;       
-                }
+                }     
             }
         }
     };
@@ -120,13 +133,6 @@
         }
     };
     
-    if(window.jQuery) {
-        var $ = jQuery;
-        view.objectParser.jquery = function (value) {
-            return $(value);
-        };
-    }
-
     // virtual
     view.prototype.modelChanged = function (oldValue, newValue) {
     };

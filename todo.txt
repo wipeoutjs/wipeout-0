@@ -9,3 +9,4 @@ Big cleanup, unit testing, commenting, disposal of objects/observables, refactor
 Debug code
 itemsControl binding
 test ko 3 (items control)
+change all ko.computed to ko.dependentObservable

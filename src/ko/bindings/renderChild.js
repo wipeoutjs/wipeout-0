@@ -34,7 +34,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
     };
             
     ko.bindingHandlers.renderChild = {};
-    ko.virtualElements.allowedBindings.renderChild = true;
+    ko.virtualElements.allowedBindings.renderChild = false; //TODO: this
     for(var i in wpfko.ko.bindings.renderChild) {
         if(i !== "utils") {
             ko.bindingHandlers.renderChild[i] = wpfko.ko.bindings.renderChild[i];
