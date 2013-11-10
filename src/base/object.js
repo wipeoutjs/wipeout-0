@@ -12,14 +12,15 @@ wpfko.base = wpfko.base || {};
         }
     };
     
-    var cachedBaseMethods = [];
-    object.prototype._superMethod = function() {
-    
+    var cachedSuperMethods = [];
+    object.prototype._super = function() {
+        ///<summary>Call the current method of the parent class with arguments<summary>
+        
         // try to find a cached version to skip lookup of parent class method
         var cached = null;
-        for(var i = 0, ii = cachedBaseMethods.length; i < ii; i++) {
-            if(cachedBaseMethods[i].child === arguments.callee.caller) {
-                cached = cachedBaseMethods[i].parent;
+        for(var i = 0, ii = cachedSuperMethods.length; i < ii; i++) {
+            if(cachedSuperMethods[i].child === arguments.callee.caller) {
+                cached = cachedSuperMethods[i].parent;
                 break;
             }
         }
@@ -42,7 +43,7 @@ wpfko.base = wpfko.base || {};
                 for(var j in inheritanceTree[i]) {
                     if(inheritanceTree[i][j] === arguments.callee.caller) {
                         // map the current method to the method it overrides
-                        cachedBaseMethods.push({
+                        cachedSuperMethods.push({
                             parent: inheritanceTree[i - 1][j],
                             child: arguments.callee.caller
                         });
@@ -69,12 +70,15 @@ wpfko.base = wpfko.base || {};
 
             var __this = this;
 
-            // add a parent constructor
+            // temporarily override _super with parent constructor
             this._super = function () {
                 _this.apply(__this, arguments);
             };
 
             childClass.apply(this, arguments);
+            
+            // re-set super to allow parent methods to be called
+            this._super = object.prototype._super;
         };
 
         // static items
