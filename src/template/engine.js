@@ -10,7 +10,12 @@ wpfko.template = wpfko.template || {};
     engine.createJavaScriptEvaluatorBlock = function(script) {
         var scriptId = engine.newScriptId();
         
-        engine.scriptCache[scriptId] = new Function("bindingContext", "with(bindingContext) { with($data) { return " + script + "; } }");        
+        if(script instanceof Function) {
+            engine.scriptCache[scriptId] = script;
+        } else {        
+            engine.scriptCache[scriptId] = new Function("bindingContext", "with(bindingContext) { with($data) { return " + script + "; } }"); 
+        }
+               
         return engine.openCodeTag + scriptId + engine.closeCodeTag;
     };
     
@@ -19,13 +24,9 @@ wpfko.template = wpfko.template || {};
     };
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
-        //var cached;
-        //var domElement = templateSource.domElement || templateSource.i; //TODO: non debug version of ko has no domElement
-        //if (!(cached = engine.templateCache[domElement.id])) {
-        //    cached = engine.templateCache[domElement.id] = new wpfko.template.xmlTemplate(templateSource.text());
-        //}
         
         // if data is not a view, cannot render.
+        //TODO: default to native template engine
         if (!(bindingContext.$data instanceof wpfko.base.view))
             return [];
         
@@ -57,18 +58,3 @@ wpfko.template = wpfko.template || {};
     wpfko.template.engine = engine;    
     ko.setTemplateEngine(new engine());    
 })();
-
-/*
-ko.__tr_ambtns(
-    function($context, $element) {
-        return(function() {
-            return { 
-                'html': model, 
-                '_ko_property_writers' : { 
-                    'html' : function(__ko_value) { 
-                        model = __ko_value; 
-                    } 
-                }  
-            } 
-        })();
-    },'span')*/

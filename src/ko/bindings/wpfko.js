@@ -7,28 +7,16 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
 
-        if(element.__wpfkoView) {
-            //TODO: knockout standard way of controling element
-            throw "##";
-        }
-        
+        //TODO: knockout standard way of controling element        
         //TODO: add optional inline properties to binding        
         var view = new (valueAccessor())();
         view.model(viewModel);                
         element.__wpfkoView = view;
         
-        return ko.bindingHandlers.template.init.call(this, element, createValueAccessor(view), allBindingsAccessor, viewModel, bindingContext);
+        var output = ko.bindingHandlers.template.init.call(this, element, createValueAccessor(view), allBindingsAccessor, viewModel, bindingContext);
+        ko.bindingHandlers.template.update.call(this, element, createValueAccessor(view), allBindingsAccessor, viewModel, bindingContext);
+        return output;
     };
-    
-    var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        
-        if(!element.__wpfkoView) {
-            //TODO: knockout standard way of controling element
-            throw "##";
-        }
-        
-        return ko.bindingHandlers.template.update.call(this, element, createValueAccessor(element.__wpfkoView), allBindingsAccessor, viewModel, bindingContext);
-    };    
     
     var createValueAccessor = function(view) {
         return function() {
@@ -42,7 +30,6 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
     
     wpfko.ko.bindings.wpfko = {
         init: init,
-        update: update,
         utils: {
             createValueAccessor: createValueAccessor
         }

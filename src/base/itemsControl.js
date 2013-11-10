@@ -75,7 +75,6 @@ wpfko.base = wpfko.base || {};
                 if(changes[i].status === deleted) {
                     del.push((function(change) {
                         return function() {
-        debugger;
                             var removed = items.splice(change.index + delPadIndex, 1)[0];
                             if(change.moved != null)
                                 move[change.moved + "." + change.index] = removed;
@@ -88,7 +87,6 @@ wpfko.base = wpfko.base || {};
                 } else if(changes[i].status === added) {
                     add.push((function(change) {
                         return function() {
-        debugger;
                             var added = change.moved != null ? move[change.index + "." + change.moved] : new wpfko.base.view(this.itemTemplateId(), change.value);
                             items.splice(change.index, 0, added);
                         };

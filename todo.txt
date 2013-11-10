@@ -2,4 +2,9 @@ xml parse error
 html in an xml doc
 strings in attributes
 
-If html element is deleted outsidde of wo, dispose of its associated view
+If html element is deleted outside of wo, dispose of its associated view
+
+Roadmap:
+Big cleanup, unit testing, commenting, disposal of objects/observables, refactoring if needed
+Debug code
+itemsControl binding
