@@ -28,7 +28,9 @@
     
     //TODO: placeholder
     visual.prototype.dispose = function() {
-        
+        for(var i in this.templateItems)
+            if(this.templateItems[i] instanceof visual) 
+                this.templateItems[i].dispose();
     };
         
     // virtual
