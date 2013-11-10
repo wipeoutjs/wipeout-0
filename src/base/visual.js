@@ -15,18 +15,8 @@
         var old = context.nodes || [];
         context.nodes = nodes;
         context.rootHtmlChanged(old, nodes);
-        
-        // if jQuery is availiable
-        if(this.$rootHtmlChanged) {
-            this.$rootHtmlChanged(function(selector) {
-                return visual.$(old, selector);
-            }, function(selector) {
-                return visual.$(nodes, selector);
-            });
-        }
     };
     
-    //TODO: placeholder
     visual.prototype.dispose = function() {
         for(var i in this.templateItems)
             if(this.templateItems[i] instanceof visual) 
@@ -36,37 +26,6 @@
     // virtual
     visual.prototype.rootHtmlChanged = function (oldValue, newValue) {
     };
-
-    // add jquery selection if available
-    if(window.jQuery) {
-        
-        var $ = window.jQuery;
-        visual.$ = function(elements, jquerySelector) {
-            if (!elements || !elements.length) {
-                return $();
-            }
-    
-            // select from the root of the template and filter out results which
-            // are not part of this element
-            return $(jquerySelector, elements[0].parentElement).filter(function () {
-                var ancestorTree = $(this).add($(this).parents());
-                for (var i = 0, ii = ancestorTree.length; i < ii; i++) {
-                    if (elements.indexOf(ancestorTree[i]) !== -1)
-                        return true;
-                }
-    
-                return false;
-            });
-        };
-        
-        visual.prototype.$ = function (jquerySelector) {
-            return visual.$(this.nodes, jquerySelector);
-        };
-                
-        // virtual
-        visual.prototype.$rootHtmlChanged = function ($oldValue, $newValue) {            
-        };
-    }
     
     visual.getDefaultTemplateId = (function () {
         var templateId = null;
