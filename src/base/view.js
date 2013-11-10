@@ -32,6 +32,8 @@
     
     //TODO: this is a very basic implementation and it is never used. Extend and implement
     view.prototype.dispose = function() {
+        this._super();
+        
         for(var i in this._bindings)
             this._bindings[i].dispose();
     };

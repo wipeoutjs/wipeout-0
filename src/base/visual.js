@@ -25,6 +25,11 @@
             });
         }
     };
+    
+    //TODO: placeholder
+    visual.prototype.dispose = function() {
+        
+    };
         
     // virtual
     visual.prototype.rootHtmlChanged = function (oldValue, newValue) {

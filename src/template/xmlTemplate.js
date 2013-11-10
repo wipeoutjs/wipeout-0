@@ -7,11 +7,10 @@ wpfko.template = wpfko.template || {};
     var _xmlTemplate = function(xmlTemplate) {
         
         this._builders = [];
-        this._elementsWithId = [];
                 
         xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
-        this._addBuilders(xmlTemplate);
+        this.viewModelBuilder = new wpfko.template.viewModelBuilder(xmlTemplate);
         this.render = wpfko.template.xmlTemplate.generateRender(xmlTemplate);
     }
     
@@ -22,60 +21,28 @@ wpfko.template = wpfko.template || {};
         }        
     };
     
+    //keep
     _xmlTemplate.isCustomElement = function(xmlElement) {
         return xmlElement.nodeType == 1 && wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName.toLowerCase()) === -1;
     };
     
-    _xmlTemplate.prototype.rebuild = function(subject) {
-        for(var i in subject.templateItems) {
-            if(subject.templateItems[i].dispose) {
-                subject.templateItems[i].dispose();
+    //keep
+    _xmlTemplate.getId = function(xmlElement) {
+        for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
+            if(xmlElement.attributes[i].nodeName === "id") {
+                return xmlElement.attributes[i].value;
             }
-            
-            delete subject.templateItems[i];
         }
         
-        for(var i = 0, ii = this._builders.length; i < ii; i++) {
-            this._builders[i](subject);
-        }
+        return null;
+    };
+    
+    _xmlTemplate.prototype.rebuild = function(subject) {
+        this.viewModelBuilder.rebuild(subject);
     };
     
     _xmlTemplate.prototype.addReferencedElements = function(subject, renderedHtml) {
-        
-        enumerate(this._elementsWithId, function(id) {
-            // normalize, input vals will be in an array, not html tree
-            var current = {
-                childNodes: renderedHtml
-            };
-            
-            // get target node using psuedo xPath
-            enumerate(id.split("."), function(val, i) {
-                current = current.childNodes[parseInt(val)];
-            });
-            
-            if(!current.id) throw "Unexpected exception, could not find element id";
-            subject.templateItems[current.id] = current;
-        });
-    }
-    
-    _xmlTemplate.prototype._addBuilders = function(xmlTemplate, itemPrefix) {
-        if(itemPrefix) itemPrefix += ".";
-        else itemPrefix = "";
-        enumerate(xmlTemplate.childNodes, function(child, i) {
-            if(_xmlTemplate.isCustomElement(child)) {
-                var id = _xmlTemplate.getId(child) || (itemPrefix + i);
-                this._builders.push(function(obj) {
-                    obj.templateItems[id] = wpfko.util.obj.createObject(child.nodeName);
-                    obj.templateItems[id].initialize(child);
-                });
-            } else if(child.nodeType == 1) {
-                // if the element has an id, record it so that it can be appended during the building of the object
-                if(_xmlTemplate.getId(child))
-                    this._elementsWithId.push(itemPrefix + i);
-                
-                this._addBuilders(child, itemPrefix + i);
-            } // non elements have no place here but we do want to enumerate over them to keep index in sync
-        }, this);
+        this.viewModelBuilder.addReferencedElements(subject, renderedHtml);
     };
     
     _xmlTemplate.elementHasModelBinding = function(element) {
@@ -103,16 +70,6 @@ wpfko.template = wpfko.template || {};
         }
         
         return current instanceof Function;
-    };
-    
-    _xmlTemplate.getId = function(xmlElement) {
-        for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
-            if(xmlElement.attributes[i].nodeName === "id") {
-                return xmlElement.attributes[i].value;
-            }
-        }
-        
-        return null;
     };
     
     _xmlTemplate.generateRender = function(xmlTemplate) {
