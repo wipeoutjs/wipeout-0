@@ -154,6 +154,7 @@ wpfko.template = wpfko.template || {};
                             contexts.push(bindingContext);
                             bindingContext = rendered.bindingContext;
                         } else {
+                            // empty rendered.bindingContext signifies we revert to the parent binding context
                             bindingContext = contexts.pop();
                         }
                     } else {                    
@@ -183,23 +184,25 @@ wpfko.template = wpfko.template || {};
     
     var reserved = ["constructor", "id"];
     
-    _xmlTemplate.renderChildFromMemo = function(memo, bindingContext) {
+    _xmlTemplate.renderChildFromMemo = function(bindingContext) {
         
-        var comment1 = document.createComment(' ko ');
-        var comment2 = document.createComment(' /ko ');
-        var p = parentElement(memo);
-        ko.virtualElements.insertAfter(p, comment1, memo);
-        ko.virtualElements.insertAfter(p, comment2, comment1);
+        return ko.memoization.memoize(function(memo) { 
+            var comment1 = document.createComment(' ko ');
+            var comment2 = document.createComment(' /ko ');
+            var p = parentElement(memo);
+            ko.virtualElements.insertAfter(p, comment1, memo);
+            ko.virtualElements.insertAfter(p, comment2, comment1);
+                
+            var acc = function() {
+                return bindingContext.$data;
+            };
             
-        var acc = function() {
-            return bindingContext.$data;
-        };
-        
-        wpfko.ko.bindings.renderChild.init(comment1, acc, acc, ko.utils.unwrapObservable(bindingContext.$data), bindingContext);
-        wpfko.ko.bindings.renderChild.update(comment1, acc, acc, ko.utils.unwrapObservable(bindingContext.$data), bindingContext);
-        
-        comment1.parentElement.removeChild(comment1);
-        comment2.parentElement.removeChild(comment2);
+            wpfko.ko.bindings.renderChild.init(comment1, acc, acc, ko.utils.unwrapObservable(bindingContext.$data), bindingContext);
+            wpfko.ko.bindings.renderChild.update(comment1, acc, acc, ko.utils.unwrapObservable(bindingContext.$data), bindingContext);
+            
+            comment1.parentElement.removeChild(comment1);
+            comment2.parentElement.removeChild(comment2);
+        });
     };
     
     _xmlTemplate.bindToDefaultModel = function(bindingContext) {
@@ -265,7 +268,7 @@ wpfko.template = wpfko.template || {};
                 
                 recursive(child);
                 // do not use binding context from memo, use context passed in when memo is created (from create javascript evaluator block)
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("ko.memoization.memoize(function(memo) { wpfko.template.xmlTemplate.renderChildFromMemo(memo, bindingContext); })"));
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(_xmlTemplate.renderChildFromMemo));
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(_xmlTemplate.emptySwitchBindingContext));
                 
             } else if(child.nodeType == 1) {
