@@ -16,7 +16,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
     var createValueAccessor = function(oldValueAccessor) {
         return function () {
             var child = oldValueAccessor();
-            var _child = ko.utils.unwrapObservable(child);
+            var _child = wpfko.util.ko.peek(child);
             return {
                 name: _child ? _child.templateId : "",
                 data: child || {},
