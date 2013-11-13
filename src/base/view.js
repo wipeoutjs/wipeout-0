@@ -37,24 +37,39 @@
             this._bindings[i].dispose();
     };
     
-    view.prototype.bind = function(property, valueAccessor) {
+    view.prototype.bind = function(property, valueAccessor, valueSetter /*optional*/) {
+        
+        if(valueSetter && !ko.isObservable(this[property]))
+           throw 'Two way bindings must be between 2 observables';
+           
         if(this._bindings[property]) {
             this._bindings[property].dispose();
             delete this._bindings[property];
         }
         
-        var toBind = ko.computed(valueAccessor);
+        var toBind = ko.computed({ read: valueAccessor, write: valueSetter});
         
         setObservable(this, property, toBind.peek());
-        var subscription = toBind.subscribe(function(newVal) {
+        var subscription1 = toBind.subscribe(function(newVal) {
             setObservable(this, property, newVal);
         }, this);
+        debugger;
+        var subscription2 = valueSetter && ko.isObservable(this[property]) ?
+            this[property].subscribe(function(newVal) {
+                setObservable({x: toBind}, "x", newVal);
+            }, this) :
+            null;
         
         this._bindings[property] = {
             dispose: function() {
-                if(subscription) {
-                    subscription.dispose();
-                    subscription = null;
+                if(subscription1) {
+                    subscription1.dispose();
+                    subscription1 = null;
+                }
+                
+                if(subscription2) {
+                    subscription2.dispose();
+                    subscription2 = null;
                 }
                 
                 if(toBind) {

@@ -10,7 +10,6 @@
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
     });
     
-    // knockout specific function. The "this" will be window and the context object will be the instance
     visual._afterRendered = function(nodes, context) {
         var old = context.nodes || [];
         context.nodes = nodes;

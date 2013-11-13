@@ -20,7 +20,7 @@ wpfko.template = wpfko.template || {};
     htmlBuilder.elementHasModelBinding = function(element) {
         
         for(var i = 0, ii = element.attributes.length; i < ii; i++) {
-            if(element.attributes[i].nodeName === "model")
+            if(element.attributes[i].nodeName === "model" || element.attributes[i].nodeName === "model-tw")
                 return true;
         }
         
@@ -99,7 +99,7 @@ wpfko.template = wpfko.template || {};
         };
     };
     
-    var reserved = ["constructor", "id"];
+    var reserved = ["constructor", "constructor-tw", "id","id-tw"];
     
     htmlBuilder.renderChildFromMemo = function(bindingContext) {
         
@@ -149,8 +149,14 @@ wpfko.template = wpfko.template || {};
         var addBindingAttributes = function(attr) {
             // reserved
             if(reserved.indexOf(attr.nodeName) !== -1) return;
-            //TODO: dispose of bindings
-            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("(function() { $data.bind('" + attr.nodeName + "', function() { return ko.utils.unwrapObservable(" + attr.value + "); }); return ''; })()"));
+            
+            var name = attr.nodeName, setter = "";
+            if(name.indexOf("-tw") === attr.nodeName.length - 3) {
+                name = name.substr(0, name.length - 3);
+                setter = ", function(val) { debugger; if(!ko.isObservable(" + attr.value + ")) throw 'Two way bindings must be between 2 observables'; " + attr.value + "(val); }"
+            }
+            
+            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("(function() { $data.bind('" + name + "', function() { return ko.utils.unwrapObservable(" + attr.value + "); }" + setter + "); return ''; })()"));
         };
         
         var addBindings = function(element) {
