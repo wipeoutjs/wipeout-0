@@ -34,7 +34,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
     };
             
     ko.bindingHandlers.itemsControl = {};
-    ko.virtualElements.allowedBindings.itemsControl = true; //TODO: this will break it
+    ko.virtualElements.allowedBindings.itemsControl = true;
     for(var i in wpfko.ko.bindings.itemsControl) {
         if(i !== "utils") {
             ko.bindingHandlers.itemsControl[i] = wpfko.ko.bindings.itemsControl[i];

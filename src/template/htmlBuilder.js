@@ -102,7 +102,6 @@ wpfko.template = wpfko.template || {};
     var reserved = ["constructor", "constructor-tw", "id","id-tw"];
     
     htmlBuilder.renderChildFromMemo = function(bindingContext) {
-        
         return ko.memoization.memoize(function(memo) { 
             var comment1 = document.createComment(' ko ');
             var comment2 = document.createComment(' /ko ');
@@ -190,7 +189,6 @@ wpfko.template = wpfko.template || {};
                 };
                 
                 recursive(child);
-                // do not use binding context from memo, use context passed in when memo is created (from create javascript evaluator block)
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.renderChildFromMemo));
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.emptySwitchBindingContext));
                 
