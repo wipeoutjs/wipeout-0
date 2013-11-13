@@ -45,7 +45,7 @@
                     <wo.contentControl model="$parent.model().item">
                         <template>
                             <wo.contentControl model="$parent.model().value">
-                                <supplimentaryProp constructor="childView" value-tw="model">
+                                <supplimentaryProp constructor="childView" model-tw="$parent.model" value-tw="model">
                                     <template>
                                         <input type="text" data-bind="value: value"></input>
                                     </template>

@@ -4,16 +4,6 @@
     var i= ko.bindingHandlers.template.init;
     var u= ko.bindingHandlers.template.update;
     
-    /**ko.bindingHandlers.template.init = function(){
-        debugger;
-        return i.apply(this, arguments);
-    };
-    
-    ko.bindingHandlers.template.update = function(){
-        debugger;
-        return u.apply(this, arguments);
-    };/**/
-    
     childView = wpfko.base.contentControl.extend(function() {
         this._super();
         this.value = ko.observable("initial");

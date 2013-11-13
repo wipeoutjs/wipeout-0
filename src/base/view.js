@@ -53,7 +53,7 @@
         var subscription1 = toBind.subscribe(function(newVal) {
             setObservable(this, property, newVal);
         }, this);
-        debugger;
+        
         var subscription2 = valueSetter && ko.isObservable(this[property]) ?
             this[property].subscribe(function(newVal) {
                 setObservable({x: toBind}, "x", newVal);
