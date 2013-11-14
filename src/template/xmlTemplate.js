@@ -8,6 +8,11 @@ wpfko.template = wpfko.template || {};
                 
         xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
+        if(xmlTemplate.firstChild.nodeName === "parsererror") {
+			var ser = new XMLSerializer();
+			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
+		}
+        
         this.viewModelBuilder = new wpfko.template.viewModelBuilder(xmlTemplate);
         this.htmlBuilder = new wpfko.template.htmlBuilder(xmlTemplate);
     }

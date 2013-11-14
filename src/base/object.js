@@ -40,16 +40,23 @@ wpfko.base = wpfko.base || {};
             
             // find the first instance of the current method in inheritance tree
             for(var i = 0, ii = inheritanceTree.length; i < ii; i++) {
-                for(var j in inheritanceTree[i]) {
-                    if(inheritanceTree[i][j] === arguments.callee.caller) {
-                        // map the current method to the method it overrides
-                        cachedSuperMethods.push({
-                            parent: inheritanceTree[i - 1][j],
-                            child: arguments.callee.caller
-                        });
+                for(var method in inheritanceTree[i]) {
+                    if(inheritanceTree[i][method] === arguments.callee.caller) {
                         
-                        // cache for the next time this is called
-                        cached = inheritanceTree[i - 1][j];
+                        for(var j = i - 1; j >= 0; j--) {
+                            if(inheritanceTree[j][method] !== arguments.callee.caller) {
+                                cached = inheritanceTree[j][method];
+                                
+                                // map the current method to the method it overrides
+                                cachedSuperMethods.push({
+                                    parent: cached,
+                                    child: arguments.callee.caller
+                                });
+                                
+                                break;
+                            }
+                        }
+                        
                         break;
                     }
                 }
