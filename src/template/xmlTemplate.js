@@ -8,7 +8,7 @@ wpfko.template = wpfko.template || {};
                 
         xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
         
-        if(xmlTemplate.firstChild.nodeName === "parsererror") {
+        if(xmlTemplate.firstChild && xmlTemplate.firstChild.nodeName === "parsererror") {
 			var ser = new XMLSerializer();
 			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
 		}
@@ -37,8 +37,8 @@ wpfko.template = wpfko.template || {};
         return html;
     };
     
-    xmlTemplate.prototype.rebuild = function(subject) {
-        this.viewModelBuilder.rebuild(subject);
+    xmlTemplate.prototype.rebuild = function(bindingContext) {
+        this.viewModelBuilder.rebuild(bindingContext);
     };
     
     wpfko.template.xmlTemplate = xmlTemplate;

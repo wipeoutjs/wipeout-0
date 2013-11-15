@@ -34,9 +34,9 @@ wpfko.template = wpfko.template || {};
         enumerate(xmlTemplate.childNodes, function(child, i) {
             if(wpfko.template.xmlTemplate.isCustomElement(child)) {
                 var id = wpfko.template.xmlTemplate.getId(child) || (itemPrefix + i);
-                this._builders.push(function(obj) {
-                    obj.templateItems[id] = wpfko.util.obj.createObject(child.nodeName);
-                    obj.templateItems[id].initialize(child);
+                this._builders.push(function(bindingContext) {
+                    bindingContext.$data.templateItems[id] = wpfko.util.obj.createObject(child.nodeName);
+                    bindingContext.$data.templateItems[id].initialize(child);
                 });
             } else if(child.nodeType == 1) {
                 // if the element has an id, record it so that it can be appended during the building of the object
@@ -48,17 +48,17 @@ wpfko.template = wpfko.template || {};
         }, this);
     };    
     
-    viewModelBuilder.prototype.rebuild = function(subject) {
-        for(var i in subject.templateItems) {
-            if(subject.templateItems[i] instanceof wpfko.base.visual) {
-                subject.templateItems[i].dispose();
+    viewModelBuilder.prototype.rebuild = function(bindingContext) {
+        for(var i in bindingContext.$data.templateItems) {
+            if(bindingContext.$data.templateItems[i] instanceof wpfko.base.visual) {
+                bindingContext.$data.templateItems[i].dispose();
             }
             
-            delete subject.templateItems[i];
+            delete bindingContext.$data.templateItems[i];
         }
         
         for(var i = 0, ii = this._builders.length; i < ii; i++) {
-            this._builders[i](subject);
+            this._builders[i](bindingContext);
         }
     };
     
