@@ -80,7 +80,7 @@
         };
     };
     
-    view.prototype.initialize = function(propertiesXml) {
+    view.prototype.initialize = function(propertiesXml, bindingContext) {
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
         
@@ -115,7 +115,7 @@
                 }
             } else {
                 var val = wpfko.util.obj.createObject(type);
-                val.initialize(child);
+                val.initialize(child, bindingContext.createChildContext(val));
                 
                 if(ko.isObservable(this[child.nodeName])) {
                     this[child.nodeName](val);       

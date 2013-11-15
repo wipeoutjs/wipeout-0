@@ -36,7 +36,7 @@ wpfko.template = wpfko.template || {};
                 var id = wpfko.template.xmlTemplate.getId(child) || (itemPrefix + i);
                 this._builders.push(function(bindingContext) {
                     bindingContext.$data.templateItems[id] = wpfko.util.obj.createObject(child.nodeName);
-                    bindingContext.$data.templateItems[id].initialize(child);
+                    bindingContext.$data.templateItems[id].initialize(child, bindingContext.createChildContext(bindingContext.$data.templateItems[id]));
                 });
             } else if(child.nodeType == 1) {
                 // if the element has an id, record it so that it can be appended during the building of the object
