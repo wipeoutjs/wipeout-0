@@ -20,7 +20,14 @@
         }, this);
         
         this._bindings = {};
-    });
+    });    
+    
+    var enumerate = function(items, callback, context) {
+        
+        for(var i = 0, ii = items.length; i < ii; i++) {
+            callback.call(context, items[i], i);
+        }        
+    };
     
     var setObservable = function(obj, property, value) {
         if(ko.isObservable(obj[property])) {
@@ -87,9 +94,7 @@
         if(!propertiesXml)
             return;
         
-        for (var i = 0, ii = propertiesXml.children.length; i < ii; i++) {
-            
-            var child = propertiesXml.children[i];  
+        enumerate(propertiesXml.children, function(child, i) {
             
             // default
             var type = "string";
@@ -123,7 +128,7 @@
                     this[child.nodeName] = val;       
                 }     
             }
-        }
+        }, this);
     };
     
     view.objectParser = {
