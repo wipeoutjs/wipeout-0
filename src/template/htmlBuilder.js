@@ -140,25 +140,7 @@ wpfko.template = wpfko.template || {};
         enumerate(xmlTemplate.childNodes, function(child, i) {            
             if(wpfko.template.xmlTemplate.isCustomElement(child)) {     
                 var id = wpfko.template.xmlTemplate.getId(child) || (itemPrefix + i);
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.switchBindingContextToTemplateItem(id)));
-                 
-                var recursive = function(element) {
-                    enumerate(element.children, function(element) {  
-                        var constructorOk = false;
-                        enumerate(element.attributes, function(attr) {
-                            //TODO: and is not complex type
-                            constructorOk |= attr.nodeName === "constructor" && htmlBuilder.constructorExists(attr.value);
-                        });
-                        
-                        if(constructorOk) {
-                            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock("new wpfko.template.switchBindingContext(bindingContext.createChildContext(wpfko.util.ko.peek(" + element.nodeName + ")))"));
-                            enumerate(element.children, recursive);
-                            result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.emptySwitchBindingContext));
-                        }
-                    });                                
-                };
-                
-                recursive(child);
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.switchBindingContextToTemplateItem(id)));                
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.renderChildFromMemo));
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.emptySwitchBindingContext));
                 
