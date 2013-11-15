@@ -87,12 +87,32 @@
         };
     };
     
+    //TODO: this is duplicated in htmlBuilder
+    var reserved = ["constructor", "constructor-tw", "id","id-tw"];
+    
     view.prototype.initialize = function(propertiesXml, bindingContext) {
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
         
         if(!propertiesXml)
             return;
+                
+        if(!wpfko.template.htmlBuilder.elementHasModelBinding(propertiesXml) && wpfko.util.ko.peek(this.model) == null) {
+            this.bind('model', function() {  return ko.utils.unwrapObservable(bindingContext.$parent.model); });
+        }
+        
+        enumerate(propertiesXml.attributes, function(attr) {
+            // reserved
+            if(reserved.indexOf(attr.nodeName) !== -1) return;
+            
+            var name = attr.nodeName, setter = "";
+            if(name.indexOf("-tw") === attr.nodeName.length - 3) {
+                name = name.substr(0, name.length - 3);
+                setter = ", function(val) { if(!ko.isObservable(" + attr.value + ")) throw 'Two way bindings must be between 2 observables'; " + attr.value + "(val); }"
+            }
+            
+            wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() { $data.bind('" + name + "', function() { return ko.utils.unwrapObservable(" + attr.value + "); }" + setter + "); return ''; })()")(bindingContext);
+        });
         
         enumerate(propertiesXml.children, function(child, i) {
             

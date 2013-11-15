@@ -7,13 +7,17 @@ wpfko.template = wpfko.template || {};
     var engine = function() { };
     engine.prototype = new ko.templateEngine();
     
+    engine.createJavaScriptEvaluatorFunction = function(script) {
+        return new Function("bindingContext", "with(bindingContext) { with($data) { return " + script + "; } }");
+    }
+    
     engine.createJavaScriptEvaluatorBlock = function(script) {
         var scriptId = engine.newScriptId();
         
         if(script instanceof Function) {
             engine.scriptCache[scriptId] = script;
         } else {        
-            engine.scriptCache[scriptId] = new Function("bindingContext", "with(bindingContext) { with($data) { return " + script + "; } }"); 
+            engine.scriptCache[scriptId] = engine.createJavaScriptEvaluatorFunction(script); 
         }
                
         return engine.openCodeTag + scriptId + engine.closeCodeTag;
