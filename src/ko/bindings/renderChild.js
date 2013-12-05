@@ -6,11 +6,12 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
 (function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        if (!(viewModel instanceof wpfko.base.visual))
-            throw "This binding can only be used on a wo.visual";
+        var child = valueAccessor();
+        if (!(viewModel instanceof wpfko.base.visual) || !(child instanceof wpfko.base.visual))
+            throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
         
         var returnVal = ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
-        viewModel.renderedChildren.push(valueAccessor());
+        viewModel.renderedChildren.push(child);
         return returnVal;
     };
     

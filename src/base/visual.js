@@ -5,9 +5,11 @@
 (function () {
     
     var visual = wpfko.base.object.extend(function (templateId) {
-        this._super();        
+        this._super();
+        
         this.templateItems = {};   
-        this.renderedChildren = [];        
+        this.renderedChildren = [];
+        
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
     });
     
