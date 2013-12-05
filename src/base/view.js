@@ -37,6 +37,10 @@
         }
     };
     
+    // virtual
+    view.prototype.onInitialized = function() {
+    }
+    
     view.prototype.dispose = function() {
         this._super();
         

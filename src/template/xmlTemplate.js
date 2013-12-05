@@ -31,9 +31,13 @@ wpfko.template = wpfko.template || {};
         return null;
     };
     
-    xmlTemplate.prototype.render = function(bindingContext) {
+    xmlTemplate.prototype.render = function(bindingContext) {        
         var html = this.htmlBuilder.render(bindingContext);
         this.viewModelBuilder.addReferencedElements(bindingContext.$data, html);
+            
+        if (bindingContext.$data instanceof wpfko.base.view)
+            bindingContext.$data.onInitialized();
+        
         return html;
     };
     

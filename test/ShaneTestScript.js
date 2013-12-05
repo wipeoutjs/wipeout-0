@@ -4,6 +4,18 @@
     var i= ko.bindingHandlers.template.init;
     var u= ko.bindingHandlers.template.update;
     
+    initializeView = wpfko.base.contentControl.extend(function() {
+        this._super();
+        
+        this.template("<div id='theDiv'>If this text is still here something went wrong</div>");
+    });
+    
+    initializeView.prototype.onInitialized = function() {
+        this._super();
+        this.templateItems.theDiv.innerHTML = this.item1 + " " + this.item2;
+        
+    };
+    
     childView = wpfko.base.contentControl.extend(function() {
         this._super();
         this.value = ko.observable("initial");
@@ -97,7 +109,6 @@ var actions = [
         return "Changed value 4";
     }, function(view) {
         view.model({deepItem:{item:{value:"newModel"}}});
-         return "Swapped out root model";
-     }
-
+        return "Swapped out root model";
+    }
 ];
