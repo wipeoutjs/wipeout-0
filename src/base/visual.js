@@ -6,7 +6,8 @@
     
     var visual = wpfko.base.object.extend(function (templateId) {
         this._super();        
-        this.templateItems = {};        
+        this.templateItems = {};   
+        this.renderedChildren = [];        
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
     });
     
@@ -20,6 +21,10 @@
         for(var i in this.templateItems)
             if(this.templateItems[i] instanceof visual) 
                 this.templateItems[i].dispose();
+        
+        for(var i = 0, ii = this.renderedChildren.length; i < ii; i++)
+            if(this.renderedChildren[i] instanceof visual) 
+                this.renderedChildren[i].dispose();
     };
         
     // virtual
