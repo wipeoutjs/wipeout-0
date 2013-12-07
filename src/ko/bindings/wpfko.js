@@ -8,8 +8,15 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
 
         //TODO: knockout standard way of controling element        
-        //TODO: add optional inline properties to binding        
-        var view = new (valueAccessor())();
+        //TODO: add optional inline properties to binding   
+        var type = valueAccessor();
+        if(!type)
+            throw "Invalid view type";
+            
+        var view = new type();
+        if(!(view instanceof wpfko.base.view))
+            throw "Invalid view type";
+        
         view.model(viewModel);                
         element.__wpfkoView = view;
         
