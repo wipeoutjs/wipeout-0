@@ -26,6 +26,10 @@ wpfko.base = wpfko.base || {};
         }
     }
     
+    event.prototype.dispose = function() {
+        this._registrations.length = 0;
+    }
+    
     event.prototype.register = function(callback, context /* optional */) {
         if(!(callback instanceof Function))
             throw "Invalid event callback";

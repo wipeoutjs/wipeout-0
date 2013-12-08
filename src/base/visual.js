@@ -38,6 +38,12 @@ wpfko.base = wpfko.base || {};
         for(var i = 0, ii = this.renderedChildren.length; i < ii; i++)
             if(this.renderedChildren[i] instanceof visual) 
                 this.renderedChildren[i].dispose();
+        
+        this._rootHtmlElement = null;
+                
+        for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++)
+            this._routedEventSubscriptions[i].event.dispose();        
+        this._routedEventSubscriptions.length = 0;
     };
     
     visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {        
