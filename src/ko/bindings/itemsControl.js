@@ -6,6 +6,9 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
     //TODO: be more accurate in what to render
     //TODO: Dispose of old views
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        if (!(viewModel instanceof wpfko.base.itemsControl))
+            throw "This binding can only be used within the context of a wo.itemsControl";
+                                                                                                   
         ko.virtualElements.emptyNode(element);
         var items = viewModel.items();
         for(var i = items.length - 1; i >= 0; i--) {

@@ -6,7 +6,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
 (function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        var child = valueAccessor();
+        var child = wpfko.util.ko.peek(valueAccessor());
         if (!(viewModel instanceof wpfko.base.visual) || !(child instanceof wpfko.base.visual))
             throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
         

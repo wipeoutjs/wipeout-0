@@ -20,10 +20,17 @@
     };
     
     visual.prototype.dispose = function() {
+        // dispose of any computeds
+        for(var i in this)
+            if(ko.isObservable(this[i]) && this[i].dispose instanceof Function)
+                this[i].dispose();
+        
+        // dispose of all template items
         for(var i in this.templateItems)
             if(this.templateItems[i] instanceof visual) 
                 this.templateItems[i].dispose();
         
+        // dispose of all rendered children
         for(var i = 0, ii = this.renderedChildren.length; i < ii; i++)
             if(this.renderedChildren[i] instanceof visual) 
                 this.renderedChildren[i].dispose();
