@@ -12,8 +12,9 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         
         if(child._rootHtmlElement)
             throw "This visual has already been rendered";
-        
+                
         var returnVal = ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
+        ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
         child._rootHtmlElement = element;
         viewModel.renderedChildren.push(child);
         return returnVal;

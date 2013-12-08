@@ -1,6 +1,6 @@
 
-    var wpfko = wpfko || {};
-    wpfko.base = wpfko.base || {};
+var wpfko = wpfko || {};
+wpfko.base = wpfko.base || {};
 
 (function () {
     
@@ -11,6 +11,8 @@
         this.renderedChildren = [];
         
         this._rootHtmlElement = null;
+        
+        this._routedEventSubscriptions = [];
         
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
     });
@@ -36,6 +38,54 @@
         for(var i = 0, ii = this.renderedChildren.length; i < ii; i++)
             if(this.renderedChildren[i] instanceof visual) 
                 this.renderedChildren[i].dispose();
+    };
+    
+    visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {        
+        for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
+            if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
+                this._routedEventSubscriptions[i].event.unRegister(callback, context);
+                return;
+            }
+        }  
+    };
+    
+    visual.prototype.registerRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {
+        
+        var rev;
+        for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
+            if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
+                rev = this._routedEventSubscriptions[i];
+                break;
+            }
+        }
+        
+        if(!rev) {
+            rev = new wpfko.base.routedEventRegistration(routedEvent);
+            this._routedEventSubscriptions.push(rev);
+        }
+        
+        rev.event.register(callback, callbackContext);
+    };
+    
+    visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {        
+        for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
+            if(eventArgs.handled) return;
+            if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
+                this._routedEventSubscriptions[i].event.trigger(eventArgs);
+            }
+        }
+        
+        if(!eventArgs.handled) {
+            var nextTarget;
+            var current = this._rootHtmlElement.parentElement;
+            while(current) {
+                if(nextTarget = ko.utils.domData.get(current, wpfko.ko.bindings.wpfko.utils.wpfkoKey)) {
+                    nextTarget.triggerRoutedEvent(routedEvent, eventArgs);
+                }
+                
+                current = current.parentElement;
+            }
+        }
     };
         
     // virtual

@@ -24,6 +24,8 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         view.model(viewModel);                
         ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, view);
         
+        view._rootHtmlElement = element;
+        
         var output = ko.bindingHandlers.template.init.call(this, element, createValueAccessor(view), allBindingsAccessor, viewModel, bindingContext);
         ko.bindingHandlers.template.update.call(this, element, createValueAccessor(view), allBindingsAccessor, viewModel, bindingContext);
         return output;

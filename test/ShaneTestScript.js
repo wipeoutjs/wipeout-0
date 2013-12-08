@@ -1,8 +1,7 @@
 
 (function () {
     
-    var i= ko.bindingHandlers.template.init;
-    var u= ko.bindingHandlers.template.update;
+    aRoutedEvent = new wo.routedEvent();
     
     initializeView = wpfko.base.contentControl.extend(function() {
         this._super();
@@ -25,6 +24,8 @@
         this._super("rootView");
         
         this.justDone = ko.observable("");
+        
+        this.registerRoutedEvent(aRoutedEvent, function() { this.templateItems.routedEvent.innerHTML = "routed event caught"; }, this);
     });
     
     rootView.prototype.next = function() {
@@ -63,6 +64,9 @@
 
 var actions = [
     function(view) {
+        view.templateItems.listTest.templateItems.theInnerItemsControl.items()[0].triggerRoutedEvent(aRoutedEvent, {});
+        return "Triggered routed event";
+    }, function(view) {
         view.templateItems.NestedDiv.innerHTML = "this is the nested div";
         return "Added text to nested div";
     }, function(view) {
