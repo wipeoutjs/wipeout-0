@@ -74,7 +74,7 @@ var actions = [
     }, function(view) {
         //TODO: doesn't work. itemsControl binding re-templates when things are moved
         view.templateItems.listTest.templateItems.theInnerItemsControl.items()[0].templateItems.stampMe.innerHTML = "stamped template";
-        return "Stamp a person view template. DOESN'T WORK!!";
+        return "Stamp a person view template.";
     }, function(view) {
         view.model().items.reverse()
         return "Reordered people";

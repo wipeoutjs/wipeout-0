@@ -10,7 +10,11 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         if (!(viewModel instanceof wpfko.base.visual) || !(child instanceof wpfko.base.visual))
             throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
         
+        if(child._rootHtmlElement)
+            throw "This visual has already been rendered";
+        
         var returnVal = ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
+        child._rootHtmlElement = element;
         viewModel.renderedChildren.push(child);
         return returnVal;
     };

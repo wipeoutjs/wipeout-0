@@ -10,6 +10,8 @@
         this.templateItems = {};   
         this.renderedChildren = [];
         
+        this._rootHtmlElement = null;
+        
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
     });
     

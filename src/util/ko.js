@@ -29,7 +29,7 @@
         parentElement: function(element) {
             var current = element.previousSibling;
             while(current) {
-                if(current.nodeType === 8 && current.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0) {
+                if(_ko.virtualElements.isVirtual(current)) {
                     return current;
                 }
                 
@@ -37,6 +37,32 @@
             }
             
             return element.parentElement;
+        },
+        isVirtual: function(node) {
+            return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0;
+        },
+        isVirtualClosing: function(node) {
+            return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'') === "/ko";
+        },
+        elementWithChildren: function(element) {
+            if(!element) return [];
+            
+            if(!_ko.virtualElements.isVirtual(element)) return [element];
+            
+            var output = [element];
+            var depth = 1;
+            var current = element.nextSibling;
+            while (depth > 0) {
+                output.push(current);
+                if(_ko.virtualElements.isVirtualClosing(current))
+                    depth--;                
+                else if(_ko.virtualElements.isVirtual(current))
+                    depth++;
+                
+                current = current.nextSibling;
+            }            
+            
+            return output;
         }
     };
     

@@ -71,29 +71,29 @@ wpfko.base = wpfko.base || {};
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
         for(var i = 0, ii = changes.length; i < ii; i++) {
-            if(changes[i].status === retained) continue;
-                if(changes[i].status === deleted) {
-                    del.push((function(change) {
-                        return function() {
-                            var removed = items.splice(change.index + delPadIndex, 1)[0];
-                            if(change.moved != null)
-                                move[change.moved + "." + change.index] = removed;
-                            else
-                                removed.dispose();
-                            
-                            delPadIndex--;
-                        };
-                    })(changes[i]));
-                } else if(changes[i].status === added) {
-                    add.push((function(change) {
-                        return function() {
-                            var added = change.moved != null ? move[change.index + "." + change.moved] : new wpfko.base.view(this.itemTemplateId(), change.value);
-                            items.splice(change.index, 0, added);
-                        };
-                    })(changes[i]));
-                } else {
-                    throw "Unsupported status";
-                }
+            if(changes[i].status === retained) continue;            
+            else if(changes[i].status === deleted) {
+                del.push((function(change) {
+                    return function() {
+                        var removed = items.splice(change.index + delPadIndex, 1)[0];
+                        if(change.moved != null)
+                            move[change.moved + "." + change.index] = removed;
+                        else
+                            removed.dispose();
+                        
+                        delPadIndex--;
+                    };
+                })(changes[i]));
+            } else if(changes[i].status === added) {
+                add.push((function(change) {
+                    return function() {
+                        var added = change.moved != null ? move[change.index + "." + change.moved] : new wpfko.base.view(this.itemTemplateId(), change.value);
+                        items.splice(change.index, 0, added);
+                    };
+                })(changes[i]));
+            } else {
+                throw "Unsupported status";
+            }
         }
         
         for(i = 0, ii = del.length; i < ii; i++) {
