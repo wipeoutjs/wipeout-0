@@ -9,16 +9,20 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
 
         //TODO: knockout standard way of controling element        
         //TODO: add optional inline properties to binding   
+        
+        if(ko.utils.domData.get(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey))
+            throw "This element is already bound to another model";
+        
         var type = valueAccessor();
         if(!type)
             throw "Invalid view type";
             
         var view = new type();
         if(!(view instanceof wpfko.base.view))
-            throw "Invalid view type";
+            throw "Invalid view type";        
         
         view.model(viewModel);                
-        element.__wpfkoView = view;
+        ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, view);
         
         var output = ko.bindingHandlers.template.init.call(this, element, createValueAccessor(view), allBindingsAccessor, viewModel, bindingContext);
         ko.bindingHandlers.template.update.call(this, element, createValueAccessor(view), allBindingsAccessor, viewModel, bindingContext);
@@ -34,11 +38,12 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
             };
         };
     };
-    
+     
     wpfko.ko.bindings.wpfko = {
         init: init,
         utils: {
-            createValueAccessor: createValueAccessor
+            createValueAccessor: createValueAccessor,
+            wpfkoKey: "__wpfko"
         }
     };
             
