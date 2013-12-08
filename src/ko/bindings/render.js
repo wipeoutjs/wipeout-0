@@ -13,7 +13,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         if(child._rootHtmlElement)
             throw "This visual has already been rendered";
                 
-        var returnVal = ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
+        var returnVal = ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
         ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
         child._rootHtmlElement = element;
         viewModel.renderedChildren.push(child);
@@ -21,7 +21,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        return ko.bindingHandlers.template.update.call(this, element, wpfko.ko.bindings.renderChild.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
+        return ko.bindingHandlers.template.update.call(this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
     };    
     
     var createValueAccessor = function(oldValueAccessor) {
@@ -36,7 +36,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         };
     };
     
-    wpfko.ko.bindings.renderChild = {
+    wpfko.ko.bindings.render = {
         init: init,
         update: update,
         utils: {
@@ -44,11 +44,17 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         }
     };
             
-    ko.bindingHandlers.renderChild = {};
-    ko.virtualElements.allowedBindings.renderChild = false; //TODO: this
-    for(var i in wpfko.ko.bindings.renderChild) {
+    ko.bindingHandlers.render = {};
+    ko.virtualElements.allowedBindings.render = false; //TODO: this
+    for(var i in wpfko.ko.bindings.render) {
         if(i !== "utils") {
-            ko.bindingHandlers.renderChild[i] = wpfko.ko.bindings.renderChild[i];
+            ko.bindingHandlers.render[i] = wpfko.ko.bindings.render[i];
         }
     };
+    
+    // backwards compatibility
+    ko.bindingHandlers.renderChild = {
+        init: ko.bindingHandlers.render.init,
+        update: ko.bindingHandlers.render.update
+    }
 })();

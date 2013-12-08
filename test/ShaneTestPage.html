@@ -34,7 +34,7 @@
                             </div>
                         </itemTemplate>
                     </wo.itemsControl>
-                    <div data-bind="renderChild: totals"></div>
+                    <div data-bind="render: totals"></div>
                 </template>
                 <totals constructor="wo.contentControl">
                     <template>
@@ -56,7 +56,7 @@
                                 </supplimentaryProp>
                                 <template>
                                     <div data-bind="html: model"></div>
-                                    <div data-bind="renderChild: supplimentaryProp"></div>
+                                    <div data-bind="render: supplimentaryProp"></div>
                                 </template>
                             </wo.contentControl>
                         </template>

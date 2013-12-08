@@ -101,7 +101,7 @@ wpfko.template = wpfko.template || {};
     
     var reserved = ["constructor", "constructor-tw", "id","id-tw"];
     
-    htmlBuilder.renderChildFromMemo = function(bindingContext) {
+    htmlBuilder.renderFromMemo = function(bindingContext) {
         return ko.memoization.memoize(function(memo) { 
             var comment1 = document.createComment(' ko ');
             var comment2 = document.createComment(' /ko ');
@@ -113,9 +113,9 @@ wpfko.template = wpfko.template || {};
                 return bindingContext.$data;
             };
             
-            // renderChildFromMemo can only derive the parent/child from the binding context
-            wpfko.ko.bindings.renderChild.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext);
-            wpfko.ko.bindings.renderChild.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext);
+            // renderFromMemo can only derive the parent/child from the binding context
+            wpfko.ko.bindings.render.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext);
+            wpfko.ko.bindings.render.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext);
             
             comment1.parentElement.removeChild(comment1);
             comment2.parentElement.removeChild(comment2);
@@ -142,7 +142,7 @@ wpfko.template = wpfko.template || {};
             if(wpfko.template.xmlTemplate.isCustomElement(child)) {     
                 var id = wpfko.template.xmlTemplate.getId(child) || (itemPrefix + i);
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.switchBindingContextToTemplateItem(id)));                
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.renderChildFromMemo));
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.renderFromMemo));
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.emptySwitchBindingContext));
                 
             } else if(child.nodeType == 1) {

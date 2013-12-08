@@ -22,8 +22,8 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
                 };
             })(i);
             
-            wpfko.ko.bindings.renderChild.init(container.open, acc, acc, viewModel, bindingContext);
-            wpfko.ko.bindings.renderChild.update(container.open, acc, acc, viewModel, bindingContext);
+            wpfko.ko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
+            wpfko.ko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
         }
         
         // todo, v3 if available
@@ -85,8 +85,8 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
                                         };
                                     })(i);
                                     
-                                    wpfko.ko.bindings.renderChild.init(container.open, acc, acc, viewModel, bindingContext);
-                                    wpfko.ko.bindings.renderChild.update(container.open, acc, acc, viewModel, bindingContext);
+                                    wpfko.ko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
+                                    wpfko.ko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
                                 }
                             };
                         })(changes[i]));
