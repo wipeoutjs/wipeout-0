@@ -50,6 +50,9 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
                                     elements[j].parentElement.removeChild(elements[j]);
                                 }
                                 
+                                if(change.moved == null)
+                                    change.value.dispose();
+                                
                                 delPadIndex--;
                             };
                         })(changes[i]));

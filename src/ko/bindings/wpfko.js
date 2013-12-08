@@ -21,23 +21,16 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         if(!(view instanceof wpfko.base.view))
             throw "Invalid view type";        
         
-        view.model(viewModel);                
-        ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, view);
+        view.model(viewModel);   
         
-        view._rootHtmlElement = element;
-        
-        var output = ko.bindingHandlers.template.init.call(this, element, createValueAccessor(view), allBindingsAccessor, viewModel, bindingContext);
-        ko.bindingHandlers.template.update.call(this, element, createValueAccessor(view), allBindingsAccessor, viewModel, bindingContext);
+        var output = ko.bindingHandlers.render.init.call(this, element, createValueAccessor(view), allBindingsAccessor, null, bindingContext);
+        ko.bindingHandlers.render.update.call(this, element, createValueAccessor(view), allBindingsAccessor, null, bindingContext);
         return output;
     };
     
     var createValueAccessor = function(view) {
         return function() {
-            return {
-                data: view,
-                name: view.templateId,
-                afterRender: wpfko.base.visual._afterRendered
-            };
+            return view;
         };
     };
      
