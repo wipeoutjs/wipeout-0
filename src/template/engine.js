@@ -30,7 +30,8 @@ wpfko.template = wpfko.template || {};
     //if it is an anonymous template it will already have been re-written within the template it was defined in
     //TODO: better way of finding anonymous template
     engine.prototype['isTemplateRewritten'] = function (template, templateDocument) {
-        if(template.indexOf("AnonymousTemplate") === 0) 
+        //TODO: not sure why template can be a html element or template id string
+        if(template && template.constructor === String && template.indexOf("AnonymousTemplate") === 0) 
             this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
         
         return ko.templateEngine.prototype.isTemplateRewritten.apply(this, arguments);
