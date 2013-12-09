@@ -25,6 +25,15 @@ wpfko.template = wpfko.template || {};
     
     engine.prototype.createJavaScriptEvaluatorBlock = function(script) {
         return engine.createJavaScriptEvaluatorBlock(script);
+    };    
+    
+    //if it is an anonymous template it will already have been re-written within the template it was defined in
+    //TODO: better way of finding anonymous template
+    engine.prototype['isTemplateRewritten'] = function (template, templateDocument) {
+        if(template.indexOf("AnonymousTemplate") === 0) 
+            this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
+        
+        return ko.templateEngine.prototype.isTemplateRewritten.apply(this, arguments);
     };
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {

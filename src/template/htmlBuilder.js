@@ -114,11 +114,8 @@ wpfko.template = wpfko.template || {};
             };
             
             // renderFromMemo can only derive the parent/child from the binding context
-            wpfko.ko.bindings.render.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext);
-            wpfko.ko.bindings.render.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext);
-            
-            comment1.parentElement.removeChild(comment1);
-            comment2.parentElement.removeChild(comment2);
+            wpfko.ko.bindings.render.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
+            wpfko.ko.bindings.render.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
         });
     };
     
