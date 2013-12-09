@@ -7,19 +7,21 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         var child = wpfko.util.ko.peek(valueAccessor());
-        if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || !(child instanceof wpfko.base.visual))
-            throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
-        
-        if(child._rootHtmlElement)
-            throw "This visual has already been rendered";
-                
-        var returnVal = ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
-        
-        ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
-        child._rootHtmlElement = element;
-        if(viewModel) viewModel.renderedChildren.push(child);
-        
-        return returnVal;
+		if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || (child && !(child instanceof wpfko.base.visual)))
+			throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
+
+		if (child && child._rootHtmlElement)
+			throw "This visual has already been rendered";
+
+		var returnVal = ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
+
+		if (child) {
+			ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
+			child._rootHtmlElement = element;
+			if (viewModel) viewModel.renderedChildren.push(child);
+		}
+
+		return returnVal;
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
