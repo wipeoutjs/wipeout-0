@@ -1,4 +1,3 @@
-
 (function () {
     
     aRoutedEvent = new wo.routedEvent();
@@ -26,6 +25,9 @@
         this.justDone = ko.observable("");
         
         this.registerRoutedEvent(aRoutedEvent, function() { this.templateItems.routedEvent.innerHTML = "routed event caught"; }, this);
+        
+        this.childView = new wo.contentControl();
+        this.childView.template("<div>Child view</div>");
     });
     
     rootView.prototype.next = function() {

@@ -8,8 +8,22 @@
     <div data-bind="wpfko: rootView">
     </div>
     
-    <script id="rootView" type="text/xml">
+    <script id="_rootView" type="text/xml">
         <div style="height: 300px">
+            <h1>Test control</h1>
+            <wo.contentControl id="listTest" xxx="'outer'">
+                <template>
+                    <!-- ko render: totals --><!-- /ko -->
+                </template>
+                <totals constructor="wo.contentControl" xxx="'inner'">
+                    <template>Bla bla</template>
+                </totals>
+            </wo.contentControl>
+        </div>
+    </script> 
+    
+    <script id="rootView" type="text/xml">
+        <div style="height: 500px">
             <h1>Test control</h1>
             <br />
             <div>
@@ -34,7 +48,7 @@
                             </div>
                         </itemTemplate>
                     </wo.itemsControl>
-                    <div data-bind="render: totals"></div>
+                    <!-- ko render: totals --><!-- /ko -->
                 </template>
                 <totals constructor="wo.contentControl">
                     <template>
