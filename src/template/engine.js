@@ -55,7 +55,7 @@ wpfko.template = wpfko.template || {};
         var output;
         
         // wrap in a computed so that observable evaluations will not propogate to the template engine
-        ko.computed(function() {
+        ko.dependentObservable(function() {
             cached.rebuild(bindingContext);
             output = cached.render(bindingContext)
         }, this).dispose();

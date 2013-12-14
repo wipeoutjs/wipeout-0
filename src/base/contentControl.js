@@ -7,7 +7,7 @@ wpfko.base = wpfko.base || {};
     var contentControl = wpfko.base.view.extend(function (templateId) {
         this._super(templateId || wpfko.base.visual.getBlankTemplateId());
 
-        this.template = ko.computed({
+        this.template = ko.dependentObservable({
             read: function () {
                 var script = document.getElementById(this.templateId());
                 return script ? script.textContent : "";

@@ -58,7 +58,7 @@
             delete this._bindings[property];
         }
         
-        var toBind = ko.computed({ read: valueAccessor, write: valueSetter});
+        var toBind = ko.dependentObservable({ read: valueAccessor, write: valueSetter});
         
         setObservable(this, property, toBind.peek());
         var subscription1 = toBind.subscribe(function(newVal) {

@@ -7,6 +7,4 @@ If html element is deleted outside of wo, dispose of its associated view
 Roadmap:
 Big cleanup, unit testing, commenting, disposal of objects/observables, refactoring if needed
 Debug code
-itemsControl binding
-test ko 3 (items control)
 change all ko.computed to ko.dependentObservable

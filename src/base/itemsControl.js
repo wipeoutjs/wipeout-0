@@ -24,7 +24,7 @@ wpfko.base = wpfko.base || {};
             itemsControl.subscribeV3.call(this);
         }
 
-        this.itemTemplate = ko.computed({
+        this.itemTemplate = ko.dependentObservable({
             read: function () {
                 var script = document.getElementById(this.itemTemplateId());
                 return script ? script.textContent : "";
