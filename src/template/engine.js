@@ -73,7 +73,7 @@ wpfko.template = wpfko.template || {};
     engine.scriptCache = {};
     engine.openCodeTag = "<!-- wpfko_code: {"
     engine.closeCodeTag = "} -->";
-    engine.scriptHasBeenReWritten = new RegExp(engine.openCodeTag + "[0-9]+" + engine.closeCodeTag);
+    engine.scriptHasBeenReWritten = RegExp(engine.openCodeTag.replace("{", "\{") + "[0-9]+" + engine.closeCodeTag.replace("}", "\}"));
     
     wpfko.template.engine = engine;    
     ko.setTemplateEngine(new engine());    
