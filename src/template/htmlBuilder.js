@@ -95,7 +95,7 @@ wpfko.template = wpfko.template || {};
                 }
             }
             
-            return ko.utils.parseHtmlFragment(returnVal.join(""));
+            return wpfko.util.html.createElements(returnVal.join(""));
         };
     };
         
@@ -150,7 +150,7 @@ wpfko.template = wpfko.template || {};
                 
                 var html = wpfko.util.html.createElement(ser.serializeToString(ch));
                 html.innerHTML = wpfko.template.htmlBuilder.generateTemplate(child, itemPrefix + i);                
-                result.push(html.outerHTML);
+                result.push(wpfko.util.html.outerHTML(html));
             } else {
                 result.push(ser.serializeToString(child));
             }

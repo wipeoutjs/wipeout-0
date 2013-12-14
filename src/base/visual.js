@@ -83,13 +83,13 @@ wpfko.base = wpfko.base || {};
         
         if(!eventArgs.handled) {
             var nextTarget;
-            var current = this._rootHtmlElement.parentElement;
+            var current = this._rootHtmlElement.parentNode;
             while(current) {
                 if(nextTarget = ko.utils.domData.get(current, wpfko.ko.bindings.wpfko.utils.wpfkoKey)) {
                     nextTarget.triggerRoutedEvent(routedEvent, eventArgs);
                 }
                 
-                current = current.parentElement;
+                current = current.parentNode;
             }
         }
     };

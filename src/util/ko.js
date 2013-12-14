@@ -44,7 +44,7 @@
                 current = current.previousSibling;
             }
             
-            return element.parentElement;
+            return element.parentNode;
         },
         isVirtual: function(node) {
             return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0;

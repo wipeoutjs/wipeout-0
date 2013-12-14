@@ -48,7 +48,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
                             // calculate a second time as value may have been changed by ko.virtualElements.emptyNode()
                             var elements = change.value._rootHtmlElement.__wpfko.allElements();
                             for(var j = 0, jj= elements.length; j< jj; j++) {
-                                elements[j].parentElement.removeChild(elements[j]);
+                                elements[j].parentNode.removeChild(elements[j]);
                             }
                             
                             if(change.moved == null)
