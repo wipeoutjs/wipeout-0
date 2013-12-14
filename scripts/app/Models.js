@@ -1,33 +1,23 @@
 
-$.extend(NS("Wipeout.Docs.ViewModels"), (function() {
+$.extend(NS("Wipeout.Docs.Models"), (function() {
     
-    var application = wo.view.extend(function() {
-        this._super("Wipeout.Docs.Application");
+    var application = wo.object.extend(function() {
+        this.menu = new treeViewBranch("branch 1", [
+                        new treeViewBranch("branch 2", [
+                            new treeViewBranch("branch 3", [{ text: "leaf1"}, {text: "leaf2"}]),
+                            new treeViewBranch("branch 4", [
+                                new treeViewBranch("branch 5", [{text: "leaf3"}, {text: "leaf4"}]),
+                                new treeViewBranch("branch 6", [{text: "leaf5"}, {text: "leaf6"}])
+                            ])
+                        ]),
+                        new treeViewBranch("branch 7", [{text: "leaf7"}, {text: "leaf8"}])
+                    ]);
     });
     
-    var treeViewBranch =  wo.view.extend(function() {
-        this._super(treeViewBranch.nullTemplate);        
+    var treeViewBranch =  wo.object.extend(function(name, branches) {
+        this.name = name;
+        this.branches = branches;
     });
-    
-    treeViewBranch.branchTemplate = "Wipeout.Docs.ViewModels.Components.TreeViewBranch_branch";
-    treeViewBranch.leafTemplate = "Wipeout.Docs.ViewModels.Components.TreeViewBranch_leaf";
-    treeViewBranch.nullTemplate = wo.visual.getBlankTemplateId();
-    
-    treeViewBranch.prototype.modelChanged = function(oldVal, newVal) {
-        this._super(oldVal, newVal);
-        
-        if(newVal && newVal.constructor === Array) {
-            this.templateId(treeViewBranch.branchTemplate);
-        } else if(newVal) {
-            this.templateId(treeViewBranch.leafTemplate);
-        } else {
-            this.templateId(treeViewBranch.nullTemplate);
-        }
-    };
-    
-    treeViewBranch.prototype.toggle = function() {
-        $(this.templateItems.content).toggle();
-    }
     
     var components = {
         TreeViewBranch: treeViewBranch

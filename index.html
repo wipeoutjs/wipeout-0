@@ -12,31 +12,21 @@
         <script type="text/javascript" src="scripts/lib/wipeout-0.2.debug.js"></script>
         
         <script type="text/javascript" src="scripts/app/Utils.js"></script>
+        <script type="text/javascript" src="scripts/app/Models.js"></script>
         <script type="text/javascript" src="scripts/app/ViewModels.js"></script>
             
         <script type="text/javascript">
             $(function() {
-                window.model = {
-                    menu: [
-                        [
-                            [{ text: "leaf1"}, {text: "leaf2"}],
-                            [
-                                [{text: "leaf3"}, {text: "leaf4"}],
-                                [{text: "leaf5"}, {text: "leaf6"}]
-                            ]
-                        ],
-                        [{text: "leaf7"}, {text: "leaf8"}]
-                    ]
-                };
+                window.model = new Wipeout.Docs.Models.Application();
                 ko.applyBindings(window.model);
             });
         </script>
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Components.TreeViewBranch_branch">
-        <wo.itemsControl itemSource="model" toggle="$parent.toggle">
+        <wo.itemsControl itemSource="model().branches" toggle="$parent.toggle">
             <template>
                 <div>
-                    <a href="javascript:void(0)" data-bind="click: toggle">open</a>
+                    <a href="javascript:void(0)" data-bind="click: toggle, text: model().name"></a>
                     <ul data-bind="itemsControl: null" style="display: none" id="content"></ul>
                 </div>
             </template>
