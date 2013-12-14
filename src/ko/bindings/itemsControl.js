@@ -3,8 +3,6 @@ wpfko.ko = wpfko.ko || {};
 wpfko.ko.bindings = wpfko.ko.bindings || {};
 
 (function () {
-    //TODO: be more accurate in what to render
-    //TODO: Dispose of old views
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         if (!(viewModel instanceof wpfko.base.itemsControl))
             throw "This binding can only be used within the context of a wo.itemsControl";
