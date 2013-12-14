@@ -117,7 +117,9 @@
             wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t$data.bind('" + name + "', function() {\n\t\t\t\treturn ko.utils.unwrapObservable(" + attr.value + ");\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
         });
         
-        enumerate(propertiesXml.children, function(child, i) {
+        enumerate(propertiesXml.childNodes, function(child, i) {
+            
+            if(child.nodeType !== 1) return;
             
             // default
             var type = "string";

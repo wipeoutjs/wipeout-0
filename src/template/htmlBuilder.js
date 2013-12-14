@@ -24,8 +24,8 @@ wpfko.template = wpfko.template || {};
                 return true;
         }
         
-        for(var i = 0, ii = element.children.length; i < ii; i++) {
-            if(element.children[i].nodeName === "model")
+        for(var i = 0, ii = element.childNodes.length; i < ii; i++) {
+            if(element.childNodes[i].nodeType === 1 && element.childNodes[i].nodeName === "model")
                 return true;
         }
         
