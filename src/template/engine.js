@@ -8,7 +8,7 @@ wpfko.template = wpfko.template || {};
     engine.prototype = new ko.templateEngine();
     
     engine.createJavaScriptEvaluatorFunction = function(script) {
-        return new Function("bindingContext", "with(bindingContext) { with($data) { return " + script + "; } }");
+        return new Function("bindingContext", "with(bindingContext) {\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
     }
     
     engine.createJavaScriptEvaluatorBlock = function(script) {

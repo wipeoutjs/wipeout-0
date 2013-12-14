@@ -101,7 +101,7 @@
             return;
                 
         if(!wpfko.template.htmlBuilder.elementHasModelBinding(propertiesXml) && wpfko.util.ko.peek(this.model) == null) {
-            this.bind('model', function() {  return ko.utils.unwrapObservable(bindingContext.$parent.model); });
+            this.bind('model', function() { return ko.utils.unwrapObservable(bindingContext.$parent.model); });
         }
         
         enumerate(propertiesXml.attributes, function(attr) {
@@ -111,10 +111,10 @@
             var name = attr.nodeName, setter = "";
             if(name.indexOf("-tw") === attr.nodeName.length - 3) {
                 name = name.substr(0, name.length - 3);
-                setter = ", function(val) { if(!ko.isObservable(" + attr.value + ")) throw 'Two way bindings must be between 2 observables'; " + attr.value + "(val); }"
+                setter = ",\n\t\t\tfunction(val) {\n\t\t\t\tif(!ko.isObservable(" + attr.value + "))\n\t\t\t\t\tthrow 'Two way bindings must be between 2 observables';\n\t\t\t\t" + attr.value + "(val);\n\t\t\t}"
             }
             
-            wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() { $data.bind('" + name + "', function() { return ko.utils.unwrapObservable(" + attr.value + "); }" + setter + "); return ''; })()")(bindingContext);
+            wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t$data.bind('" + name + "', function() {\n\t\t\t\treturn ko.utils.unwrapObservable(" + attr.value + ");\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
         });
         
         enumerate(propertiesXml.children, function(child, i) {
