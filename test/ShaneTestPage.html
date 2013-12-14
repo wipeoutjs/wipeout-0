@@ -9,16 +9,13 @@
     </div>
     
     <script id="_rootView" type="text/xml">
-        <div style="height: 300px">
-            <h1>Test control</h1>
-            <wo.contentControl id="listTest" xxx="'outer'">
-                <template>
-                    <!-- ko render: totals --><!-- /ko -->
-                </template>
-                <totals constructor="wo.contentControl" xxx="'inner'">
-                    <template>Bla bla</template>
-                </totals>
-            </wo.contentControl>
+        <div style="height: 500px">
+            <wo.itemsControl id="theInnerItemsControl" itemSource="$parent.model().items">
+                <itemTemplate>
+                    <!-- ko --><!-- /ko -->
+                    <div>aaa</div>
+                </itemTemplate>
+            </wo.itemsControl>
         </div>
     </script> 
     

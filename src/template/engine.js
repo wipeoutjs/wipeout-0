@@ -27,15 +27,17 @@ wpfko.template = wpfko.template || {};
         return engine.createJavaScriptEvaluatorBlock(script);
     };    
     
-    //if it is an anonymous template it will already have been re-written within the template it was defined in
-    //TODO: better way of finding anonymous template
-    engine.prototype['isTemplateRewritten'] = function (template, templateDocument) {
-        //TODO: not sure why template can be a html element or template id string
-        if(template && template.constructor === String && template.indexOf("AnonymousTemplate") === 0) 
-            this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
+    engine.prototype.isTemplateRewritten = function (template, templateDocument) {
+        //TODO: if template is not a string
+        if(template && template.constructor === String) {
+            var script = document.getElementById(template);
+            if(engine.scriptHasBeenReWritten.test(script.textContent))
+                this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
+        }
         
         return ko.templateEngine.prototype.isTemplateRewritten.apply(this, arguments);
     };
+    
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
         
@@ -64,13 +66,14 @@ wpfko.template = wpfko.template || {};
     engine.newScriptId = (function() {        
         var i = Math.floor(Math.random() * 10000);        
         return function() {
-            return "ScriptId" + (++i);
+            return (++i).toString();
         };
     })();
     
     engine.scriptCache = {};
     engine.openCodeTag = "<!-- wpfko_code: {"
     engine.closeCodeTag = "} -->";
+    engine.scriptHasBeenReWritten = new RegExp(engine.openCodeTag + "[0-9]+" + engine.closeCodeTag);
     
     wpfko.template.engine = engine;    
     ko.setTemplateEngine(new engine());    
