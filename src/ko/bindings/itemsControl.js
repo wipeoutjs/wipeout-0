@@ -28,14 +28,13 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         
         // todo, v3 if available
         viewModel.items.subscribe(function() {
-    var added = "added", deleted = "deleted", retained = "retained";
             try {
                 var changes = ko.utils.compareArrays(items, arguments[0] || []);
                 
                 var del = [], add = [], move = {}, delPadIndex = 0;
                 for(var i = 0, ii = changes.length; i < ii; i++) {
-                    if(changes[i].status === retained) continue;            
-                    else if(changes[i].status === deleted) {
+                    if(changes[i].status === wpfko.util.ko.array.diff.retained) continue;            
+                    else if(changes[i].status === wpfko.util.ko.array.diff.deleted) {
                         del.push((function(change) {
                             return function() {
                                 if(change.moved != null) {
@@ -56,7 +55,7 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
                                 delPadIndex--;
                             };
                         })(changes[i]));
-                    } else if(changes[i].status === added) {
+                    } else if(changes[i].status === wpfko.util.ko.array.diff.added) {
                         add.push((function(change) {
                             return function() {
                                 var index= viewModel.items.indexOf(change.value);

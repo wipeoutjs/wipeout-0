@@ -58,7 +58,7 @@ wpfko.template = wpfko.template || {};
             
             endTag = template.indexOf(close);
             if(endTag === -1) {
-                throw "##"; //TODO
+                throw "Invalid wpfko_code tag.";
             }
             
             result.push((function(scriptId) {
@@ -98,9 +98,7 @@ wpfko.template = wpfko.template || {};
             return ko.utils.parseHtmlFragment(returnVal.join(""));
         };
     };
-    
-    var reserved = ["constructor", "constructor-tw", "id","id-tw"];
-    
+        
     htmlBuilder.renderFromMemo = function(bindingContext) {
         return ko.memoization.memoize(function(memo) { 
             var comment1 = document.createComment(' ko ');

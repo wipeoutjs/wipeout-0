@@ -25,6 +25,14 @@
             return input;
     };
     
+    _ko.array = {
+        diff: {
+            added: "added", 
+            deleted: "deleted",
+            retained: "retained"
+        }
+    };
+    
     _ko.virtualElements = {
         parentElement: function(element) {
             var current = element.previousSibling;

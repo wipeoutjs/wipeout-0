@@ -66,13 +66,12 @@ wpfko.base = wpfko.base || {};
         
     };
 
-    var added = "added", deleted = "deleted", retained = "retained";
     itemsControl.prototype.itemsChanged = function (changes) { 
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
         for(var i = 0, ii = changes.length; i < ii; i++) {
-            if(changes[i].status === retained) continue;            
-            else if(changes[i].status === deleted) {
+            if(changes[i].status === wpfko.util.ko.array.diff.retained) continue;            
+            else if(changes[i].status === wpfko.util.ko.array.diff.deleted) {
                 del.push((function(change) {
                     return function() {
                         var removed = items.splice(change.index + delPadIndex, 1)[0];
@@ -82,7 +81,7 @@ wpfko.base = wpfko.base || {};
                         delPadIndex--;
                     };
                 })(changes[i]));
-            } else if(changes[i].status === added) {
+            } else if(changes[i].status === wpfko.util.ko.array.diff.added) {
                 add.push((function(change) {
                     return function() {
                         var added = change.moved != null ? move[change.index + "." + change.moved] : new wpfko.base.view(this.itemTemplateId(), change.value);

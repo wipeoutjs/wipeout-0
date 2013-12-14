@@ -91,8 +91,7 @@
         };
     };
     
-    //TODO: this is duplicated in htmlBuilder
-    var reserved = ["constructor", "constructor-tw", "id","id-tw"];
+    view.reservedPropertyNames = ["constructor", "constructor-tw", "id","id-tw"];
     
     view.prototype.initialize = function(propertiesXml, bindingContext) {
         if(this._initialized) throw "Cannot call initialize item twice";
@@ -107,7 +106,7 @@
         
         enumerate(propertiesXml.attributes, function(attr) {
             // reserved
-            if(reserved.indexOf(attr.nodeName) !== -1) return;
+            if(view.reservedPropertyNames.indexOf(attr.nodeName) !== -1) return;
             
             var name = attr.nodeName, setter = "";
             if(name.indexOf("-tw") === attr.nodeName.length - 3) {

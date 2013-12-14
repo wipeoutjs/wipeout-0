@@ -78,7 +78,6 @@ var actions = [
         view.model().items.push({itemId: ko.observable(66), itemName: ko.observable("Paddy")});
         return "Added person";
     }, function(view) {
-        //TODO: doesn't work. itemsControl binding re-templates when things are moved
         view.templateItems.listTest.templateItems.theInnerItemsControl.items()[0].templateItems.stampMe.innerHTML = "stamped template";
         return "Stamp a person view template.";
     }, function(view) {
