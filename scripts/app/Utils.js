@@ -9,3 +9,11 @@ window.NS = function(namespace) {
     
     return current;
 };
+
+window.vmChooser = function(model) {
+    model = ko.unwrap(model);
+    
+    if(model == null) return null;
+    
+    throw "Unknown model type";
+};

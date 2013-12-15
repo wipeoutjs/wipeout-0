@@ -35,15 +35,23 @@
                     <Wipeout.Docs.ViewModels.Components.TreeViewBranch />
                 </li>
             </itemTemplate>
-        </wo.itemsControl>
+        </wo.itemsControl>        
         </script>    
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Components.TreeViewBranch_leaf">
         <div data-bind="text: model().text"></div>
+        </script>     
+        
+        <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.LandingPage">
+        Welcome to Wipeout
         </script>    
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Application">
         <Wipeout.Docs.ViewModels.Components.TreeViewBranch model="$parent.model().menu" />
+        <br />
+        <br />
+        <br />
+        <Wipeout.Docs.ViewModels.Components.DynamicRender model="$parent.model().content" />
         </script>    
     </body>
 </html>

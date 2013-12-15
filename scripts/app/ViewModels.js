@@ -29,12 +29,50 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
         $(this.templateItems.content).toggle();
     }
     
+    var dynamicRender = wo.contentControl.extend(function() {
+        this._super();
+        
+        this.content = ko.observable();
+        
+        this.template("<!-- ko render: content --><!-- /ko -->");
+    });
+    
+    dynamicRender.prototype.modelChanged = function(oldVal, newVal) {
+        this._super(oldVal, newVal);
+               
+        var oldVal = this.content();
+        try { 
+            if(newVal == null)
+                this.content(null);
+            else if(newVal instanceof Wipeout.Docs.Models.Pages.LandingPage) {
+                var newVm = new Wipeout.Docs.ViewModels.Pages.LandingPage();
+                newVm.model(newVal);
+                this.content(newVm);
+            }
+            else
+                throw "Unknown model type";
+        } finally {
+            if(oldVal)
+                oldVal.dispose();
+        }
+    };    
+    
+    var landingPage = wo.view.extend(function() {
+        this._super("Wipeout.Docs.ViewModels.Pages.LandingPage");
+    });
+    
     var components = {
-        TreeViewBranch: treeViewBranch
+        TreeViewBranch: treeViewBranch,
+        DynamicRender: dynamicRender
+    };
+    
+    var pages = {
+        LandingPage: landingPage
     };
     
     return {
         Application: application,
-        Components: components
+        Components: components,
+        Pages: pages
     };
 })());
