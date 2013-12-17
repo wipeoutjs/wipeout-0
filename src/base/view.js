@@ -48,9 +48,9 @@
             this._bindings[i].dispose();
     };
     
-    view.prototype.bind = function(property, valueAccessor, valueSetter /*optional*/) {
+    view.prototype.bind = function(property, valueAccessor, twoWay) {
         
-        if(valueSetter && !ko.isObservable(this[property]))
+        if(twoWay && (!ko.isObservable(this[property]) || !ko.isObservable(valueAccessor())))
            throw 'Two way bindings must be between 2 observables';
            
         if(this._bindings[property]) {
@@ -58,14 +58,17 @@
             delete this._bindings[property];
         }
         
-        var toBind = ko.dependentObservable({ read: valueAccessor, write: valueSetter});
+        var toBind = ko.dependentObservable({ 
+            read: function() { return ko.utils.unwrapObservable(valueAccessor()); },
+            write: twoWay ? function() { valueAccessor()(arguments[0]); } : undefined
+        });                                 
         
         setObservable(this, property, toBind.peek());
         var subscription1 = toBind.subscribe(function(newVal) {
             setObservable(this, property, newVal);
         }, this);
         
-        var subscription2 = valueSetter && ko.isObservable(this[property]) ?
+        var subscription2 = twoWay ?
             this[property].subscribe(function(newVal) {
                 setObservable({x: toBind}, "x", newVal);
             }, this) :
@@ -101,7 +104,7 @@
             return;
                 
         if(!wpfko.template.htmlBuilder.elementHasModelBinding(propertiesXml) && wpfko.util.ko.peek(this.model) == null) {
-            this.bind('model', function() { return ko.utils.unwrapObservable(bindingContext.$parent.model); });
+            this.bind('model', bindingContext.$parent.model);
         }
         
         enumerate(propertiesXml.attributes, function(attr) {
@@ -111,10 +114,10 @@
             var name = attr.nodeName, setter = "";
             if(name.indexOf("-tw") === attr.nodeName.length - 3) {
                 name = name.substr(0, name.length - 3);
-                setter = ",\n\t\t\tfunction(val) {\n\t\t\t\tif(!ko.isObservable(" + attr.value + "))\n\t\t\t\t\tthrow 'Two way bindings must be between 2 observables';\n\t\t\t\t" + attr.value + "(val);\n\t\t\t}"
+                setter = ",\n\t\t\tfunction(val) {\n\t\t\t\tif(!ko.isObservable(" + attr.value + "))\n\t\t\t\t\tthrow 'Two way bindings must be between 2 observables';\n\t\t\t\t" + attr.value + "(val);\n\t\t\t}";
             }
             
-            wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t$data.bind('" + name + "', function() {\n\t\t\t\treturn ko.utils.unwrapObservable(" + attr.value + ");\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
+            wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t$data.bind('" + name + "', function() {\n\t\t\t\treturn " + attr.value + ";\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
         });
         
         enumerate(propertiesXml.childNodes, function(child, i) {
