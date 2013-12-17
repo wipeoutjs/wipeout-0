@@ -14,7 +14,14 @@ wpfko.base = wpfko.base || {};
     
     var cachedSuperMethods = [];
     object.prototype._super = function() {
+        
         ///<summary>Call the current method of the parent class with arguments<summary>
+        
+        // contructor call
+        if(arguments.callee === this.constructor) {
+            this.constructor.prototype.constructor.apply(this, arguments);
+            return;
+        }        
         
         // try to find a cached version to skip lookup of parent class method
         var cached = null;
@@ -71,36 +78,19 @@ wpfko.base = wpfko.base || {};
     };
 
     object.extend = function (childClass) {
-
-        var _this = this;
-        var newConstructor = function () {
-
-            var __this = this;
-
-            // temporarily override _super with parent constructor
-            this._super = function () {
-                _this.apply(__this, arguments);
-            };
-
-            childClass.apply(this, arguments);
-            
-            // re-set super to allow parent methods to be called
-            this._super = object.prototype._super;
-        };
-
+ 
         // static items
         for (var p in this)
-            if (this.hasOwnProperty(p)) newConstructor[p] = this[p];
-
+            if (this.hasOwnProperty(p)) childClass[p] = this[p];
+ 
         // will ensure any subsequent changes to the parent class will reflect in child class
-        function prototypeTracker() { this.constructor = newConstructor; }
-
+        function prototypeTracker() { this.constructor = childClass; }
+ 
         prototypeTracker.prototype = this.prototype;
-
+ 
         // inherit
-        newConstructor.prototype = new prototypeTracker();
-
-        return newConstructor;
+        childClass.prototype = new prototypeTracker();
+        return childClass;
     };
 
     wpfko.base.object = object;
