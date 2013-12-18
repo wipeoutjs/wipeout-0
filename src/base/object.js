@@ -12,9 +12,11 @@ wpfko.base = wpfko.base || {};
         }
     };
     
-    var cachedSuperMethods = [];
-    object.prototype._super = function() {
-        
+    var cachedSuperMethods = {
+        parents:[],
+        children:[]
+    };
+    object.prototype._super = function() {        
         ///<summary>Call the current method of the parent class with arguments<summary>
         
         // contructor call
@@ -24,13 +26,8 @@ wpfko.base = wpfko.base || {};
         }        
         
         // try to find a cached version to skip lookup of parent class method
-        var cached = null;
-        for(var i = 0, ii = cachedSuperMethods.length; i < ii; i++) {
-            if(cachedSuperMethods[i].child === arguments.callee.caller) {
-                cached = cachedSuperMethods[i].parent;
-                break;
-            }
-        }
+        var superIndex = cachedSuperMethods.children.indexOf(arguments.callee.caller);
+        var cached = superIndex === -1 ? null : cachedSuperMethods.parents[superIndex];
         
         if(!cached) {
             
@@ -55,10 +52,8 @@ wpfko.base = wpfko.base || {};
                                 cached = inheritanceTree[j][method];
                                 
                                 // map the current method to the method it overrides
-                                cachedSuperMethods.push({
-                                    parent: cached,
-                                    child: arguments.callee.caller
-                                });
+                                cachedSuperMethods.children.push(arguments.callee.caller);
+                                cachedSuperMethods.parents.push(cached);
                                 
                                 break;
                             }
