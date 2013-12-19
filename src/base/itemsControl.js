@@ -84,7 +84,7 @@ wpfko.base = wpfko.base || {};
             } else if(changes[i].status === wpfko.util.ko.array.diff.added) {
                 add.push((function(change) {
                     return function() {
-                        var added = change.moved != null ? move[change.index + "." + change.moved] : new wpfko.base.view(this.itemTemplateId(), change.value);
+                        var added = change.moved != null ? move[change.index + "." + change.moved] : this.createItem(change.value);
                         items.splice(change.index, 0, added);
                     };
                 })(changes[i]));
@@ -103,6 +103,11 @@ wpfko.base = wpfko.base || {};
         
         this.items.valueHasMutated();
     };
+
+    // virtual
+    itemsControl.prototype.createItem = function (model) {
+        return new wpfko.base.view(this.itemTemplateId(), model);        
+    }
 
     itemsControl.prototype.reDrawItems = function () {
         var models = this.itemSource() || [];

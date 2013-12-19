@@ -46,6 +46,30 @@ wpfko.base = wpfko.base || {};
         this._routedEventSubscriptions.length = 0;
     };
     
+    visual.getParentElement = function(element) {
+        var current = element.previousSibling;
+        while(current) {
+            if(wpfko.util.ko.virtualElements.isVirtual(current))
+                return current;
+            
+            current = current.previousSibling;
+        }
+        
+        return element.parentElement;
+    };
+    
+    visual.prototype.getParent = function() {
+        var nextTarget;
+        var current = visual.getParentElement(this._rootHtmlElement);
+        while(current) {
+            if(nextTarget = ko.utils.domData.get(current, wpfko.ko.bindings.wpfko.utils.wpfkoKey)) {
+                return nextTarget;
+            }
+            
+            current = visual.getParentElement(current);
+        }        
+    };
+    
     visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {        
         for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
             if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
@@ -73,7 +97,11 @@ wpfko.base = wpfko.base || {};
         rev.event.register(callback, callbackContext);
     };
     
-    visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {        
+    visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
+        if(!(eventArgs instanceof wpfko.base.routedEventArgs)) {
+            eventArgs = new wpfko.base.routedEventArgs(eventArgs, this);
+        }
+        
         for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
             if(eventArgs.handled) return;
             if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
@@ -82,14 +110,9 @@ wpfko.base = wpfko.base || {};
         }
         
         if(!eventArgs.handled) {
-            var nextTarget;
-            var current = this._rootHtmlElement.parentNode;
-            while(current) {
-                if(nextTarget = ko.utils.domData.get(current, wpfko.ko.bindings.wpfko.utils.wpfkoKey)) {
-                    nextTarget.triggerRoutedEvent(routedEvent, eventArgs);
-                }
-                
-                current = current.parentNode;
+            var nextTarget = this.getParent();
+            if(nextTarget) {
+                nextTarget.triggerRoutedEvent(routedEvent, eventArgs);
             }
         }
     };
