@@ -71,9 +71,14 @@ wpfko.base = wpfko.base || {};
     };
     
     itemsControl.prototype.syncModelsAndViewModels = function() {
+        var changed = false, modelNull = false;
         var models = this.itemSource();
+        if(models ==  null) {
+            modelNull = true;
+            models = [];
+        }
+        
         var viewModels = this.items();
-        var changed = false;
         
         if(models.length !== viewModels.length) {
             changed = true;
@@ -87,13 +92,17 @@ wpfko.base = wpfko.base || {};
             }
         }
         
-        if(changed)
-            this.itemSource.valueHasMutated();
+        if(changed) {
+            if(modelNull)
+                this.itemSource(models);
+            else
+                this.itemSource.valueHasMutated();
+        }
     };
 
     itemsControl.prototype.modelsAndViewModelsAreSynched = function() {
-        var model = this.itemSource();
-        var viewModel = this.items();
+        var model = this.itemSource() || [];
+        var viewModel = this.items() || [];
         
         if(model.length !== viewModel.length)
             return false;

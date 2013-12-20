@@ -60,7 +60,7 @@
         
         var toBind = ko.dependentObservable({ 
             read: function() { return ko.utils.unwrapObservable(valueAccessor()); },
-            write: twoWay ? function() { valueAccessor()(arguments[0]); } : undefined
+            write: twoWay ? function() { var va = valueAccessor(); if(va) valueAccessor()(arguments[0]); } : undefined
         });                                 
         
         setObservable(this, property, toBind.peek());

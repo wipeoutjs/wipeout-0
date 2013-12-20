@@ -38,7 +38,7 @@
                 <template>
                     <div data-bind="html: model().rootTitle"></div>
                     <div style="float: left">
-                        <wo.itemsControl id="theInnerItemsControl1" itemSource="$parent.model().items" xxx="1">
+                        <wo.itemsControl id="theInnerItemsControl1" itemSource-tw="model().items" xxx="1">
                             <itemTemplate>
                                 <div id="stampMe"></div>
                                 <div>
@@ -49,7 +49,7 @@
                         </wo.itemsControl>
                     </div>
                     <div style="float: left; margin-left: 20px;">
-                        <wo.itemsControl id="theInnerItemsControl2" itemSource="$parent.model().items" xxx="2">
+                        <wo.itemsControl id="theInnerItemsControl2" itemSource-tw="model().items" xxx="2">
                             <itemTemplate>
                                 <div id="stampMe"></div>
                                 <div>
