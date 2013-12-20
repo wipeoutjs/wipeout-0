@@ -33,6 +33,11 @@
         }
     };
     
+    //TODO: this
+    _ko.isObservableArray = function(test) {
+        return ko.isObservable(test) && test.push && test.push.constructor === Function;
+    };
+    
     _ko.virtualElements = {
         parentElement: function(element) {
             var current = element.previousSibling;
