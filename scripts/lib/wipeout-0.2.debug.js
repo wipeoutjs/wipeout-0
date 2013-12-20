@@ -12,18 +12,22 @@ wpfko.base = wpfko.base || {};
         }
     };
     
-    var cachedSuperMethods = [];
-    object.prototype._super = function() {
+    var cachedSuperMethods = {
+        parents:[],
+        children:[]
+    };
+    object.prototype._super = function() {        
         ///<summary>Call the current method of the parent class with arguments<summary>
         
+        // contructor call
+        if(arguments.callee === this.constructor) {
+            this.constructor.prototype.constructor.apply(this, arguments);
+            return;
+        }        
+        
         // try to find a cached version to skip lookup of parent class method
-        var cached = null;
-        for(var i = 0, ii = cachedSuperMethods.length; i < ii; i++) {
-            if(cachedSuperMethods[i].child === arguments.callee.caller) {
-                cached = cachedSuperMethods[i].parent;
-                break;
-            }
-        }
+        var superIndex = cachedSuperMethods.children.indexOf(arguments.callee.caller);
+        var cached = superIndex === -1 ? null : cachedSuperMethods.parents[superIndex];
         
         if(!cached) {
             
@@ -48,10 +52,8 @@ wpfko.base = wpfko.base || {};
                                 cached = inheritanceTree[j][method];
                                 
                                 // map the current method to the method it overrides
-                                cachedSuperMethods.push({
-                                    parent: cached,
-                                    child: arguments.callee.caller
-                                });
+                                cachedSuperMethods.children.push(arguments.callee.caller);
+                                cachedSuperMethods.parents.push(cached);
                                 
                                 break;
                             }
@@ -71,36 +73,19 @@ wpfko.base = wpfko.base || {};
     };
 
     object.extend = function (childClass) {
-
-        var _this = this;
-        var newConstructor = function () {
-
-            var __this = this;
-
-            // temporarily override _super with parent constructor
-            this._super = function () {
-                _this.apply(__this, arguments);
-            };
-
-            childClass.apply(this, arguments);
-            
-            // re-set super to allow parent methods to be called
-            this._super = object.prototype._super;
-        };
-
+ 
         // static items
         for (var p in this)
-            if (this.hasOwnProperty(p)) newConstructor[p] = this[p];
-
+            if (this.hasOwnProperty(p)) childClass[p] = this[p];
+ 
         // will ensure any subsequent changes to the parent class will reflect in child class
-        function prototypeTracker() { this.constructor = newConstructor; }
-
+        function prototypeTracker() { this.constructor = childClass; }
+ 
         prototypeTracker.prototype = this.prototype;
-
+ 
         // inherit
-        newConstructor.prototype = new prototypeTracker();
-
-        return newConstructor;
+        childClass.prototype = new prototypeTracker();
+        return childClass;
     };
 
     wpfko.base.object = object;
@@ -154,6 +139,30 @@ wpfko.base = wpfko.base || {};
         this._routedEventSubscriptions.length = 0;
     };
     
+    visual.getParentElement = function(element) {
+        var current = element.previousSibling;
+        while(current) {
+            if(wpfko.util.ko.virtualElements.isVirtual(current))
+                return current;
+            
+            current = current.previousSibling;
+        }
+        
+        return element.parentElement;
+    };
+    
+    visual.prototype.getParent = function() {
+        var nextTarget;
+        var current = visual.getParentElement(this._rootHtmlElement);
+        while(current) {
+            if(nextTarget = ko.utils.domData.get(current, wpfko.ko.bindings.wpfko.utils.wpfkoKey)) {
+                return nextTarget;
+            }
+            
+            current = visual.getParentElement(current);
+        }        
+    };
+    
     visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {        
         for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
             if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
@@ -181,7 +190,11 @@ wpfko.base = wpfko.base || {};
         rev.event.register(callback, callbackContext);
     };
     
-    visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {        
+    visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
+        if(!(eventArgs instanceof wpfko.base.routedEventArgs)) {
+            eventArgs = new wpfko.base.routedEventArgs(eventArgs, this);
+        }
+        
         for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
             if(eventArgs.handled) return;
             if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
@@ -190,14 +203,9 @@ wpfko.base = wpfko.base || {};
         }
         
         if(!eventArgs.handled) {
-            var nextTarget;
-            var current = this._rootHtmlElement.parentNode;
-            while(current) {
-                if(nextTarget = ko.utils.domData.get(current, wpfko.ko.bindings.wpfko.utils.wpfkoKey)) {
-                    nextTarget.triggerRoutedEvent(routedEvent, eventArgs);
-                }
-                
-                current = current.parentNode;
+            var nextTarget = this.getParent();
+            if(nextTarget) {
+                nextTarget.triggerRoutedEvent(routedEvent, eventArgs);
             }
         }
     };
@@ -284,9 +292,9 @@ wpfko.base = wpfko.base || {};
             this._bindings[i].dispose();
     };
     
-    view.prototype.bind = function(property, valueAccessor, valueSetter /*optional*/) {
+    view.prototype.bind = function(property, valueAccessor, twoWay) {
         
-        if(valueSetter && !ko.isObservable(this[property]))
+        if(twoWay && (!ko.isObservable(this[property]) || !ko.isObservable(valueAccessor())))
            throw 'Two way bindings must be between 2 observables';
            
         if(this._bindings[property]) {
@@ -294,14 +302,17 @@ wpfko.base = wpfko.base || {};
             delete this._bindings[property];
         }
         
-        var toBind = ko.dependentObservable({ read: valueAccessor, write: valueSetter});
+        var toBind = ko.dependentObservable({ 
+            read: function() { return ko.utils.unwrapObservable(valueAccessor()); },
+            write: twoWay ? function() { var va = valueAccessor(); if(va) valueAccessor()(arguments[0]); } : undefined
+        });                                 
         
         setObservable(this, property, toBind.peek());
         var subscription1 = toBind.subscribe(function(newVal) {
             setObservable(this, property, newVal);
         }, this);
         
-        var subscription2 = valueSetter && ko.isObservable(this[property]) ?
+        var subscription2 = twoWay ?
             this[property].subscribe(function(newVal) {
                 setObservable({x: toBind}, "x", newVal);
             }, this) :
@@ -337,7 +348,7 @@ wpfko.base = wpfko.base || {};
             return;
                 
         if(!wpfko.template.htmlBuilder.elementHasModelBinding(propertiesXml) && wpfko.util.ko.peek(this.model) == null) {
-            this.bind('model', function() { return ko.utils.unwrapObservable(bindingContext.$parent.model); });
+            this.bind('model', bindingContext.$parent.model);
         }
         
         enumerate(propertiesXml.attributes, function(attr) {
@@ -347,10 +358,10 @@ wpfko.base = wpfko.base || {};
             var name = attr.nodeName, setter = "";
             if(name.indexOf("-tw") === attr.nodeName.length - 3) {
                 name = name.substr(0, name.length - 3);
-                setter = ",\n\t\t\tfunction(val) {\n\t\t\t\tif(!ko.isObservable(" + attr.value + "))\n\t\t\t\t\tthrow 'Two way bindings must be between 2 observables';\n\t\t\t\t" + attr.value + "(val);\n\t\t\t}"
+                setter = ",\n\t\t\tfunction(val) {\n\t\t\t\tif(!ko.isObservable(" + attr.value + "))\n\t\t\t\t\tthrow 'Two way bindings must be between 2 observables';\n\t\t\t\t" + attr.value + "(val);\n\t\t\t}";
             }
             
-            wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t$data.bind('" + name + "', function() {\n\t\t\t\treturn ko.utils.unwrapObservable(" + attr.value + ");\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
+            wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t$data.bind('" + name + "', function() {\n\t\t\t\treturn " + attr.value + ";\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
         });
         
         enumerate(propertiesXml.childNodes, function(child, i) {
@@ -577,6 +588,8 @@ wpfko.base = wpfko.base || {};
         } else {
             itemsControl.subscribeV3.call(this);
         }
+        
+        this.items.subscribe(this.syncModelsAndViewModels, this);
 
         this.itemTemplate = ko.dependentObservable({
             read: function () {
@@ -606,6 +619,8 @@ wpfko.base = wpfko.base || {};
         var initial = this.itemSource.peek();
         this.itemSource.subscribe(function() {
             try {
+                if(this.modelsAndViewModelsAreSynched())
+                    return;
                 this.itemsChanged(ko.utils.compareArrays(initial, arguments[0] || []));
             } finally {
                 initial = wpfko.util.obj.copyArray(arguments[0] || []);
@@ -618,6 +633,51 @@ wpfko.base = wpfko.base || {};
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl<summary>
         this.itemSource.subscribe(this.itemsChanged, this, "arrayChange");
         
+    };
+    
+    itemsControl.prototype.syncModelsAndViewModels = function() {
+        var changed = false, modelNull = false;
+        var models = this.itemSource();
+        if(models ==  null) {
+            modelNull = true;
+            models = [];
+        }
+        
+        var viewModels = this.items();
+        
+        if(models.length !== viewModels.length) {
+            changed = true;
+            models.length = viewModels.length;
+        }
+        
+        for(var i = 0, ii = viewModels.length; i < ii; i++) {
+            if(viewModels[i].model() !== models[i]) {
+                models[i] = viewModels[i].model();
+                changed = true;
+            }
+        }
+        
+        if(changed) {
+            if(modelNull)
+                this.itemSource(models);
+            else
+                this.itemSource.valueHasMutated();
+        }
+    };
+
+    itemsControl.prototype.modelsAndViewModelsAreSynched = function() {
+        var model = this.itemSource() || [];
+        var viewModel = this.items() || [];
+        
+        if(model.length !== viewModel.length)
+            return false;
+        
+        for(var i = 0, ii = model.length; i < ii; i++) {
+            if(model[i] !== viewModel[i].model())
+                return false;
+        }
+        
+        return true;
     };
 
     itemsControl.prototype.itemsChanged = function (changes) { 
@@ -638,7 +698,7 @@ wpfko.base = wpfko.base || {};
             } else if(changes[i].status === wpfko.util.ko.array.diff.added) {
                 add.push((function(change) {
                     return function() {
-                        var added = change.moved != null ? move[change.index + "." + change.moved] : new wpfko.base.view(this.itemTemplateId(), change.value);
+                        var added = change.moved != null ? move[change.index + "." + change.moved] : this.createItem(change.value);
                         items.splice(change.index, 0, added);
                     };
                 })(changes[i]));
@@ -657,6 +717,11 @@ wpfko.base = wpfko.base || {};
         
         this.items.valueHasMutated();
     };
+
+    // virtual
+    itemsControl.prototype.createItem = function (model) {
+        return new wpfko.base.view(this.itemTemplateId(), model);        
+    }
 
     itemsControl.prototype.reDrawItems = function () {
         var models = this.itemSource() || [];
@@ -682,7 +747,7 @@ wpfko.base = wpfko.base || {};
     };
 
     routedEvent.prototype.trigger = function(triggerOnVisual, eventArgs) {
-        triggerOnVisual.triggerRoutedEvent(this, new routedEventArgs(eventArgs));
+        triggerOnVisual.triggerRoutedEvent(this, new routedEventArgs(eventArgs, triggerOnVisual));
     };
     
     routedEvent.prototype.unRegister = function (callback, triggerOnVisual, context /* optional */) {
@@ -695,9 +760,10 @@ wpfko.base = wpfko.base || {};
     
     wpfko.base.routedEvent = routedEvent;
     
-    var routedEventArgs = function(eventArgs) {        
+    var routedEventArgs = function(eventArgs, originator) {        
         this.handled = false;
         this.data = eventArgs;
+        this.originator = originator;
     };
     
     wpfko.base.routedEventArgs = routedEventArgs;
@@ -1478,6 +1544,11 @@ wpfko.util = wpfko.util || {};
             deleted: "deleted",
             retained: "retained"
         }
+    };
+    
+    //TODO: this
+    _ko.isObservableArray = function(test) {
+        return ko.isObservable(test) && test.push && test.push.constructor === Function;
     };
     
     _ko.virtualElements = {
