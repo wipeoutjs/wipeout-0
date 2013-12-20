@@ -23,6 +23,8 @@ wpfko.base = wpfko.base || {};
         } else {
             itemsControl.subscribeV3.call(this);
         }
+        
+        this.items.subscribe(this.syncModelsAndViewModels, this);
 
         this.itemTemplate = ko.dependentObservable({
             read: function () {
@@ -52,6 +54,8 @@ wpfko.base = wpfko.base || {};
         var initial = this.itemSource.peek();
         this.itemSource.subscribe(function() {
             try {
+                if(this.modelsAndViewModelsAreSynched())
+                    return;
                 this.itemsChanged(ko.utils.compareArrays(initial, arguments[0] || []));
             } finally {
                 initial = wpfko.util.obj.copyArray(arguments[0] || []);
@@ -64,6 +68,42 @@ wpfko.base = wpfko.base || {};
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl<summary>
         this.itemSource.subscribe(this.itemsChanged, this, "arrayChange");
         
+    };
+    
+    itemsControl.prototype.syncModelsAndViewModels = function() {
+        var models = this.itemSource();
+        var viewModels = this.items();
+        var changed = false;
+        
+        if(models.length !== viewModels.length) {
+            changed = true;
+            models.length = viewModels.length;
+        }
+        
+        for(var i = 0, ii = viewModels.length; i < ii; i++) {
+            if(viewModels[i].model() !== models[i]) {
+                models[i] = viewModels[i].model();
+                changed = true;
+            }
+        }
+        
+        if(changed)
+            this.itemSource.valueHasMutated();
+    };
+
+    itemsControl.prototype.modelsAndViewModelsAreSynched = function() {
+        var model = this.itemSource();
+        var viewModel = this.items();
+        
+        if(model.length !== viewModel.length)
+            return false;
+        
+        for(var i = 0, ii = model.length; i < ii; i++) {
+            if(model[i] !== viewModel[i].model())
+                return false;
+        }
+        
+        return true;
     };
 
     itemsControl.prototype.itemsChanged = function (changes) { 

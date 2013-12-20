@@ -66,7 +66,7 @@
 
 var actions = [
     function(view) {
-        view.templateItems.listTest.templateItems.theInnerItemsControl.items()[0].triggerRoutedEvent(aRoutedEvent, {});
+        view.templateItems.listTest.templateItems.theInnerItemsControl1.items()[0].triggerRoutedEvent(aRoutedEvent, {});
         return "Triggered routed event";
     }, function(view) {
         view.templateItems.NestedDiv.innerHTML = "this is the nested div";
@@ -78,7 +78,11 @@ var actions = [
         view.model().items.push({itemId: ko.observable(66), itemName: ko.observable("Paddy")});
         return "Added person";
     }, function(view) {
-        view.templateItems.listTest.templateItems.theInnerItemsControl.items()[0].templateItems.stampMe.innerHTML = "stamped template";
+        view.templateItems.listTest.templateItems.theInnerItemsControl1.items.splice(0, 1);
+        return "Removed from one item source \"items\". Expect the other to follow suit.";
+    }, function(view) {
+        view.templateItems.listTest.templateItems.theInnerItemsControl1.items()[0].templateItems.stampMe.innerHTML = "stamped template";
+        view.templateItems.listTest.templateItems.theInnerItemsControl2.items()[0].templateItems.stampMe.innerHTML = "stamped template";
         return "Stamp a person view template.";
     }, function(view) {
         view.model().items.reverse()
