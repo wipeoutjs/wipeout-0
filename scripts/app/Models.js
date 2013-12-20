@@ -5,15 +5,25 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         
         this.content = ko.observable(new landingPage());
         
+        
+        /*
+        Introduction
+            Quick demo
+            Explanation/Diagrams
+            
+        API
+            by namespace
+         */
+        
         this.menu = new treeViewBranch("branch 1", [
                         new treeViewBranch("branch 2", [
-                            new treeViewBranch("branch 3", [{ text: "leaf1"}, {text: "leaf2"}]),
+                            new treeViewBranch("branch 3", [new treeViewBranch("leaf1"), new treeViewBranch("leaf2")]),
                             new treeViewBranch("branch 4", [
-                                new treeViewBranch("branch 5", [{text: "leaf3"}, {text: "leaf4"}]),
-                                new treeViewBranch("branch 6", [{text: "leaf5"}, {text: "leaf6"}])
+                                new treeViewBranch("branch 5", [new treeViewBranch("leaf3"), new treeViewBranch("leaf4")]),
+                                new treeViewBranch("branch 6", [new treeViewBranch("leaf5"), new treeViewBranch("leaf6")])
                             ])
                         ]),
-                        new treeViewBranch("branch 7", [{text: "leaf7"}, {text: "leaf8"}])
+                        new treeViewBranch("branch 7", [new treeViewBranch("leaf7"), new treeViewBranch("leaf8")])
                     ]);        
     });
     

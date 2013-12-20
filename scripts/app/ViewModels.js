@@ -16,7 +16,7 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     treeViewBranch.prototype.modelChanged = function(oldVal, newVal) {
         this._super(oldVal, newVal);
         
-        if(newVal instanceof Wipeout.Docs.Models.Components.TreeViewBranch) {
+        if(newVal && newVal.branches) {
             this.templateId(treeViewBranch.branchTemplate);
         } else if(newVal) {
             this.templateId(treeViewBranch.leafTemplate);
