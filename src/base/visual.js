@@ -58,6 +58,17 @@ wpfko.base = wpfko.base || {};
         return element.parentElement;
     };
     
+    visual.prototype.getParents = function() {
+        var current = this;
+        var parents = [];
+        while(current) {
+            parents.push(current);
+            current = current.getParent();
+        }
+        
+        return parents;
+    };
+    
     visual.prototype.getParent = function() {
         var nextTarget;
         var current = visual.getParentElement(this._rootHtmlElement);
