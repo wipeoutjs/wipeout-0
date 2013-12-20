@@ -47,10 +47,19 @@ wpfko.base = wpfko.base || {};
     };
     
     visual.getParentElement = function(element) {
+        var depth = 0;
         var current = element.previousSibling;
         while(current) {
-            if(wpfko.util.ko.virtualElements.isVirtual(current))
-                return current;
+            if(wpfko.util.ko.virtualElements.isVirtualClosing(current)) {
+                depth--;
+            }
+            
+            if(wpfko.util.ko.virtualElements.isVirtual(current)) {
+                if(depth === 0)
+                    return current;
+                
+                depth++;
+            }
             
             current = current.previousSibling;
         }

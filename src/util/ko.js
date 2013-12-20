@@ -55,7 +55,7 @@
             return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0;
         },
         isVirtualClosing: function(node) {
-            return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'') === "/ko";
+            return node.nodeType === 8 && node.nodeValue.replace(/^\s+|\s+$/g, '') === "/ko";
         },
         elementWithChildren: function(element) {
             if(!element) return [];
