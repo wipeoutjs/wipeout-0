@@ -133,14 +133,14 @@
                 }
             }
             
-            if (view.objectParser[type]) {
+            if (view.objectParser[type.replace(/^\s+|\s+$/g, '').toLowerCase()]) {
                 var innerHTML = [];
                 var ser = ser || new XMLSerializer();
                 for (var j = 0, jj = child.childNodes.length; j < jj; j++) {
                     innerHTML.push(ser.serializeToString(child.childNodes[j]));
                 }
             
-                var val = view.objectParser[type](innerHTML.join(""));
+                var val = view.objectParser[type.replace(/^\s+|\s+$/g, '').toLowerCase()](innerHTML.join(""));
                 if(ko.isObservable(this[child.nodeName])) {
                     this[child.nodeName](val);       
                 } else {
@@ -160,6 +160,10 @@
     };
     
     view.objectParser = {
+        "json": function (value) {
+            //TODO: browser compatability
+            return JSON.parse(value);
+        },
         "string": function (value) {
             return value;
         },
