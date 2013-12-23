@@ -6,29 +6,15 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         if (!(viewModel instanceof wpfko.base.itemsControl))
             throw "This binding can only be used within the context of a wo.itemsControl";
-                                                                                                   
+
         ko.virtualElements.emptyNode(element);
-        var items = wpfko.util.obj.copyArray(viewModel.items.peek());
-        for(var i = items.length - 1; i >= 0; i--) {
-            var container = wpfko.util.html.createWpfkoComment();
-            ko.virtualElements.prepend(element, container.close);
-            ko.virtualElements.prepend(element, container.open);            
-            
-            var acc = (function(i) {
-                return function() {
-                    return items[i];
-                };
-            })(i);
-            
-            wpfko.ko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
-            wpfko.ko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
-        }
-        
-        if(wpfko.util.ko.version()[0] < 3) {
+        if (wpfko.util.ko.version()[0] < 3) {
             utils.subscribeV2(element, viewModel, bindingContext);
         } else {
             utils.subscribeV3(element, viewModel, bindingContext);
         }
+
+        itemsChanged(element, viewModel, bindingContext)(ko.utils.compareArrays([], viewModel.items.peek()));
     };
     
     var itemsChanged = function(element, viewModel, bindingContext) {
