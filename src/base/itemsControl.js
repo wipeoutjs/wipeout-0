@@ -163,7 +163,7 @@ wpfko.base = wpfko.base || {};
         var values = this.items();
         values.length = models.length;
         for (var i = 0, ii = models.length; i < ii; i++) {
-            values[i] = new wpfko.base.view(this.itemTemplateId(), models[i]);
+            values[i] = this.createItem(models[i]);
         }
 
         this.items.valueHasMutated();
