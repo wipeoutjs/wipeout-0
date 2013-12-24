@@ -151,6 +151,8 @@ wpfko.template = wpfko.template || {};
                 var html = wpfko.util.html.createElement(ser.serializeToString(ch));
                 html.innerHTML = wpfko.template.htmlBuilder.generateTemplate(child, itemPrefix + i);                
                 result.push(wpfko.util.html.outerHTML(html));
+            } else if(child.nodeType === 3) {
+                result.push(child.data);
             } else {
                 result.push(ser.serializeToString(child));
             }
