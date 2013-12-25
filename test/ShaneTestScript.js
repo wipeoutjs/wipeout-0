@@ -19,7 +19,7 @@
         this.value = ko.observable("initial");
     });
     
-    rootView = wpfko.base.contentControl.extend(function() {
+    rootView = wpfko.base.view.extend(function() {
         this._super("rootView");
         
         this.justDone = ko.observable("");
@@ -119,8 +119,5 @@ var actions = [
     }, function(view) {
         view.model({deepItem:{item:{value:"newModel"}}});
         return "Swapped out root model";
-    }, function(view) {
-        view.template("<div>Cleared down</div>");
-        return "Clear down view";
-    }, 
+    }
 ];

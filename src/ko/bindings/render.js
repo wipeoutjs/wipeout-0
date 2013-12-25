@@ -22,24 +22,16 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
                 child._rootHtmlElement = element;
                 if (viewModel) viewModel.renderedChildren.push(child);
             }
-            
-            var _this = this;
-            var templateChanged = function() {
-                ko.bindingHandlers.template.update.call(_this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
-            };
-            
-            child.templateId.subscribe(templateChanged);
-            templateChanged();
+
+            return ko.bindingHandlers.template.update.call(this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
         };
     
     var createValueAccessor = function(oldValueAccessor) {
-        // ensure template id does not trigger another update
-        // this will be handled within the binding
         return function () {
             var child = oldValueAccessor();
-            var _child = ko.utils.unwrapObservable(child);
+            var _child = wpfko.util.ko.peek(child);
             return {
-                name: _child ? _child.templateId.peek() : "",
+                name: _child ? _child.templateId : "",
                 data: child || {},
                 afterRender: _child ? wpfko.base.visual._afterRendered : undefined
             }
