@@ -23,7 +23,7 @@ wpfko.util = wpfko.util || {};
     }; 
         
     var createElements = function(htmlString) {
-        if(!htmlString) return null;
+        if(htmlString == null) return null;
         // add divs so that text element won't be trimmed
         htmlString = "<div></div>" + htmlString + "<div></div>";
         
