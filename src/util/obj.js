@@ -30,7 +30,20 @@ wpfko.util = wpfko.util || {};
         return output;
     };
     
+    var enumerate = function(enumerate, action, context) {
+        context = context || window;
+        
+        if(enumerate == null) return;
+        if(enumerate instanceof Array)
+            for(var i = 0, ii = enumerate.length; i < ii; i++)
+                action.call(context, enumerate[i], i);
+        else
+            for(var i in enumerate)
+                action.call(context, enumerate[i], i);
+    };
+    
     wpfko.util.obj = {
+        enumerate: enumerate,
         createObject: createObject,
         copyArray: copyArray
     };

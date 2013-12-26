@@ -75,11 +75,60 @@ wpfko.util = wpfko.util || {};
             }
         };
         
-        return open.__wpfko;
-        
+        return open.__wpfko;        
+    };
+ 
+    var getAllChildren = function (element) {
+        var children = [];
+        if (wpfko.util.ko.virtualElements.isVirtual(element)) {
+            var parent = wpfko.util.ko.virtualElements.parentElement(element);
+            
+            // find index of "element"
+            for (var i = 0, ii = parent.childNodes.length; i < ii; i++) {
+                if (parent.childNodes[i] === element)
+                    break;
+            }
+ 
+            i++;
+ 
+            // use previous i
+            // get all children of the virtual element. It is ok to get more than
+            // just the children as the next block will break out when un wanted nodes are reached
+            for (var ii = parent.childNodes.length; i < ii; i++) {
+                children.push(parent.childNodes[i]);
+            }
+        } else {
+            children = element.childNodes;
+        }
+ 
+        var output = [];
+        var depth = 0;
+ 
+        for (var i = 0, ii = children.length; i < ii; i++) {
+            if (wpfko.util.ko.virtualElements.isVirtualClosing(children[i])) {
+                depth--;
+                
+                // we are in a virtual parent element
+                if (depth < 0) return output;
+                continue;
+            }
+ 
+            // we are in a virtual child element
+            if (depth > 0)
+                continue;
+ 
+            output.push(children[i]);
+            
+            // the next element will be in a virtual child
+            if (wpfko.util.ko.virtualElements.isVirtual(children[i]))
+                depth++;
+        }
+ 
+        return output;
     };
     
     wpfko.util.html = {
+        getAllChildren: getAllChildren,
         outerHTML: outerHTML,
         createElement: createElement,
         createElements: createElements,

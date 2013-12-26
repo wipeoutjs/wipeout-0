@@ -8,10 +8,8 @@ wpfko.base = wpfko.base || {};
         this._super();
         
         this.templateItems = {};   
-        this.renderedChildren = [];
-        
-        this._rootHtmlElement = null;
-        
+        this.renderedChildren = [];        
+        this._rootHtmlElement = null;        
         this._routedEventSubscriptions = [];
         
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
@@ -161,7 +159,26 @@ wpfko.base = wpfko.base || {};
 
             return templateId;
         };
-    })(); 
+    })();
+        
+    visual.visualGraph = function (rootElement, displayFunction) {
+        if (!rootElement)
+            return [];
+ 
+        displayFunction = displayFunction || function() { return typeof arguments[0]; };
+ 
+        var output = [];
+        wpfko.util.obj.enumerate(wpfko.util.html.getAllChildren(rootElement), function (child) {
+            wpfko.util.obj.enumerate(visual.visualGraph(child), output.push, output);
+        });
+ 
+        var vm = ko.utils.domData.get(rootElement, wpfko.ko.bindings.wpfko.utils.wpfkoKey);        
+        if (vm) {
+            return [{ viewModel: vm, display: displayFunction(vm), children: output}];
+        }
+ 
+        return output;
+    };
     
     // list of html tags which will not be treated as objects
     visual.reservedTags = ["a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "command", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "head", "header", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "map", "mark", "menu", "meta", "meter", "nav", "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"];
