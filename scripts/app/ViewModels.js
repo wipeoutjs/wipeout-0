@@ -3,6 +3,10 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     
     var application = wo.view.extend(function() {
         this._super("Wipeout.Docs.ViewModels.Application");
+        
+        this.registerRoutedEvent(treeViewBranch.renderPage, function (args) {
+            this.model().content(args.data);
+        }, this);
     });
     
     var treeViewBranch =  wo.view.extend(function() {
@@ -15,8 +19,7 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     
     treeViewBranch.prototype.modelChanged = function(oldVal, newVal) {
         this._super(oldVal, newVal);
-        
-        if(newVal && newVal.branches) {
+        if(newVal && (newVal.branches || newVal.payload())) {
             this.templateId(treeViewBranch.branchTemplate);
         } else if(newVal) {
             this.templateId(treeViewBranch.leafTemplate);
@@ -25,9 +28,17 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
         }
     };
     
-    treeViewBranch.prototype.toggle = function() {
-        $(this.templateItems.content).toggle();
-    }
+    treeViewBranch.prototype.select = function() {
+        if(this.model().branches)
+            $(this.templateItems.content).toggle();
+        
+        var payload = this.model().payload();
+        if (payload) {
+            this.triggerRoutedEvent(treeViewBranch.renderPage, payload);
+        }
+    };
+    
+    treeViewBranch.renderPage = new wo.routedEvent();    
     
     var dynamicRender = wo.contentControl.extend(function() {
         this._super();
@@ -42,15 +53,27 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
                
         var oldVal = this.content();
         try { 
-            if(newVal == null)
+            if(newVal == null) {
                 this.content(null);
-            else if(newVal instanceof Wipeout.Docs.Models.Pages.LandingPage) {
-                var newVm = new Wipeout.Docs.ViewModels.Pages.LandingPage();
+            } else {
+                var newVm = null;
+                if(newVal instanceof Wipeout.Docs.Models.Pages.LandingPage) {
+                    newVm = new Wipeout.Docs.ViewModels.Pages.LandingPage();
+                } else if(newVal instanceof Wipeout.Docs.Models.Pages.ClassPage) {
+                    newVm = new Wipeout.Docs.ViewModels.Pages.ClassPage();
+                } else if(newVal instanceof Wipeout.Docs.Models.Pages.EventPage) {
+                    newVm = new Wipeout.Docs.ViewModels.Pages.EventPage();
+                } else if(newVal instanceof Wipeout.Docs.Models.Pages.PropertyPage) {
+                    newVm = new Wipeout.Docs.ViewModels.Pages.PropertyPage();
+                } else if(newVal instanceof Wipeout.Docs.Models.Pages.FunctionPage) {
+                    newVm = new Wipeout.Docs.ViewModels.Pages.FunctionPage();
+                } else {
+                    throw "Unknown model type";
+                }
+                
                 newVm.model(newVal);
                 this.content(newVm);
             }
-            else
-                throw "Unknown model type";
         } finally {
             if(oldVal)
                 oldVal.dispose();
@@ -59,6 +82,18 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     
     var landingPage = wo.view.extend(function() {
         this._super("Wipeout.Docs.ViewModels.Pages.LandingPage");
+    });    
+    
+    var classPage = wo.view.extend(function() {
+        this._super("Wipeout.Docs.ViewModels.Pages.ClassPage");
+    });
+    
+    var propertyPage = wo.view.extend(function() {
+        this._super("Wipeout.Docs.ViewModels.Pages.PropertyPage");
+    });
+    
+    var functionPage = wo.view.extend(function() {
+        this._super("Wipeout.Docs.ViewModels.Pages.FunctionPage");
     });
     
     var components = {
@@ -67,7 +102,10 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     };
     
     var pages = {
-        LandingPage: landingPage
+        LandingPage: landingPage,
+        ClassPage: classPage,
+        PropertyPage: propertyPage,
+        FunctionPage: functionPage
     };
     
     return {

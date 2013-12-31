@@ -23,10 +23,10 @@
         </script>
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Components.TreeViewBranch_branch">
-        <wo.itemsControl itemSource="model().branches" toggle="$parent.toggle">
+        <wo.itemsControl itemSource="model().branches" select="$parent.select">
             <template>
                 <div>
-                    <a href="javascript:void(0)" data-bind="click: toggle, text: model().name"></a>
+                    <a href="javascript:void(0)" data-bind="click: select, text: model().name"></a>
                     <ul data-bind="itemsControl: null" style="display: none" id="content"></ul>
                 </div>
             </template>
@@ -44,6 +44,26 @@
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.LandingPage">
         Welcome to Wipeout
+        </script>       
+        
+        <!----><script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassPage"><!---->
+        <h2>Constructor</h2>
+        bla....bla...bla...
+        <h2>Static Properties</h2>
+        <table>
+        </table>
+        </script>       
+        
+        <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.EventPage">
+        Event
+        </script>       
+        
+        <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.PropertyPage">
+        Property
+        </script>        
+        
+        <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.FunctionPage">
+        Function
         </script>    
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Application">
