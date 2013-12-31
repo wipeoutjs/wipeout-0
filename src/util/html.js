@@ -13,13 +13,36 @@ wpfko.util = wpfko.util || {};
         return div.innerHTML;        
     };  
         
+    var singleElement = /^<\s*[a-zA-Z]*\s*\/>$/;
     var createElement = function(htmlString) {
         if(!htmlString) return null;
+        
         var div = document.createElement("div");
+        if(singleElement.test(htmlString)) {
+            var tag = wpfko.util.html.getTagName(htmlString);
+            htmlString = "<" + tag + ">" + "</" + tag + ">";
+        } 
+        
         div.innerHTML = htmlString;
         var element = div.firstChild;
         div.removeChild(element);
         return element;        
+    }; 
+    
+    var validHtmlCharacter = /[a-zA-Z0-9]/;
+    var getTagName = function(openingTag) {
+        openingTag = openingTag.replace(/^\s+|\s+$/g, "");
+        if(!openingTag || openingTag[0] !== "<")
+            throw "Invalid html tag";
+        
+        openingTag = openingTag.substring(1).replace(/^\s+|\s+$/g, "");
+        
+        for(var i = 0, ii = openingTag.length; i < ii; i++) {
+            if(!validHtmlCharacter.test(openingTag[i]))
+                break;
+        }
+        
+        return openingTag.substring(0, i);
     }; 
         
     var createElements = function(htmlString) {
@@ -128,6 +151,7 @@ wpfko.util = wpfko.util || {};
     };
     
     wpfko.util.html = {
+        getTagName: getTagName,
         getAllChildren: getAllChildren,
         outerHTML: outerHTML,
         createElement: createElement,
