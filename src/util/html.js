@@ -13,6 +13,7 @@ wpfko.util = wpfko.util || {};
         return div.innerHTML;        
     };  
         
+    //TODO: div might not be appropriate, eg, if html string is <li />
     var createElement = function(htmlString) {
         if(!htmlString) return null;
         var div = document.createElement("div");
@@ -21,7 +22,8 @@ wpfko.util = wpfko.util || {};
         div.removeChild(element);
         return element;        
     }; 
-        
+       
+    //TODO: div might not be appropriate, eg, if html string is <li />
     var createElements = function(htmlString) {
         if(htmlString == null) return null;
         // add divs so that text element won't be trimmed
