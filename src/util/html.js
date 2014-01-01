@@ -40,6 +40,13 @@ wpfko.util = wpfko.util || {};
         return openingTag.substring(0, i);
     };
     
+    var stripHtmlComments = /<\!--[^>]*-->/g;
+    var getFirstTagName = function(htmlContent) {
+        htmlContent = htmlContent.replace(stripHtmlComments, "");
+        
+        return getTagName(htmlContent);
+    };
+    
     //TODO: More tags
     var specialTags = {
         td: "tr",
@@ -53,10 +60,14 @@ wpfko.util = wpfko.util || {};
     //TODO: div might not be appropriate, eg, if html string is <li />
     var createElements = function(htmlString) {
         if(htmlString == null) return null;
-        // add divs so that text element won't be trimmed
-        htmlString = "<div></div>" + htmlString + "<div></div>";
         
-        var div = document.createElement("div");
+        var parent1 = getFirstTagName(htmlString);
+        var parent2 = getTagName("<" + parent1 + "/>");
+        
+        // add wrapping elements so that text element won't be trimmed
+        htmlString = "<" + parent1 + "></" + parent1 + ">" + htmlString + "<" + parent1 + "></" + parent1 + ">";
+        
+        var div = document.createElement(parent2);
         div.innerHTML = htmlString;
         
         var output = [];
