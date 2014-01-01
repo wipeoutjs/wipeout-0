@@ -64,13 +64,13 @@ wpfko.util = wpfko.util || {};
     var createElements = function(htmlString) {
         if(htmlString == null) return null;
         
-        var parent1 = specialTags[getFirstTagName(htmlString)] || "div";
-        var parent2 = specialTags[getTagName("<" + parent1 + "/>")] || "div";
+        var sibling = getFirstTagName(htmlString) || "div";
+        var parent = specialTags[getTagName("<" + sibling + "/>")] || "div";
         
         // add wrapping elements so that text element won't be trimmed
-        htmlString = "<" + parent1 + "></" + parent1 + ">" + htmlString + "<" + parent1 + "></" + parent1 + ">";
+        htmlString = "<" + sibling + "></" + sibling + ">" + htmlString + "<" + sibling + "></" + sibling + ">";
         
-        var div = document.createElement(parent2);
+        var div = document.createElement(parent);
         div.innerHTML = htmlString;
         
         var output = [];
