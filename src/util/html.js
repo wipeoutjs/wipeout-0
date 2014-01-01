@@ -42,6 +42,7 @@ wpfko.util = wpfko.util || {};
     //TODO: More tags
     var specialTags = {
         td: "tr",
+        th: "table",
         tr: "table",
         tbody: "table",
         thead: "table",
