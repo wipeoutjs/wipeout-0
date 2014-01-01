@@ -16,12 +16,37 @@ wpfko.util = wpfko.util || {};
     //TODO: div might not be appropriate, eg, if html string is <li />
     var createElement = function(htmlString) {
         if(!htmlString) return null;
-        var div = document.createElement("div");
-        div.innerHTML = htmlString;
-        var element = div.firstChild;
-        div.removeChild(element);
+        var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
+        parent.innerHTML = htmlString;
+        var element = parent.firstChild;
+        parent.removeChild(element);
         return element;        
     }; 
+    
+    var validHtmlCharacter = /[a-zA-Z0-9]/;
+    var getTagName = function(openingTag) {
+        openingTag = openingTag.replace(/^\s+|\s+$/g, "");
+        if(!openingTag || openingTag[0] !== "<")
+            throw "Invalid html tag";
+        
+        openingTag = openingTag.substring(1).replace(/^\s+|\s+$/g, "");
+        
+        for(var i = 0, ii = openingTag.length; i < ii; i++) {
+            if(!validHtmlCharacter.test(openingTag[i]))
+                break;
+        }
+        
+        return openingTag.substring(0, i);
+    };
+    
+    //TODO: More tags
+    var specialTags = {
+        td: "tr",
+        tr: "table",
+        tbody: "table",
+        thead: "table",
+        li: "ul"
+    };
        
     //TODO: div might not be appropriate, eg, if html string is <li />
     var createElements = function(htmlString) {
@@ -130,11 +155,12 @@ wpfko.util = wpfko.util || {};
     };
     
     wpfko.util.html = {
+        specialTags: specialTags,
+        getTagName: getTagName,
         getAllChildren: getAllChildren,
         outerHTML: outerHTML,
         createElement: createElement,
         createElements: createElements,
         createWpfkoComment: createWpfkoComment
-    };
-    
+    };    
 })();
