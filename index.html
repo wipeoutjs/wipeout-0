@@ -44,64 +44,90 @@
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.LandingPage">
         Welcome to Wipeout
-        </script>       
+        </script>  
         
         <!----><script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassPage"><!---->
         <h2>Constructor</h2>
-        bla....bla...bla...
-        <table>
-            <thead>
-                <th>
-                    <td>Function</td>
-                    <td>Summary</td>
-                </th>
-            </thead>
-        </table>
-        </script>             
-        
-        <!----><script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassPageX"><!---->
-        <h2>Constructor</h2>
-        bla....bla...bla...
         <h2>Static Properties</h2>
-        <table>
-            <thead>
-                <th>
-                    <td>Property</td>
-                    <td>Summary</td>
-                </th>
-            </thead>
-            <wo.itemsControl itemSource="model().staticProperties">
-                <template>
-                    <tbody data-bind="itemsSource: null"></tbody>
-                </template>
-                <itemTemplate>
-                    <tr>
-                        <td data-bind="html: model().name"></td>
-                        <td data-bind="html: model().summary"></td>
-                    </tr>
-                </itemTemplate>
-            </wo.itemsControl>
-        </table>
+        <wo.itemsControl itemSource="model().staticProperties">
+            <template>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Function</th>
+                            <th>Summary</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="itemsControl: null"></tbody>
+                </table>
+            </template>
+            <itemTemplate>
+                <tr>
+                    <td data-bind="html: model().name"></td>
+                    <td data-bind="html: model().summary"></td>
+                </tr>
+            </itemTemplate>
+        </wo.itemsControl>
         <h2>Static Functions</h2>
-        <table>
-            <thead>
-                <th>
-                    <td>Function</td>
-                    <td>Summary</td>
-                </th>
-            </thead>
-            <wo.itemsControl itemSource="model().staticFunctions">
-                <template>
-                    <tbody data-bind="itemsSource: null"></tbody>
-                </template>
-                <itemTemplate>
-                    <tr>
-                        <td data-bind="html: model().name"></td>
-                        <td data-bind="html: model().summary"></td>
-                    </tr>
-                </itemTemplate>
-            </wo.itemsControl>
-        </table>
+        <wo.itemsControl itemSource="model().staticFunctions">
+            <template>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Function</th>
+                            <th>Summary</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="itemsControl: null"></tbody>
+                </table>
+            </template>
+            <itemTemplate>
+                <tr>
+                    <td data-bind="html: model().name"></td>
+                    <td data-bind="html: model().summary"></td>
+                </tr>
+            </itemTemplate>
+        </wo.itemsControl>
+        <h2>Properties</h2>
+        <wo.itemsControl itemSource="model().properties">
+            <template>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Function</th>
+                            <th>Summary</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="itemsControl: null"></tbody>
+                </table>
+            </template>
+            <itemTemplate>
+                <tr>
+                    <td data-bind="html: model().name"></td>
+                    <td data-bind="html: model().summary"></td>
+                </tr>
+            </itemTemplate>
+        </wo.itemsControl>
+        <h2>Functions</h2>
+        <wo.itemsControl itemSource="model().functions">
+            <template>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Function</th>
+                            <th>Summary</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="itemsControl: null"></tbody>
+                </table>
+            </template>
+            <itemTemplate>
+                <tr>
+                    <td data-bind="html: model().name"></td>
+                    <td data-bind="html: model().summary"></td>
+                </tr>
+            </itemTemplate>
+        </wo.itemsControl>
         </script>       
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.EventPage">

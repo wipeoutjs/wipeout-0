@@ -23,27 +23,27 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.content = ko.observable(new landingPage());
         
         var objectBranch = new classTreeViewBranch("wo.object");
-        //var visualBranch = new classTreeViewBranch("wo.visual");
-        //var viewBranch = new classTreeViewBranch("wo.view");
-        //var contentControlBranch = new classTreeViewBranch("wo.contentControl");
-        //var itemsControlBranch = new classTreeViewBranch("wo.itemsControl");
-        //var eventBranch = new classTreeViewBranch("wo.event");
-        //var routedEventBranch = new classTreeViewBranch("wo.routedEvent");
-        //var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs");
-        //var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration");
+        var visualBranch = new classTreeViewBranch("wo.visual");
+        var viewBranch = new classTreeViewBranch("wo.view");
+        var contentControlBranch = new classTreeViewBranch("wo.contentControl");
+        var itemsControlBranch = new classTreeViewBranch("wo.itemsControl");
+        var eventBranch = new classTreeViewBranch("wo.event");
+        var routedEventBranch = new classTreeViewBranch("wo.routedEvent");
+        var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs");
+        var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration");
         
         this.menu = new pageTreeViewBranch("branch 1", null, [
             new pageTreeViewBranch("API", null, [
                 new pageTreeViewBranch("wo", null, [
-                    //contentControlBranch,
-                    //eventBranch,
-                    //itemsControlBranch,
-                    objectBranch//,
-                    //routedEventBranch,
-                    //routedEventArgsBranch,
-                    //routedEventRegistrationBranch,
-                    //viewBranch,
-                    //visualBranch
+                    contentControlBranch,
+                    eventBranch,
+                    itemsControlBranch,
+                    objectBranch,
+                    routedEventBranch,
+                    routedEventArgsBranch,
+                    routedEventRegistrationBranch,
+                    viewBranch,
+                    visualBranch
                 ])
             ]),
         ]);        

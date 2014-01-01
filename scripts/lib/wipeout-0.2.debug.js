@@ -1474,11 +1474,6 @@ wpfko.util = wpfko.util || {};
         
     //TODO: div might not be appropriate, eg, if html string is <li />
     var createElement = function(htmlString) {
-        
-        var ttt = getTagName(htmlString);
-        if(ttt === "tr" || ttt === "td" || ttt === "thead" || ttt === "tbody" ||ttt === "th")debugger;
-        
-        
         if(!htmlString) return null;
         var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
         parent.innerHTML = htmlString;
@@ -1503,6 +1498,16 @@ wpfko.util = wpfko.util || {};
         return openingTag.substring(0, i);
     };
     
+    var stripHtmlComments = /<\!--[^>]*-->/g;
+    var getFirstTagName = function(htmlContent) {
+        htmlContent = htmlContent.replace(stripHtmlComments, "").replace(/^\s+|\s+$/g, "");
+        var i = 0;
+        if((i = htmlContent.indexOf("<")) === -1)
+            return null;
+        
+        return getTagName(htmlContent.substring(i));
+    };
+    
     //TODO: More tags
     var specialTags = {
         td: "tr",
@@ -1516,10 +1521,14 @@ wpfko.util = wpfko.util || {};
     //TODO: div might not be appropriate, eg, if html string is <li />
     var createElements = function(htmlString) {
         if(htmlString == null) return null;
-        // add divs so that text element won't be trimmed
-        htmlString = "<div></div>" + htmlString + "<div></div>";
         
-        var div = document.createElement("div");
+        var sibling = getFirstTagName(htmlString) || "div";
+        var parent = specialTags[getTagName("<" + sibling + "/>")] || "div";
+        
+        // add wrapping elements so that text element won't be trimmed
+        htmlString = "<" + sibling + "></" + sibling + ">" + htmlString + "<" + sibling + "></" + sibling + ">";
+        
+        var div = document.createElement(parent);
         div.innerHTML = htmlString;
         
         var output = [];
@@ -1621,14 +1630,14 @@ wpfko.util = wpfko.util || {};
     
     wpfko.util.html = {
         specialTags: specialTags,
+        getFirstTagName: getFirstTagName,
         getTagName: getTagName,
         getAllChildren: getAllChildren,
         outerHTML: outerHTML,
         createElement: createElement,
         createElements: createElements,
         createWpfkoComment: createWpfkoComment
-    };
-    
+    };    
 })();
 
 
