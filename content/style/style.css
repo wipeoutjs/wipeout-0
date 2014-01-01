@@ -1,0 +1,7 @@
+.leftNav {
+    float: left;
+    position: static;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+}

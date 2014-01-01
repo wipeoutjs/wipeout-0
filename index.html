@@ -4,6 +4,8 @@
         <title>Wipeout</title>
     </head>
     <body>
+        
+        <link rel="stylesheet" type="text/css" href="content/style/style.css">
     
         <div data-bind="wpfko: Wipeout.Docs.ViewModels.Application"></div>
         
@@ -143,11 +145,13 @@
         </script>    
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Application">
-        <Wipeout.Docs.ViewModels.Components.TreeViewBranch model="$parent.model().menu" />
-        <br />
-        <br />
-        <br />
-        <Wipeout.Docs.ViewModels.Components.DynamicRender model="$parent.model().content" />
+        <div class="leftNav">
+            <Wipeout.Docs.ViewModels.Components.TreeViewBranch model="$parent.model().menu" />
+        </div>
+        <div style="float: left; width: 50px; height: 1px;"></div>
+        <div>
+            <Wipeout.Docs.ViewModels.Components.DynamicRender model="$parent.model().content" />
+        </div>
         </script>    
     </body>
 </html>
