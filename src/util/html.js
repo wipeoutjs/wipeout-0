@@ -64,8 +64,8 @@ wpfko.util = wpfko.util || {};
     var createElements = function(htmlString) {
         if(htmlString == null) return null;
         
-        var parent1 = getFirstTagName(htmlString) || "div";
-        var parent2 = getTagName("<" + parent1 + "/>") || "div";
+        var parent1 = specialTags[getFirstTagName(htmlString)] || "div";
+        var parent2 = specialTags[getTagName("<" + parent1 + "/>")] || "div";
         
         // add wrapping elements so that text element won't be trimmed
         htmlString = "<" + parent1 + "></" + parent1 + ">" + htmlString + "<" + parent1 + "></" + parent1 + ">";
