@@ -42,9 +42,12 @@ wpfko.util = wpfko.util || {};
     
     var stripHtmlComments = /<\!--[^>]*-->/g;
     var getFirstTagName = function(htmlContent) {
-        htmlContent = htmlContent.replace(stripHtmlComments, "");
+        htmlContent = htmlContent.replace(stripHtmlComments, "").replace(/^\s+|\s+$/g, "");
+        var i = 0;
+        if((i = htmlContent.indexOf("<")) === -1)
+            return null;
         
-        return getTagName(htmlContent);
+        return getTagName(htmlContent.substring(i));
     };
     
     //TODO: More tags
@@ -61,8 +64,8 @@ wpfko.util = wpfko.util || {};
     var createElements = function(htmlString) {
         if(htmlString == null) return null;
         
-        var parent1 = getFirstTagName(htmlString);
-        var parent2 = getTagName("<" + parent1 + "/>");
+        var parent1 = getFirstTagName(htmlString) || "div";
+        var parent2 = getTagName("<" + parent1 + "/>") || "div";
         
         // add wrapping elements so that text element won't be trimmed
         htmlString = "<" + parent1 + "></" + parent1 + ">" + htmlString + "<" + parent1 + "></" + parent1 + ">";
@@ -169,6 +172,7 @@ wpfko.util = wpfko.util || {};
     
     wpfko.util.html = {
         specialTags: specialTags,
+        getFirstTagName: getFirstTagName,
         getTagName: getTagName,
         getAllChildren: getAllChildren,
         outerHTML: outerHTML,
