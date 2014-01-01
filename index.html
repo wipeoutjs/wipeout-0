@@ -49,6 +49,19 @@
         <!----><script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassPage"><!---->
         <h2>Constructor</h2>
         bla....bla...bla...
+        <table>
+            <thead>
+                <th>
+                    <td>Function</td>
+                    <td>Summary</td>
+                </th>
+            </thead>
+        </table>
+        </script>             
+        
+        <!----><script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassPageX"><!---->
+        <h2>Constructor</h2>
+        bla....bla...bla...
         <h2>Static Properties</h2>
         <table>
             <thead>
@@ -57,11 +70,37 @@
                     <td>Summary</td>
                 </th>
             </thead>
-            <tbody>
-                <wo.itemsControl itemSource="model().staticProperties">
-                    <itemTemplate>Hi</itemTemplate>
-                </wo.itemsControl>
-            </tbody>
+            <wo.itemsControl itemSource="model().staticProperties">
+                <template>
+                    <tbody data-bind="itemsSource: null"></tbody>
+                </template>
+                <itemTemplate>
+                    <tr>
+                        <td data-bind="html: model().name"></td>
+                        <td data-bind="html: model().summary"></td>
+                    </tr>
+                </itemTemplate>
+            </wo.itemsControl>
+        </table>
+        <h2>Static Functions</h2>
+        <table>
+            <thead>
+                <th>
+                    <td>Function</td>
+                    <td>Summary</td>
+                </th>
+            </thead>
+            <wo.itemsControl itemSource="model().staticFunctions">
+                <template>
+                    <tbody data-bind="itemsSource: null"></tbody>
+                </template>
+                <itemTemplate>
+                    <tr>
+                        <td data-bind="html: model().name"></td>
+                        <td data-bind="html: model().summary"></td>
+                    </tr>
+                </itemTemplate>
+            </wo.itemsControl>
         </table>
         </script>       
         

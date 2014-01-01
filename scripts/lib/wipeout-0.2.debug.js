@@ -1465,7 +1465,8 @@ wpfko.util = wpfko.util || {};
     var outerHTML = function(element) {
         if(!element) return null;
         
-        var div = document.createElement("div");
+        var tagName = element.nodeType === 1 ? (specialTags[element.tagName.toLowerCase()] || "div") : "div";
+        var div = document.createElement(tagName);
         div.innerHTML = element.outerHTML;
         
         return div.innerHTML;        
@@ -1473,6 +1474,11 @@ wpfko.util = wpfko.util || {};
         
     //TODO: div might not be appropriate, eg, if html string is <li />
     var createElement = function(htmlString) {
+        
+        var ttt = getTagName(htmlString);
+        if(ttt === "tr" || ttt === "td" || ttt === "thead" || ttt === "tbody" ||ttt === "th")debugger;
+        
+        
         if(!htmlString) return null;
         var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
         parent.innerHTML = htmlString;
@@ -1500,8 +1506,8 @@ wpfko.util = wpfko.util || {};
     //TODO: More tags
     var specialTags = {
         td: "tr",
-        th: "table",
-        tr: "table",
+        th: "tr",
+        tr: "tbody",
         tbody: "table",
         thead: "table",
         li: "ul"

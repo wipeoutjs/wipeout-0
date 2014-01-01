@@ -23,27 +23,27 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.content = ko.observable(new landingPage());
         
         var objectBranch = new classTreeViewBranch("wo.object");
-        var visualBranch = new classTreeViewBranch("wo.visual");
-        var viewBranch = new classTreeViewBranch("wo.view");
-        var contentControlBranch = new classTreeViewBranch("wo.contentControl");
-        var itemsControlBranch = new classTreeViewBranch("wo.itemsControl");
-        var eventBranch = new classTreeViewBranch("wo.event");
-        var routedEventBranch = new classTreeViewBranch("wo.routedEvent");
-        var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs");
-        var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration");
+        //var visualBranch = new classTreeViewBranch("wo.visual");
+        //var viewBranch = new classTreeViewBranch("wo.view");
+        //var contentControlBranch = new classTreeViewBranch("wo.contentControl");
+        //var itemsControlBranch = new classTreeViewBranch("wo.itemsControl");
+        //var eventBranch = new classTreeViewBranch("wo.event");
+        //var routedEventBranch = new classTreeViewBranch("wo.routedEvent");
+        //var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs");
+        //var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration");
         
         this.menu = new pageTreeViewBranch("branch 1", null, [
             new pageTreeViewBranch("API", null, [
                 new pageTreeViewBranch("wo", null, [
-                    contentControlBranch,
-                    eventBranch,
-                    itemsControlBranch,
-                    objectBranch,
-                    routedEventBranch,
-                    routedEventArgsBranch,
-                    routedEventRegistrationBranch,
-                    viewBranch,
-                    visualBranch
+                    //contentControlBranch,
+                    //eventBranch,
+                    //itemsControlBranch,
+                    objectBranch//,
+                    //routedEventBranch,
+                    //routedEventArgsBranch,
+                    //routedEventRegistrationBranch,
+                    //viewBranch,
+                    //visualBranch
                 ])
             ]),
         ]);        
@@ -177,8 +177,8 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.events = [];
         this.properties = [];
         this.staticProperties = [];
-        this.methods = [];
-        this.staticMethods = [];
+        this.functions = [];
+        this.staticFunctions = [];
     });
         
     classPage.prototype.addEvent = function(name, summary, page) {
@@ -194,9 +194,9 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         
     classPage.prototype.addFunction = function(name, summary, isStatic, page) {
         if(isStatic)
-            this.staticMethods.push(new classPageItem(name, summary, page));
+            this.staticFunctions.push(new classPageItem(name, summary, page));
         else
-            this.methods.push(new classPageItem(name, summary, page));
+            this.functions.push(new classPageItem(name, summary, page));
     };
     
     var classPageItem = function(name, summary, page) {
@@ -244,6 +244,8 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
 
     var functionBranch = pageTreeViewBranch.extend(function(name, classFullName, isStatic, theFunction){
         this._super(name, new functionPage(name, classFullName, isStatic, functionBranch.getArgs(theFunction)));
+        
+        this.isStatic = isStatic;
     });
 
     functionBranch.getArgs = function(theFunction) {
