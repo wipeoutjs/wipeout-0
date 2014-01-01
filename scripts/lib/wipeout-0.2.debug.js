@@ -101,10 +101,8 @@ wpfko.base = wpfko.base || {};
         this._super();
         
         this.templateItems = {};   
-        this.renderedChildren = [];
-        
-        this._rootHtmlElement = null;
-        
+        this.renderedChildren = [];        
+        this._rootHtmlElement = null;        
         this._routedEventSubscriptions = [];
         
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
@@ -140,15 +138,35 @@ wpfko.base = wpfko.base || {};
     };
     
     visual.getParentElement = function(element) {
+        var depth = 0;
         var current = element.previousSibling;
         while(current) {
-            if(wpfko.util.ko.virtualElements.isVirtual(current))
-                return current;
+            if(wpfko.util.ko.virtualElements.isVirtualClosing(current)) {
+                depth--;
+            }
+            
+            if(wpfko.util.ko.virtualElements.isVirtual(current)) {
+                if(depth === 0)
+                    return current;
+                
+                depth++;
+            }
             
             current = current.previousSibling;
         }
         
         return element.parentElement;
+    };
+    
+    visual.prototype.getParents = function() {
+        var current = this;
+        var parents = [];
+        while(current) {
+            parents.push(current);
+            current = current.getParent();
+        }
+        
+        return parents;
     };
     
     visual.prototype.getParent = function() {
@@ -234,7 +252,26 @@ wpfko.base = wpfko.base || {};
 
             return templateId;
         };
-    })(); 
+    })();
+        
+    visual.visualGraph = function (rootElement, displayFunction) {
+        if (!rootElement)
+            return [];
+ 
+        displayFunction = displayFunction || function() { return typeof arguments[0]; };
+ 
+        var output = [];
+        wpfko.util.obj.enumerate(wpfko.util.html.getAllChildren(rootElement), function (child) {
+            wpfko.util.obj.enumerate(visual.visualGraph(child), output.push, output);
+        });
+ 
+        var vm = ko.utils.domData.get(rootElement, wpfko.ko.bindings.wpfko.utils.wpfkoKey);        
+        if (vm) {
+            return [{ viewModel: vm, display: displayFunction(vm), children: output}];
+        }
+ 
+        return output;
+    };
     
     // list of html tags which will not be treated as objects
     visual.reservedTags = ["a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "command", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "head", "header", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "map", "mark", "menu", "meta", "meter", "nav", "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"];
@@ -377,14 +414,14 @@ wpfko.base = wpfko.base || {};
                 }
             }
             
-            if (view.objectParser[type]) {
+            if (view.objectParser[type.replace(/^\s+|\s+$/g, '').toLowerCase()]) {
                 var innerHTML = [];
                 var ser = ser || new XMLSerializer();
                 for (var j = 0, jj = child.childNodes.length; j < jj; j++) {
                     innerHTML.push(ser.serializeToString(child.childNodes[j]));
                 }
             
-                var val = view.objectParser[type](innerHTML.join(""));
+                var val = view.objectParser[type.replace(/^\s+|\s+$/g, '').toLowerCase()](innerHTML.join(""));
                 if(ko.isObservable(this[child.nodeName])) {
                     this[child.nodeName](val);       
                 } else {
@@ -404,6 +441,10 @@ wpfko.base = wpfko.base || {};
     };
     
     view.objectParser = {
+        "json": function (value) {
+            //TODO: browser compatability
+            return JSON.parse(value);
+        },
         "string": function (value) {
             return value;
         },
@@ -728,7 +769,7 @@ wpfko.base = wpfko.base || {};
         var values = this.items();
         values.length = models.length;
         for (var i = 0, ii = models.length; i < ii; i++) {
-            values[i] = new wpfko.base.view(this.itemTemplateId(), models[i]);
+            values[i] = this.createItem(models[i]);
         }
 
         this.items.valueHasMutated();
@@ -784,29 +825,15 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         if (!(viewModel instanceof wpfko.base.itemsControl))
             throw "This binding can only be used within the context of a wo.itemsControl";
-                                                                                                   
+
         ko.virtualElements.emptyNode(element);
-        var items = wpfko.util.obj.copyArray(viewModel.items.peek());
-        for(var i = items.length - 1; i >= 0; i--) {
-            var container = wpfko.util.html.createWpfkoComment();
-            ko.virtualElements.prepend(element, container.close);
-            ko.virtualElements.prepend(element, container.open);            
-            
-            var acc = (function(i) {
-                return function() {
-                    return items[i];
-                };
-            })(i);
-            
-            wpfko.ko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
-            wpfko.ko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
-        }
-        
-        if(wpfko.util.ko.version()[0] < 3) {
+        if (wpfko.util.ko.version()[0] < 3) {
             utils.subscribeV2(element, viewModel, bindingContext);
         } else {
             utils.subscribeV3(element, viewModel, bindingContext);
         }
+
+        itemsChanged(element, viewModel, bindingContext)(ko.utils.compareArrays([], viewModel.items.peek()));
     };
     
     var itemsChanged = function(element, viewModel, bindingContext) {
@@ -930,35 +957,41 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
 
 (function () {
         
-    var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        var child = wpfko.util.ko.peek(valueAccessor());
-		if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || (child && !(child instanceof wpfko.base.visual)))
-			throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
+        var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            return ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
+        };
 
-		if (child && child._rootHtmlElement)
-			throw "This visual has already been rendered";
+        var update = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            var child = wpfko.util.ko.peek(valueAccessor());
+            if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || (child && !(child instanceof wpfko.base.visual)))
+                throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
 
-		var returnVal = ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
+            if (child && child._rootHtmlElement)
+                throw "This visual has already been rendered";
 
-		if (child) {
-			ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
-			child._rootHtmlElement = element;
-			if (viewModel) viewModel.renderedChildren.push(child);
-		}
-
-		return returnVal;
-    };
-    
-    var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        return ko.bindingHandlers.template.update.call(this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
-    };    
+            if (child) {
+                ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
+                child._rootHtmlElement = element;
+                if (viewModel) viewModel.renderedChildren.push(child);
+            }
+            
+            var _this = this;
+            var templateChanged = function() {
+                ko.bindingHandlers.template.update.call(_this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
+            };
+            
+            child.templateId.subscribe(templateChanged);
+            templateChanged();
+        };
     
     var createValueAccessor = function(oldValueAccessor) {
+        // ensure template id does not trigger another update
+        // this will be handled within the binding
         return function () {
             var child = oldValueAccessor();
-            var _child = wpfko.util.ko.peek(child);
+            var _child = ko.utils.unwrapObservable(child);
             return {
-                name: _child ? _child.templateId : "",
+                name: _child ? _child.templateId.peek() : "",
                 data: child || {},
                 afterRender: _child ? wpfko.base.visual._afterRendered : undefined
             }
@@ -1275,6 +1308,8 @@ wpfko.template = wpfko.template || {};
                 var html = wpfko.util.html.createElement(ser.serializeToString(ch));
                 html.innerHTML = wpfko.template.htmlBuilder.generateTemplate(child, itemPrefix + i);                
                 result.push(wpfko.util.html.outerHTML(html));
+            } else if(child.nodeType === 3) {
+                result.push(child.data);
             } else {
                 result.push(ser.serializeToString(child));
             }
@@ -1436,17 +1471,45 @@ wpfko.util = wpfko.util || {};
         return div.innerHTML;        
     };  
         
+    //TODO: div might not be appropriate, eg, if html string is <li />
     var createElement = function(htmlString) {
         if(!htmlString) return null;
-        var div = document.createElement("div");
-        div.innerHTML = htmlString;
-        var element = div.firstChild;
-        div.removeChild(element);
+        var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
+        parent.innerHTML = htmlString;
+        var element = parent.firstChild;
+        parent.removeChild(element);
         return element;        
     }; 
+    
+    var validHtmlCharacter = /[a-zA-Z0-9]/;
+    var getTagName = function(openingTag) {
+        openingTag = openingTag.replace(/^\s+|\s+$/g, "");
+        if(!openingTag || openingTag[0] !== "<")
+            throw "Invalid html tag";
         
+        openingTag = openingTag.substring(1).replace(/^\s+|\s+$/g, "");
+        
+        for(var i = 0, ii = openingTag.length; i < ii; i++) {
+            if(!validHtmlCharacter.test(openingTag[i]))
+                break;
+        }
+        
+        return openingTag.substring(0, i);
+    };
+    
+    //TODO: More tags
+    var specialTags = {
+        td: "tr",
+        th: "table",
+        tr: "table",
+        tbody: "table",
+        thead: "table",
+        li: "ul"
+    };
+       
+    //TODO: div might not be appropriate, eg, if html string is <li />
     var createElements = function(htmlString) {
-        if(!htmlString) return null;
+        if(htmlString == null) return null;
         // add divs so that text element won't be trimmed
         htmlString = "<div></div>" + htmlString + "<div></div>";
         
@@ -1498,11 +1561,62 @@ wpfko.util = wpfko.util || {};
             }
         };
         
-        return open.__wpfko;
-        
+        return open.__wpfko;        
+    };
+ 
+    var getAllChildren = function (element) {
+        var children = [];
+        if (wpfko.util.ko.virtualElements.isVirtual(element)) {
+            var parent = wpfko.util.ko.virtualElements.parentElement(element);
+            
+            // find index of "element"
+            for (var i = 0, ii = parent.childNodes.length; i < ii; i++) {
+                if (parent.childNodes[i] === element)
+                    break;
+            }
+ 
+            i++;
+ 
+            // use previous i
+            // get all children of the virtual element. It is ok to get more than
+            // just the children as the next block will break out when un wanted nodes are reached
+            for (var ii = parent.childNodes.length; i < ii; i++) {
+                children.push(parent.childNodes[i]);
+            }
+        } else {
+            children = element.childNodes;
+        }
+ 
+        var output = [];
+        var depth = 0;
+ 
+        for (var i = 0, ii = children.length; i < ii; i++) {
+            if (wpfko.util.ko.virtualElements.isVirtualClosing(children[i])) {
+                depth--;
+                
+                // we are in a virtual parent element
+                if (depth < 0) return output;
+                continue;
+            }
+ 
+            // we are in a virtual child element
+            if (depth > 0)
+                continue;
+ 
+            output.push(children[i]);
+            
+            // the next element will be in a virtual child
+            if (wpfko.util.ko.virtualElements.isVirtual(children[i]))
+                depth++;
+        }
+ 
+        return output;
     };
     
     wpfko.util.html = {
+        specialTags: specialTags,
+        getTagName: getTagName,
+        getAllChildren: getAllChildren,
         outerHTML: outerHTML,
         createElement: createElement,
         createElements: createElements,
@@ -1568,7 +1682,7 @@ wpfko.util = wpfko.util || {};
             return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0;
         },
         isVirtualClosing: function(node) {
-            return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'') === "/ko";
+            return node.nodeType === 8 && node.nodeValue.replace(/^\s+|\s+$/g, '') === "/ko";
         },
         elementWithChildren: function(element) {
             if(!element) return [];
@@ -1627,7 +1741,20 @@ wpfko.util = wpfko.util || {};
         return output;
     };
     
+    var enumerate = function(enumerate, action, context) {
+        context = context || window;
+        
+        if(enumerate == null) return;
+        if(enumerate instanceof Array)
+            for(var i = 0, ii = enumerate.length; i < ii; i++)
+                action.call(context, enumerate[i], i);
+        else
+            for(var i in enumerate)
+                action.call(context, enumerate[i], i);
+    };
+    
     wpfko.util.obj = {
+        enumerate: enumerate,
         createObject: createObject,
         copyArray: copyArray
     };
