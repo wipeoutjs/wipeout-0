@@ -13,7 +13,7 @@ wpfko.base = wpfko.base || {};
     contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
         return ko.dependentObservable({
             read: function () {
-                var script = document.getElementById(templateIdObservable);
+                var script = document.getElementById(templateIdObservable());
                 return script ? script.textContent : "";
             },
             write: function (newValue) {
