@@ -16,19 +16,19 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
 
             if (child && child._rootHtmlElement)
                 throw "This visual has already been rendered";
-
-            if (child) {
-                ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
-                child._rootHtmlElement = element;
-                if (viewModel) viewModel.renderedChildren.push(child);
-            }
             
             var _this = this;
             var templateChanged = function() {
                 ko.bindingHandlers.template.update.call(_this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
             };
+
+            if (child) {
+                ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
+                child._rootHtmlElement = element;
+                if (viewModel) viewModel.renderedChildren.push(child);
+                child.templateId.subscribe(templateChanged);
+            }
             
-            child.templateId.subscribe(templateChanged);
             templateChanged();
         };
     
