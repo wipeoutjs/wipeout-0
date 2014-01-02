@@ -7,17 +7,21 @@ wpfko.base = wpfko.base || {};
     var contentControl = wpfko.base.view.extend(function (templateId) {
         this._super(templateId || wpfko.base.visual.getBlankTemplateId());
 
-        this.template = ko.dependentObservable({
+        this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
+    });
+    
+    contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
+        return ko.dependentObservable({
             read: function () {
-                var script = document.getElementById(this.templateId());
+                var script = document.getElementById(templateIdObservable);
                 return script ? script.textContent : "";
             },
             write: function (newValue) {
-                this.templateId(wpfko.base.contentControl.createAnonymousTemplate(newValue));
+                templateIdObservable(wpfko.base.contentControl.createAnonymousTemplate(newValue));
             },
-            owner: this
+            owner: owner
         });
-    });  
+    };
     
     var dataTemplateHash = "data-templatehash";    
     contentControl.createAnonymousTemplate = (function () {

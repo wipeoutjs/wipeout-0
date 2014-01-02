@@ -26,16 +26,7 @@ wpfko.base = wpfko.base || {};
         
         this.items.subscribe(this.syncModelsAndViewModels, this);
 
-        this.itemTemplate = ko.dependentObservable({
-            read: function () {
-                var script = document.getElementById(this.itemTemplateId());
-                return script ? script.textContent : "";
-            },
-            write: function (newValue) {
-                this.itemTemplateId(wpfko.base.contentControl.createAnonymousTemplate(newValue));
-            },
-            owner: this
-        });
+        this.itemTemplate = wpfko.base.contentControl.createTemplatePropertyFor(this.itemTemplateId, this);
 
         var itemTemplateId = this.itemTemplateId.peek();
         this.itemTemplateId.subscribe(function (newValue) {
