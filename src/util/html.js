@@ -55,6 +55,8 @@ wpfko.util = wpfko.util || {};
         td: "tr",
         th: "tr",
         tr: "tbody",
+        col: "colgroup",
+        colgroup: "table",
         tbody: "table",
         thead: "table",
         li: "ul"
