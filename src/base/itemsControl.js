@@ -10,11 +10,11 @@ wpfko.base = wpfko.base || {};
         deafaultTemplateId = wpfko.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");
     }
     
-    var itemsControl = wpfko.base.contentControl.extend(function () { 
+    var itemsControl = wpfko.base.contentControl.extend(function (templateId, itemTemplateId) { 
         staticConstructor();
-        this._super(deafaultTemplateId);
+        this._super(templateId || deafaultTemplateId);
 
-        this.itemTemplateId = ko.observable();
+        this.itemTemplateId = ko.observable(itemTemplateId);
         this.itemSource = ko.observableArray([]);
         this.items = ko.observableArray([]);
 

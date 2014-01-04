@@ -5,6 +5,7 @@ wpfko.base = wpfko.base || {};
 (function () {
     
     var object = function (values) {
+        ///<summary>The object class is the base class for all wipeout objects. It has base functionality for inheritance and parent methods</summary>
         this._events = {};
 
         if (values) {
@@ -16,14 +17,9 @@ wpfko.base = wpfko.base || {};
         parents:[],
         children:[]
     };
+    
     object.prototype._super = function() {        
-        ///<summary>Call the current method of the parent class with arguments<summary>
-        
-        // contructor call
-        if(arguments.callee === this.constructor) {
-            this.constructor.prototype.constructor.apply(this, arguments);
-            return;
-        }        
+        ///<summary>Call the current method or constructor of the parent class with arguments</summary>
         
         // try to find a cached version to skip lookup of parent class method
         var superIndex = cachedSuperMethods.children.indexOf(arguments.callee.caller);
@@ -73,6 +69,7 @@ wpfko.base = wpfko.base || {};
     };
 
     object.extend = function (childClass) {
+        ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
  
         // static items
         for (var p in this)
