@@ -4,13 +4,8 @@ wpfko.base = wpfko.base || {};
 
 (function () {
     
-    var object = function (values) {
+    var object = function () {
         ///<summary>The object class is the base class for all wipeout objects. It has base functionality for inheritance and parent methods</summary>
-        this._events = {};
-
-        if (values) {
-            $.extend(this, values);
-        }
     };
     
     var cachedSuperMethods = {
