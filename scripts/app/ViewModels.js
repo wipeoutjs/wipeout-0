@@ -59,13 +59,13 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
                 var newVm = null;
                 if(newVal instanceof Wipeout.Docs.Models.Pages.LandingPage) {
                     newVm = new Wipeout.Docs.ViewModels.Pages.LandingPage();
-                } else if(newVal instanceof Wipeout.Docs.Models.Pages.ClassPage) {
+                } else if(newVal instanceof Wipeout.Docs.Models.Descriptions.Class) {
                     newVm = new Wipeout.Docs.ViewModels.Pages.ClassPage();
-                } else if(newVal instanceof Wipeout.Docs.Models.Pages.EventPage) {
+                } else if(newVal instanceof Wipeout.Docs.Models.Descriptions.Event) {
                     newVm = new Wipeout.Docs.ViewModels.Pages.EventPage();
-                } else if(newVal instanceof Wipeout.Docs.Models.Pages.PropertyPage) {
+                } else if(newVal instanceof Wipeout.Docs.Models.Descriptions.Property) {
                     newVm = new Wipeout.Docs.ViewModels.Pages.PropertyPage();
-                } else if(newVal instanceof Wipeout.Docs.Models.Pages.FunctionPage) {
+                } else if(newVal instanceof Wipeout.Docs.Models.Descriptions.Function) {
                     newVm = new Wipeout.Docs.ViewModels.Pages.FunctionPage();
                 } else {
                     throw "Unknown model type";

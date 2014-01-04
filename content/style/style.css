@@ -1,9 +1,6 @@
-.leftNavWidth {
-    width: 300px;
-    overflow:auto;
-}
 
 .leftNav {
+    overflow:auto;
     position: fixed;
     height: 100%;
     top: 0px;

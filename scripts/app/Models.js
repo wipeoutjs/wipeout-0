@@ -9,48 +9,89 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 callback.call(context, enumerate[i], i);
     };
     
-    var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-    function getParamNames(func) {
-      var fnStr = func.toString().replace(STRIP_COMMENTS, '')
-      var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(/([^\s,]+)/g)
-      if(result === null)
-         result = []
-      return result
-    }
+    var get = function(item, root) {
+        
+        var current = root || window;
+        enumerate(item.split("."), function(item) {
+            current = current[item];
+        });
+        
+        return current;
+    };
+    
+    var api = wo.object.extend(function(rootNamespace) {
+        this._super();
+        
+        this.classes = [];
+    });
+    
+    api.prototype.getClassDescription = function(classConstructor) {
+        for(var i = 0, ii = this.classes.length; i < ii; i++)            
+            if(this.classes[i].classConstructor === classConstructor)
+                return this.classes[i].classDescription;
+    };
+    
+    api.prototype.forClass = function(className) {
+        
+        var classConstructor = get(className);
+        var result = this.getClassDescription(classConstructor);
+        if(result)
+            return result;
+        
+        var desc = new classDescription(className, this);
+        this.classes.push({
+            classDescription: desc,
+            classConstructor: classConstructor
+        });
+        
+        return desc;
+    };
     
     var application = wo.object.extend(function() {
         
         this.content = ko.observable(new landingPage());
         
-        var objectBranch = new classTreeViewBranch("wo.object");
-        var visualBranch = new classTreeViewBranch("wo.visual");
-        var viewBranch = new classTreeViewBranch("wo.view");
-        var contentControlBranch = new classTreeViewBranch("wo.contentControl");
-        var itemsControlBranch = new classTreeViewBranch("wo.itemsControl");
-        var eventBranch = new classTreeViewBranch("wo.event");
-        var routedEventBranch = new classTreeViewBranch("wo.routedEvent");
-        var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs");
-        var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration");
+        var currentApi = new api();
+        
+        var objectBranch = new classTreeViewBranch("wo.object", currentApi.forClass("wo.object"));
+        //var visualBranch = new classTreeViewBranch("wo.visual", currentApi.forClass("wo.visual"));
+        //var viewBranch = new classTreeViewBranch("wo.view", currentApi.forClass("wo.view"));
+        //var contentControlBranch = new classTreeViewBranch("wo.contentControl", currentApi.forClass("wo.contentControl"));
+        //var itemsControlBranch = new classTreeViewBranch("wo.itemsControl", currentApi.forClass("wo.itemsControl"));
+        //var eventBranch = new classTreeViewBranch("wo.event", currentApi.forClass("wo.event"));
+        //var routedEventBranch = new classTreeViewBranch("wo.routedEvent", currentApi.forClass("wo.routedEvent"));
+        //var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs", currentApi.forClass("wo.routedEventArgs"));
+        var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration", currentApi.forClass("wo.routedEventRegistration"));
         
         this.menu =
             new pageTreeViewBranch("API", null, [
                 new pageTreeViewBranch("wo", null, [
-                    contentControlBranch,
-                    eventBranch,
-                    itemsControlBranch,
+                    //contentControlBranch,
+                    //eventBranch,
+                    //itemsControlBranch,
                     objectBranch,
-                    routedEventBranch,
-                    routedEventArgsBranch,
+                    //routedEventBranch,
+                    //routedEventArgsBranch,
                     routedEventRegistrationBranch,
-                    viewBranch,
-                    visualBranch
+                    //viewBranch,
+                    //visualBranch
                 ])
         ]);        
     });
-        
-    //####################################################
+    
+    //#######################################################
     //## Base
-    //####################################################   
+    //#######################################################
+    
+    var displayItem = wo.object.extend(function(name) {
+        this._super();
+        
+        this.title = name;
+    });
+    
+    var landingPage =  displayItem.extend(function(title) {
+       this._super(title); 
+    }); 
             
     var treeViewBranch =  wo.object.extend(function(name, branches) {
         this._super();
@@ -60,7 +101,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
     }); 
             
     treeViewBranch.prototype.payload = function() {
-            return null;
+        return null;
     };
             
     var pageTreeViewBranch = treeViewBranch.extend(function(name, page, branches) {
@@ -73,109 +114,30 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         return this.page;
     };
         
-    var page = wo.object.extend(function(title) {
-        this.title = title;
-    });
+    var classDescriptionItem = wo.object.extend(function(itemName, itemSummary) {
+        this._super();
         
-    //####################################################
+        this.name = itemName;
+        this.summary = itemSummary;
+    });
+    
+    //#######################################################
+    //## END: Base
+    //#######################################################
+    
+    //#######################################################
     //## Class
-    //####################################################
-            
-    var classTreeViewBranch = pageTreeViewBranch.extend(function(fullName) {
-        this._super(classTreeViewBranch.getClassName(fullName), new classPage(fullName), classTreeViewBranch.getBranches(fullName));
-            
-        enumerate(this.branches, function(branch) {
-            if (branch instanceof eventBranch) {
-                this.page.addEvent(branch.name, branch.summary, branch.page);
-            } else if (branch instanceof propertyBranch) {
-                this.page.addProperty(branch.name, branch.summary, branch.isStatic, branch.page);
-            } else if (branch instanceof functionBranch) {
-                this.page.addFunction(branch.name, branch.summary, branch.isStatic, branch.page);
-            } else {
-                throw "Invalid branch type";
-            }
-        }, this);
-            
-        this.branches.sort(function() { return arguments[0].name.localeCompare(arguments[1].name); });
-        this.page.order();
-    });
-
-    classTreeViewBranch.getClassName = function(fullName) {
-        fullName = fullName.split(".");
-        return fullName[fullName.length - 1];
-    };
-
-    classTreeViewBranch.getBranches = function(fullName) {
-            var fn = fullName;
-        fullName = fullName.split(".");
-        var current = window;
-        for(var i = 0, ii = fullName.length; i < ii; i++) {
-            current = current[fullName[i]];
-        }        
+    //#######################################################
         
-        // compile prototype tree into array
-        var inheritanceTree = [];
-        current = current.prototype;
-        while(current) {
-            inheritanceTree.push(current.constructor);
-            current = Object.getPrototypeOf(current);
-        }
+    var classDescription = wo.object.extend(function(classFullName, api) {
+        this._super();
         
-        var instance = {};
-        var prototype = {};
-        var statics = {};
-        var output = [];
-            
-        enumerate(inheritanceTree, function(current) {
-            for(var i in current) {
-                if(current.hasOwnProperty(i) && !statics[i]) {
-                    statics[i] = true;
-                    if(current[i] instanceof wo.event) {
-                        output.push(new eventBranch(i, fn));
-                    } else if(current[i] instanceof Function) {
-                        output.push(new functionBranch(i, fn, true, current[i]));
-                    } else {
-                        output.push(new propertyBranch(i, fn, true));
-                    }
-                }
-            }
-            
-            for(var i in current.prototype) {
-                if(current.prototype.hasOwnProperty(i)) {
-                    if(prototype[i]) {
-                        output.splice(output.indexOf(prototype[i]), 1);
-                    }
-                    
-                    if(current.prototype[i] instanceof Function) { 
-                        //TODO: if override
-                        prototype[i] = new functionBranch(i, fn, false, current.prototype[i]);
-                    } else {
-                        prototype[i] = new propertyBranch(i, fn, false);
-                    }
-                    
-                    output.push(prototype[i]);
-                }
-            }
-            
-            var anInstance = new current();        
-            for(var i in anInstance) {
-                if(anInstance.hasOwnProperty(i) && !instance[i]) {
-                    instance[i] = true;
-                    if(anInstance[i] instanceof Function && !ko.isObservable(anInstance[i])) {
-                        output.push(new functionBranch(i, fn, false, anInstance[i]));
-                    } else {
-                        output.push(new propertyBranch(i, fn, false));
-                    }
-                }
-            }
-        });
+        this.className = classDescription.getClassName(classFullName);
+        this.constructorFunction = get(classFullName);
+        this.classFullName = classFullName;
+        this.api = api;
         
-        return output;
-    };
-
-    var classPage = page.extend(function(name) {
-        this._super(name);
-        
+        this.classConstructor = null;
         this.events = [];
         this.staticEvents = [];
         this.properties = [];
@@ -183,115 +145,209 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.functions = [];
         this.staticFunctions = [];
         
-        name = name.split(".");
-        var current = window;
-        for(var i = 0, ii = name.length; i < ii; i++) {
-            current = current[name[i]];
+        this.rebuild();
+    });
+    
+    classDescription.prototype.rebuild = function() {
+        this.classConstructor = null;
+        this.events.length = 0;
+        this.staticEvents.length = 0;
+        this.properties.length = 0;
+        this.staticProperties.length = 0;
+        this.functions.length = 0;
+        this.staticFunctions.length = 0;
+                
+        for(var i in this.constructorFunction) {
+            if(this.constructorFunction.hasOwnProperty(i)) {
+                if(this.constructorFunction[i] instanceof wo.event) {
+                    this.staticEvents.push(new eventDescription(this.constructorFunction, i, this.classFullName));
+                } else if(this.constructorFunction[i] instanceof Function && !ko.isObservable(this.constructorFunction[i])) {
+                    this.staticFunctions.push(new functionDescription(this.constructorFunction[i], i, this.classFullName));
+                } else {
+                    this.staticProperties.push(new propertyDescription(this.constructorFunction, i, this.classFullName));
+                }
+            }
         }
         
-        this.classConstructor = new classPageItem(this.title, functionBranch.getFunctionSummary(current));
-    });
+        for(var i in this.constructorFunction.prototype) {
+            if(this.constructorFunction.prototype.hasOwnProperty(i)) {                    
+                if(this.constructorFunction.prototype[i] instanceof wo.event) { 
+                    this.events.push(new eventDescription(this.constructorFunction, i, this.classFullName));
+                } else if(this.constructorFunction.prototype[i] instanceof Function && !ko.isObservable(this.constructorFunction.prototype[i])) {
+                    this.functions.push(new functionDescription(this.constructorFunction.prototype[i], i, this.classFullName));
+                } else {
+                    this.properties.push(new propertyDescription(this.constructorFunction, i, this.classFullName));
+                }
+            }
+        }
         
-    classPage.prototype.order = function() {
+        var anInstance = new this.constructorFunction();        
+        for(var i in anInstance) {
+            if(anInstance.hasOwnProperty(i)) {                    
+                if(anInstance[i] instanceof wo.event) { 
+                    this.events.push(new eventDescription(this.constructorFunction, i, this.classFullName));
+                } else if(anInstance[i] instanceof Function && !ko.isObservable(anInstance[i])) { 
+                    this.functions.push(new functionDescription(anInstance[i], i, this.classFullName));
+                } else {
+                    this.properties.push(new propertyDescription(this.constructorFunction, i, this.classFullName));
+                }
+            }
+        }
+        
+        var current = this.constructorFunction;
+        while((current = Object.getPrototypeOf(current.prototype).constructor) !== Object) {  
+            var parentClass = this.api.getClassDescription(current);
+            if(!parentClass)
+                throw "Class has not been defined yet";
+            
+            var copy = function(fromTo, nameProperty) {
+                enumerate(parentClass[fromTo], function(fn) { 
+                    if(this[fromTo].indexOf(fn) !== -1) return;
+                    
+                    for(var i = 0, ii = this[fromTo].length; i < ii; i++) {                    
+                        if(this[fromTo][i][nameProperty] === fn[nameProperty]) {
+                            if(!this[fromTo][i].overrides)
+                                this[fromTo][i].overrides = fn;
+                            
+                            return;
+                        }
+                    }
+                    
+                    this[fromTo].push(fn);
+                }, this);
+            };
+            
+            copy.call(this, "staticEvents", "eventName");
+            copy.call(this, "staticProperties", "propertyName");
+            copy.call(this, "staticFunctions", "functionName");
+            copy.call(this, "events", "eventName");
+            copy.call(this, "properties", "propertyName");
+            copy.call(this, "functions", "functionName");
+        };
+        
+        var pullSummaryFromOverride = function(fromTo) {
+            enumerate(this[fromTo], function(item) {
+                var current = item;
+                while (current && current.overrides && !current.summary) {
+                    if(current.overrides.summary) {
+                        current.summary = current.overrides.summary + 
+                            (current.overrides.summaryInherited ? "" : " (from " + current.overrides.classFullName + ")");
+                        current.summaryInherited = true;
+                    }
+                    
+                    current = current.overrides;
+                }
+            });
+        };
+        
+        pullSummaryFromOverride.call(this, "staticProperties");
+        pullSummaryFromOverride.call(this, "staticFunctions");
+        pullSummaryFromOverride.call(this, "staticEvents");
+        pullSummaryFromOverride.call(this, "events");
+        pullSummaryFromOverride.call(this, "properties");
+        pullSummaryFromOverride.call(this, "functions");
+        
+        for(var i = 0, ii = this.functions.length; i < ii; i++) {
+            if(this.functions[i].functionName === "constructor") {
+                this.classConstructor = this.functions.splice(i, 1)[0];
+                break;
+            }
+        }
+        
+        if(i === this.functions.length)
+            this.classConstructor = new functionDescription(this.constructorFunction, this.className, this.classFullName);
         
         var sort = function() { return arguments[0].name.localeCompare(arguments[1].name); };
+        
         this.events.sort(sort);
+        this.staticEvents.sort(sort);
         this.properties.sort(sort);
         this.staticProperties.sort(sort);
         this.functions.sort(sort);
         this.staticFunctions.sort(sort);
     };
-        
-    classPage.prototype.addEvent = function(name, summary, page) {
-        this.events.push(new classPageItem(name, summary, page));
-    };
-        
-    classPage.prototype.addProperty = function(name, summary, isStatic, page) {
-        if(isStatic)
-            this.staticProperties.push(new classPageItem(name, summary, page));
-        else
-            this.properties.push(new classPageItem(name, summary, page));
-    };
-        
-    classPage.prototype.addFunction = function(name, summary, isStatic, page) {
-        if(isStatic)
-            this.staticFunctions.push(new classPageItem(name, summary, page));
-        else
-            this.functions.push(new classPageItem(name, summary, page));
+    
+    classDescription.getClassName = function(classFullName) {
+        classFullName = classFullName.split(".");
+        return classFullName[classFullName.length - 1];
     };
     
-    var classPageItem = function(name, summary, page) {
-        this.name = name;
-        this.summary = summary;
-        this.page = page;
+    var classTreeViewBranch = pageTreeViewBranch.extend(function(name, classDescription) {
+        this._super(name, classDescription, classTreeViewBranch.compileBranches(classDescription));
+    });
+    
+    classTreeViewBranch.compileBranches = function(classDescription) {
+        var output = [];
+        
+        output.push(new pageTreeViewBranch("constructor", classDescription.classConstructor));    
+        
+        enumerate(classDescription.staticEvents, function(event) {
+            output.push(new pageTreeViewBranch(event.eventName, null));            
+        });
+        
+        enumerate(classDescription.staticProperties, function(property) {
+            output.push(new pageTreeViewBranch(property.propertyName, null));            
+        });
+        
+        enumerate(classDescription.staticFunctions, function(_function) {
+            output.push(new pageTreeViewBranch(_function.functionName, null));            
+        });
+        
+        enumerate(classDescription.events, function(event) {
+            output.push(new pageTreeViewBranch(event.eventName, null));            
+        });
+        
+        enumerate(classDescription.properties, function(property) {
+            output.push(new pageTreeViewBranch(property.propertyName, null));            
+        });
+        
+        enumerate(classDescription.functions, function(_function) {
+            output.push(new pageTreeViewBranch(_function.functionName, null));            
+        });
+        
+        output.sort(function() { return arguments[0].name === "constructor" ? -1 : arguments[0].name.localeCompare(arguments[1].name); });
+        return output;
     };
-        
-    //####################################################
-    //## Event
-    //####################################################
-
-    var eventBranch = pageTreeViewBranch.extend(function(name, classFullName){
-        this._super(name, new eventBranch(name, classFullName));        
-    });
-        
-    var eventPage = page.extend(function(name, classFullName) {
-        this._super(name); 
-        
-        this.classFullName = classFullName;
-        this.summaryTemplate = "Event_Summary_" + classFullName + "." + name;
-    });
-        
-    //####################################################
-    //## Property
-    //####################################################
-        
-    var propertyBranch = pageTreeViewBranch.extend(function(name, classFullName, isStatic){
-        this._super(name, new propertyPage(name, classFullName, isStatic));
-        
-        this.isStatic = isStatic;
-    });
-        
-    var propertyPage = page.extend(function(name, classFullName, isStatic) {
-        this._super(name); 
-        
-        this.classFullName = classFullName;
-        this.isStatic = isStatic;
-        this.summaryTemplate = "Property_Summary_" + classFullName + "." + name;
-    });
-        
-    //####################################################
+    
+    //#######################################################
+    //## END: Class
+    //#######################################################
+    
+    //#######################################################
     //## Function
-    //####################################################   
-
-    var functionBranch = pageTreeViewBranch.extend(function(name, classFullName, isStatic, theFunction){
-        this._super(name, new functionPage(name, classFullName, isStatic, functionBranch.getArgs(theFunction)));
-        this.isStatic = isStatic;
+    //#######################################################
+    
+    var functionDescription = classDescriptionItem.extend(function(theFunction, functionName, classFullName) {
+        this._super(functionName, functionDescription.getFunctionSummary(theFunction));
         
-        this.summary = functionBranch.getFunctionSummary(theFunction);
+        this.function = theFunction;
+        this.functionName = functionName;
+        this.classFullName = classFullName;
+        
+        this.overrides = null;
     });
         
-    functionBranch.getFunctionSummary = function(theFunction) {
-        var ttt = theFunction;
-        thisFunction = theFunction.toString();
+    functionDescription.getFunctionSummary = function(theFunction) {
+        theFunction = theFunction.toString();
         
         var isInlineComment = false;
         var isBlockComment = false;
         
         var removeFunctionDefinition = function() {
-            var firstInline = thisFunction.indexOf("//");
-            var firstBlock = thisFunction.indexOf("/*");
-            var openFunction = thisFunction.indexOf("{");
+            var firstInline = theFunction.indexOf("//");
+            var firstBlock = theFunction.indexOf("/*");
+            var openFunction = theFunction.indexOf("{");
             
             if(firstInline === -1) firstInline = Number.MAX_VALUE;
             if(firstBlock === -1) firstBlock = Number.MAX_VALUE;
                     
             if(openFunction < firstInline && openFunction < firstBlock) {
-                thisFunction = thisFunction.substr(openFunction + 1).replace(/^\s+|\s+$/g, '');
+                theFunction = theFunction.substr(openFunction + 1).replace(/^\s+|\s+$/g, '');
             } else { 
                 if(firstInline < firstBlock) {
-                    thisFunction = thisFunction.substr(thisFunction.indexOf("\n")).replace(/^\s+|\s+$/g, '');
+                    theFunction = theFunction.substr(theFunction.indexOf("\n")).replace(/^\s+|\s+$/g, '');
                 } else {
-                    thisFunction = thisFunction.substr(thisFunction.indexOf("*/")).replace(/^\s+|\s+$/g, '');
+                    theFunction = theFunction.substr(theFunction.indexOf("*/")).replace(/^\s+|\s+$/g, '');
                 }
                 
                 removeFunctionDefinition();
@@ -300,65 +356,101 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         
         removeFunctionDefinition();
         
-        if (thisFunction.indexOf("///<summary>" === 0)) {
-            return thisFunction.substring(12, thisFunction.indexOf("</summary>"));
+        if (theFunction.indexOf("///<summary>" === 0)) {
+            return theFunction.substring(12, theFunction.indexOf("</summary>"));
         }
         
         return "";   
-    };
-
-    functionBranch.getArgs = function(theFunction) {
-        var output = [];
-        
-        enumerate(getParamNames(theFunction), function(arg) {
-            output.push({ name: arg, type: "unknown" });
-        }, this);
-        
-        return output;
-    };
-        
-    var functionPage = page.extend(function(name, classFullName, isStatic, args) {
-        this._super(name); 
-        
-        this.classFullName = classFullName;
-        this.isStatic = isStatic;
-        this.summaryTemplate = "Function_Summary_" + classFullName + "." + name;
-        this.arguments = [];
-        
-        enumerate(args, function(arg) { 
-            this.arguments.push({
-                name: arg.name,
-                type: arg.type,
-                template: "Function_Argument_" + classFullName + "." + name + "_" + arg.name
-            });
-        }, this);
-    });
-        
-    //####################################################
-    //## END Function
-    //####################################################   
+    };  
     
-    var landingPage =  page.extend(function(title) {
-       this._super(title); 
+    //#######################################################
+    //## END: Function
+    //#######################################################
+    
+    //#######################################################
+    //## Property
+    //#######################################################
+    
+    var propertyDescription = classDescriptionItem.extend(function(constructorFunction, propertyName, classFullName) {
+        this._super(propertyName, propertyDescription.getPropertySummary(constructorFunction, propertyName));
+        
+        this.propertyName = propertyName;
+        this.classFullName = classFullName;
     });
+    
+    var inlineCommentOnly = /^\/\//;
+    propertyDescription.getPropertySummary = function(constructorFunction, propertyName) {
+        constructorFunction = constructorFunction.toString();
+                
+        var search = function(regex) {
+            var i = constructorFunction.search(regex);
+            if(i !== -1) {
+                var func = constructorFunction.substring(0, i);
+                var lastLine = func.lastIndexOf("\n");
+                if(lastLine > 0) {
+                    func = func.substring(lastLine);
+                } 
+                
+                func = func.replace(/^\s+|\s+$/g, '');
+                if(inlineCommentOnly.test(func))
+                    return func.substring(2);
+                else
+                    return null;
+            }
+        }
+        
+        var result = search(new RegExp("\\s*this\\s*\\.\\s*" + propertyName + "\\s*="));
+        if(result)
+            return result;
+                
+        return search(new RegExp("\\s*this\\s*\\[\\s*\"" + propertyName + "\"\\s*\\]\\s*="));        
+    };
+    
+    //#######################################################
+    //## END: Property
+    //#######################################################  
+    
+    //#######################################################
+    //## Event
+    //#######################################################
+    
+    var eventDescription = classDescriptionItem.extend(function(constructorFunction, eventName, classFullName) {
+        this._super(eventName, propertyDescription.getPropertySummary(constructorFunction, eventName));
+        
+        this.eventName = eventName;
+        this.classFullName = classFullName;
+    });
+    
+    //#######################################################
+    //## END: Event
+    //#######################################################  
+    
+    //#######################################################
+    //## Export
+    //#######################################################
     
     var components = {
         TreeViewBranch: treeViewBranch,
-        PageTreeViewBranch: pageTreeViewBranch,
-        ClassTreeViewBranch: classTreeViewBranch
+        PageTreeViewBranch: pageTreeViewBranch/*,
+        ClassTreeViewBranch: classTreeViewBranch*/
     };
     
     var pages = {
+        LandingPage: landingPage
+    };
+    
+    var descriptions = {
         LandingPage: landingPage,
-        ClassPage: classPage,
-        EventPage: eventPage,
-        PropertyPage: propertyPage,
-        FunctionPage: functionPage
+        Class: classDescription,
+        //EventPage: eventPage,
+        //PropertyPage: propertyPage,
+        //FunctionPage: functionPage
     };
     
     return {
         Application: application,
         Components: components,
-        Pages: pages
+        Pages: pages,
+        Descriptions: descriptions
     };
 })());
