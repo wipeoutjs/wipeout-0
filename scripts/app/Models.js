@@ -188,7 +188,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
             current = current[name[i]];
         }
         
-        this.constructor = new classPageItem(this.title, functionBranch.getFunctionSummary(current));
+        this.classContructor = new classPageItem(this.title, functionBranch.getFunctionSummary(current));
     });
         
     classPage.prototype.order = function() {

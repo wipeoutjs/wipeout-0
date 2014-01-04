@@ -93,11 +93,20 @@ wpfko.base = wpfko.base || {};
         ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
         this._super();
         
-        this.templateItems = {};   
+        //Dictionary of items created within the current template. The items can be visuals or html elements
+        this.templateItems = {};
+        
+        //TODO: is this different to templateItems?
+        //Array of visuals created within the current template.
         this.renderedChildren = [];        
+        
+        //The html element or virtual element which is the root node of the template of this visual
         this._rootHtmlElement = null;        
+        
+        //Collection event subsciptions for routed events triggered on this object
         this._routedEventSubscriptions = [];
         
+        //The template of the visual, giving it an appearance
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
     });
     
@@ -126,6 +135,7 @@ wpfko.base = wpfko.base || {};
             if(this.renderedChildren[i] instanceof visual) 
                 this.renderedChildren[i].dispose();
         
+        this.renderedChildren.length = 0;
         this._rootHtmlElement = null;
                 
         for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++)
@@ -298,7 +308,8 @@ wpfko.base = wpfko.base || {};
 
         this._super(templateId);
         
-        this.model = ko.observable(model);
+        //The model of view. If not set, it will default to the model of its parent view
+        this.model = ko.observable(model || null);
         
         var model = null;
         this.model.subscribe(function(newVal) {
@@ -309,6 +320,7 @@ wpfko.base = wpfko.base || {};
             }                                          
         }, this);
         
+        //Placeholder to store binding disposeal objects
         this._bindings = {};
     });    
     
@@ -499,6 +511,7 @@ wpfko.base = wpfko.base || {};
         ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
         this._super(templateId || wpfko.base.visual.getBlankTemplateId());
 
+        //The template which corresponds to the templateId for this item
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
     });
     
@@ -576,6 +589,8 @@ wpfko.base = wpfko.base || {};
     
     var event = function() {
         ///<summary>Defines a new event with register and trigger functinality</summary>
+        
+        //Array of callbacks to fire when event is triggered
         this._registrations = [];
     };
 
@@ -650,8 +665,16 @@ wpfko.base = wpfko.base || {};
         staticConstructor();
         this._super(templateId || deafaultTemplateId);
 
+        //The id of the template to render for each item
         this.itemTemplateId = ko.observable(itemTemplateId);
+
+        //The template which corresponds to the itemTemplateId for this object
+        this.itemTemplate = wpfko.base.contentControl.createTemplatePropertyFor(this.itemTemplateId, this);
+        
+        //An array of models to render
         this.itemSource = ko.observableArray([]);
+        
+        //An array of viewmodels, each corresponding to a mode in the itemSource property
         this.items = ko.observableArray([]);
 
         if(wpfko.util.ko.version()[0] < 3) {
@@ -661,8 +684,6 @@ wpfko.base = wpfko.base || {};
         }
         
         this.items.subscribe(this.syncModelsAndViewModels, this);
-
-        this.itemTemplate = wpfko.base.contentControl.createTemplatePropertyFor(this.itemTemplateId, this);
 
         var itemTemplateId = this.itemTemplateId.peek();
         this.itemTemplateId.subscribe(function (newValue) {
@@ -836,9 +857,15 @@ wpfko.base = wpfko.base || {};
     wpfko.base.routedEvent = routedEvent;
     
     var routedEventArgs = function(eventArgs, originator) { 
-        ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>       
+        ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>
+        
+        //Signals whether the routed event has been handled and should not propagate any further
         this.handled = false;
+        
+        //The original event args used when the routedEvent has been triggered
         this.data = eventArgs;
+        
+        //The object which triggered the event
         this.originator = originator;
     };
     
@@ -846,8 +873,12 @@ wpfko.base = wpfko.base || {};
     
     //TODO: private
     var routedEventRegistration = function(routedEvent) {  
-        ///<summary>Holds routed event registration details</summary>            
+        ///<summary>Holds routed event registration details</summary>
+        
+        // The routed event
         this.routedEvent = routedEvent;
+        
+        //An inner event to handler triggering callbacks
         this.event = new wpfko.base.event();
     };
     
