@@ -6,6 +6,8 @@ wpfko.base = wpfko.base || {};
     
     var event = function() {
         ///<summary>Defines a new event with register and trigger functinality</summary>
+        
+        //Array of callbacks to fire when event is triggered
         this._registrations = [];
     };
 

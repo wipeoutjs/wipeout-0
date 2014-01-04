@@ -26,9 +26,15 @@ wpfko.base = wpfko.base || {};
     wpfko.base.routedEvent = routedEvent;
     
     var routedEventArgs = function(eventArgs, originator) { 
-        ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>       
+        ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>
+        
+        //Signals whether the routed event has been handled and should not propagate any further
         this.handled = false;
+        
+        //The original event args used when the routedEvent has been triggered
         this.data = eventArgs;
+        
+        //The object which triggered the event
         this.originator = originator;
     };
     
@@ -36,8 +42,12 @@ wpfko.base = wpfko.base || {};
     
     //TODO: private
     var routedEventRegistration = function(routedEvent) {  
-        ///<summary>Holds routed event registration details</summary>            
+        ///<summary>Holds routed event registration details</summary>
+        
+        // The routed event
         this.routedEvent = routedEvent;
+        
+        //An inner event to handler triggering callbacks
         this.event = new wpfko.base.event();
     };
     

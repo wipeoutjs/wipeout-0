@@ -9,7 +9,8 @@
 
         this._super(templateId);
         
-        this.model = ko.observable(model);
+        //The model of view. If not set, it will default to the model of its parent view
+        this.model = ko.observable(model || null);
         
         var model = null;
         this.model.subscribe(function(newVal) {
@@ -20,6 +21,7 @@
             }                                          
         }, this);
         
+        //Placeholder to store binding disposeal objects
         this._bindings = {};
     });    
     

@@ -16,8 +16,16 @@ wpfko.base = wpfko.base || {};
         staticConstructor();
         this._super(templateId || deafaultTemplateId);
 
+        //The id of the template to render for each item
         this.itemTemplateId = ko.observable(itemTemplateId);
+
+        //The template which corresponds to the itemTemplateId for this object
+        this.itemTemplate = wpfko.base.contentControl.createTemplatePropertyFor(this.itemTemplateId, this);
+        
+        //An array of models to render
         this.itemSource = ko.observableArray([]);
+        
+        //An array of viewmodels, each corresponding to a mode in the itemSource property
         this.items = ko.observableArray([]);
 
         if(wpfko.util.ko.version()[0] < 3) {
@@ -27,8 +35,6 @@ wpfko.base = wpfko.base || {};
         }
         
         this.items.subscribe(this.syncModelsAndViewModels, this);
-
-        this.itemTemplate = wpfko.base.contentControl.createTemplatePropertyFor(this.itemTemplateId, this);
 
         var itemTemplateId = this.itemTemplateId.peek();
         this.itemTemplateId.subscribe(function (newValue) {

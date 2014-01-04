@@ -8,6 +8,7 @@ wpfko.base = wpfko.base || {};
         ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
         this._super(templateId || wpfko.base.visual.getBlankTemplateId());
 
+        //The template which corresponds to the templateId for this item
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
     });
     
