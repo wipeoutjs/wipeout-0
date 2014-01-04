@@ -33,7 +33,7 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
             $(this.templateItems.content).toggle();
         
         var payload = this.model().payload();
-        if (payload) {
+        if ($(this.templateItems.content).filter(":visible").length && payload) {
             this.triggerRoutedEvent(treeViewBranch.renderPage, payload);
         }
     };
