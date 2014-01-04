@@ -23,29 +23,28 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.content = ko.observable(new landingPage());
         
         var objectBranch = new classTreeViewBranch("wo.object");
-        /*var visualBranch = new classTreeViewBranch("wo.visual");
+        var visualBranch = new classTreeViewBranch("wo.visual");
         var viewBranch = new classTreeViewBranch("wo.view");
         var contentControlBranch = new classTreeViewBranch("wo.contentControl");
         var itemsControlBranch = new classTreeViewBranch("wo.itemsControl");
         var eventBranch = new classTreeViewBranch("wo.event");
         var routedEventBranch = new classTreeViewBranch("wo.routedEvent");
         var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs");
-        var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration");*/
+        var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration");
         
-        this.menu = new pageTreeViewBranch("branch 1", null, [
+        this.menu =
             new pageTreeViewBranch("API", null, [
                 new pageTreeViewBranch("wo", null, [
-                    /*contentControlBranch,
+                    contentControlBranch,
                     eventBranch,
-                    itemsControlBranch,*/
-                    objectBranch/*,
+                    itemsControlBranch,
+                    objectBranch,
                     routedEventBranch,
                     routedEventArgsBranch,
                     routedEventRegistrationBranch,
                     viewBranch,
-                    visualBranch*/
+                    visualBranch
                 ])
-            ]),
         ]);        
     });
         
@@ -96,6 +95,9 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 throw "Invalid branch type";
             }
         }, this);
+            
+        this.branches.sort(function() { return arguments[0].name.localeCompare(arguments[1].name); });
+        this.page.order();
     });
 
     classTreeViewBranch.getClassName = function(fullName) {
@@ -159,7 +161,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
             for(var i in anInstance) {
                 if(anInstance.hasOwnProperty(i) && !instance[i]) {
                     instance[i] = true;
-                    if(anInstance[i] instanceof Function) {
+                    if(anInstance[i] instanceof Function && !ko.isObservable(anInstance[i])) {
                         output.push(new functionBranch(i, fn, false, anInstance[i]));
                     } else {
                         output.push(new propertyBranch(i, fn, false));
@@ -188,6 +190,16 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         
         this.constructor = new classPageItem(this.title, functionBranch.getFunctionSummary(current));
     });
+        
+    classPage.prototype.order = function() {
+        
+        var sort = function() { return arguments[0].name.localeCompare(arguments[1].name); };
+        this.events.sort(sort);
+        this.properties.sort(sort);
+        this.staticProperties.sort(sort);
+        this.functions.sort(sort);
+        this.staticFunctions.sort(sort);
+    };
         
     classPage.prototype.addEvent = function(name, summary, page) {
         this.events.push(new classPageItem(name, summary, page));

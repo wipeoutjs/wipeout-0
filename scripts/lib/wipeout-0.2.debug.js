@@ -4,13 +4,8 @@ wpfko.base = wpfko.base || {};
 
 (function () {
     
-    var object = function (values) {
+    var object = function () {
         ///<summary>The object class is the base class for all wipeout objects. It has base functionality for inheritance and parent methods</summary>
-        this._events = {};
-
-        if (values) {
-            $.extend(this, values);
-        }
     };
     
     var cachedSuperMethods = {
@@ -95,6 +90,7 @@ wpfko.base = wpfko.base || {};
 (function () {
     
     var visual = wpfko.base.object.extend(function (templateId) {
+        ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
         this._super();
         
         this.templateItems = {};   
@@ -106,12 +102,15 @@ wpfko.base = wpfko.base || {};
     });
     
     visual._afterRendered = function(nodes, context) {
+        ///<summary>Used by the render binding to trigger the rootHtmlChanged method</summary>
         var old = context.nodes || [];
         context.nodes = nodes;
         context.rootHtmlChanged(old, nodes);
     };
     
     visual.prototype.dispose = function() {
+        ///<summary>Dispose of this visual</summary>
+        
         // dispose of any computeds
         for(var i in this)
             if(ko.isObservable(this[i]) && this[i].dispose instanceof Function)
@@ -134,7 +133,10 @@ wpfko.base = wpfko.base || {};
         this._routedEventSubscriptions.length = 0;
     };
     
+    //TODO: move to util
     visual.getParentElement = function(element) {
+        ///<summary>Gets the parent or virtual parent of the element</summary>
+        
         var depth = 0;
         var current = element.previousSibling;
         while(current) {
@@ -156,6 +158,7 @@ wpfko.base = wpfko.base || {};
     };
     
     visual.prototype.getParents = function() {
+        ///<summary>Gets an array of the entire tree of ancestor visual objects</summary>
         var current = this;
         var parents = [];
         while(current) {
@@ -167,6 +170,7 @@ wpfko.base = wpfko.base || {};
     };
     
     visual.prototype.getParent = function() {
+        ///<summary>Get the parent visual of this visual</summary>
         var nextTarget;
         var current = visual.getParentElement(this._rootHtmlElement);
         while(current) {
@@ -178,7 +182,8 @@ wpfko.base = wpfko.base || {};
         }        
     };
     
-    visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {        
+    visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {  
+        ///<summary>Unregister from a routed event. The callback and callback context must tbe the same as those passed in during registration</summary>      
         for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
             if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
                 this._routedEventSubscriptions[i].event.unRegister(callback, context);
@@ -188,6 +193,7 @@ wpfko.base = wpfko.base || {};
     };
     
     visual.prototype.registerRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {
+        ///<summary>Register for a routed event</summary>    
         
         var rev;
         for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
@@ -206,6 +212,7 @@ wpfko.base = wpfko.base || {};
     };
     
     visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
+        ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual</summary>    
         if(!(eventArgs instanceof wpfko.base.routedEventArgs)) {
             eventArgs = new wpfko.base.routedEventArgs(eventArgs, this);
         }
@@ -227,11 +234,13 @@ wpfko.base = wpfko.base || {};
         
     // virtual
     visual.prototype.rootHtmlChanged = function (oldValue, newValue) {
+        ///<summary>Triggered each time after a template is rendered</summary>    
     };
     
     visual.getDefaultTemplateId = (function () {
         var templateId = null;
         return function () {
+            ///<summary>Returns the Id for the default template</summary>    
             if (!templateId) {
                 templateId = wpfko.base.contentControl.createAnonymousTemplate("<span>No template has been specified</span>");
             }
@@ -243,6 +252,7 @@ wpfko.base = wpfko.base || {};
     visual.getBlankTemplateId = (function () {
         var templateId = null;
         return function () {
+            ///<summary>Returns the Id for an empty template</summary>    
             if (!templateId) {
                 templateId = wpfko.base.contentControl.createAnonymousTemplate("");
             }
@@ -252,6 +262,7 @@ wpfko.base = wpfko.base || {};
     })();
         
     visual.visualGraph = function (rootElement, displayFunction) {
+        ///<summary>Compiles a tree of all visual elements in a block of html, starting at the rootElement</summary>    
         if (!rootElement)
             return [];
  
@@ -282,7 +293,8 @@ wpfko.base = wpfko.base || {};
 
 (function () {    
 
-    var view = wpfko.base.visual.extend(function (templateId, model /*optional*/) {
+    var view = wpfko.base.visual.extend(function (templateId, model /*optional*/) {        
+        ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>    
 
         this._super(templateId);
         
@@ -317,9 +329,11 @@ wpfko.base = wpfko.base || {};
     
     // virtual
     view.prototype.onInitialized = function() {
+        ///<summary>Called by the template engine after a view is created and all of its properties are set</summary>    
     }
     
     view.prototype.dispose = function() {
+        ///<summary>Dispose of view specific items</summary>    
         this._super();
         
         for(var i in this._bindings)
@@ -327,6 +341,7 @@ wpfko.base = wpfko.base || {};
     };
     
     view.prototype.bind = function(property, valueAccessor, twoWay) {
+        ///<summary>Bind the value returned by valueAccessor to this[property]</summary>
         
         if(twoWay && (!ko.isObservable(this[property]) || !ko.isObservable(valueAccessor())))
            throw 'Two way bindings must be between 2 observables';
@@ -374,7 +389,9 @@ wpfko.base = wpfko.base || {};
     
     view.reservedPropertyNames = ["constructor", "constructor-tw", "id","id-tw"];
     
+    //TODO private
     view.prototype.initialize = function(propertiesXml, bindingContext) {
+        ///<summary>Takes an xml fragment and binding context and sets its properties accordingly</summary>
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
         
@@ -465,6 +482,7 @@ wpfko.base = wpfko.base || {};
     
     // virtual
     view.prototype.modelChanged = function (oldValue, newValue) {
+        ///<summary>Called when the model has changed</summary>
     };
 
     wpfko.base.view = view;
@@ -478,12 +496,14 @@ wpfko.base = wpfko.base || {};
 (function () {    
 
     var contentControl = wpfko.base.view.extend(function (templateId) {
+        ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
         this._super(templateId || wpfko.base.visual.getBlankTemplateId());
 
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
     });
     
     contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
+        ///<summary>Creates a computed for a template property which is bound to the templateIdObservable property</summary>
         return ko.dependentObservable({
             read: function () {
                 var script = document.getElementById(templateIdObservable());
@@ -502,6 +522,7 @@ wpfko.base = wpfko.base || {};
         var i = Math.floor(Math.random() * 1000000000);
 
         return function (templateString) {
+            ///<summary>Creates an anonymous template within the DOM and returns its id</summary>
 
             // lazy create div to place anonymous templates
             if (!templateArea) {
@@ -533,6 +554,7 @@ wpfko.base = wpfko.base || {};
 
     //http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
     contentControl.hashCode = function (str) {        
+        ///<summary>Creates a rough has code for the given string</summary>
         var hash = 0;
         for (var i = 0, ii = str.length; i < ii; i++) {
             var ch = str.charCodeAt(i);
@@ -553,10 +575,12 @@ wpfko.base = wpfko.base || {};
 (function () {
     
     var event = function() {
+        ///<summary>Defines a new event with register and trigger functinality</summary>
         this._registrations = [];
     };
 
     event.prototype.trigger = function(eventArgs) {
+        ///<summary>Trigger the event, passing the eventArgs to each subscriber</summary>
         for(var i = 0, ii = this._registrations.length; i < ii; i++) {
             if(eventArgs instanceof wpfko.base.routedEventArgs && eventArgs.handled) return;
             
@@ -565,6 +589,7 @@ wpfko.base = wpfko.base || {};
     };
     
     event.prototype.unRegister = function (callback, context /* optional */) {
+        ///<summary>Un subscribe to an event. The callback and context must be the same as those passed in the original registration</summary>
         context = context == null ? window : context;
         for(var i = 0, ii = this._registrations.length; i < ii; i++) {
             if(this._registrations[i].callback === callback && this._registrations[i].context === context) {
@@ -575,10 +600,12 @@ wpfko.base = wpfko.base || {};
     }
     
     event.prototype.dispose = function() {
+        ///<summary>Dispose of the event</summary>
         this._registrations.length = 0;
     }
     
     event.prototype.register = function(callback, context /* optional */) {
+        ///<summary>Subscribe to an event</summary>
         if(!(callback instanceof Function))
             throw "Invalid event callback";
         
@@ -617,7 +644,9 @@ wpfko.base = wpfko.base || {};
         deafaultTemplateId = wpfko.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");
     }
     
-    var itemsControl = wpfko.base.contentControl.extend(function (templateId, itemTemplateId) { 
+    var itemsControl = wpfko.base.contentControl.extend(function (templateId, itemTemplateId) {
+        ///<summary>Bind a list of models (itemSource) to a list of view models (items) and render accordingly</summary>
+        
         staticConstructor();
         this._super(templateId || deafaultTemplateId);
 
@@ -647,8 +676,9 @@ wpfko.base = wpfko.base || {};
         }, this);
     });
     
+    //TODO: private
     itemsControl.subscribeV2 = function() {
-        ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl<summary>
+        ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl</summary>
         var initial = this.itemSource.peek();
         this.itemSource.subscribe(function() {
             try {
@@ -662,13 +692,16 @@ wpfko.base = wpfko.base || {};
         
     };
     
+    //TODO: private
     itemsControl.subscribeV3 = function() {
-        ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl<summary>
+        ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
         this.itemSource.subscribe(this.itemsChanged, this, "arrayChange");
         
     };
     
+    //TODO: private
     itemsControl.prototype.syncModelsAndViewModels = function() {
+        ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
         var changed = false, modelNull = false;
         var models = this.itemSource();
         if(models ==  null) {
@@ -698,7 +731,9 @@ wpfko.base = wpfko.base || {};
         }
     };
 
+    //TODO: private
     itemsControl.prototype.modelsAndViewModelsAreSynched = function() {
+        ///<summary>Returns whether all models have a corresponding view model at the correct index</summary>
         var model = this.itemSource() || [];
         var viewModel = this.items() || [];
         
@@ -714,6 +749,7 @@ wpfko.base = wpfko.base || {};
     };
 
     itemsControl.prototype.itemsChanged = function (changes) { 
+        ///<summary>Adds, removes and moves view models depending on changes to the models array</summary>
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
         for(var i = 0, ii = changes.length; i < ii; i++) {
@@ -753,10 +789,12 @@ wpfko.base = wpfko.base || {};
 
     // virtual
     itemsControl.prototype.createItem = function (model) {
+        ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
         return new wpfko.base.view(this.itemTemplateId(), model);        
     }
 
     itemsControl.prototype.reDrawItems = function () {
+        ///<summary>Destroys and re-draws all view models</summary>
         var models = this.itemSource() || [];
         var values = this.items();
         values.length = models.length;
@@ -777,23 +815,28 @@ wpfko.base = wpfko.base || {};
 (function () {
     
     var routedEvent = function() {
+        ///<summary>A routed event is triggerd on a visual and travels up to ancestor visuals all the way to the root of the application</summary>
     };
 
     routedEvent.prototype.trigger = function(triggerOnVisual, eventArgs) {
+        ///<summary>Trigger a routed event on a visual</summary>
         triggerOnVisual.triggerRoutedEvent(this, new routedEventArgs(eventArgs, triggerOnVisual));
     };
     
     routedEvent.prototype.unRegister = function (callback, triggerOnVisual, context /* optional */) {
+        ///<summary>Unregister a routed event on a visual</summary>
         triggerOnVisual.unRegisterRoutedEvent(this, callback, context);
     }
     
     routedEvent.prototype.register = function(callback, triggerOnVisual, context /* optional */) {
+        ///<summary>Register a routed event on a visual</summary>
         triggerOnVisual.registerRoutedEvent(this, callback, context);
     };
     
     wpfko.base.routedEvent = routedEvent;
     
-    var routedEventArgs = function(eventArgs, originator) {        
+    var routedEventArgs = function(eventArgs, originator) { 
+        ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>       
         this.handled = false;
         this.data = eventArgs;
         this.originator = originator;
@@ -801,7 +844,9 @@ wpfko.base = wpfko.base || {};
     
     wpfko.base.routedEventArgs = routedEventArgs;
     
-    var routedEventRegistration = function(routedEvent) {        
+    //TODO: private
+    var routedEventRegistration = function(routedEvent) {  
+        ///<summary>Holds routed event registration details</summary>            
         this.routedEvent = routedEvent;
         this.event = new wpfko.base.event();
     };
