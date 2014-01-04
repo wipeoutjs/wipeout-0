@@ -54,27 +54,27 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         var currentApi = new api();
         
         var objectBranch = new classTreeViewBranch("wo.object", currentApi.forClass("wo.object"));
-        //var visualBranch = new classTreeViewBranch("wo.visual", currentApi.forClass("wo.visual"));
-        //var viewBranch = new classTreeViewBranch("wo.view", currentApi.forClass("wo.view"));
-        //var contentControlBranch = new classTreeViewBranch("wo.contentControl", currentApi.forClass("wo.contentControl"));
-        //var itemsControlBranch = new classTreeViewBranch("wo.itemsControl", currentApi.forClass("wo.itemsControl"));
-        //var eventBranch = new classTreeViewBranch("wo.event", currentApi.forClass("wo.event"));
-        //var routedEventBranch = new classTreeViewBranch("wo.routedEvent", currentApi.forClass("wo.routedEvent"));
-        //var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs", currentApi.forClass("wo.routedEventArgs"));
+        var visualBranch = new classTreeViewBranch("wo.visual", currentApi.forClass("wo.visual"));
+        var viewBranch = new classTreeViewBranch("wo.view", currentApi.forClass("wo.view"));
+        var contentControlBranch = new classTreeViewBranch("wo.contentControl", currentApi.forClass("wo.contentControl"));
+        var itemsControlBranch = new classTreeViewBranch("wo.itemsControl", currentApi.forClass("wo.itemsControl"));
+        var eventBranch = new classTreeViewBranch("wo.event", currentApi.forClass("wo.event"));
+        var routedEventBranch = new classTreeViewBranch("wo.routedEvent", currentApi.forClass("wo.routedEvent"));
+        var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs", currentApi.forClass("wo.routedEventArgs"));
         var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration", currentApi.forClass("wo.routedEventRegistration"));
         
         this.menu =
             new pageTreeViewBranch("API", null, [
                 new pageTreeViewBranch("wo", null, [
-                    //contentControlBranch,
-                    //eventBranch,
-                    //itemsControlBranch,
+                    contentControlBranch,
+                    eventBranch,
+                    itemsControlBranch,
                     objectBranch,
-                    //routedEventBranch,
-                    //routedEventArgsBranch,
+                    routedEventBranch,
+                    routedEventArgsBranch,
                     routedEventRegistrationBranch,
-                    //viewBranch,
-                    //visualBranch
+                    viewBranch,
+                    visualBranch
                 ])
         ]);        
     });
