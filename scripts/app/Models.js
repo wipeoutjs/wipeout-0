@@ -23,27 +23,27 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.content = ko.observable(new landingPage());
         
         var objectBranch = new classTreeViewBranch("wo.object");
-        var visualBranch = new classTreeViewBranch("wo.visual");
+        /*var visualBranch = new classTreeViewBranch("wo.visual");
         var viewBranch = new classTreeViewBranch("wo.view");
         var contentControlBranch = new classTreeViewBranch("wo.contentControl");
         var itemsControlBranch = new classTreeViewBranch("wo.itemsControl");
         var eventBranch = new classTreeViewBranch("wo.event");
         var routedEventBranch = new classTreeViewBranch("wo.routedEvent");
         var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs");
-        var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration");
+        var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration");*/
         
         this.menu = new pageTreeViewBranch("branch 1", null, [
             new pageTreeViewBranch("API", null, [
                 new pageTreeViewBranch("wo", null, [
-                    contentControlBranch,
+                    /*contentControlBranch,
                     eventBranch,
-                    itemsControlBranch,
-                    objectBranch,
+                    itemsControlBranch,*/
+                    objectBranch/*,
                     routedEventBranch,
                     routedEventArgsBranch,
                     routedEventRegistrationBranch,
                     viewBranch,
-                    visualBranch
+                    visualBranch*/
                 ])
             ]),
         ]);        
@@ -179,6 +179,14 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.staticProperties = [];
         this.functions = [];
         this.staticFunctions = [];
+        
+        name = name.split(".");
+        var current = window;
+        for(var i = 0, ii = name.length; i < ii; i++) {
+            current = current[name[i]];
+        }
+        
+        this.constructor = new classPageItem(this.title, functionBranch.getFunctionSummary(current));
     });
         
     classPage.prototype.addEvent = function(name, summary, page) {
@@ -244,9 +252,47 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
 
     var functionBranch = pageTreeViewBranch.extend(function(name, classFullName, isStatic, theFunction){
         this._super(name, new functionPage(name, classFullName, isStatic, functionBranch.getArgs(theFunction)));
-        
         this.isStatic = isStatic;
+        
+        this.summary = functionBranch.getFunctionSummary(theFunction);
     });
+        
+    functionBranch.getFunctionSummary = function(theFunction) {
+        var ttt = theFunction;
+        thisFunction = theFunction.toString();
+        
+        var isInlineComment = false;
+        var isBlockComment = false;
+        
+        var removeFunctionDefinition = function() {
+            var firstInline = thisFunction.indexOf("//");
+            var firstBlock = thisFunction.indexOf("/*");
+            var openFunction = thisFunction.indexOf("{");
+            
+            if(firstInline === -1) firstInline = Number.MAX_VALUE;
+            if(firstBlock === -1) firstBlock = Number.MAX_VALUE;
+                    
+            if(openFunction < firstInline && openFunction < firstBlock) {
+                thisFunction = thisFunction.substr(openFunction + 1).replace(/^\s+|\s+$/g, '');
+            } else { 
+                if(firstInline < firstBlock) {
+                    thisFunction = thisFunction.substr(thisFunction.indexOf("\n")).replace(/^\s+|\s+$/g, '');
+                } else {
+                    thisFunction = thisFunction.substr(thisFunction.indexOf("*/")).replace(/^\s+|\s+$/g, '');
+                }
+                
+                removeFunctionDefinition();
+            }
+        };
+        
+        removeFunctionDefinition();
+        
+        if (thisFunction.indexOf("///<summary>" === 0)) {
+            return thisFunction.substring(12, thisFunction.indexOf("</summary>"));
+        }
+        
+        return "";   
+    };
 
     functionBranch.getArgs = function(theFunction) {
         var output = [];

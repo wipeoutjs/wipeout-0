@@ -1,6 +1,10 @@
+.leftNavWidth {
+    width: 300px;
+    overflow:auto;
+}
+
 .leftNav {
-    float: left;
-    position: static;
+    position: fixed;
     height: 100%;
     top: 0px;
     left: 0px;

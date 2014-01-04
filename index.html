@@ -48,87 +48,31 @@
         Welcome to Wipeout
         </script>  
         
+        <script type="text/xml" id="ClassItemsTable">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Function</th>
+                        <th>Summary</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="itemsControl: null"></tbody>
+            </table>
+        </script>  
+        
+        <!----><script type="text/xml" id="ClassItemRow"><!---->
+                <tr>
+                    <td data-bind="html: model().name"></td>
+                    <td data-bind="html: model().summary"></td>
+                </tr>
+        </script>
+        
         <!----><script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassPage"><!---->
         <h2>Constructor</h2>
+        <span data-bind="html: model().constructor.summary"></span>
         <h2>Static Properties</h2>
-        <wo.itemsControl itemSource="model().staticProperties">
-            <template>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Function</th>
-                            <th>Summary</th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="itemsControl: null"></tbody>
-                </table>
-            </template>
-            <itemTemplate>
-                <tr>
-                    <td data-bind="html: model().name"></td>
-                    <td data-bind="html: model().summary"></td>
-                </tr>
-            </itemTemplate>
-        </wo.itemsControl>
-        <h2>Static Functions</h2>
-        <wo.itemsControl itemSource="model().staticFunctions">
-            <template>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Function</th>
-                            <th>Summary</th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="itemsControl: null"></tbody>
-                </table>
-            </template>
-            <itemTemplate>
-                <tr>
-                    <td data-bind="html: model().name"></td>
-                    <td data-bind="html: model().summary"></td>
-                </tr>
-            </itemTemplate>
-        </wo.itemsControl>
-        <h2>Properties</h2>
-        <wo.itemsControl itemSource="model().properties">
-            <template>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Function</th>
-                            <th>Summary</th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="itemsControl: null"></tbody>
-                </table>
-            </template>
-            <itemTemplate>
-                <tr>
-                    <td data-bind="html: model().name"></td>
-                    <td data-bind="html: model().summary"></td>
-                </tr>
-            </itemTemplate>
-        </wo.itemsControl>
-        <h2>Functions</h2>
-        <wo.itemsControl itemSource="model().functions">
-            <template>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Function</th>
-                            <th>Summary</th>
-                        </tr>
-                    </thead>
-                    <tbody data-bind="itemsControl: null"></tbody>
-                </table>
-            </template>
-            <itemTemplate>
-                <tr>
-                    <td data-bind="html: model().name"></td>
-                    <td data-bind="html: model().summary"></td>
-                </tr>
-            </itemTemplate>
+        <wo.itemsControl itemSource="model().staticProperties" templateId="ClassItemsTable" itemTemplateId="ClassItemRow">
+            
         </wo.itemsControl>
         </script>       
         
@@ -145,11 +89,11 @@
         </script>    
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Application">
-        <div class="leftNav">
+        <div class="leftNav leftNavWidth">
             <Wipeout.Docs.ViewModels.Components.TreeViewBranch model="$parent.model().menu" />
         </div>
-        <div style="float: left; width: 50px; height: 1px;"></div>
-        <div>
+        <div style="height: 1px; float: left" class="leftNavWidth"></div>
+        <div style="float: left; margin-left: 20px;">
             <Wipeout.Docs.ViewModels.Components.DynamicRender model="$parent.model().content" />
         </div>
         </script>    
