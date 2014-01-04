@@ -96,12 +96,17 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
         this._super("Wipeout.Docs.ViewModels.Pages.FunctionPage");
     });
     
+    var classItemTable = wo.itemsControl.extend(function() {
+        this._super("Wipeout.Docs.ViewModels.Pages.ClassItemTable", "Wipeout.Docs.ViewModels.Pages.ClassItemRow");
+    });
+    
     var components = {
         TreeViewBranch: treeViewBranch,
         DynamicRender: dynamicRender
     };
     
     var pages = {
+        ClassItemTable: classItemTable,
         LandingPage: landingPage,
         ClassPage: classPage,
         PropertyPage: propertyPage,

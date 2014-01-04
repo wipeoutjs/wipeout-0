@@ -48,32 +48,36 @@
         Welcome to Wipeout
         </script>  
         
-        <script type="text/xml" id="ClassItemsTable">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Function</th>
-                        <th>Summary</th>
-                    </tr>
-                </thead>
-                <tbody data-bind="itemsControl: null"></tbody>
-            </table>
+        <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassItemTable">
+            <div data-bind="visible: itemSource().length">
+                <h2 data-bind="html: title"></h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Function</th>
+                            <th>Summary</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="itemsControl: null"></tbody>
+                </table>
+            </div>
         </script>  
         
-        <!----><script type="text/xml" id="ClassItemRow"><!---->
+        <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassItemRow">
                 <tr>
                     <td data-bind="html: model().name"></td>
                     <td data-bind="html: model().summary"></td>
                 </tr>
         </script>
         
-        <!----><script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassPage"><!---->
-        <h2>Constructor</h2>
-        <span data-bind="html: model().constructor.summary"></span>
-        <h2>Static Properties</h2>
-        <wo.itemsControl itemSource="model().staticProperties" templateId="ClassItemsTable" itemTemplateId="ClassItemRow">
-            
-        </wo.itemsControl>
+        <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassPage">
+            <h2>Constructor</h2>
+            <span data-bind="html: model().constructor.summary"></span>
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticProperties" title="'Static Properties'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticFunctions" title="'Static Functions'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().properties" title="'Properties'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().functions" title="'Functions'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().events" title="'Events'" />
         </script>       
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.EventPage">

@@ -5,6 +5,7 @@ wpfko.base = wpfko.base || {};
 (function () {
     
     var object = function (values) {
+        ///<summary>The object class is the base class for all wipeout objects. It has base functionality for inheritance and parent methods</summary>
         this._events = {};
 
         if (values) {
@@ -16,14 +17,9 @@ wpfko.base = wpfko.base || {};
         parents:[],
         children:[]
     };
+    
     object.prototype._super = function() {        
-        ///<summary>Call the current method of the parent class with arguments<summary>
-        
-        // contructor call
-        if(arguments.callee === this.constructor) {
-            this.constructor.prototype.constructor.apply(this, arguments);
-            return;
-        }        
+        ///<summary>Call the current method or constructor of the parent class with arguments</summary>
         
         // try to find a cached version to skip lookup of parent class method
         var superIndex = cachedSuperMethods.children.indexOf(arguments.callee.caller);
@@ -73,6 +69,7 @@ wpfko.base = wpfko.base || {};
     };
 
     object.extend = function (childClass) {
+        ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
  
         // static items
         for (var p in this)
@@ -341,7 +338,7 @@ wpfko.base = wpfko.base || {};
         
         var toBind = ko.dependentObservable({ 
             read: function() { return ko.utils.unwrapObservable(valueAccessor()); },
-            write: twoWay ? function() { var va = valueAccessor(); if(va) valueAccessor()(arguments[0]); } : undefined
+            write: twoWay ? function() { var va = valueAccessor(); if(va) va(arguments[0]); } : undefined
         });                                 
         
         setObservable(this, property, toBind.peek());
@@ -483,17 +480,21 @@ wpfko.base = wpfko.base || {};
     var contentControl = wpfko.base.view.extend(function (templateId) {
         this._super(templateId || wpfko.base.visual.getBlankTemplateId());
 
-        this.template = ko.dependentObservable({
+        this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
+    });
+    
+    contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
+        return ko.dependentObservable({
             read: function () {
-                var script = document.getElementById(this.templateId());
+                var script = document.getElementById(templateIdObservable());
                 return script ? script.textContent : "";
             },
             write: function (newValue) {
-                this.templateId(wpfko.base.contentControl.createAnonymousTemplate(newValue));
+                templateIdObservable(wpfko.base.contentControl.createAnonymousTemplate(newValue));
             },
-            owner: this
+            owner: owner
         });
-    });  
+    };
     
     var dataTemplateHash = "data-templatehash";    
     contentControl.createAnonymousTemplate = (function () {
@@ -616,11 +617,11 @@ wpfko.base = wpfko.base || {};
         deafaultTemplateId = wpfko.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");
     }
     
-    var itemsControl = wpfko.base.contentControl.extend(function () { 
+    var itemsControl = wpfko.base.contentControl.extend(function (templateId, itemTemplateId) { 
         staticConstructor();
-        this._super(deafaultTemplateId);
+        this._super(templateId || deafaultTemplateId);
 
-        this.itemTemplateId = ko.observable();
+        this.itemTemplateId = ko.observable(itemTemplateId);
         this.itemSource = ko.observableArray([]);
         this.items = ko.observableArray([]);
 
@@ -632,16 +633,7 @@ wpfko.base = wpfko.base || {};
         
         this.items.subscribe(this.syncModelsAndViewModels, this);
 
-        this.itemTemplate = ko.dependentObservable({
-            read: function () {
-                var script = document.getElementById(this.itemTemplateId());
-                return script ? script.textContent : "";
-            },
-            write: function (newValue) {
-                this.itemTemplateId(wpfko.base.contentControl.createAnonymousTemplate(newValue));
-            },
-            owner: this
-        });
+        this.itemTemplate = wpfko.base.contentControl.createTemplatePropertyFor(this.itemTemplateId, this);
 
         var itemTemplateId = this.itemTemplateId.peek();
         this.itemTemplateId.subscribe(function (newValue) {
@@ -965,22 +957,22 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
             var child = wpfko.util.ko.peek(valueAccessor());
             if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || (child && !(child instanceof wpfko.base.visual)))
                 throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
-
-            if (child && child._rootHtmlElement)
-                throw "This visual has already been rendered";
-
-            if (child) {
-                ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
-                child._rootHtmlElement = element;
-                if (viewModel) viewModel.renderedChildren.push(child);
-            }
             
             var _this = this;
             var templateChanged = function() {
                 ko.bindingHandlers.template.update.call(_this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
             };
+
+            if (child) {
+                if (child._rootHtmlElement)
+                    throw "This visual has already been rendered";
+                
+                ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
+                child._rootHtmlElement = element;
+                if (viewModel) viewModel.renderedChildren.push(child);
+                child.templateId.subscribe(templateChanged);
+            }
             
-            child.templateId.subscribe(templateChanged);
             templateChanged();
         };
     
@@ -1513,6 +1505,8 @@ wpfko.util = wpfko.util || {};
         td: "tr",
         th: "tr",
         tr: "tbody",
+        col: "colgroup",
+        colgroup: "table",
         tbody: "table",
         thead: "table",
         li: "ul"
