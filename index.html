@@ -72,9 +72,10 @@
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassPage">
             <h2>Constructor</h2>
-            <span data-bind="html: model().classContructor.summary"></span>
+            <span data-bind="html: model().classConstructor.summary"></span>
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticProperties" title="'Static Properties'" />
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticFunctions" title="'Static Functions'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticEvents" title="'Static Events'" />
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().properties" title="'Properties'" />
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().functions" title="'Functions'" />
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().events" title="'Events'" />

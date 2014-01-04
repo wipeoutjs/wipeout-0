@@ -106,10 +106,11 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
     };
 
     classTreeViewBranch.getBranches = function(fullName) {
-        var splitFullName = fullName.split(".");
+            var fn = fullName;
+        fullName = fullName.split(".");
         var current = window;
-        for(var i = 0, ii = splitFullName.length; i < ii; i++) {
-            current = current[splitFullName[i]];
+        for(var i = 0, ii = fullName.length; i < ii; i++) {
+            current = current[fullName[i]];
         }        
         
         // compile prototype tree into array
@@ -130,11 +131,11 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 if(current.hasOwnProperty(i) && !statics[i]) {
                     statics[i] = true;
                     if(current[i] instanceof wo.event) {
-                        output.push(new eventBranch(i, fullName));
+                        output.push(new eventBranch(i, fn));
                     } else if(current[i] instanceof Function) {
-                        output.push(new functionBranch(i, fullName, true, current[i]));
+                        output.push(new functionBranch(i, fn, true, current[i]));
                     } else {
-                        output.push(new propertyBranch(i, fullName, true));
+                        output.push(new propertyBranch(i, fn, true));
                     }
                 }
             }
@@ -147,9 +148,9 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                     
                     if(current.prototype[i] instanceof Function) { 
                         //TODO: if override
-                        prototype[i] = new functionBranch(i, fullName, false, current.prototype[i]);
+                        prototype[i] = new functionBranch(i, fn, false, current.prototype[i]);
                     } else {
-                        prototype[i] = new propertyBranch(i, fullName, false);
+                        prototype[i] = new propertyBranch(i, fn, false);
                     }
                     
                     output.push(prototype[i]);
@@ -161,9 +162,9 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 if(anInstance.hasOwnProperty(i) && !instance[i]) {
                     instance[i] = true;
                     if(anInstance[i] instanceof Function && !ko.isObservable(anInstance[i])) {
-                        output.push(new functionBranch(i, fullName, false, anInstance[i]));
+                        output.push(new functionBranch(i, fn, false, anInstance[i]));
                     } else {
-                        output.push(new propertyBranch(i, fullName, false));
+                        output.push(new propertyBranch(i, fn, false));
                     }
                 }
             }
@@ -176,6 +177,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this._super(name);
         
         this.events = [];
+        this.staticEvents = [];
         this.properties = [];
         this.staticProperties = [];
         this.functions = [];
@@ -187,7 +189,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
             current = current[name[i]];
         }
         
-        this.classContructor = new classPageItem(this.title, functionBranch.getFunctionSummary(current));
+        this.classConstructor = new classPageItem(this.title, functionBranch.getFunctionSummary(current));
     });
         
     classPage.prototype.order = function() {
