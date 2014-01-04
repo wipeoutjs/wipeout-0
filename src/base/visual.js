@@ -5,6 +5,7 @@ wpfko.base = wpfko.base || {};
 (function () {
     
     var visual = wpfko.base.object.extend(function (templateId) {
+        ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
         this._super();
         
         this.templateItems = {};   
@@ -16,12 +17,15 @@ wpfko.base = wpfko.base || {};
     });
     
     visual._afterRendered = function(nodes, context) {
+        ///<summary>Used by the render binding to trigger the rootHtmlChanged method</summary>
         var old = context.nodes || [];
         context.nodes = nodes;
         context.rootHtmlChanged(old, nodes);
     };
     
     visual.prototype.dispose = function() {
+        ///<summary>Dispose of this visual</summary>
+        
         // dispose of any computeds
         for(var i in this)
             if(ko.isObservable(this[i]) && this[i].dispose instanceof Function)
@@ -44,7 +48,10 @@ wpfko.base = wpfko.base || {};
         this._routedEventSubscriptions.length = 0;
     };
     
+    //TODO: move to util
     visual.getParentElement = function(element) {
+        ///<summary>Gets the parent or virtual parent of the element</summary>
+        
         var depth = 0;
         var current = element.previousSibling;
         while(current) {
@@ -66,6 +73,7 @@ wpfko.base = wpfko.base || {};
     };
     
     visual.prototype.getParents = function() {
+        ///<summary>Gets an array of the entire tree of ancestor visual objects</summary>
         var current = this;
         var parents = [];
         while(current) {
@@ -77,6 +85,7 @@ wpfko.base = wpfko.base || {};
     };
     
     visual.prototype.getParent = function() {
+        ///<summary>Get the parent visual of this visual</summary>
         var nextTarget;
         var current = visual.getParentElement(this._rootHtmlElement);
         while(current) {
@@ -88,7 +97,8 @@ wpfko.base = wpfko.base || {};
         }        
     };
     
-    visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {        
+    visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {  
+        ///<summary>Unregister from a routed event. The callback and callback context must tbe the same as those passed in during registration</summary>      
         for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
             if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
                 this._routedEventSubscriptions[i].event.unRegister(callback, context);
@@ -98,6 +108,7 @@ wpfko.base = wpfko.base || {};
     };
     
     visual.prototype.registerRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {
+        ///<summary>Register for a routed event</summary>    
         
         var rev;
         for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
@@ -116,6 +127,7 @@ wpfko.base = wpfko.base || {};
     };
     
     visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
+        ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual</summary>    
         if(!(eventArgs instanceof wpfko.base.routedEventArgs)) {
             eventArgs = new wpfko.base.routedEventArgs(eventArgs, this);
         }
@@ -137,11 +149,13 @@ wpfko.base = wpfko.base || {};
         
     // virtual
     visual.prototype.rootHtmlChanged = function (oldValue, newValue) {
+        ///<summary>Triggered each time after a template is rendered</summary>    
     };
     
     visual.getDefaultTemplateId = (function () {
         var templateId = null;
         return function () {
+            ///<summary>Returns the Id for the default template</summary>    
             if (!templateId) {
                 templateId = wpfko.base.contentControl.createAnonymousTemplate("<span>No template has been specified</span>");
             }
@@ -153,6 +167,7 @@ wpfko.base = wpfko.base || {};
     visual.getBlankTemplateId = (function () {
         var templateId = null;
         return function () {
+            ///<summary>Returns the Id for an empty template</summary>    
             if (!templateId) {
                 templateId = wpfko.base.contentControl.createAnonymousTemplate("");
             }
@@ -162,6 +177,7 @@ wpfko.base = wpfko.base || {};
     })();
         
     visual.visualGraph = function (rootElement, displayFunction) {
+        ///<summary>Compiles a tree of all visual elements in a block of html, starting at the rootElement</summary>    
         if (!rootElement)
             return [];
  

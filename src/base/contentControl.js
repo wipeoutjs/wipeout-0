@@ -5,12 +5,14 @@ wpfko.base = wpfko.base || {};
 (function () {    
 
     var contentControl = wpfko.base.view.extend(function (templateId) {
+        ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
         this._super(templateId || wpfko.base.visual.getBlankTemplateId());
 
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
     });
     
     contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
+        ///<summary>Creates a computed for a template property which is bound to the templateIdObservable property</summary>
         return ko.dependentObservable({
             read: function () {
                 var script = document.getElementById(templateIdObservable());
@@ -29,6 +31,7 @@ wpfko.base = wpfko.base || {};
         var i = Math.floor(Math.random() * 1000000000);
 
         return function (templateString) {
+            ///<summary>Creates an anonymous template within the DOM and returns its id</summary>
 
             // lazy create div to place anonymous templates
             if (!templateArea) {
@@ -60,6 +63,7 @@ wpfko.base = wpfko.base || {};
 
     //http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
     contentControl.hashCode = function (str) {        
+        ///<summary>Creates a rough has code for the given string</summary>
         var hash = 0;
         for (var i = 0, ii = str.length; i < ii; i++) {
             var ch = str.charCodeAt(i);

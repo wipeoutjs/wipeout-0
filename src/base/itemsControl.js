@@ -10,7 +10,9 @@ wpfko.base = wpfko.base || {};
         deafaultTemplateId = wpfko.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");
     }
     
-    var itemsControl = wpfko.base.contentControl.extend(function (templateId, itemTemplateId) { 
+    var itemsControl = wpfko.base.contentControl.extend(function (templateId, itemTemplateId) {
+        ///<summary>Bind a list of models (itemSource) to a list of view models (items) and render accordingly</summary>
+        
         staticConstructor();
         this._super(templateId || deafaultTemplateId);
 
@@ -40,8 +42,9 @@ wpfko.base = wpfko.base || {};
         }, this);
     });
     
+    //TODO: private
     itemsControl.subscribeV2 = function() {
-        ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl<summary>
+        ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl</summary>
         var initial = this.itemSource.peek();
         this.itemSource.subscribe(function() {
             try {
@@ -55,13 +58,16 @@ wpfko.base = wpfko.base || {};
         
     };
     
+    //TODO: private
     itemsControl.subscribeV3 = function() {
-        ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl<summary>
+        ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
         this.itemSource.subscribe(this.itemsChanged, this, "arrayChange");
         
     };
     
+    //TODO: private
     itemsControl.prototype.syncModelsAndViewModels = function() {
+        ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
         var changed = false, modelNull = false;
         var models = this.itemSource();
         if(models ==  null) {
@@ -91,7 +97,9 @@ wpfko.base = wpfko.base || {};
         }
     };
 
+    //TODO: private
     itemsControl.prototype.modelsAndViewModelsAreSynched = function() {
+        ///<summary>Returns whether all models have a corresponding view model at the correct index</summary>
         var model = this.itemSource() || [];
         var viewModel = this.items() || [];
         
@@ -107,6 +115,7 @@ wpfko.base = wpfko.base || {};
     };
 
     itemsControl.prototype.itemsChanged = function (changes) { 
+        ///<summary>Adds, removes and moves view models depending on changes to the models array</summary>
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
         for(var i = 0, ii = changes.length; i < ii; i++) {
@@ -146,10 +155,12 @@ wpfko.base = wpfko.base || {};
 
     // virtual
     itemsControl.prototype.createItem = function (model) {
+        ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
         return new wpfko.base.view(this.itemTemplateId(), model);        
     }
 
     itemsControl.prototype.reDrawItems = function () {
+        ///<summary>Destroys and re-draws all view models</summary>
         var models = this.itemSource() || [];
         var values = this.items();
         values.length = models.length;

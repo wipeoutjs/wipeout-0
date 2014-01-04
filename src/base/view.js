@@ -4,7 +4,8 @@
 
 (function () {    
 
-    var view = wpfko.base.visual.extend(function (templateId, model /*optional*/) {
+    var view = wpfko.base.visual.extend(function (templateId, model /*optional*/) {        
+        ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>    
 
         this._super(templateId);
         
@@ -39,9 +40,11 @@
     
     // virtual
     view.prototype.onInitialized = function() {
+        ///<summary>Called by the template engine after a view is created and all of its properties are set</summary>    
     }
     
     view.prototype.dispose = function() {
+        ///<summary>Dispose of view specific items</summary>    
         this._super();
         
         for(var i in this._bindings)
@@ -49,6 +52,7 @@
     };
     
     view.prototype.bind = function(property, valueAccessor, twoWay) {
+        ///<summary>Bind the value returned by valueAccessor to this[property]</summary>
         
         if(twoWay && (!ko.isObservable(this[property]) || !ko.isObservable(valueAccessor())))
            throw 'Two way bindings must be between 2 observables';
@@ -96,7 +100,9 @@
     
     view.reservedPropertyNames = ["constructor", "constructor-tw", "id","id-tw"];
     
+    //TODO private
     view.prototype.initialize = function(propertiesXml, bindingContext) {
+        ///<summary>Takes an xml fragment and binding context and sets its properties accordingly</summary>
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
         
@@ -187,6 +193,7 @@
     
     // virtual
     view.prototype.modelChanged = function (oldValue, newValue) {
+        ///<summary>Called when the model has changed</summary>
     };
 
     wpfko.base.view = view;
