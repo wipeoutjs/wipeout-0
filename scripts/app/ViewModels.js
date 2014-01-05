@@ -86,7 +86,19 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     
     var classPage = wo.view.extend(function() {
         this._super("Wipeout.Docs.ViewModels.Pages.ClassPage");
+        
+        this.usagesTemplateId = ko.computed(function() {
+            if(this.model()) {
+                var className = this.model().classFullName + classPage.classUsagesTemplateSuffix;
+                if(document.getElementById(className))
+                    return className;
+            }
+            
+            return wo.contentControl.getBlankTemplateId();
+        }, this);
     });
+    
+    classPage.classUsagesTemplateSuffix = "_ClassUsages";
     
     var propertyPage = wo.view.extend(function() {
         this._super("Wipeout.Docs.ViewModels.Pages.PropertyPage");
@@ -100,9 +112,20 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
         this._super("Wipeout.Docs.ViewModels.Pages.ClassItemTable", "Wipeout.Docs.ViewModels.Pages.ClassItemRow");
     });
     
+    var codeBlock = wo.view.extend(function() {
+        this._super("Wipeout.Docs.ViewModels.Components.CodeBlock");        
+        this.code = null;
+    });
+    
+    codeBlock.prototype.rootHtmlChanged = function() {
+        this._super.apply(this, arguments);
+        prettyPrint(null, this.templateItems.codeBlock);
+    };
+    
     var components = {
         TreeViewBranch: treeViewBranch,
-        DynamicRender: dynamicRender
+        DynamicRender: dynamicRender,
+        CodeBlock: codeBlock
     };
     
     var pages = {

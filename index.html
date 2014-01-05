@@ -6,12 +6,15 @@
     <body>
         
         <link rel="stylesheet" type="text/css" href="content/style/style.css">
+        <link rel="stylesheet" type="text/css" href="content/style/prettify.css">
     
         <div data-bind="wpfko: Wipeout.Docs.ViewModels.Application"></div>
         
         <script type="text/javascript" src="scripts/lib/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="scripts/lib/knockout-2.3.0.debug.js"></script>
         <script type="text/javascript" src="scripts/lib/wipeout-0.2.debug.js"></script>
+        
+        <script type="text/javascript" src="scripts/lib/prettify.js"></script>
         
         <script type="text/javascript" src="scripts/app/Utils.js"></script>
         <script type="text/javascript" src="scripts/app/Models.js"></script>
@@ -72,18 +75,243 @@
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassPage">
             <h2>Constructor</h2>
-            <span data-bind="html: model().classConstructor.summary"></span>
+            <div data-bind="html: model().classConstructor.summary"></div>
+            <div data-bind="visible: usagesTemplateId() !== wo.contentControl.getBlankTemplateId()">
+                <h2>
+                    <span>Using the</span>
+                    <span data-bind="html: model().classFullName"></span>
+                </h2>
+                <wo.view templateId="$parent.usagesTemplateId" model="$parent.model().classConstructor" />
+            </div>
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticProperties" title="'Static Properties'" />
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticFunctions" title="'Static Functions'" />
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticEvents" title="'Static Events'" />
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().properties" title="'Properties'" />
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().functions" title="'Functions'" />
             <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().events" title="'Events'" />
+        </script>
+        
+        <script type="text/xml" id="wo.object_ClassUsages">
+        <p>The wo.object class is the base class for all wipeout objects. It provides helpers to inhert from and call base methods of a class</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>// create a parent class which inherits from wo.object        
+var person = wo.object.extend(function(name /* constructorArg */) {
+    // call constructor on wo.object class
+    this._super();
+    
+    this.name = name;
+});
+
+// add a method to person
+person.prototype.greet = function(person) {
+    return "Hi " + person.name + ". I am " + this.name + ".";
+};
+
+// create a child class which inherits from person     
+var veryPolitePerson = person.extend(function(name /* constructorArg */) {
+    // call constructor on person class
+    this._super(name);
+});
+
+// add a method to veryPolitePerson, overriding a method on person
+veryPolitePerson.prototype.greet = function(person) {
+    // call overwridden greet method on parent class
+    var baseResult = this._super(person);
+    return baseResult + " Pleased to meet you!";
+};
+
+// create 2 people
+var john = new person("John");
+var mark = new veryPolitePerson("Mark");
+
+// will alert: "Hi Mark. I am John."
+alert(john.greet(mark));
+
+// will alert: "Hi John. I am Mark. Pleased to meet you!"
+alert(mark.greet(john));</code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+        </script>  
+        
+        <script type="text/xml" id="wo.event_ClassUsages">
+        <p>The wo.event class provides object oriented event functionality within the wipeout framework. Example usage is as follows:</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>// create event
+var myEvent = new wo.event();
+
+// subscribe to event
+var dispose1 = myEvent.register(function(eventArgs) {
+    alert("Handler 1: " + eventArgs);
+});
+
+// subscribe to event again
+var dispose2 = myEvent.register(function(eventArgs) {
+    alert("Handler 2: " + eventArgs);
+});
+
+// will alert "Handler 1: Event triggered" and "Handler 2: Event triggered"
+myEvent.trigger("Event triggered");
+
+// dispose of one of the handlers
+dispose1.dispose();
+
+// will alert "Handler 2: Event triggered again"
+myEvent.trigger("Event triggered again);</code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+        </script>                   
+        
+        <script type="text/xml" id="wo.routedEvent_ClassUsages">
+        <p>Routed events are similar to events, however, when triggered they bubble up the visual tree until handled. Some of the differences between events and routed events are as follows</p>
+        <ul>
+            <li>Routed events are generally static. That way various object instances can subscribe to the same event and catch it if it bubbles past.</li>
+            <li>Routed events must be triggered by a wo.visual. If not handled by subscribers to this event on this visual, the event will bubble up to the parent of the visual until handled or the DOM root is reached</li>
+        </ul>
+        </script>                         
+        
+        <script type="text/xml" id="wo.routedEventArgs_ClassUsages">
+        <p>Routed event args are passed to routed event handlers. If routed event args are not specified when the routed event is triggered, a new instance is created and its data property is populated with the original event arguments</p>
+        </script>                   
+        
+        <script type="text/xml" id="wo.visual_ClassUsages">
+        <p>The wo.visual class is an internal class used to render content. It appears in the inheritance chain for wo.view but should not be used alone. Use wo.view instead.</p>        
+        </script>                 
+        
+        <script type="text/xml" id="wo.view_ClassUsages">
+        <p>wo.view is the base class for all wipeout view models. The view can be used in 2 ways.</p>        
+        <ol>
+            <li>To be inherited from in order to provide visual, model and binding functionalty to view models</li>
+            <li>As a dummy view model which a template can be attached to</li>
+        </ol>
+        <h3>Inheriting from a view</h3>
+        <p>The following creates a simple view model with collapsable content.</p> 
+        <p>Javascript:</p> 
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>// create a custom view model
+window.collapsable = wo.view.extend(function() {
+    // call wo.view constructor and give the template id for this view model
+    this._super("collapsable_template");
+                
+    this.open = true;
+});
+                
+// a function which will show or hide the collapsable content
+window.collapsable.prototype.toggle = functon() {
+    // "colapsableContent" is the id of the div to show/hide in the template for this view model
+    if(this.open)
+        this.templateItems.colapsableContent.style.display = "none";
+    else
+        this.templateItems.colapsableContent.style.display = null;
+                
+    this.open = !this.open;
+};</code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>     
+        <p>Html template:</p> 
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;script type="text/xml" id="collapsable_template">
+    &lt;!-- a link bound to the toggle function of the view model -->
+    &lt;a data-bind="click: toggle">Toggle&lt;/a>
+    &lt;!-- a div whos content is bound to the model of the view model. 
+                Its id is used to find this element within the view model -->
+    &lt;div data-bind="html: model" id="colapsableContent">&lt;/div>
+&lt;/script></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>          
+        <p>Usage:</p> 
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;collapsable model="'This is the content to be shown/hidden'">&lt;/collapsable></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>        
+        <h3>Using a view as a dummy view model to render a template</h3>
+        <p>Sometimes you may wish for a model to have an appearance without the need for dynamic view model code. In this case a wo.view can be used directly:</p> 
+          
+        <p>Html template:</p> 
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;script type="text/xml" id="displayPerson_template">
+    &lt;label>First name:&lt;/label>
+    &lt;span data-bind="html: model().firstName">&lt;/span>
+    &lt;label>Last name:&lt;/label>
+    &lt;span data-bind="html: model().lastName">&lt;/span>
+&lt;/script></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>          
+        <p>Usage:</p> 
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;wo.view model="{firstName: 'John', lastName: 'Smith'}" templateId="'displayPerson_template'">&lt;/wo.view></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>        
+        </script>
+        
+        <script type="text/xml" id="wo.contentControl_ClassUsages">
+        <p>The wo.contentControl class is a wo.view class with the ability to set its template as a string as well as an Id. For example:</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;wo.contentControl model="{firstName: 'John', lastName: 'Smith'}">
+    &lt;template>
+        &lt;fieldset>
+            &lt;label>First name:&lt;/label>
+            &lt;span data-bind="html: model().firstName">&lt;/span>,
+            &lt;label>Last name:&lt;/label>
+            &lt;span data-bind="html: model().lastName">&lt;/span>
+        &lt;/fieldset>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>        
+        <p>Will render:</p>
+        <div>
+            <fieldset>
+                <label>First name:</label>
+                <span>John</span>,
+                <label>Last name:</label>
+                <span>Smith</span>
+            </fieldset>
+        </div>
+        <p>The template and templateId properties are tightly bound, so that if the template property is set the templateId property will reflect this change, and vice versa</p>        
+        </script>       
+        
+        <!---><script type="text/xml" id="wo.itemsControl_ClassUsages"><!---->
+        <p>The wo.itemsControl class is the wipeout method for dealing with collections. It has am itemsSource property, designed to accept an array of models. It also has an items property which will be auto populated with view models which correspond to the itemsSource models</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;wo.itemsControl itemSource="[{firstName: 'John', lastName: 'Smith'}, {firstName: 'Mark', lastName: 'Walsh'}]">
+    &lt;!--The template for the control os a whole-->
+    &lt;template>
+        &lt;h2>People:&lt;/h2>
+        &lt;!--The itemsControl binding renders each item into the parent element.
+            It does not need a second argument, however knockout syntax requires it-->
+        &lt;ul data-bind="itemsControl: null">&lt;/ul>
+    &lt;/template>
+    &lt;itemTemplate>
+        &lt;!--The template for each item in the itemSource-->
+        &lt;li>
+            &lt;label>First name:&lt;/label>
+            &lt;span data-bind="html: model().firstName">&lt;/span>,
+            &lt;label>Last name:&lt;/label>
+            &lt;span data-bind="html: model().lastName">&lt;/span>
+        &lt;/li>
+    &lt;/itemTemplate>
+&lt;/wo.itemsControl></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>        
+        <p>Will render:</p>
+        <div>
+            <ul>
+                <li>
+                    <label>First name:</label>
+                    <span>John</span>,
+                    <label>Last name:</label>
+                    <span>Smith</span>
+                </li>
+                <li>
+                    <label>First name:</label>
+                    <span>Mark</span>,
+                    <label>Last name:</label>
+                    <span>Walsh</span>
+                </li>
+            </ul>
+        </div>        
         </script>       
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.EventPage">
         Event
-        </script>       
+        </script>    
+        
+        <script type="text/xml" id="Wipeout.Docs.ViewModels.Components.CodeBlock">
+        <div id="codeBlock">
+            <pre class="prettyprint" data-bind="html: code"></pre>
+        </div>
+        </script>  
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.PropertyPage">
         Property
