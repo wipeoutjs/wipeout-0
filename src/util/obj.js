@@ -42,6 +42,23 @@ wpfko.util = wpfko.util || {};
                 action.call(context, enumerate[i], i);
     };
     
+    var enumerateDesc = function(enumerate, action, context) {
+        context = context || window;
+        
+        if(enumerate == null) return;
+        if(enumerate instanceof Array)
+            for(var i = enumerate.length - 1; i >= 0; i--)
+                action.call(context, enumerate[i], i);
+        else {
+            var props = [];
+            for(var i in enumerate)
+                props.push(i);
+            
+            for(var i = props.length - 1; i >= 0; i--)
+                action.call(context, enumerate[props[i]], props[i]);
+        }
+    };
+    
     wpfko.util.obj = {
         enumerate: enumerate,
         createObject: createObject,
