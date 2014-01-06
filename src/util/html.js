@@ -64,7 +64,7 @@ wpfko.util = wpfko.util || {};
        
     //TODO: div might not be appropriate, eg, if html string is <li />
     var createElements = function(htmlString) {
-        if(htmlString == null) return null;
+        if(htmlString == null) return [];
         
         var sibling = getFirstTagName(htmlString) || "div";
         var parent = specialTags[getTagName("<" + sibling + "/>")] || "div";
