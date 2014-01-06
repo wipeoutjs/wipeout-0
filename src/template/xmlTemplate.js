@@ -1,8 +1,6 @@
 
-var wpfko = wpfko || {};
-wpfko.template = wpfko.template || {};
 
-(function () {
+Class("wpfko.template.xmlTemplate", function () {
     
     var xmlTemplate = function(xmlTemplate) {
                 
@@ -45,5 +43,5 @@ wpfko.template = wpfko.template || {};
         this.viewModelBuilder.rebuild(bindingContext);
     };
     
-    wpfko.template.xmlTemplate = xmlTemplate;
-})();
+    return xmlTemplate;
+});

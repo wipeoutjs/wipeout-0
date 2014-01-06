@@ -1,7 +1,5 @@
 
-var wpfko = wpfko || {};
-wpfko.base = wpfko.base || {};
-(function () {
+Class("wpfko.base.itemsControl", function () {
     
     var deafaultTemplateId;
     var staticConstructor = function() {
@@ -177,5 +175,5 @@ wpfko.base = wpfko.base || {};
         this.items.valueHasMutated();
     };
 
-    wpfko.base.itemsControl = itemsControl;
-})();
+    return itemsControl;
+});

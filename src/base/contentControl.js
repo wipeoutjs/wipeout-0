@@ -1,8 +1,5 @@
 
-var wpfko = wpfko || {};
-wpfko.base = wpfko.base || {};
-
-(function () {    
+Class("wpfko.base.contentControl", function () {    
 
     var contentControl = wpfko.base.view.extend(function (templateId) {
         ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
@@ -75,5 +72,5 @@ wpfko.base = wpfko.base || {};
         return hash;
     };
     
-    wpfko.base.contentControl = contentControl;
-})();
+    return contentControl;
+});

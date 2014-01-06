@@ -1,10 +1,7 @@
 
-var wpfko = wpfko || {};
-wpfko.template = wpfko.template || {};
-
-(function () {
+Class("wpfko.template.switchBindingContext", function () {
     
-    wpfko.template.switchBindingContext = function(bindingContext) {
+    return function(bindingContext) {
         this.bindingContext = bindingContext;
     }
-})();
+});

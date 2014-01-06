@@ -1,16 +1,12 @@
 
-var wpfko = wpfko || {};
-wpfko.ko = wpfko.ko || {};
-wpfko.ko.bindings = wpfko.ko.bindings || {};
-
-(function () {
+Binding("wpfko", function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
 
         //TODO: knockout standard way of controling element        
         //TODO: add optional inline properties to binding   
         
-        if(ko.utils.domData.get(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey))
+        if(ko.utils.domData.get(element, wpfko.bindings.wpfko.utils.wpfkoKey))
             throw "This element is already bound to another model";
         
         var type = valueAccessor();
@@ -34,19 +30,11 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         };
     };
      
-    wpfko.ko.bindings.wpfko = {
+    return {
         init: init,
         utils: {
             createValueAccessor: createValueAccessor,
             wpfkoKey: "__wpfko"
         }
     };
-            
-    ko.bindingHandlers.wpfko = {};
-    ko.virtualElements.allowedBindings.wpfko = true;
-    for(var i in wpfko.ko.bindings.wpfko) {
-        if(i !== "utils") {
-            ko.bindingHandlers.wpfko[i] = wpfko.ko.bindings.wpfko[i];
-        }
-    };
-})();
+});

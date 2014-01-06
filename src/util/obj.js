@@ -1,8 +1,73 @@
+var wpfko = {};
+    
+var enumerate = function(enumerate, action, context) {
+    context = context || window;
+    
+    if(enumerate == null) return;
+    if(enumerate instanceof Array)
+        for(var i = 0, ii = enumerate.length; i < ii; i++)
+            action.call(context, enumerate[i], i);
+    else
+        for(var i in enumerate)
+            action.call(context, enumerate[i], i);
+};
 
-var wpfko = wpfko || {};
-wpfko.util = wpfko.util || {};
+var enumerateDesc = function(enumerate, action, context) {
+    context = context || window;
+    
+    if(enumerate == null) return;
+    if(enumerate instanceof Array)
+        for(var i = enumerate.length - 1; i >= 0; i--)
+            action.call(context, enumerate[i], i);
+    else {
+        var props = [];
+        for(var i in enumerate)
+            props.push(i);
+        
+        for(var i = props.length - 1; i >= 0; i--)
+            action.call(context, enumerate[props[i]], props[i]);
+    }
+};
 
-(function () {
+var Binding = function(bindingName, accessorFunction) {
+    
+    var cls = Class("wpfko.bindings." + bindingName, accessorFunction);    
+    ko.bindingHandlers[bindingName] = {
+        init: cls.init,
+        update: cls.update
+    };
+};
+
+var Class = function(classFullName, accessorFunction) {
+    classFullName = classFullName.split(".");
+    var namespace = classFullName.splice(0, classFullName.length - 1);
+    
+    var tmp = {};
+    tmp[classFullName[classFullName.length - 1]] = accessorFunction();
+    
+    Extend(namespace.join("."), tmp);
+    
+    return tmp[classFullName[classFullName.length - 1]];
+};
+
+var Extend = function(namespace, extendWith) {
+    namespace = namespace.split(".");
+    
+    if(namespace[0] !== "wpfko") throw "Root must be \"wpfko\".";
+    namespace.splice(0, 1);
+    
+    var current = wpfko;
+    enumerate(namespace, function(nsPart) {
+        current = current[nsPart] || (current[nsPart] = {});
+    });
+    
+    if(extendWith && extendWith instanceof Function) extendWith = extendWith();
+    enumerate(extendWith, function(item, i) {
+        current[i] = item;
+    });
+};
+
+Class("wpfko.util.obj", function () {
         
     var createObject = function(constructorString, context) {
         if(!context) context = window;
@@ -30,39 +95,10 @@ wpfko.util = wpfko.util || {};
         return output;
     };
     
-    var enumerate = function(enumerate, action, context) {
-        context = context || window;
-        
-        if(enumerate == null) return;
-        if(enumerate instanceof Array)
-            for(var i = 0, ii = enumerate.length; i < ii; i++)
-                action.call(context, enumerate[i], i);
-        else
-            for(var i in enumerate)
-                action.call(context, enumerate[i], i);
-    };
-    
-    var enumerateDesc = function(enumerate, action, context) {
-        context = context || window;
-        
-        if(enumerate == null) return;
-        if(enumerate instanceof Array)
-            for(var i = enumerate.length - 1; i >= 0; i--)
-                action.call(context, enumerate[i], i);
-        else {
-            var props = [];
-            for(var i in enumerate)
-                props.push(i);
-            
-            for(var i = props.length - 1; i >= 0; i--)
-                action.call(context, enumerate[props[i]], props[i]);
-        }
-    };
-    
-    wpfko.util.obj = {
+    return {
         enumerate: enumerate,
+        enumerateDesc: enumerateDesc,
         createObject: createObject,
         copyArray: copyArray
-    };
-    
-})();
+    };    
+});

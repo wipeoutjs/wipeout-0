@@ -1,8 +1,5 @@
 
-var wpfko = wpfko || {};
-wpfko.template = wpfko.template || {};
-
-(function () {
+Class("wpfko.template.engine", function () {
     
     var engine = function() { };
     engine.prototype = new ko.templateEngine();
@@ -75,6 +72,7 @@ wpfko.template = wpfko.template || {};
     engine.closeCodeTag = "} -->";
     engine.scriptHasBeenReWritten = RegExp(engine.openCodeTag.replace("{", "\{") + "[0-9]+" + engine.closeCodeTag.replace("}", "\}"));
     
-    wpfko.template.engine = engine;    
-    ko.setTemplateEngine(new engine());    
-})();
+    //TODO: is this the best place for this
+    ko.setTemplateEngine(new engine());
+    return engine;
+});

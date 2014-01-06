@@ -1,8 +1,5 @@
 
-var wpfko = wpfko || {};
-wpfko.base = wpfko.base || {};
-
-(function () {
+Class("wpfko.base.routedEvent", function () {
     
     var routedEvent = function() {
         ///<summary>A routed event is triggerd on a visual and travels up to ancestor visuals all the way to the root of the application</summary>
@@ -10,7 +7,7 @@ wpfko.base = wpfko.base || {};
 
     routedEvent.prototype.trigger = function(triggerOnVisual, eventArgs) {
         ///<summary>Trigger a routed event on a visual</summary>
-        triggerOnVisual.triggerRoutedEvent(this, new routedEventArgs(eventArgs, triggerOnVisual));
+        triggerOnVisual.triggerRoutedEvent(this, new wpfko.base.routedEventArgs(eventArgs, triggerOnVisual));
     };
     
     routedEvent.prototype.unRegister = function (callback, triggerOnVisual, context /* optional */) {
@@ -23,7 +20,10 @@ wpfko.base = wpfko.base || {};
         triggerOnVisual.registerRoutedEvent(this, callback, context);
     };
     
-    wpfko.base.routedEvent = routedEvent;
+    return routedEvent;
+});
+
+Class("wpfko.base.routedEventArgs", function () {
     
     var routedEventArgs = function(eventArgs, originator) { 
         ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>
@@ -38,8 +38,11 @@ wpfko.base = wpfko.base || {};
         this.originator = originator;
     };
     
-    wpfko.base.routedEventArgs = routedEventArgs;
+    return routedEventArgs;
+});
     
+
+Class("wpfko.base.routedEventRegistration", function () {
     //TODO: private
     var routedEventRegistration = function(routedEvent) {  
         ///<summary>Holds routed event registration details</summary>
@@ -51,5 +54,5 @@ wpfko.base = wpfko.base || {};
         this.event = new wpfko.base.event();
     };
     
-    wpfko.base.routedEventRegistration = routedEventRegistration;
-})();
+    return routedEventRegistration;
+});

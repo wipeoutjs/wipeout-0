@@ -2,7 +2,7 @@
 var wpfko = wpfko || {};
 wpfko.base = wpfko.base || {};
 
-(function () {
+Class("wpfko.base.event", function () {
     
     var event = function() {
         ///<summary>Defines a new event with register and trigger functinality</summary>
@@ -61,5 +61,5 @@ wpfko.base = wpfko.base || {};
         };
     };
     
-    wpfko.base.event = event;
-})();
+    return event;
+});

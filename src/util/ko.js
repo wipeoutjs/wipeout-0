@@ -1,8 +1,6 @@
 
-    var wpfko = wpfko || {};
-    wpfko.util = wpfko.util || {};
 
-(function () {
+Class("wpfko.util.ko", function () {
     
     var _ko = {};
     
@@ -79,5 +77,5 @@
         }
     };
     
-    wpfko.util.ko = _ko;
-})();
+    return _ko;
+});

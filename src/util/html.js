@@ -1,8 +1,6 @@
 
-var wpfko = wpfko || {};
-wpfko.util = wpfko.util || {};
 
-(function () { 
+Class("wpfko.util.html", function () { 
         
     var outerHTML = function(element) {
         if(!element) return null;
@@ -172,7 +170,7 @@ wpfko.util = wpfko.util || {};
         return output;
     };
     
-    wpfko.util.html = {
+    return {
         specialTags: specialTags,
         getFirstTagName: getFirstTagName,
         getTagName: getTagName,
@@ -182,4 +180,4 @@ wpfko.util = wpfko.util || {};
         createElements: createElements,
         createWpfkoComment: createWpfkoComment
     };    
-})();
+});

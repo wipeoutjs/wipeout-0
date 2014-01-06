@@ -1,8 +1,5 @@
-var wpfko = wpfko || {};
-wpfko.ko = wpfko.ko || {};
-wpfko.ko.bindings = wpfko.ko.bindings || {};
 
-(function () {
+Binding("itemsControl", function () {
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         if (!(viewModel instanceof wpfko.base.itemsControl))
             throw "This binding can only be used within the context of a wo.itemsControl";
@@ -75,8 +72,8 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
                                     };
                                 })(i);
                                 
-                                wpfko.ko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
-                                wpfko.ko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
+                                wpfko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
+                                wpfko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
                             }
                         };
                     })(changes[i]));
@@ -116,17 +113,9 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         },
         itemsChanged: itemsChanged
     };
-        
-    wpfko.ko.bindings.itemsControl = {
+    
+    return {
         init: init,
         utils: utils
     };
-            
-    ko.bindingHandlers.itemsControl = {};
-    ko.virtualElements.allowedBindings.itemsControl = true;
-    for(var i in wpfko.ko.bindings.itemsControl) {
-        if(i !== "utils") {
-            ko.bindingHandlers.itemsControl[i] = wpfko.ko.bindings.itemsControl[i];
-        }
-    };
-})();
+});

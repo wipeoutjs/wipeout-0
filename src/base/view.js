@@ -1,8 +1,5 @@
 
-    var wpfko = wpfko || {};
-    wpfko.base = wpfko.base || {};
-
-(function () {    
+Class("wpfko.base.view", function () {    
 
     var view = wpfko.base.visual.extend(function (templateId, model /*optional*/) {        
         ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>    
@@ -198,5 +195,5 @@
         ///<summary>Called when the model has changed</summary>
     };
 
-    wpfko.base.view = view;
-})();
+    return view;
+});

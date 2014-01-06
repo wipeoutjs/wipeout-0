@@ -1,8 +1,4 @@
-
-var wpfko = wpfko || {};
-wpfko.template = wpfko.template || {};
-
-(function () {
+Class("wpfko.template.htmlBuilder", function () {
     
     var htmlBuilder = function(xmlTemplate) {
         
@@ -112,8 +108,8 @@ wpfko.template = wpfko.template || {};
             };
             
             // renderFromMemo can only derive the parent/child from the binding context
-            wpfko.ko.bindings.render.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
-            wpfko.ko.bindings.render.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
+            wpfko.bindings.render.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
+            wpfko.bindings.render.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
         });
     };
     
@@ -161,5 +157,5 @@ wpfko.template = wpfko.template || {};
         return result.join("");
     };
     
-    wpfko.template.htmlBuilder = htmlBuilder;
-})();
+    return htmlBuilder;
+});
