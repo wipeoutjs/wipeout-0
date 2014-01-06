@@ -64,17 +64,19 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration", currentApi.forClass("wo.routedEventRegistration"));
         
         this.menu =
-            new pageTreeViewBranch("API", null, [
-                new pageTreeViewBranch("wo", null, [
-                    contentControlBranch,
-                    eventBranch,
-                    itemsControlBranch,
-                    objectBranch,
-                    routedEventBranch,
-                    routedEventArgsBranch,
-                    routedEventRegistrationBranch,
-                    viewBranch,
-                    visualBranch
+            new treeViewBranch("wipeout", [
+                new treeViewBranch("API", [
+                    new treeViewBranch("wo", [
+                        contentControlBranch,
+                        eventBranch,
+                        itemsControlBranch,
+                        objectBranch,
+                        routedEventBranch,
+                        routedEventArgsBranch,
+                        routedEventRegistrationBranch,
+                        viewBranch,
+                        visualBranch
+                    ])
                 ])
         ]);        
     });
@@ -279,7 +281,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
     classTreeViewBranch.compileBranches = function(classDescription) {
         var output = [];
         
-        output.push(new pageTreeViewBranch("constructor", classDescription.classConstructor));    
+        output.push(new pageTreeViewBranch("constructor"));    
         
         enumerate(classDescription.staticEvents, function(event) {
             output.push(new pageTreeViewBranch(event.eventName, null));            

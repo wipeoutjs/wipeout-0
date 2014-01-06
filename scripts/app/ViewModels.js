@@ -9,6 +9,13 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
         }, this);
     });
     
+    application.prototype.rootHtmlChanged = function() {
+        this._super.apply(this, arguments);
+        
+        //TODO: this
+        this.templateItems.treeView.select();
+    };
+    
     var treeViewBranch =  wo.view.extend(function() {
         this._super(treeViewBranch.nullTemplate);        
     });
