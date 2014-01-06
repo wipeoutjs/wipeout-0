@@ -1,8 +1,113 @@
-(function () { 
-var wpfko = wpfko || {};
-wpfko.base = wpfko.base || {};
+(function () { var wpfko = {};
+    
+var enumerate = function(enumerate, action, context) {
+    context = context || window;
+    
+    if(enumerate == null) return;
+    if(enumerate instanceof Array)
+        for(var i = 0, ii = enumerate.length; i < ii; i++)
+            action.call(context, enumerate[i], i);
+    else
+        for(var i in enumerate)
+            action.call(context, enumerate[i], i);
+};
 
-(function () {
+var enumerateDesc = function(enumerate, action, context) {
+    context = context || window;
+    
+    if(enumerate == null) return;
+    if(enumerate instanceof Array)
+        for(var i = enumerate.length - 1; i >= 0; i--)
+            action.call(context, enumerate[i], i);
+    else {
+        var props = [];
+        for(var i in enumerate)
+            props.push(i);
+        
+        for(var i = props.length - 1; i >= 0; i--)
+            action.call(context, enumerate[props[i]], props[i]);
+    }
+};
+
+var Binding = function(bindingName, allowVirtual, accessorFunction) {
+    
+    var cls = Class("wpfko.bindings." + bindingName, accessorFunction);    
+    ko.bindingHandlers[bindingName] = {
+        init: cls.init,
+        update: cls.update
+    };
+    
+    if(allowVirtual)
+        ko.virtualElements.allowedBindings[bindingName] = true;
+};
+
+var Class = function(classFullName, accessorFunction) {
+    classFullName = classFullName.split(".");
+    var namespace = classFullName.splice(0, classFullName.length - 1);
+    
+    var tmp = {};
+    tmp[classFullName[classFullName.length - 1]] = accessorFunction();
+    
+    Extend(namespace.join("."), tmp);
+    
+    return tmp[classFullName[classFullName.length - 1]];
+};
+
+var Extend = function(namespace, extendWith) {
+    namespace = namespace.split(".");
+    
+    if(namespace[0] !== "wpfko") throw "Root must be \"wpfko\".";
+    namespace.splice(0, 1);
+    
+    var current = wpfko;
+    enumerate(namespace, function(nsPart) {
+        current = current[nsPart] || (current[nsPart] = {});
+    });
+    
+    if(extendWith && extendWith instanceof Function) extendWith = extendWith();
+    enumerate(extendWith, function(item, i) {
+        current[i] = item;
+    });
+};
+
+Class("wpfko.util.obj", function () {
+        
+    var createObject = function(constructorString, context) {
+        if(!context) context = window;
+        
+        var constructor = constructorString.split(".");
+        for(var i = 0, ii = constructor.length; i <ii; i++) {
+            context = context[constructor[i]];
+            if(!context) {
+                throw "Cannot create object \"" + constructorString + "\"";
+            }
+        }
+        
+        if(context instanceof Function)            
+            return new context();
+        else 
+            throw constructorString + " is not a valid function.";
+    };
+
+    var copyArray = function(input) {
+        var output = [];
+        for(var i = 0, ii = input.length; i < ii; i++) {
+            output.push(input[i]);
+        }
+        
+        return output;
+    };
+    
+    return {
+        enumerate: enumerate,
+        enumerateDesc: enumerateDesc,
+        createObject: createObject,
+        copyArray: copyArray
+    };    
+});
+
+
+Class("wpfko.base.object", function () {
     
     var object = function () {
         ///<summary>The object class is the base class for all wipeout objects. It has base functionality for inheritance and parent methods</summary>
@@ -13,12 +118,35 @@ wpfko.base = wpfko.base || {};
         children:[]
     };
     
+    object.clearVirtualCache = function(forMethod /*optional*/) {
+        ///<summary>Lookup results for _super methods are cached. This could cause problems in the rare cases when a class prototype is altered after one of its methods are called. Clearing the cache will solve this</summary>
+        if(!forMethod) {
+            cachedSuperMethods.parents.length = 0;
+            cachedSuperMethods.children.length = 0;
+            return;
+        }
+        
+        for(var i = 0, ii = cachedSuperMethods.children.length; i < ii; i++) {
+            if(cachedSuperMethods.children[i] === forMethod || cachedSuperMethods.parents[i] === forMethod) {
+                cachedSuperMethods.children.splice(i, 1);
+                cachedSuperMethods.parents.splice(i, 1);
+            }
+        };
+    };
+    
+    // The virtual cache caches overridden methods for quick lookup later. It is not safe to use if two function prototypes which are not related share the same function, or function prototypes are modified after an application initilisation stage
+    object.useVirtualCache = true;
+    
     object.prototype._super = function() {        
         ///<summary>Call the current method or constructor of the parent class with arguments</summary>
         
         // try to find a cached version to skip lookup of parent class method
-        var superIndex = cachedSuperMethods.children.indexOf(arguments.callee.caller);
-        var cached = superIndex === -1 ? null : cachedSuperMethods.parents[superIndex];
+        var cached = null;
+        if(object.useVirtualCache) {
+            var superIndex = cachedSuperMethods.children.indexOf(arguments.callee.caller);
+            if(superIndex !== -1)
+                cached = cachedSuperMethods.parents[superIndex];
+        }
         
         if(!cached) {
             
@@ -42,9 +170,11 @@ wpfko.base = wpfko.base || {};
                             if(inheritanceTree[j][method] !== arguments.callee.caller) {
                                 cached = inheritanceTree[j][method];
                                 
-                                // map the current method to the method it overrides
-                                cachedSuperMethods.children.push(arguments.callee.caller);
-                                cachedSuperMethods.parents.push(cached);
+                                if(object.useVirtualCache) {
+                                    // map the current method to the method it overrides
+                                    cachedSuperMethods.children.push(arguments.callee.caller);
+                                    cachedSuperMethods.parents.push(cached);
+                                }
                                 
                                 break;
                             }
@@ -66,9 +196,10 @@ wpfko.base = wpfko.base || {};
     object.extend = function (childClass) {
         ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
  
-        // static items
+        // static functions
         for (var p in this)
-            if (this.hasOwnProperty(p)) childClass[p] = this[p];
+            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function)
+                childClass[p] = this[p];
  
         // will ensure any subsequent changes to the parent class will reflect in child class
         function prototypeTracker() { this.constructor = childClass; }
@@ -80,14 +211,11 @@ wpfko.base = wpfko.base || {};
         return childClass;
     };
 
-    wpfko.base.object = object;
-})();
+    return object;
+});
 
 
-var wpfko = wpfko || {};
-wpfko.base = wpfko.base || {};
-
-(function () {
+Class("wpfko.base.visual", function () {
     
     var visual = wpfko.base.object.extend(function (templateId) {
         ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
@@ -184,7 +312,7 @@ wpfko.base = wpfko.base || {};
         var nextTarget;
         var current = visual.getParentElement(this._rootHtmlElement);
         while(current) {
-            if(nextTarget = ko.utils.domData.get(current, wpfko.ko.bindings.wpfko.utils.wpfkoKey)) {
+            if(nextTarget = ko.utils.domData.get(current, wpfko.bindings.wpfko.utils.wpfkoKey)) {
                 return nextTarget;
             }
             
@@ -283,7 +411,7 @@ wpfko.base = wpfko.base || {};
             wpfko.util.obj.enumerate(visual.visualGraph(child), output.push, output);
         });
  
-        var vm = ko.utils.domData.get(rootElement, wpfko.ko.bindings.wpfko.utils.wpfkoKey);        
+        var vm = ko.utils.domData.get(rootElement, wpfko.bindings.wpfko.utils.wpfkoKey);        
         if (vm) {
             return [{ viewModel: vm, display: displayFunction(vm), children: output}];
         }
@@ -294,14 +422,11 @@ wpfko.base = wpfko.base || {};
     // list of html tags which will not be treated as objects
     visual.reservedTags = ["a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "command", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "head", "header", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "map", "mark", "menu", "meta", "meter", "nav", "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"];
     
-    wpfko.base.visual = visual;
-})();
+    return visual;
+});
 
 
-    var wpfko = wpfko || {};
-    wpfko.base = wpfko.base || {};
-
-(function () {    
+Class("wpfko.base.view", function () {    
 
     var view = wpfko.base.visual.extend(function (templateId, model /*optional*/) {        
         ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>    
@@ -497,15 +622,12 @@ wpfko.base = wpfko.base || {};
         ///<summary>Called when the model has changed</summary>
     };
 
-    wpfko.base.view = view;
-})();
+    return view;
+});
 
 
 
-var wpfko = wpfko || {};
-wpfko.base = wpfko.base || {};
-
-(function () {    
+Class("wpfko.base.contentControl", function () {    
 
     var contentControl = wpfko.base.view.extend(function (templateId) {
         ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
@@ -578,14 +700,14 @@ wpfko.base = wpfko.base || {};
         return hash;
     };
     
-    wpfko.base.contentControl = contentControl;
-})();
+    return contentControl;
+});
 
 
 var wpfko = wpfko || {};
 wpfko.base = wpfko.base || {};
 
-(function () {
+Class("wpfko.base.event", function () {
     
     var event = function() {
         ///<summary>Defines a new event with register and trigger functinality</summary>
@@ -644,13 +766,11 @@ wpfko.base = wpfko.base || {};
         };
     };
     
-    wpfko.base.event = event;
-})();
+    return event;
+});
 
 
-var wpfko = wpfko || {};
-wpfko.base = wpfko.base || {};
-(function () {
+Class("wpfko.base.itemsControl", function () {
     
     var deafaultTemplateId;
     var staticConstructor = function() {
@@ -826,14 +946,11 @@ wpfko.base = wpfko.base || {};
         this.items.valueHasMutated();
     };
 
-    wpfko.base.itemsControl = itemsControl;
-})();
+    return itemsControl;
+});
 
 
-var wpfko = wpfko || {};
-wpfko.base = wpfko.base || {};
-
-(function () {
+Class("wpfko.base.routedEvent", function () {
     
     var routedEvent = function() {
         ///<summary>A routed event is triggerd on a visual and travels up to ancestor visuals all the way to the root of the application</summary>
@@ -841,7 +958,7 @@ wpfko.base = wpfko.base || {};
 
     routedEvent.prototype.trigger = function(triggerOnVisual, eventArgs) {
         ///<summary>Trigger a routed event on a visual</summary>
-        triggerOnVisual.triggerRoutedEvent(this, new routedEventArgs(eventArgs, triggerOnVisual));
+        triggerOnVisual.triggerRoutedEvent(this, new wpfko.base.routedEventArgs(eventArgs, triggerOnVisual));
     };
     
     routedEvent.prototype.unRegister = function (callback, triggerOnVisual, context /* optional */) {
@@ -854,7 +971,10 @@ wpfko.base = wpfko.base || {};
         triggerOnVisual.registerRoutedEvent(this, callback, context);
     };
     
-    wpfko.base.routedEvent = routedEvent;
+    return routedEvent;
+});
+
+Class("wpfko.base.routedEventArgs", function () {
     
     var routedEventArgs = function(eventArgs, originator) { 
         ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>
@@ -869,8 +989,11 @@ wpfko.base = wpfko.base || {};
         this.originator = originator;
     };
     
-    wpfko.base.routedEventArgs = routedEventArgs;
+    return routedEventArgs;
+});
     
+
+Class("wpfko.base.routedEventRegistration", function () {
     //TODO: private
     var routedEventRegistration = function(routedEvent) {  
         ///<summary>Holds routed event registration details</summary>
@@ -882,14 +1005,11 @@ wpfko.base = wpfko.base || {};
         this.event = new wpfko.base.event();
     };
     
-    wpfko.base.routedEventRegistration = routedEventRegistration;
-})();
+    return routedEventRegistration;
+});
 
-var wpfko = wpfko || {};
-wpfko.ko = wpfko.ko || {};
-wpfko.ko.bindings = wpfko.ko.bindings || {};
 
-(function () {
+Binding("itemsControl", true, function () {
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         if (!(viewModel instanceof wpfko.base.itemsControl))
             throw "This binding can only be used within the context of a wo.itemsControl";
@@ -962,8 +1082,8 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
                                     };
                                 })(i);
                                 
-                                wpfko.ko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
-                                wpfko.ko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
+                                wpfko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
+                                wpfko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
                             }
                         };
                     })(changes[i]));
@@ -1003,30 +1123,18 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         },
         itemsChanged: itemsChanged
     };
-        
-    wpfko.ko.bindings.itemsControl = {
+    
+    return {
         init: init,
         utils: utils
     };
-            
-    ko.bindingHandlers.itemsControl = {};
-    ko.virtualElements.allowedBindings.itemsControl = true;
-    for(var i in wpfko.ko.bindings.itemsControl) {
-        if(i !== "utils") {
-            ko.bindingHandlers.itemsControl[i] = wpfko.ko.bindings.itemsControl[i];
-        }
-    };
-})();
+});
 
 
-var wpfko = wpfko || {};
-wpfko.ko = wpfko.ko || {};
-wpfko.ko.bindings = wpfko.ko.bindings || {};
-
-(function () {
+Binding("render", true, function () {
         
         var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            return ko.bindingHandlers.template.init.call(this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
+            return ko.bindingHandlers.template.init.call(this, element, wpfko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
         };
 
         var update = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -1036,14 +1144,14 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
             
             var _this = this;
             var templateChanged = function() {
-                ko.bindingHandlers.template.update.call(_this, element, wpfko.ko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
+                ko.bindingHandlers.template.update.call(_this, element, wpfko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
             };
 
             if (child) {
                 if (child._rootHtmlElement)
                     throw "This visual has already been rendered";
                 
-                ko.utils.domData.set(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey, child);
+                ko.utils.domData.set(element, wpfko.bindings.wpfko.utils.wpfkoKey, child);
                 child._rootHtmlElement = element;
                 if (viewModel) viewModel.renderedChildren.push(child);
                 child.templateId.subscribe(templateChanged);
@@ -1066,42 +1174,24 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         };
     };
     
-    wpfko.ko.bindings.render = {
+    return {
         init: init,
         update: update,
         utils: {
             createValueAccessor: createValueAccessor
         }
     };
-            
-    ko.bindingHandlers.render = {};
-    ko.virtualElements.allowedBindings.render = true;
-    for(var i in wpfko.ko.bindings.render) {
-        if(i !== "utils") {
-            ko.bindingHandlers.render[i] = wpfko.ko.bindings.render[i];
-        }
-    };
-    
-    // backwards compatibility
-    ko.bindingHandlers.renderChild = {
-        init: ko.bindingHandlers.render.init,
-        update: ko.bindingHandlers.render.update
-    }
-})();
+});
 
 
-var wpfko = wpfko || {};
-wpfko.ko = wpfko.ko || {};
-wpfko.ko.bindings = wpfko.ko.bindings || {};
-
-(function () {
+Binding("wpfko", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
 
         //TODO: knockout standard way of controling element        
         //TODO: add optional inline properties to binding   
         
-        if(ko.utils.domData.get(element, wpfko.ko.bindings.wpfko.utils.wpfkoKey))
+        if(ko.utils.domData.get(element, wpfko.bindings.wpfko.utils.wpfkoKey))
             throw "This element is already bound to another model";
         
         var type = valueAccessor();
@@ -1125,28 +1215,17 @@ wpfko.ko.bindings = wpfko.ko.bindings || {};
         };
     };
      
-    wpfko.ko.bindings.wpfko = {
+    return {
         init: init,
         utils: {
             createValueAccessor: createValueAccessor,
             wpfkoKey: "__wpfko"
         }
     };
-            
-    ko.bindingHandlers.wpfko = {};
-    ko.virtualElements.allowedBindings.wpfko = true;
-    for(var i in wpfko.ko.bindings.wpfko) {
-        if(i !== "utils") {
-            ko.bindingHandlers.wpfko[i] = wpfko.ko.bindings.wpfko[i];
-        }
-    };
-})();
+});
 
 
-var wpfko = wpfko || {};
-wpfko.template = wpfko.template || {};
-
-(function () {
+Class("wpfko.template.engine", function () {
     
     var engine = function() { };
     engine.prototype = new ko.templateEngine();
@@ -1219,15 +1298,12 @@ wpfko.template = wpfko.template || {};
     engine.closeCodeTag = "} -->";
     engine.scriptHasBeenReWritten = RegExp(engine.openCodeTag.replace("{", "\{") + "[0-9]+" + engine.closeCodeTag.replace("}", "\}"));
     
-    wpfko.template.engine = engine;    
-    ko.setTemplateEngine(new engine());    
-})();
+    //TODO: is this the best place for this
+    ko.setTemplateEngine(new engine());
+    return engine;
+});
 
-
-var wpfko = wpfko || {};
-wpfko.template = wpfko.template || {};
-
-(function () {
+Class("wpfko.template.htmlBuilder", function () {
     
     var htmlBuilder = function(xmlTemplate) {
         
@@ -1337,8 +1413,8 @@ wpfko.template = wpfko.template || {};
             };
             
             // renderFromMemo can only derive the parent/child from the binding context
-            wpfko.ko.bindings.render.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
-            wpfko.ko.bindings.render.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
+            wpfko.bindings.render.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
+            wpfko.bindings.render.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
         });
     };
     
@@ -1386,25 +1462,19 @@ wpfko.template = wpfko.template || {};
         return result.join("");
     };
     
-    wpfko.template.htmlBuilder = htmlBuilder;
-})();
+    return htmlBuilder;
+});
 
 
-var wpfko = wpfko || {};
-wpfko.template = wpfko.template || {};
-
-(function () {
+Class("wpfko.template.switchBindingContext", function () {
     
-    wpfko.template.switchBindingContext = function(bindingContext) {
+    return function(bindingContext) {
         this.bindingContext = bindingContext;
     }
-})();
+});
 
 
-var wpfko = wpfko || {};
-wpfko.template = wpfko.template || {};
-
-(function () {
+Class("wpfko.template.viewModelBuilder", function () {
     
     var viewModelBuilder = function(xmlTemplate) {
         this._builders = [];
@@ -1471,14 +1541,12 @@ wpfko.template = wpfko.template || {};
         }        
     };
     
-    wpfko.template.viewModelBuilder = viewModelBuilder;
-})();
+    return viewModelBuilder;
+});
 
 
-var wpfko = wpfko || {};
-wpfko.template = wpfko.template || {};
 
-(function () {
+Class("wpfko.template.xmlTemplate", function () {
     
     var xmlTemplate = function(xmlTemplate) {
                 
@@ -1521,14 +1589,12 @@ wpfko.template = wpfko.template || {};
         this.viewModelBuilder.rebuild(bindingContext);
     };
     
-    wpfko.template.xmlTemplate = xmlTemplate;
-})();
+    return xmlTemplate;
+});
 
 
-var wpfko = wpfko || {};
-wpfko.util = wpfko.util || {};
 
-(function () { 
+Class("wpfko.util.html", function () { 
         
     var outerHTML = function(element) {
         if(!element) return null;
@@ -1590,7 +1656,7 @@ wpfko.util = wpfko.util || {};
        
     //TODO: div might not be appropriate, eg, if html string is <li />
     var createElements = function(htmlString) {
-        if(htmlString == null) return null;
+        if(htmlString == null) return [];
         
         var sibling = getFirstTagName(htmlString) || "div";
         var parent = specialTags[getTagName("<" + sibling + "/>")] || "div";
@@ -1698,7 +1764,7 @@ wpfko.util = wpfko.util || {};
         return output;
     };
     
-    wpfko.util.html = {
+    return {
         specialTags: specialTags,
         getFirstTagName: getFirstTagName,
         getTagName: getTagName,
@@ -1708,13 +1774,11 @@ wpfko.util = wpfko.util || {};
         createElements: createElements,
         createWpfkoComment: createWpfkoComment
     };    
-})();
+});
 
 
-    var wpfko = wpfko || {};
-    wpfko.util = wpfko.util || {};
 
-(function () {
+Class("wpfko.util.ko", function () {
     
     var _ko = {};
     
@@ -1791,60 +1855,8 @@ wpfko.util = wpfko.util || {};
         }
     };
     
-    wpfko.util.ko = _ko;
-})();
-
-
-var wpfko = wpfko || {};
-wpfko.util = wpfko.util || {};
-
-(function () {
-        
-    var createObject = function(constructorString, context) {
-        if(!context) context = window;
-        
-        var constructor = constructorString.split(".");
-        for(var i = 0, ii = constructor.length; i <ii; i++) {
-            context = context[constructor[i]];
-            if(!context) {
-                throw "Cannot create object \"" + constructorString + "\"";
-            }
-        }
-        
-        if(context instanceof Function)            
-            return new context();
-        else 
-            throw constructorString + " is not a valid function.";
-    };
-
-    var copyArray = function(input) {
-        var output = [];
-        for(var i = 0, ii = input.length; i < ii; i++) {
-            output.push(input[i]);
-        }
-        
-        return output;
-    };
-    
-    var enumerate = function(enumerate, action, context) {
-        context = context || window;
-        
-        if(enumerate == null) return;
-        if(enumerate instanceof Array)
-            for(var i = 0, ii = enumerate.length; i < ii; i++)
-                action.call(context, enumerate[i], i);
-        else
-            for(var i in enumerate)
-                action.call(context, enumerate[i], i);
-    };
-    
-    wpfko.util.obj = {
-        enumerate: enumerate,
-        createObject: createObject,
-        copyArray: copyArray
-    };
-    
-})();
+    return _ko;
+});
 
 window["wpfko"] = wpfko;
 window["wo"] = wpfko.base;

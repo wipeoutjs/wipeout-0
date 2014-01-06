@@ -219,9 +219,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 }, this);
             };
             
-            copy.call(this, "staticEvents", "eventName");
-            copy.call(this, "staticProperties", "propertyName");
-            copy.call(this, "staticFunctions", "functionName");
+            // instance items only (no statics)
             copy.call(this, "events", "eventName");
             copy.call(this, "properties", "propertyName");
             copy.call(this, "functions", "functionName");
