@@ -1,5 +1,5 @@
 
-Binding("render", function () {
+Binding("render", true, function () {
         
         var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             return ko.bindingHandlers.template.init.call(this, element, wpfko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);

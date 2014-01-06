@@ -29,13 +29,16 @@ var enumerateDesc = function(enumerate, action, context) {
     }
 };
 
-var Binding = function(bindingName, accessorFunction) {
+var Binding = function(bindingName, allowVirtual, accessorFunction) {
     
     var cls = Class("wpfko.bindings." + bindingName, accessorFunction);    
     ko.bindingHandlers[bindingName] = {
         init: cls.init,
         update: cls.update
     };
+    
+    if(allowVirtual)
+        ko.virtualElements.allowedBindings[bindingName] = true;
 };
 
 var Class = function(classFullName, accessorFunction) {

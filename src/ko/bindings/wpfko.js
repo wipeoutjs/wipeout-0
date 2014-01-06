@@ -1,5 +1,5 @@
 
-Binding("wpfko", function () {
+Binding("wpfko", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
 

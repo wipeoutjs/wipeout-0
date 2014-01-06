@@ -1,5 +1,5 @@
 
-Binding("itemsControl", function () {
+Binding("itemsControl", true, function () {
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         if (!(viewModel instanceof wpfko.base.itemsControl))
             throw "This binding can only be used within the context of a wo.itemsControl";
