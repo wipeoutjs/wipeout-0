@@ -66,14 +66,16 @@ Binding("itemsControl", true, function () {
                                     viewModel.items.peek()[index - 1]._rootHtmlElement.__wpfko.insertAfter(container.open);
                                 }           
                                 
+                                //TODO: this is invalid. Firstly i is wrong, secondly, does not update when re-ordered
+                                //TODO: if debug
                                 var acc = (function(i) {
                                     return function() {
-                                        return change.value;
+                                        return { item: change.value, comment: "itemsControl item: " + i.toString() };
                                     };
                                 })(i);
                                 
-                                wpfko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
-                                wpfko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
+                                wpfko.bindings.namedRender.init(container.open, acc, acc, viewModel, bindingContext);
+                                wpfko.bindings.namedRender.update(container.open, acc, acc, viewModel, bindingContext);
                             }
                         };
                     })(changes[i]));

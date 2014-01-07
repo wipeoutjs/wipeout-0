@@ -28,6 +28,8 @@ Binding("namedRender", true, function () {
             templateChanged();
         };
     
+    var wipeoutType = "wipeout-type";
+    
     var createValueAccessor = function(oldValueAccessor) {
         // ensure template id does not trigger another update
         // this will be handled within the binding
@@ -42,12 +44,13 @@ Binding("namedRender", true, function () {
                     
                     var comment = ko.utils.unwrapObservable(value.comment);
                     
-                    //TODO: if debug
                     if(comment) {
+                        //TODO: more than 1 update (eg if template changes)
                         if(wpfko.util.ko.virtualElements.isVirtual(_child._rootHtmlElement)) {
-                            _child._rootHtmlElement.textContent += "wipeout-type: '" + comment.replace("'", "\'") + "'";
+                            _child._rootHtmlElement.textContent += wipeoutType + ": '" + comment.replace("'", "\'") + "'";
                         } else if(_child._rootHtmlElement && _child._rootHtmlElement.nodeType === 1) {
-                            var att = document.createAttribute("data-wipeout-type");
+                            //TODO: test
+                            var att = document.createAttribute("data-" + wipeoutType);
                             att.value = comment;
                             _child._rootHtmlElement.setAttributeNode(att);
                         }

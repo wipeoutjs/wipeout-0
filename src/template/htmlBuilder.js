@@ -95,22 +95,25 @@ Class("wpfko.template.htmlBuilder", function () {
         };
     };
         
-    htmlBuilder.renderFromMemo = function(bindingContext) {
-        return ko.memoization.memoize(function(memo) { 
-            var comment1 = document.createComment(' ko ');
-            var comment2 = document.createComment(' /ko ');
-            var p = wpfko.util.ko.virtualElements.parentElement(memo);
-            ko.virtualElements.insertAfter(p, comment1, memo);
-            ko.virtualElements.insertAfter(p, comment2, comment1);
+    //TODO: if debug
+    htmlBuilder.renderFromMemo = function(name) {
+        return function(bindingContext) {
+            return ko.memoization.memoize(function(memo) { 
+                var comment1 = document.createComment(' ko ');
+                var comment2 = document.createComment(' /ko ');
+                var p = wpfko.util.ko.virtualElements.parentElement(memo);
+                ko.virtualElements.insertAfter(p, comment1, memo);
+                ko.virtualElements.insertAfter(p, comment2, comment1);
+                    
+                var acc = function() {
+                    return { item: bindingContext.$data, comment: name };
+                };
                 
-            var acc = function() {
-                return bindingContext.$data;
-            };
-            
-            // renderFromMemo can only derive the parent/child from the binding context
-            wpfko.bindings.render.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
-            wpfko.bindings.render.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
-        });
+                // renderFromMemo can only derive the parent/child from the binding context
+                wpfko.bindings.namedRender.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
+                wpfko.bindings.namedRender.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
+            });
+        };
     };
     
     htmlBuilder.emptySwitchBindingContext = function(bindingContext) {
@@ -131,9 +134,9 @@ Class("wpfko.template.htmlBuilder", function () {
         
         enumerate(xmlTemplate.childNodes, function(child, i) {            
             if(wpfko.template.xmlTemplate.isCustomElement(child)) {     
-                var id = wpfko.template.xmlTemplate.getId(child) || (itemPrefix + i);
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.switchBindingContextToTemplateItem(id)));                
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.renderFromMemo));
+                var id = wpfko.template.xmlTemplate.getId(child);
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.switchBindingContextToTemplateItem(id || (itemPrefix + i)))); 
+                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.renderFromMemo(child.nodeName + (id ? (" #" + id) : ""))));
                 result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.emptySwitchBindingContext));
                 
             } else if(child.nodeType == 1) {
