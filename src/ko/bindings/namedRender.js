@@ -6,7 +6,7 @@ Binding("namedRender", true, function () {
         };
 
         var update = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var child = wpfko.util.ko.peek(valueAccessor().item);
+            var child = wpfko.util.ko.peek(wpfko.util.ko.peek(valueAccessor()).item);
             if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || (child && !(child instanceof wpfko.base.visual)))
                 throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
             
