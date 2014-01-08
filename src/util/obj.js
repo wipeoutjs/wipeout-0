@@ -70,7 +70,7 @@ var Extend = function(namespace, extendWith) {
     });
 };
 
-Class("wpfko.util.obj", function () {
+Class("wpfko.utils.obj", function () {
         
     var createObject = function(constructorString, context) {
         if(!context) context = window;

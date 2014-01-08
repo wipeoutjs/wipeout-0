@@ -62,11 +62,11 @@ Class("wpfko.base.visual", function () {
         var depth = 0;
         var current = element.previousSibling;
         while(current) {
-            if(wpfko.util.ko.virtualElements.isVirtualClosing(current)) {
+            if(wpfko.utils.ko.virtualElements.isVirtualClosing(current)) {
                 depth--;
             }
             
-            if(wpfko.util.ko.virtualElements.isVirtual(current)) {
+            if(wpfko.utils.ko.virtualElements.isVirtual(current)) {
                 if(depth === 0)
                     return current;
                 
@@ -191,8 +191,8 @@ Class("wpfko.base.visual", function () {
         displayFunction = displayFunction || function() { return typeof arguments[0]; };
  
         var output = [];
-        wpfko.util.obj.enumerate(wpfko.util.html.getAllChildren(rootElement), function (child) {
-            wpfko.util.obj.enumerate(visual.visualGraph(child), output.push, output);
+        wpfko.utils.obj.enumerate(wpfko.utils.html.getAllChildren(rootElement), function (child) {
+            wpfko.utils.obj.enumerate(visual.visualGraph(child), output.push, output);
         });
  
         var vm = ko.utils.domData.get(rootElement, wpfko.bindings.wpfko.utils.wpfkoKey);        

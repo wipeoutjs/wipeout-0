@@ -33,7 +33,7 @@ Class("wpfko.base.contentControl", function () {
 
             // lazy create div to place anonymous templates
             if (!templateArea) {
-                templateArea = wpfko.util.html.createElement("<div style='display: none'></div>");
+                templateArea = wpfko.utils.html.createElement("<div style='display: none'></div>");
                 document.body.appendChild(templateArea);
             }
 

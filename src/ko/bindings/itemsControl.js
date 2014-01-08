@@ -5,7 +5,7 @@ Binding("itemsControl", true, function () {
             throw "This binding can only be used within the context of a wo.itemsControl";
 
         ko.virtualElements.emptyNode(element);
-        if (wpfko.util.ko.version()[0] < 3) {
+        if (wpfko.utils.ko.version()[0] < 3) {
             utils.subscribeV2(element, viewModel, bindingContext);
         } else {
             utils.subscribeV3(element, viewModel, bindingContext);
@@ -18,8 +18,8 @@ Binding("itemsControl", true, function () {
         return function(changes) {                
             var del = [], add = [], move = {}, delPadIndex = 0;
             for(var i = 0, ii = changes.length; i < ii; i++) {
-                if(changes[i].status === wpfko.util.ko.array.diff.retained) continue;            
-                else if(changes[i].status === wpfko.util.ko.array.diff.deleted) {
+                if(changes[i].status === wpfko.utils.ko.array.diff.retained) continue;            
+                else if(changes[i].status === wpfko.utils.ko.array.diff.deleted) {
                     del.push((function(change) {
                         return function() {
                             if(change.moved != null) {
@@ -40,7 +40,7 @@ Binding("itemsControl", true, function () {
                             delPadIndex--;
                         };
                     })(changes[i]));
-                } else if(changes[i].status === wpfko.util.ko.array.diff.added) {
+                } else if(changes[i].status === wpfko.utils.ko.array.diff.added) {
                     add.push((function(change) {
                         return function() {
                             var index= viewModel.items.indexOf(change.value);
@@ -57,7 +57,7 @@ Binding("itemsControl", true, function () {
                                     }
                                 }
                             } else {
-                                var container = wpfko.util.html.createWpfkoComment();
+                                var container = wpfko.utils.html.createWpfkoComment();
                                 if(index === 0) {
                                     ko.virtualElements.prepend(element, container.close);
                                     ko.virtualElements.prepend(element, container.open);   
@@ -98,7 +98,7 @@ Binding("itemsControl", true, function () {
         subscribeV2: function(element, viewModel, bindingContext) {            
             ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl<summary>            
             
-            var items = wpfko.util.obj.copyArray(viewModel.items.peek());
+            var items = wpfko.utils.obj.copyArray(viewModel.items.peek());
             var handler = utils.itemsChanged(element, viewModel, bindingContext);
                         
             viewModel.items.subscribe(function() {            
@@ -106,7 +106,7 @@ Binding("itemsControl", true, function () {
                     var changes = ko.utils.compareArrays(items, arguments[0] || []);
                     handler(changes);
                 } finally {
-                    items = wpfko.util.obj.copyArray(viewModel.items.peek());
+                    items = wpfko.utils.obj.copyArray(viewModel.items.peek());
                 }
             });
         },

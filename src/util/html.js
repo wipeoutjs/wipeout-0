@@ -1,6 +1,6 @@
 
 
-Class("wpfko.util.html", function () { 
+Class("wpfko.utils.html", function () { 
         
     var outerHTML = function(element) {
         if(!element) return null;
@@ -123,8 +123,8 @@ Class("wpfko.util.html", function () {
  
     var getAllChildren = function (element) {
         var children = [];
-        if (wpfko.util.ko.virtualElements.isVirtual(element)) {
-            var parent = wpfko.util.ko.virtualElements.parentElement(element);
+        if (wpfko.utils.ko.virtualElements.isVirtual(element)) {
+            var parent = wpfko.utils.ko.virtualElements.parentElement(element);
             
             // find index of "element"
             for (var i = 0, ii = parent.childNodes.length; i < ii; i++) {
@@ -148,7 +148,7 @@ Class("wpfko.util.html", function () {
         var depth = 0;
  
         for (var i = 0, ii = children.length; i < ii; i++) {
-            if (wpfko.util.ko.virtualElements.isVirtualClosing(children[i])) {
+            if (wpfko.utils.ko.virtualElements.isVirtualClosing(children[i])) {
                 depth--;
                 
                 // we are in a virtual parent element
@@ -163,7 +163,7 @@ Class("wpfko.util.html", function () {
             output.push(children[i]);
             
             // the next element will be in a virtual child
-            if (wpfko.util.ko.virtualElements.isVirtual(children[i]))
+            if (wpfko.utils.ko.virtualElements.isVirtual(children[i]))
                 depth++;
         }
  

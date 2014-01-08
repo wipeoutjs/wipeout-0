@@ -1,6 +1,6 @@
 
 
-Class("wpfko.util.ko", function () {
+Class("wpfko.utils.ko", function () {
     
     var _ko = {};
     

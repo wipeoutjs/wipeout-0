@@ -91,7 +91,7 @@ Class("wpfko.template.htmlBuilder", function () {
                 }
             }
             
-            return wpfko.util.html.createElements(returnVal.join(""));
+            return wpfko.utils.html.createElements(returnVal.join(""));
         };
     };
         
@@ -101,7 +101,7 @@ Class("wpfko.template.htmlBuilder", function () {
             return ko.memoization.memoize(function(memo) { 
                 var comment1 = document.createComment(' ko ');
                 var comment2 = document.createComment(' /ko ');
-                var p = wpfko.util.ko.virtualElements.parentElement(memo);
+                var p = wpfko.utils.ko.virtualElements.parentElement(memo);
                 ko.virtualElements.insertAfter(p, comment1, memo);
                 ko.virtualElements.insertAfter(p, comment2, comment1);
                     
@@ -110,8 +110,8 @@ Class("wpfko.template.htmlBuilder", function () {
                 };
                 
                 // renderFromMemo can only derive the parent/child from the binding context
-                wpfko.bindings.namedRender.init(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
-                wpfko.bindings.namedRender.update(comment1, acc, acc, wpfko.util.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
+                wpfko.bindings.namedRender.init(comment1, acc, acc, wpfko.utils.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
+                wpfko.bindings.namedRender.update(comment1, acc, acc, wpfko.utils.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
             });
         };
     };
@@ -147,9 +147,9 @@ Class("wpfko.template.htmlBuilder", function () {
                     ch.removeChild(ch.childNodes[0]);
                 }
                 
-                var html = wpfko.util.html.createElement(ser.serializeToString(ch));
+                var html = wpfko.utils.html.createElement(ser.serializeToString(ch));
                 html.innerHTML = wpfko.template.htmlBuilder.generateTemplate(child, itemPrefix + i);                
-                result.push(wpfko.util.html.outerHTML(html));
+                result.push(wpfko.utils.html.outerHTML(html));
             } else if(child.nodeType === 3) {
                 result.push(child.data);
             } else {

@@ -108,7 +108,7 @@ Class("wpfko.base.view", function () {
         if(!propertiesXml)
             return;
                 
-        if(!wpfko.template.htmlBuilder.elementHasModelBinding(propertiesXml) && wpfko.util.ko.peek(this.model) == null) {
+        if(!wpfko.template.htmlBuilder.elementHasModelBinding(propertiesXml) && wpfko.utils.ko.peek(this.model) == null) {
             this.bind('model', bindingContext.$parent.model);
         }
         
@@ -152,7 +152,7 @@ Class("wpfko.base.view", function () {
                     this[child.nodeName] = val;       
                 }
             } else {
-                var val = wpfko.util.obj.createObject(type);
+                var val = wpfko.utils.obj.createObject(type);
                 val.initialize(child, bindingContext.createChildContext(val));
                 
                 if(ko.isObservable(this[child.nodeName])) {

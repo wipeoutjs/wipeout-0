@@ -26,7 +26,7 @@ Class("wpfko.base.itemsControl", function () {
         //An array of viewmodels, each corresponding to a mode in the itemSource property
         this.items = ko.observableArray([]);
 
-        if(wpfko.util.ko.version()[0] < 3) {
+        if(wpfko.utils.ko.version()[0] < 3) {
             itemsControl.subscribeV2.call(this);
         } else {
             itemsControl.subscribeV3.call(this);
@@ -56,7 +56,7 @@ Class("wpfko.base.itemsControl", function () {
                     return;
                 this.itemsChanged(ko.utils.compareArrays(initial, arguments[0] || []));
             } finally {
-                initial = wpfko.util.obj.copyArray(arguments[0] || []);
+                initial = wpfko.utils.obj.copyArray(arguments[0] || []);
             }
         }, this);
         
@@ -123,8 +123,8 @@ Class("wpfko.base.itemsControl", function () {
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
         for(var i = 0, ii = changes.length; i < ii; i++) {
-            if(changes[i].status === wpfko.util.ko.array.diff.retained) continue;            
-            else if(changes[i].status === wpfko.util.ko.array.diff.deleted) {
+            if(changes[i].status === wpfko.utils.ko.array.diff.retained) continue;            
+            else if(changes[i].status === wpfko.utils.ko.array.diff.deleted) {
                 del.push((function(change) {
                     return function() {
                         var removed = items.splice(change.index + delPadIndex, 1)[0];
@@ -134,7 +134,7 @@ Class("wpfko.base.itemsControl", function () {
                         delPadIndex--;
                     };
                 })(changes[i]));
-            } else if(changes[i].status === wpfko.util.ko.array.diff.added) {
+            } else if(changes[i].status === wpfko.utils.ko.array.diff.added) {
                 add.push((function(change) {
                     return function() {
                         var added = change.moved != null ? move[change.index + "." + change.moved] : this.createItem(change.value);
