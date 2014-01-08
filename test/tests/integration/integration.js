@@ -5,7 +5,7 @@ module("wipeout.tests.integration", {
         $application = $($fixture.children()[0]);
         
         ko.applyBindings({}, $application[0]);
-        application = ko.utils.domData.get($application[0], wpfko.bindings.wpfko.utils.wpfkoKey);
+        application = wo.utils.html.getViewModel($application[0]);
         
         window.views = {};
     },

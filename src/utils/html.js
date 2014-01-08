@@ -5,6 +5,8 @@ Class("wpfko.utils.html", function () {
     var outerHTML = function(element) {
         if(!element) return null;
         
+        if(element.constructor === HTMLHtmlElement) throw "Cannot serialize a Html element using outerHTML";
+        
         var tagName = element.nodeType === 1 ? (specialTags[element.tagName.toLowerCase()] || "div") : "div";
         var div = document.createElement(tagName);
         div.innerHTML = element.outerHTML;
@@ -48,16 +50,25 @@ Class("wpfko.utils.html", function () {
         return getTagName(htmlContent.substring(i));
     };
     
-    //TODO: More tags
     var specialTags = {
-        td: "tr",
-        th: "tr",
-        tr: "tbody",
+        area: "map",
+        base: "head",
+        basefont: "head",
+        body: "html",
+        caption: "table",
         col: "colgroup",
         colgroup: "table",
+        command : "menu",
+        frame: "frameset",
+        frameset: "html",
+        head: "html",
+        li: "ul",
         tbody: "table",
+        td: "tr",
+        tfoot: "table",
+        th: "tr",
         thead: "table",
-        li: "ul"
+        tr: "tbody"
     };
        
     //TODO: div might not be appropriate, eg, if html string is <li />
@@ -170,6 +181,10 @@ Class("wpfko.utils.html", function () {
         return output;
     };
     
+    var getViewModel = function(forHtmlNode) {
+        return ko.utils.domData.get(forHtmlNode, wpfko.bindings.wpfko.utils.wpfkoKey);        
+    };
+    
     return {
         specialTags: specialTags,
         getFirstTagName: getFirstTagName,
@@ -178,7 +193,8 @@ Class("wpfko.utils.html", function () {
         outerHTML: outerHTML,
         createElement: createElement,
         createElements: createElements,
-        createWpfkoComment: createWpfkoComment
+        createWpfkoComment: createWpfkoComment,
+        getViewModel: getViewModel
     };    
 });
 
