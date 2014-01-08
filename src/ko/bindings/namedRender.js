@@ -52,15 +52,7 @@ Binding("namedRender", true, function () {
                     var comment = ko.utils.unwrapObservable(value.comment);
                     
                     if(comment && DEBUG) {
-                        //TODO: more than 1 update (eg if template changes)
-                        if(wpfko.utils.ko.virtualElements.isVirtual(_child._rootHtmlElement)) {
-                            _child._rootHtmlElement.textContent += wipeoutType + ": '" + comment.replace("'", "\'") + "'";
-                        } else if(_child._rootHtmlElement && _child._rootHtmlElement.nodeType === 1) {
-                            //TODO: test
-                            var att = document.createAttribute("data-" + wipeoutType);
-                            att.value = comment;
-                            _child._rootHtmlElement.setAttributeNode(att);
-                        }
+                        wpfko.bindings["wipeout-comment"].comment(_child._rootHtmlElement, comment);
                     }
                 } : undefined
             }
