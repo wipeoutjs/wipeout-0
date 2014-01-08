@@ -273,8 +273,8 @@ window.collapsable.prototype.toggle = functon() {
             It does not need a second argument, however knockout syntax requires it-->
         &lt;ul data-bind="itemsControl: null">&lt;/ul>
     &lt;/template>
+    &lt;!--The template for each item in the itemSource-->
     &lt;itemTemplate>
-        &lt;!--The template for each item in the itemSource-->
         &lt;li>
             &lt;label>First name:&lt;/label>
             &lt;span data-bind="html: model().firstName">&lt;/span>,
