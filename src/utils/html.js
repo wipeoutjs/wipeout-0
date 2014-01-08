@@ -13,16 +13,6 @@ Class("wpfko.utils.html", function () {
         
         return div.innerHTML;        
     };  
-        
-    //TODO: div might not be appropriate, eg, if html string is <li />
-    var createElement = function(htmlString) {
-        if(!htmlString) return null;
-        var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
-        parent.innerHTML = htmlString;
-        var element = parent.firstChild;
-        parent.removeChild(element);
-        return element;        
-    }; 
     
     var validHtmlCharacter = /[a-zA-Z0-9]/;
     var getTagName = function(openingTag) {
@@ -70,8 +60,16 @@ Class("wpfko.utils.html", function () {
         thead: "table",
         tr: "tbody"
     };
+        
+    var createElement = function(htmlString) {
+        if(!htmlString) return null;
+        var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
+        parent.innerHTML = htmlString;
+        var element = parent.firstChild;
+        parent.removeChild(element);
+        return element;        
+    }; 
        
-    //TODO: div might not be appropriate, eg, if html string is <li />
     var createElements = function(htmlString) {
         if(htmlString == null) return [];
         
