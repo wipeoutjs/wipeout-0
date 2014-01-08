@@ -43,12 +43,15 @@ Binding("namedRender", true, function () {
             return {
                 name: _child ? _child.templateId.peek() : "",
                 data: value.item || {},
-                afterRender: _child ? function() { 
-                    wpfko.base.visual._afterRendered.apply(this, arguments);
+                afterRender: _child ? function(nodes, context) { 
+                    
+                    var old = _child.nodes || [];
+                    _child.nodes = nodes;
+                    _child.rootHtmlChanged(old, nodes);
                     
                     var comment = ko.utils.unwrapObservable(value.comment);
                     
-                    if(comment) {
+                    if(comment && DEBUG) {
                         //TODO: more than 1 update (eg if template changes)
                         if(wpfko.utils.ko.virtualElements.isVirtual(_child._rootHtmlElement)) {
                             _child._rootHtmlElement.textContent += wipeoutType + ": '" + comment.replace("'", "\'") + "'";

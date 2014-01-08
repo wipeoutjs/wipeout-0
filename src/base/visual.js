@@ -22,13 +22,6 @@ Class("wpfko.base.visual", function () {
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
     });
     
-    visual._afterRendered = function(nodes, context) {
-        ///<summary>Used by the render binding to trigger the rootHtmlChanged method</summary>
-        var old = context.nodes || [];
-        context.nodes = nodes;
-        context.rootHtmlChanged(old, nodes);
-    };
-    
     visual.prototype.dispose = function() {
         ///<summary>Dispose of this visual</summary>
         
