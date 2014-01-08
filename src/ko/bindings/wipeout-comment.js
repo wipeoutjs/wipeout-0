@@ -10,13 +10,10 @@ Binding("wipeout-comment", true, function () {
         //TODO: more than 1 update
         if(wpfko.utils.ko.virtualElements.isVirtual(element)) {
             element.textContent += wipeoutComment + ": '" + comment.replace("'", "\'") + "'";
-        } else if(element && element.nodeType === 1) {
-            //TODO: test
-            var att = document.createAttribute("data-" + wipeoutComment);
-            att.value = comment;
-            element.setAttributeNode(att);
+        } else if(element && element.parentElement) {
+            element.parentElement.insertBefore(document.createComment(wipeoutComment + ": '" + comment.replace("'", "\'") + "'"), element);
         }            
-    }
+    };
     
     return {
         update: update,
