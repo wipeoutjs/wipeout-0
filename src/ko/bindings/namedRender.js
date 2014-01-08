@@ -21,7 +21,11 @@ Binding("namedRender", true, function () {
                 
                 ko.utils.domData.set(element, wpfko.bindings.wpfko.utils.wpfkoKey, child);
                 child._rootHtmlElement = element;
-                if (viewModel) viewModel.renderedChildren.push(child);
+                if (viewModel) {
+                    if (viewModel === child) throw "A wo.view cannot be a child of itself.";
+                    viewModel.renderedChildren.push(child);
+                }
+                
                 child.templateId.subscribe(templateChanged);
             }
             
