@@ -181,3 +181,8 @@ Class("wpfko.utils.html", function () {
         createWpfkoComment: createWpfkoComment
     };    
 });
+
+//legacy
+Class("wpfko.util.html", function () { 
+    return wpfko.utils.html;
+});

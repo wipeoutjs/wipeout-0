@@ -105,3 +105,8 @@ Class("wpfko.utils.obj", function () {
         copyArray: copyArray
     };    
 });
+
+//legacy
+Class("wpfko.util.obj", function () { 
+    return wpfko.utils.obj;
+});

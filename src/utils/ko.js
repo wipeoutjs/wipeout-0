@@ -79,3 +79,8 @@ Class("wpfko.utils.ko", function () {
     
     return _ko;
 });
+
+//legacy
+Class("wpfko.util.ko", function () { 
+    return wpfko.utils.ko;
+});
