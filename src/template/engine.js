@@ -72,7 +72,7 @@ Class("wpfko.template.engine", function () {
     engine.closeCodeTag = "} -->";
     engine.scriptHasBeenReWritten = RegExp(engine.openCodeTag.replace("{", "\{") + "[0-9]+" + engine.closeCodeTag.replace("}", "\}"));
     
-    //TODO: is this the best place for this
-    ko.setTemplateEngine(new engine());
     return engine;
+    
+    // look in build files for template engine definition
 });
