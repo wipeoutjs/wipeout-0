@@ -1,36 +1,36 @@
 
 Binding("namedRender", true, function () {
         
-        var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            return ko.bindingHandlers.template.init.call(this, element, wpfko.bindings.namedRender.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
+    var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        return ko.bindingHandlers.template.init.call(this, element, wpfko.bindings.namedRender.utils.createValueAccessor(valueAccessor), allBindingsAccessor, valueAccessor(), bindingContext);
+    };
+
+    var update = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        var child = wpfko.utils.ko.peek(wpfko.utils.ko.peek(valueAccessor()).item);
+        if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || (child && !(child instanceof wpfko.base.visual)))
+            throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
+        
+        var _this = this;
+        var templateChanged = function() {
+            ko.bindingHandlers.template.update.call(_this, element, wpfko.bindings.namedRender.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
         };
 
-        var update = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-            var child = wpfko.utils.ko.peek(wpfko.utils.ko.peek(valueAccessor()).item);
-            if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || (child && !(child instanceof wpfko.base.visual)))
-                throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
+        if (child) {
+            if (child._rootHtmlElement)
+                throw "This visual has already been rendered";
             
-            var _this = this;
-            var templateChanged = function() {
-                ko.bindingHandlers.template.update.call(_this, element, wpfko.bindings.namedRender.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
-            };
-
-            if (child) {
-                if (child._rootHtmlElement)
-                    throw "This visual has already been rendered";
-                
-                ko.utils.domData.set(element, wpfko.bindings.wpfko.utils.wpfkoKey, child);
-                child._rootHtmlElement = element;
-                if (viewModel) {
-                    if (viewModel === child) throw "A wo.view cannot be a child of itself.";
-                    viewModel.renderedChildren.push(child);
-                }
-                
-                child.templateId.subscribe(templateChanged);
+            ko.utils.domData.set(element, wpfko.bindings.wpfko.utils.wpfkoKey, child);
+            child._rootHtmlElement = element;
+            if (viewModel) {
+                if (viewModel === child) throw "A wo.view cannot be a child of itself.";
+                viewModel.renderedChildren.push(child);
             }
             
-            templateChanged();
-        };
+            child.templateId.subscribe(templateChanged);
+        }
+        
+        templateChanged();
+    };
     
     var wipeoutType = "wipeout-type";
     
