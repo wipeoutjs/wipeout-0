@@ -7,11 +7,14 @@ Binding("wipeout-comment", true, function () {
     };
     
     var comment = function(element, comment) {  
-        //TODO: more than 1 update
         if(wpfko.utils.ko.virtualElements.isVirtual(element)) {
-            element.textContent += wipeoutComment + ": '" + comment.replace("'", "\'") + "'";
+            element[wipeoutComment] = element[wipeoutComment] || element.textContent;
+            element.textContent = element[wipeoutComment] + wipeoutComment + ": '" + comment.replace("'", "\'") + "' ";
         } else if(element && element.parentElement) {
-            element.parentElement.insertBefore(document.createComment(wipeoutComment + ": '" + comment.replace("'", "\'") + "'"), element);
+            if(!element[wipeoutComment])
+                element.parentElement.insertBefore(element[wipeoutComment] = document.createComment(""), element);
+            
+            element[wipeoutComment].textContent = " " + wipeoutComment + ": '" + comment.replace("'", "\'") + "' "
         }            
     };
     

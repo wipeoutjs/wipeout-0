@@ -151,6 +151,11 @@ Class("wpfko.base.visual", function () {
     visual.prototype.rootHtmlChanged = function (oldValue, newValue) {
         ///<summary>Triggered each time after a template is rendered</summary>    
     };
+        
+    // virtual
+    visual.prototype.applicationInitialized = function () {
+        ///<summary>Triggered after the entire application has been initialized. Will only be triggered on the viewModel created directly by the wpfko binding</summary>    
+    };
     
     visual.getDefaultTemplateId = (function () {
         var templateId = null;

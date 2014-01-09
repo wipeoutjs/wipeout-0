@@ -21,6 +21,9 @@ Binding("wpfko", true, function () {
         
         var output = ko.bindingHandlers.render.init.call(this, element, createValueAccessor(view), allBindingsAccessor, null, bindingContext);
         ko.bindingHandlers.render.update.call(this, element, createValueAccessor(view), allBindingsAccessor, null, bindingContext);
+        
+        view.applicationInitialized();
+        
         return output;
     };
     
