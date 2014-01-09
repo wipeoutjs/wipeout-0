@@ -32,8 +32,6 @@ Binding("namedRender", true, function () {
         templateChanged();
     };
     
-    var wipeoutType = "wipeout-type";
-    
     var createValueAccessor = function(oldValueAccessor) {
         // ensure template id does not trigger another update
         // this will be handled within the binding
@@ -49,8 +47,7 @@ Binding("namedRender", true, function () {
                     _child.nodes = nodes;
                     _child.rootHtmlChanged(old, nodes);
                     
-                    var comment = ko.utils.unwrapObservable(value.comment);
-                    
+                    var comment = ko.utils.unwrapObservable(value.comment);                    
                     if(comment && DEBUG) {
                         wpfko.bindings["wipeout-comment"].comment(_child._rootHtmlElement, comment);
                     }
