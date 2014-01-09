@@ -56,6 +56,8 @@ Binding("itemsControl", true, function () {
                                         before._rootHtmlElement.__wpfko.insertAfter(item.elements[j]);
                                     }
                                 }
+                                
+                                //wpfko.bindings["wipeout-comment"].comment(item.vm._rootHtmlElement, "itemsControl item: " + item.index);
                             } else {
                                 var container = wpfko.utils.html.createWpfkoComment();
                                 if(index === 0) {
@@ -64,15 +66,17 @@ Binding("itemsControl", true, function () {
                                 } else {
                                     viewModel.items.peek()[index - 1]._rootHtmlElement.__wpfko.insertAfter(container.close);
                                     viewModel.items.peek()[index - 1]._rootHtmlElement.__wpfko.insertAfter(container.open);
-                                }           
+                                }     
                                 
-                                //TODO: this is invalid. Firstly i is wrong, secondly, does not update when re-ordered
-                                //TODO: if debug
+                                //TODO: this is invalid. Does not update when re-ordered or item is deleted
                                 var acc = (function(i) {
                                     return function() {
-                                        return { item: change.value, comment: "itemsControl item: " + i.toString() };
+                                        return { 
+                                            item: change.value, 
+                                            comment: DEBUG ? ("itemsControl item: " + i.toString()) : undefined
+                                        };
                                     };
-                                })(i);
+                                })(change.index);
                                 
                                 wpfko.bindings.namedRender.init(container.open, acc, acc, viewModel, bindingContext);
                                 wpfko.bindings.namedRender.update(container.open, acc, acc, viewModel, bindingContext);
