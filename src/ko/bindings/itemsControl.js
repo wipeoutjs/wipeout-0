@@ -55,9 +55,7 @@ Binding("itemsControl", true, function () {
                                     for(var j = item.elements.length - 1; j >= 0; j--) {
                                         before._rootHtmlElement.__wpfko.insertAfter(item.elements[j]);
                                     }
-                                }
-                                
-                                //wpfko.bindings["wipeout-comment"].comment(item.vm._rootHtmlElement, "itemsControl item: " + item.index);
+                                }                                
                             } else {
                                 var container = wpfko.utils.html.createWpfkoComment();
                                 if(index === 0) {
@@ -69,17 +67,12 @@ Binding("itemsControl", true, function () {
                                 }     
                                 
                                 //TODO: this is invalid. Does not update when re-ordered or item is deleted
-                                var acc = (function(i) {
-                                    return function() {
-                                        return { 
-                                            item: change.value, 
-                                            comment: DEBUG ? ("itemsControl item: " + i.toString()) : undefined
-                                        };
-                                    };
-                                })(change.index);
+                                var acc = function() {
+                                    return change.value;
+                                };
                                 
-                                wpfko.bindings.namedRender.init(container.open, acc, acc, viewModel, bindingContext);
-                                wpfko.bindings.namedRender.update(container.open, acc, acc, viewModel, bindingContext);
+                                wpfko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
+                                wpfko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
                             }
                         };
                     })(changes[i]));
@@ -94,6 +87,10 @@ Binding("itemsControl", true, function () {
             
             for(i = 0, ii = add.length; i < ii; i++) {
                 add[i].call(this);
+            }
+        
+            if(DEBUG) {
+                utils.addComments(viewModel.items());
             }
         }
     };
@@ -117,7 +114,12 @@ Binding("itemsControl", true, function () {
         subscribeV3: function(element, viewModel, bindingContext) {            
             viewModel.items.subscribe(utils.itemsChanged(element, viewModel, bindingContext), window, "arrayChange");
         },
-        itemsChanged: itemsChanged
+        itemsChanged: itemsChanged,
+        addComments: function(values) {
+            enumerate(values, function(value, i) {
+                wpfko.bindings["wipeout-comment"].comment(value._rootHtmlElement, "itemsControl item: " + i.toString());
+            });
+        }
     };
     
     return {
