@@ -19,6 +19,23 @@ module("wipeout.tests.integration", {
     }
 });
 
+test("wpfko.base.if", function() {
+    // arrange
+    application.hello = ko.observable({hello: "xxx"});
+    application.template('<wo.if condition="$parent.hello">\
+    <template>\
+        <div data-bind="html: $parent.hello().hello"></div>\
+    </template>\
+</wo.if>');
+    
+    // act
+    application.hello(null);
+    
+    // assert
+    // no exception means it is ok
+    ok(true);
+});
+
 test("templateItems", function() {
     // arrange
     var id = "IBYIBOIYHOUUBOH";
