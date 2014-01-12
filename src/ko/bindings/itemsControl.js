@@ -22,14 +22,15 @@ Binding("itemsControl", true, function () {
                 else if(changes[i].status === wpfko.utils.ko.array.diff.deleted) {
                     del.push((function(change) {
                         return function() {
+                            var elements;
                             if(change.moved != null) {
-                                move[change.moved + "." + change.index] = { vm: change.value, elements: change.value._rootHtmlElement.__wpfko.allElements() };
+                                elements = change.value._rootHtmlElement.__wpfko.allElements();
+                                move[change.moved + "." + change.index] = { vm: change.value, elements: elements };
                             } else {
                                 ko.virtualElements.emptyNode(change.value._rootHtmlElement);
+                                elements = change.value._rootHtmlElement.__wpfko.allElements();
                             }
                             
-                            // calculate a second time as value may have been changed by ko.virtualElements.emptyNode()
-                            var elements = change.value._rootHtmlElement.__wpfko.allElements();
                             for(var j = 0, jj= elements.length; j< jj; j++) {
                                 elements[j].parentNode.removeChild(elements[j]);
                             }
