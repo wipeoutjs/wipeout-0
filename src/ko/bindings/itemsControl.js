@@ -35,8 +35,10 @@ Binding("itemsControl", true, function () {
                                 elements[j].parentNode.removeChild(elements[j]);
                             }
                             
-                            if(change.moved == null)
+                            if(change.moved == null) {
+                                viewModel.itemDeleted(change.value);
                                 change.value.dispose();
+                            }
                             
                             delPadIndex--;
                         };
@@ -74,6 +76,8 @@ Binding("itemsControl", true, function () {
                                 
                                 wpfko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
                                 wpfko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
+                                
+                                viewModel.itemRendered(change.value);
                             }
                         };
                     })(changes[i]));

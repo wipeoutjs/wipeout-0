@@ -156,12 +156,22 @@ Class("wpfko.base.itemsControl", function () {
         
         this.items.valueHasMutated();
     };
+    
+    //virtual
+    itemsControl.prototype.itemRendered = function (item) {
+        ///<summary>Called after a new item items control is rendered</summary>
+    };
+    
+    //virtual
+    itemsControl.prototype.itemDeleted = function (item) {
+        ///<summary>Called just before an new item in the items control is disposed of</summary>
+    };
 
     // virtual
     itemsControl.prototype.createItem = function (model) {
         ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
         return new wpfko.base.view(this.itemTemplateId(), model);        
-    }
+    };
 
     itemsControl.prototype.reDrawItems = function () {
         ///<summary>Destroys and re-draws all view models</summary>
