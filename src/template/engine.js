@@ -1,14 +1,18 @@
 
 Class("wpfko.template.engine", function () {
     
-    var engine = function() { };
+    var engine = function() {
+        ///<summary>The wipeout template engine, inherits from ko.templateEngine</summary>
+    };
     engine.prototype = new ko.templateEngine();
     
     engine.createJavaScriptEvaluatorFunction = function(script) {
+        ///<summary>Modify a block of script so that it's running context is the bining context</summary>
         return new Function("bindingContext", "with(bindingContext) {\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
     }
     
     engine.createJavaScriptEvaluatorBlock = function(script) {
+        ///<summary>Add a function to the static script cache or cretate and add a script</summary>
         var scriptId = engine.newScriptId();
         
         if(script instanceof Function) {
@@ -21,10 +25,13 @@ Class("wpfko.template.engine", function () {
     };
     
     engine.prototype.createJavaScriptEvaluatorBlock = function(script) {
+        ///<summary>Add a function to the static script cache or cretate and add a script</summary>
         return engine.createJavaScriptEvaluatorBlock(script);
     };    
     
     engine.prototype.isTemplateRewritten = function (template, templateDocument) {
+        ///<summary>Returns whether a template has been re-written or not. Anonymous templates will have been rewritten before going through the template engine</summary>
+        
         //TODO: if template is not a string
         if(template && template.constructor === String) {
             var script = document.getElementById(template);
@@ -37,6 +44,7 @@ Class("wpfko.template.engine", function () {
     
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
+        ///<summary>Build html from a template source</summary>
         
         // if data is not a view, cannot render.
         //TODO: default to native template engine
@@ -63,6 +71,7 @@ Class("wpfko.template.engine", function () {
     engine.newScriptId = (function() {        
         var i = Math.floor(Math.random() * 10000);        
         return function() {
+            ///<summary>Get a unique name for a script</summary>
             return (++i).toString();
         };
     })();
