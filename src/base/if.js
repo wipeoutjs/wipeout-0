@@ -5,7 +5,12 @@ Class("wpfko.base.if", function () {
         ///<summary>The if class is a content control which provides the functionality of the knockout if binding</summary>        
         this._super.apply(this, arguments);
         
+        // if true, the template will be rendered, otherwise a blank template is rendered
         this.condition = ko.observable();
+        
+        // stores the template id if the condition is false
+        this.__cachedTemplateId = this.templateId();
+        
         this.condition.subscribe(this.onConditionChanged, this);
         this.templateId.subscribe(this.copyTemplateId, this);
         
