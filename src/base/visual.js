@@ -5,9 +5,6 @@ Class("wpfko.base.visual", function () {
         ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
         this._super();
         
-        // If set to true the binding context of this control will be the same as the binding context of its parent (or the next non passthrough control)
-        this.passthroughBindingContext = false;
-        
         //Dictionary of items created within the current template. The items can be visuals or html elements
         this.templateItems = {};
         
@@ -24,14 +21,6 @@ Class("wpfko.base.visual", function () {
         //The template of the visual, giving it an appearance
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
     });
-    
-    visual.prototype.createChildContext = function(bindingContext) {
-        if(this.passthroughBindingContext) {
-            return bindingContext;
-        }
-        
-        return bindingContext.createChildContext(this);
-    };
     
     visual.prototype.dispose = function() {
         ///<summary>Dispose of this visual</summary>

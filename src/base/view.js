@@ -153,10 +153,7 @@ Class("wpfko.base.view", function () {
                 }
             } else {
                 var val = wpfko.utils.obj.createObject(type);
-                if(!(val instanceof view))
-                    throw "Invalid object type"; //TODO: better message
-                
-                val.initialize(child, val.createChildContext(bindingContext));
+                val.initialize(child, bindingContext.createChildContext(val));
                 
                 if(ko.isObservable(this[child.nodeName])) {
                     this[child.nodeName](val);       

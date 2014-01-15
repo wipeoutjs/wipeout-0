@@ -122,7 +122,7 @@ Class("wpfko.template.htmlBuilder", function () {
     
     htmlBuilder.switchBindingContextToTemplateItem = function(templateItemId) {
         return function(bindingContext) {
-            return new wpfko.template.switchBindingContext(bindingContext.$data.templateItems[templateItemId].createChildContext(bindingContext));
+            return new wpfko.template.switchBindingContext(bindingContext.createChildContext(bindingContext.$data.templateItems[templateItemId]));
         }
     };
     
