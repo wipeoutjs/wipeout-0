@@ -28,7 +28,7 @@ Class("wpfko.base.contentControl", function () {
         var templateArea = null;
         var i = Math.floor(Math.random() * 1000000000);
 
-        return function (templateString) {
+        return function (templateString, forceCreate) {
             ///<summary>Creates an anonymous template within the DOM and returns its id</summary>
 
             // lazy create div to place anonymous templates
@@ -40,16 +40,18 @@ Class("wpfko.base.contentControl", function () {
             templateString = templateString.replace(/^\s+|\s+$/g, '');
             var hash = contentControl.hashCode(templateString).toString();
 
-            // if we can, reuse an existing anonymous template
-            for (var j = 0, jj = templateArea.childNodes.length; j < jj; j++) {
-                if (templateArea.childNodes[j].nodeType === 1 &&
-                templateArea.childNodes[j].nodeName === "SCRIPT" &&
-                templateArea.childNodes[j].id &&
-                // first use a hash to avoid computationally expensive string compare if possible
-                templateArea.childNodes[j].attributes[dataTemplateHash] &&
-                templateArea.childNodes[j].attributes[dataTemplateHash].nodeValue === hash &&
-                templateArea.childNodes[j].innerHTML === templateString) {
-                    return templateArea.childNodes[j].id;
+            if(!forceCreate) {
+                // if we can, reuse an existing anonymous template
+                for (var j = 0, jj = templateArea.childNodes.length; j < jj; j++) {
+                    if (templateArea.childNodes[j].nodeType === 1 &&
+                    templateArea.childNodes[j].nodeName === "SCRIPT" &&
+                    templateArea.childNodes[j].id &&
+                    // first use a hash to avoid computationally expensive string compare if possible
+                    templateArea.childNodes[j].attributes[dataTemplateHash] &&
+                    templateArea.childNodes[j].attributes[dataTemplateHash].nodeValue === hash &&
+                    templateArea.childNodes[j].innerHTML === templateString) {
+                        return templateArea.childNodes[j].id;
+                    }
                 }
             }
 
