@@ -5,6 +5,10 @@ enumerate(wpfko.base, function(item, i) {
 
 window.wo.utils = wpfko.utils;
 
+window.wo.setTemplateEngine = function() {
+    ko.setTemplateEngine(new wpfko.template.engine());
+};
+
 var load = true;
 var matches = [
     /wipeout\-0\.2\.js$/,
@@ -28,4 +32,4 @@ enumerate(document.getElementsByTagName("script"), function(script) {
 });
 
 if(load)
-    ko.setTemplateEngine(new wpfko.template.engine());
+    window.wo.setTemplateEngine();
