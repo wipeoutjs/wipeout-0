@@ -17,11 +17,13 @@ var matches = [
     /wipeout\-0\.2\.debug\.js?/    
 ];
 
+
+// find a wipeout script. If it has no data-wo-template="false" attribute, use the wipeout template engine
 var wipeoutDebug = /wipeout-0.2.debug.js$/;
 enumerate(document.getElementsByTagName("script"), function(script) {
     if(load) {
         enumerate(matches, function(regex) {
-            if(load && regex.test(script.src)) {
+            if(script.src && load && regex.test(script.src)) {
                 if (script.attributes["data-wo-template"] &&
                     (script.attributes["data-wo-template"].value === false ||
                     script.attributes["data-wo-template"].value === "false"))
