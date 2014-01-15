@@ -97,7 +97,7 @@ Class("wpfko.base.view", function () {
         };
     };
     
-    view.reservedPropertyNames = ["constructor", "constructor-tw", "id","id-tw"];
+    view.reservedPropertyNames = ["constructor", "constructor-tw", "id","id-tw", "passthroughBindingContext", "passthroughBindingContext-tw"];
     
     //TODO private
     view.prototype.initialize = function(propertiesXml, bindingContext) {
@@ -111,6 +111,23 @@ Class("wpfko.base.view", function () {
         if(!wpfko.template.htmlBuilder.elementHasModelBinding(propertiesXml) && wpfko.utils.ko.peek(this.model) == null) {
             this.bind('model', bindingContext.$parent.model);
         }
+        
+        var done = false;
+        var setPassthroughBindingContext = function(attr) {
+            if(attr.nodeName === "passthroughBindingContext-tw")
+                throw "passthroughBindingContext cannot be bound, it can only be set once. Remove the \"-tw\" from the property setter";
+            
+            if(attr.nodeName === "passthroughBindingContext") {
+                if(done)
+                    throw "passthroughBindingContext can only be set once.";
+                
+                done = true;
+                this.passthroughBindingContext = attr.nodeValue && (attr.nodeValue.constructor !==  String || attr.nodeValue.replace(/^\s+|\s+$/g, '').toLowerCase() !== "false");
+            }
+        };
+        
+        enumerate(propertiesXml.attributes, setPassthroughBindingContext, this);
+        enumerate(propertiesXml.childNodes, setPassthroughBindingContext, this);    
         
         enumerate(propertiesXml.attributes, function(attr) {
             // reserved
@@ -126,8 +143,7 @@ Class("wpfko.base.view", function () {
         });
         
         enumerate(propertiesXml.childNodes, function(child, i) {
-            
-            if(child.nodeType !== 1) return;
+            if(child.nodeType !== 1 || view.reservedPropertyNames.indexOf(child.nodeName) !== -1) return;
             
             // default
             var type = "string";

@@ -186,6 +186,31 @@ test("basic items source. initial, add, remove, re-arrange", function() {
     assert(item4, item3, item1);
 });
 
+test("passthroughBindingContext", function() {
+    // arrange
+    var id = "JBKJBLKJBKJLBLKJB";
+    application.hello = "ASLGBLKDJASJKLGB";
+    
+    // act
+    application.template(
+"<wo.contentControl passthroughBindingContext=\"true\">\
+    <template>\
+        <wo.contentControl passthroughBindingContext=\"true\">\
+            <template>\
+                <wo.contentControl>\
+                    <template>\
+                        <div id='" + id + "' data-bind='html: hello'></div>\
+                    </template>\
+                </wo.contentControl>\
+            </template>\
+        </wo.contentControl>\
+    </template>\
+</wo.contentControl>");
+    
+    // assert
+    strictEqual(application.hello, $("#" + id).html());
+});
+
 test("multi-dimentional binding", function() {
     // arrange
     var val = "KJBIUPJKKJGVLHJVMGJ";
