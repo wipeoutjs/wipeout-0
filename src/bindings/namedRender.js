@@ -39,6 +39,7 @@ Binding("namedRender", true, function () {
             var value = ko.utils.unwrapObservable(oldValueAccessor());            
             var _child = ko.utils.unwrapObservable(value.item);
             return {
+                templateEngine: wpfko.template.engine.instance,
                 name: _child ? _child.templateId.peek() : "",
                 data: value.item || {},
                 afterRender: _child ? function(nodes, context) { 
