@@ -21,31 +21,48 @@ Class("wpfko.base.visual", function () {
         //The template of the visual, giving it an appearance
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
     });
+        
+    visual.prototype.unRender = function() {
+        ///<summary>Prepares a visual to be re-rendered</summary>
+        
+        // disassociate the visual from its root element and empty the root element
+        ko.utils.domData.set(this._rootHtmlElement, wpfko.bindings.wpfko.utils.wpfkoKey, undefined); 
+        ko.virtualElements.emptyNode(this._rootHtmlElement);
+        delete this._rootHtmlElement;
+        
+        // dispose of all template items
+        enumerate(this.templateItems, function(item, i) {
+            if(item instanceof visual) 
+                item.dispose();
+            
+            delete this.templateItems[i];
+            
+            var index = this.renderedChildren.indexOf(item);
+            if(index !== -1)
+                this.renderedChildren.splice(index, 1);            
+        }, this);
+        
+        // dispose of all rendered children
+        enumerate(this.renderedChildren.splice(0, this.renderedChildren.length), function(child) {
+            if(child instanceof visual) 
+                child.dispose();
+        });
+    };
     
     visual.prototype.dispose = function() {
         ///<summary>Dispose of this visual</summary>
+        
+        this.unRender();
         
         // dispose of any computeds
         for(var i in this)
             if(ko.isObservable(this[i]) && this[i].dispose instanceof Function)
                 this[i].dispose();
-        
-        // dispose of all template items
-        for(var i in this.templateItems)
-            if(this.templateItems[i] instanceof visual) 
-                this.templateItems[i].dispose();
-        
-        // dispose of all rendered children
-        for(var i = 0, ii = this.renderedChildren.length; i < ii; i++)
-            if(this.renderedChildren[i] instanceof visual) 
-                this.renderedChildren[i].dispose();
-        
-        this.renderedChildren.length = 0;
-        this._rootHtmlElement = null;
                 
-        for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++)
-            this._routedEventSubscriptions[i].event.dispose();        
-        this._routedEventSubscriptions.length = 0;
+        // dispose of routed event subscriptions
+        enumerate(this._routedEventSubscriptions.splice(0, this._routedEventSubscriptions.length), function(event) {
+            event.dispose();
+        });
     };
     
     //TODO: move to util

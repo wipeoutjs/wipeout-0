@@ -24,20 +24,12 @@ Binding("itemsControl", true, function () {
                         return function() {
                             var elements;
                             if(change.moved != null) {
-                                elements = change.value._rootHtmlElement.__wpfko.allElements();
-                                move[change.moved + "." + change.index] = { vm: change.value, elements: elements };
+                                move[change.moved + "." + change.index] = { vm: change.value, elements: change.value._rootHtmlElement.__wpfko.allElements() };                            
+                                enumerate(move[change.moved + "." + change.index].elements, function(node) {
+                                    node.parentNode.removeChild(node);                                    
+                                });
                             } else {
-                                ko.virtualElements.emptyNode(change.value._rootHtmlElement);
-                                elements = change.value._rootHtmlElement.__wpfko.allElements();
-                            }
-                            
-                            for(var j = 0, jj= elements.length; j< jj; j++) {
-                                elements[j].parentNode.removeChild(elements[j]);
-                            }
-                            
-                            if(change.moved == null) {
                                 viewModel.itemDeleted(change.value);
-                                change.value.dispose();
                             }
                             
                             delPadIndex--;

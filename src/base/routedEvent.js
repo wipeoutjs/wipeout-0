@@ -54,5 +54,9 @@ Class("wpfko.base.routedEventRegistration", function () {
         this.event = new wpfko.base.event();
     };
     
+    routedEventRegistration.prototype.dispose = function() {
+        this.event.dispose();
+    };
+    
     return routedEventRegistration;
 });

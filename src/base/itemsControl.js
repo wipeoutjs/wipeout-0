@@ -164,7 +164,12 @@ Class("wpfko.base.itemsControl", function () {
     
     //virtual
     itemsControl.prototype.itemDeleted = function (item) {
-        ///<summary>Called just before an new item in the items control is disposed of</summary>
+        ///<summary>Disposes of deleted items</summary>        
+        var renderedChild = this.renderedChildren.indexOf(item);
+        if(renderedChild !== -1)
+            this.renderedChildren.splice(renderedChild, 1);
+        
+        item.dispose();
     };
 
     // virtual
