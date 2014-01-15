@@ -33,7 +33,7 @@ Class("wpfko.template.viewModelBuilder", function () {
                 var id = wpfko.template.xmlTemplate.getId(child) || (itemPrefix + i);
                 this._builders.push(function(bindingContext) {
                     bindingContext.$data.templateItems[id] = wpfko.utils.obj.createObject(child.nodeName);
-                    bindingContext.$data.templateItems[id].initialize(child, bindingContext.createChildContext(bindingContext.$data.templateItems[id]));
+                    bindingContext.$data.templateItems[id].initialize(child, bindingContext.$data.templateItems[id].createChildContext(bindingContext));
                 });
             } else if(child.nodeType == 1) {
                 // if the element has an id, record it so that it can be appended during the building of the object

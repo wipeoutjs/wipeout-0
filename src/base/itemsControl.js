@@ -23,7 +23,7 @@ Class("wpfko.base.itemsControl", function () {
         //An array of models to render
         this.itemSource = ko.observableArray([]);
         
-        //An array of viewmodels, each corresponding to a mode in the itemSource property
+        //An array of viewmodels, each corresponding to a model in the itemSource property
         this.items = ko.observableArray([]);
 
         if(wpfko.utils.ko.version()[0] < 3) {
