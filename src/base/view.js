@@ -127,7 +127,7 @@ Class("wpfko.base.view", function () {
         
         enumerate(propertiesXml.childNodes, function(child, i) {
             
-            if(child.nodeType !== 1) return;
+            if(child.nodeType !== 1 || view.reservedPropertyNames.indexOf(child.nodeName) !== -1) return;
             
             // default
             var type = "string";
