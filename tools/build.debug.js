@@ -1,2 +1,2 @@
 window.wpfko = wpfko;
-var DEBUG = true;
+var DEBUG = wo.DEBUG = true;

@@ -1,1 +1,1 @@
-var DEBUG = false;
+var DEBUG = wo.DEBUG = false;
