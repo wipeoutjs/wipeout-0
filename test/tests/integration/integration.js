@@ -97,6 +97,42 @@ test("basic knockout binding, non observable", function() {
     strictEqual($("#" + id).html(), val);
 });
 
+test("un render", function() {
+    // arrange    
+    application.hello = new wo.contentControl();
+    application.hello.helloAgain = new wo.contentControl();
+    application.hello.helloAgain.template(
+"<wo.contentControl id=\"asdasdd\">\
+</wo.contentControl>\
+<div>Hi</div>\
+<wo.contentControl>\
+</wo.contentControl>");
+    application.hello.template("<!-- ko render: helloAgain--><!-- /ko -->");
+    
+    application.template("<!-- ko render: hello--><!-- /ko -->");
+    var ctrls = [];
+    var getAllChildren = function(forItem) {
+        ctrls.push(forItem);
+        wo.utils.obj.enumerate(forItem.rendernedChildren, function(item) {
+            getAllChildren(item);
+        });
+    };
+    
+    getAllChildren(application);
+        
+    wo.utils.obj.enumerate(ctrls, function(item) {
+        ok(item._rootHtmlElement);
+    });
+    
+    // act
+    application.unRender();
+    
+    // assert
+    wo.utils.obj.enumerate(ctrls, function(item) {
+        ok(!item._rootHtmlElement);
+    });
+});
+
 test("basic knockout binding", function() {
     // arrange
     var val = "LIB:OIPHJKB:OIYHJB";

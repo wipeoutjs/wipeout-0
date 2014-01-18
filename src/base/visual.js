@@ -25,11 +25,6 @@ Class("wpfko.base.visual", function () {
     visual.prototype.unRender = function() {
         ///<summary>Prepares a visual to be re-rendered</summary>
         
-        // disassociate the visual from its root element and empty the root element
-        ko.utils.domData.set(this._rootHtmlElement, wpfko.bindings.wpfko.utils.wpfkoKey, undefined); 
-        ko.virtualElements.emptyNode(this._rootHtmlElement);
-        delete this._rootHtmlElement;
-        
         // dispose of all template items
         enumerate(this.templateItems, function(item, i) {
             if(item instanceof visual) 
@@ -47,6 +42,11 @@ Class("wpfko.base.visual", function () {
             if(child instanceof visual) 
                 child.dispose();
         });
+        
+        // disassociate the visual from its root element and empty the root element
+        ko.utils.domData.set(this._rootHtmlElement, wpfko.bindings.wpfko.utils.wpfkoKey, undefined); 
+        ko.virtualElements.emptyNode(this._rootHtmlElement);
+        delete this._rootHtmlElement;
     };
     
     visual.prototype.dispose = function() {
