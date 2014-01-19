@@ -33,13 +33,6 @@ Class("wpfko.template.viewModelBuilder", function () {
                 var id = wpfko.template.xmlTemplate.getId(child) || (itemPrefix + i);
                 this._builders.push(function(bindingContext) {
                     bindingContext.$data.templateItems[id] = wpfko.utils.obj.createObject(child.nodeName);
-                    
-                    if(!(bindingContext.$data.templateItems[id] instanceof wpfko.base.view))
-                        return "Only wo.views can be created in this way";
-                        
-                    if(DEBUG)
-                        bindingContext.$data.templateItems[id].className(child.nodeName);
-                    
                     bindingContext.$data.templateItems[id].initialize(child, bindingContext.createChildContext(bindingContext.$data.templateItems[id]));
                 });
             } else if(child.nodeType == 1) {

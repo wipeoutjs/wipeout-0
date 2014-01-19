@@ -1,4 +1,4 @@
-window.testUtils = window.testUtils || {};
+
 $.extend(testUtils, (function() {
     
     var cached = [];

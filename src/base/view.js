@@ -153,12 +153,6 @@ Class("wpfko.base.view", function () {
                 }
             } else {
                 var val = wpfko.utils.obj.createObject(type);
-                if(!(val instanceof wpfko.base.view))
-                    return "Only wo.views can be created in this way";
-                    
-                if(DEBUG)
-                    val.className(type);
-                    
                 val.initialize(child, bindingContext.createChildContext(val));
                 
                 if(ko.isObservable(this[child.nodeName])) {
