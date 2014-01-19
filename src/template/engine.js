@@ -27,21 +27,62 @@ Class("wpfko.template.engine", function () {
     engine.prototype.createJavaScriptEvaluatorBlock = function(script) {
         ///<summary>Add a function to the static script cache or cretate and add a script</summary>
         return engine.createJavaScriptEvaluatorBlock(script);
-    };    
-    
-    engine.prototype.isTemplateRewritten = function (template, templateDocument) {
-        ///<summary>Returns whether a template has been re-written or not. Anonymous templates will have been rewritten before going through the template engine</summary>
-        
-        //TODO: if template is not a string
-        if(template && template.constructor === String) {
-            var script = document.getElementById(template);
-            if(engine.scriptHasBeenReWritten.test(script.textContent))
-                this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
-        }
-        
-        return ko.templateEngine.prototype.isTemplateRewritten.apply(this, arguments);
     };
     
+    engine.prototype.rewriteTemplate = function (template, rewriterCallback, templateDocument) {
+                                
+        //TODO: if template is not a string
+        var script = document.getElementById(template);
+        
+        this.wipeoutRewrite(script);
+        
+        // if it is an anonymous template it will already have been rewritten
+        if(!engine.scriptHasBeenReWritten.test(script.textContent)) {
+            ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
+        } 
+        
+        this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
+    };    
+    
+    engine.wipeoutRewrite = function(xmlElement) {
+        if(wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName) !== -1) {
+            enumerate(xmlElement.childNodes, function(child) {
+                if(child.nodeType === 1)
+                    engine.wipeoutRewrite(child);
+            });
+        } else {
+            var newScriptId = engine.newScriptId();
+            var openingTag = " ko xxx: " + newScriptId + ", wipeout-comment: '" + xmlElement.nodeName + "'";
+            if(xmlElement.nextSibling) {
+                xmlElement.parentElement.insertBefore(document.createComment(" /ko "), xmlElement.nextSibling);
+                xmlElement.parentElement.insertBefore(document.createComment(openingTag), xmlElement.nextSibling);
+            } else {
+                xmlElement.parentElement.appendChild(document.createComment(openingTag));
+                xmlElement.parentElement.appendChild(document.createComment(" /ko "));
+            }
+        }
+    };
+    
+    engine.prototype.wipeoutRewrite = function(script) {
+        
+        var ser = new XMLSerializer();
+        xmlTemplate = new DOMParser().parseFromString("<root>" + script.textContent + "</root>", "application/xml").documentElement;        
+        if(xmlTemplate.firstChild && xmlTemplate.firstChild.nodeName === "parsererror") {
+            //TODO: copy pasted
+			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
+		}
+        
+        var scriptContent = [];
+        // do not use ii, xmlTemplate.childNodes may change
+        for(var i = 0; i < xmlTemplate.childNodes.length; i++) {            
+            if(xmlTemplate.childNodes[i].nodeType === 1)
+                engine.wipeoutRewrite(xmlTemplate.childNodes[i]);
+            
+            scriptContent.push(ser.serializeToString(xmlTemplate.childNodes[i]));
+        }
+        
+        script.textContent = scriptContent.join("");
+    };
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
         ///<summary>Build html from a template source</summary>

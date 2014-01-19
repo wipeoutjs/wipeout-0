@@ -4,7 +4,9 @@ var enumerate = function(enumerate, action, context) {
     context = context || window;
     
     if(enumerate == null) return;
-    if(enumerate instanceof Array)
+    if(enumerate instanceof Array || 
+       enumerate instanceof HTMLCollection || 
+       enumerate instanceof NodeList)
         for(var i = 0, ii = enumerate.length; i < ii; i++)
             action.call(context, enumerate[i], i);
     else

@@ -95,7 +95,6 @@ Class("wpfko.template.htmlBuilder", function () {
         };
     };
         
-    //TODO: if debug
     htmlBuilder.renderFromMemo = function(name) {
         return function(bindingContext) {
             return ko.memoization.memoize(function(memo) { 
