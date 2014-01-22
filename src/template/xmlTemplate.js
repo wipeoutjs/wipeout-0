@@ -15,10 +15,6 @@ Class("wpfko.template.xmlTemplate", function () {
         this.htmlBuilder = new wpfko.template.htmlBuilder(xmlTemplate);
     }
     
-    xmlTemplate.isCustomElement = function(xmlElement) {
-        return xmlElement.nodeType == 1 && wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName.toLowerCase()) === -1;
-    };
-    
     xmlTemplate.getId = function(xmlElement) {
         for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
             if(xmlElement.attributes[i].nodeName === "id") {
