@@ -2,16 +2,9 @@
 
 Class("wpfko.template.xmlTemplate", function () {
     
-    var xmlTemplate = function(xmlTemplate) {
-                
-        xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
+    var xmlTemplate = function(templateString) {             
         
-        if(xmlTemplate.firstChild && xmlTemplate.firstChild.nodeName === "parsererror") {
-			var ser = new XMLSerializer();
-			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
-		}
-        
-        this.htmlBuilder = new wpfko.template.htmlBuilder(xmlTemplate);
+        this.htmlBuilder = new wpfko.template.htmlBuilder(templateString);
     }
     
     xmlTemplate.getId = function(xmlElement) {
