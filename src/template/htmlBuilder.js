@@ -20,18 +20,6 @@ Class("wpfko.template.htmlBuilder", function () {
         return false;
     };
     
-    htmlBuilder.constructorExists = function(constructor) {
-        
-        constructor = constructor.split(".");
-        var current = window;
-        for(var i = 0, ii = constructor.length; i < ii; i++) {
-            current = current[constructor[i]];
-            if(!current) return false;
-        }
-        
-        return current instanceof Function;
-    };
-    
     htmlBuilder.generateRender = function(xmlTemplate) {
         var open = wpfko.template.engine.openCodeTag;
         var close = wpfko.template.engine.closeCodeTag;
@@ -77,7 +65,7 @@ Class("wpfko.template.htmlBuilder", function () {
         };
     };
     
-    htmlBuilder.generateTemplate = function(xmlTemplate, itemPrefix) {  
+    htmlBuilder.generateTemplate = function(xmlTemplate, itemPrefix) {          
         if(itemPrefix) itemPrefix += ".";
         else itemPrefix = "";
         var result = [];
