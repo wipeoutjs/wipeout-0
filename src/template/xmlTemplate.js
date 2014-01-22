@@ -29,7 +29,6 @@ Class("wpfko.template.xmlTemplate", function () {
         enumerate(html.ids, function(item, id) {
             bindingContext.$data.templateItems[id] = item;
         });
-       // this.viewModelBuilder.addReferencedElements(bindingContext.$data, html);
             
         if (bindingContext.$data instanceof wpfko.base.view)
             bindingContext.$data.onInitialized();

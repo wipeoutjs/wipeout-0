@@ -63,7 +63,7 @@ Class("wpfko.template.htmlBuilder", function () {
             
             var html = wpfko.utils.html.createElements(returnVal.join(""));
             var ids = htmlBuilder.getTemplateIds({childNodes: html});
-            debugger;
+            
             return {
                 html: html,
                 ids: ids
@@ -92,7 +92,7 @@ Class("wpfko.template.htmlBuilder", function () {
         return ids;
     };
     
-    htmlBuilder.generateTemplate = function(xmlTemplate, itemPrefix) {          
+    htmlBuilder.generateTemplate = function(xmlTemplate, itemPrefix) { 
         if(itemPrefix) itemPrefix += ".";
         else itemPrefix = "";
         var result = [];
