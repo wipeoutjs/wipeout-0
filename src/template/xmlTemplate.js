@@ -11,7 +11,6 @@ Class("wpfko.template.xmlTemplate", function () {
 			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
 		}
         
-        this.viewModelBuilder = new wpfko.template.viewModelBuilder(xmlTemplate);
         this.htmlBuilder = new wpfko.template.htmlBuilder(xmlTemplate);
     }
     
@@ -27,12 +26,15 @@ Class("wpfko.template.xmlTemplate", function () {
     
     xmlTemplate.prototype.render = function(bindingContext) {        
         var html = this.htmlBuilder.render(bindingContext);
-        this.viewModelBuilder.addReferencedElements(bindingContext.$data, html);
+        enumerate(html.ids, function(item, id) {
+            bindingContext.$data.templateItems[id] = item;
+        });
+       // this.viewModelBuilder.addReferencedElements(bindingContext.$data, html);
             
         if (bindingContext.$data instanceof wpfko.base.view)
             bindingContext.$data.onInitialized();
         
-        return html;
+        return html.html;
     };
     
     return xmlTemplate;

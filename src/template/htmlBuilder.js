@@ -61,8 +61,35 @@ Class("wpfko.template.htmlBuilder", function () {
                 }
             }
             
-            return wpfko.utils.html.createElements(returnVal.join(""));
+            var html = wpfko.utils.html.createElements(returnVal.join(""));
+            var ids = htmlBuilder.getTemplateIds({childNodes: html});
+            debugger;
+            return {
+                html: html,
+                ids: ids
+            };
         };
+    };
+    
+    //TODO: this is done at render time, can it be cached?
+    htmlBuilder.getTemplateIds = function (element) {
+        var ids = {};
+        enumerate(element.childNodes, function(node) {
+            if(node.nodeType === 1) {
+                for(var j = 0, jj = node.attributes.length; j < jj; j++) {
+                    if(node.attributes[j].nodeName === "id") {
+                        ids[node.attributes[j].nodeValue] = node;
+                        break;
+                    }
+                }
+                
+                enumerate(htmlBuilder.getTemplateIds(node), function(element, id) {
+                    ids[id] = element;
+                });
+            }                
+        });
+        
+        return ids;
     };
     
     htmlBuilder.generateTemplate = function(xmlTemplate, itemPrefix) {          
