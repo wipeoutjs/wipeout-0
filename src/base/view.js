@@ -95,6 +95,21 @@ Class("wpfko.base.view", function () {
                 }
             }
         };
+    };    
+    
+    view.elementHasModelBinding = function(element) {
+        
+        for(var i = 0, ii = element.attributes.length; i < ii; i++) {
+            if(element.attributes[i].nodeName === "model" || element.attributes[i].nodeName === "model-tw")
+                return true;
+        }
+        
+        for(var i = 0, ii = element.childNodes.length; i < ii; i++) {
+            if(element.childNodes[i].nodeType === 1 && element.childNodes[i].nodeName === "model")
+                return true;
+        }
+        
+        return false;
     };
     
     view.reservedPropertyNames = ["constructor", "constructor-tw", "id","id-tw"];
@@ -108,7 +123,7 @@ Class("wpfko.base.view", function () {
         if(!propertiesXml)
             return;
                 
-        if(!wpfko.template.htmlBuilder.elementHasModelBinding(propertiesXml) && wpfko.utils.ko.peek(this.model) == null) {
+        if(!view.elementHasModelBinding(propertiesXml) && wpfko.utils.ko.peek(this.model) == null) {
             this.bind('model', bindingContext.$parent.model);
         }
         
