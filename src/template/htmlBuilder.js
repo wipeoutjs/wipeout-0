@@ -5,14 +5,6 @@ Class("wpfko.template.htmlBuilder", function () {
         this.render = htmlBuilder.generateRender(xmlTemplate);
     };
     
-    
-    var enumerate = function(items, callback, context) {
-        
-        for(var i = 0, ii = items.length; i < ii; i++) {
-            callback.call(context, items[i], i);
-        }        
-    };
-    
     htmlBuilder.elementHasModelBinding = function(element) {
         
         for(var i = 0, ii = element.attributes.length; i < ii; i++) {
@@ -74,18 +66,8 @@ Class("wpfko.template.htmlBuilder", function () {
             var returnVal = [];
             for(var i = 0; i < ii; i++) {
                 if(result[i] instanceof Function) {                    
-                    var rendered = result[i](bindingContext);
-                    if(rendered instanceof wpfko.template.switchBindingContext) {
-                        if(rendered.bindingContext) {
-                            contexts.push(bindingContext);
-                            bindingContext = rendered.bindingContext;
-                        } else {
-                            // empty rendered.bindingContext signifies we revert to the parent binding context
-                            bindingContext = contexts.pop();
-                        }
-                    } else {                    
-                        returnVal.push(rendered);
-                    }
+                    var rendered = result[i](bindingContext);                  
+                    returnVal.push(rendered);
                 } else {
                     returnVal.push(result[i]);
                 }
@@ -93,36 +75,6 @@ Class("wpfko.template.htmlBuilder", function () {
             
             return wpfko.utils.html.createElements(returnVal.join(""));
         };
-    };
-        
-    htmlBuilder.renderFromMemo = function(name) {
-        return function(bindingContext) {
-            return ko.memoization.memoize(function(memo) { 
-                var comment1 = document.createComment(' ko ');
-                var comment2 = document.createComment(' /ko ');
-                var p = wpfko.utils.ko.virtualElements.parentElement(memo);
-                ko.virtualElements.insertAfter(p, comment1, memo);
-                ko.virtualElements.insertAfter(p, comment2, comment1);
-                    
-                var acc = function() {
-                    return { item: bindingContext.$data, comment: name };
-                };
-                
-                // renderFromMemo can only derive the parent/child from the binding context
-                wpfko.bindings.namedRender.init(comment1, acc, acc, wpfko.utils.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
-                wpfko.bindings.namedRender.update(comment1, acc, acc, wpfko.utils.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
-            });
-        };
-    };
-    
-    htmlBuilder.emptySwitchBindingContext = function(bindingContext) {
-        return new wpfko.template.switchBindingContext();
-    };
-    
-    htmlBuilder.switchBindingContextToTemplateItem = function(templateItemId) {
-        return function(bindingContext) {
-            return new wpfko.template.switchBindingContext(bindingContext.createChildContext(bindingContext.$data.templateItems[templateItemId]));
-        }
     };
     
     htmlBuilder.generateTemplate = function(xmlTemplate, itemPrefix) {  
@@ -132,13 +84,7 @@ Class("wpfko.template.htmlBuilder", function () {
         var ser = new XMLSerializer();
         
         enumerate(xmlTemplate.childNodes, function(child, i) {            
-            if(wpfko.template.xmlTemplate.isCustomElement(child)) {     
-                var id = wpfko.template.xmlTemplate.getId(child);
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.switchBindingContextToTemplateItem(id || (itemPrefix + i)))); 
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.renderFromMemo(child.nodeName + (id ? (" #" + id) : ""))));
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.emptySwitchBindingContext));
-                
-            } else if(child.nodeType == 1) {
+            if(child.nodeType == 1) {
                 
                 // create copy with no child nodes
                 var ch = new DOMParser().parseFromString(ser.serializeToString(child), "application/xml").documentElement;

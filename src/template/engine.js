@@ -38,13 +38,17 @@ Class("wpfko.template.engine", function () {
         
         // if it is an anonymous template it will already have been rewritten
         if(!engine.scriptHasBeenReWritten.test(script.textContent)) {
+            
             ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
-        } 
+        } else {
+            //TODO: why does this case exist. Hint, the only one seems to be the default template for itemsControl
+        }
         
         this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
     };    
     
     engine.wipeoutRewrite = function(xmlElement) {
+        ///<summary>Recursively go through an xml element and replace all view models with render comments</summary>
         if(wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName) !== -1) {
             enumerate(xmlElement.childNodes, function(child) {
                 if(child.nodeType === 1)
@@ -52,14 +56,21 @@ Class("wpfko.template.engine", function () {
             });
         } else {
             var newScriptId = engine.newScriptId();
-            var openingTag = " ko xxx: " + newScriptId + ", wipeout-comment: '" + xmlElement.nodeName + "'";
-            if(xmlElement.nextSibling) {
-                xmlElement.parentElement.insertBefore(document.createComment(" /ko "), xmlElement.nextSibling);
-                xmlElement.parentElement.insertBefore(document.createComment(openingTag), xmlElement.nextSibling);
-            } else {
-                xmlElement.parentElement.appendChild(document.createComment(openingTag));
-                xmlElement.parentElement.appendChild(document.createComment(" /ko "));
-            }
+            engine.scriptCache[newScriptId] = function(parentBindingContext) {
+                var vm = wpfko.utils.obj.createObject(xmlElement.nodeName);                
+                var context = parentBindingContext.createChildContext(vm);
+                vm.initialize(xmlElement, context);                
+                return {
+                    vm: vm,
+                    bindingContext: context,
+                    id: wpfko.template.xmlTemplate.getId(xmlElement)
+                };
+            };
+            
+            var openingTag = " ko renderFromScript: " + newScriptId + ", wipeout-comment: '" + xmlElement.nodeName + "'";
+            xmlElement.parentElement.insertBefore(document.createComment(openingTag), xmlElement);
+            xmlElement.parentElement.insertBefore(document.createComment(" /ko "), xmlElement);
+            xmlElement.parentElement.removeChild(xmlElement);
         }
     };
     
