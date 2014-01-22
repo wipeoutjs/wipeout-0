@@ -36,7 +36,6 @@ Class("wpfko.template.htmlBuilder", function () {
         
         var template = wpfko.template.htmlBuilder.generateTemplate(xmlTemplate);
                  
-        debugger;
         var startTag, endTag;
         var result = [];
         while((startTag = template.indexOf(open)) !== -1) {
