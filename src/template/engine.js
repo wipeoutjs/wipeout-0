@@ -63,11 +63,11 @@ Class("wpfko.template.engine", function () {
                 return {
                     vm: vm,
                     bindingContext: context,
-                    id: wpfko.template.xmlTemplate.getId(xmlElement)
+                    id: engine.getId(xmlElement)
                 };
             };
             
-            var openingTag = " ko renderFromScript: " + newScriptId + comment;
+            var openingTag = " ko renderFromScript: " + newScriptId;
             if(DEBUG)
                 openingTag += ", wipeout-comment: '" + xmlElement.nodeName + "'";
             
@@ -75,6 +75,16 @@ Class("wpfko.template.engine", function () {
             xmlElement.parentElement.insertBefore(document.createComment(" /ko "), xmlElement);
             xmlElement.parentElement.removeChild(xmlElement);
         }
+    };    
+    
+    engine.getId = function(xmlElement) {
+        for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
+            if(xmlElement.attributes[i].nodeName === "id") {
+                return xmlElement.attributes[i].value;
+            }
+        }
+        
+        return null;
     };
     
     engine.prototype.wipeoutRewrite = function(script) {
@@ -108,7 +118,7 @@ Class("wpfko.template.engine", function () {
         
         var cached = templateSource['data']('precompiled');
         if (!cached) {
-            cached = new wpfko.template.xmlTemplate(templateSource.text());
+            cached = new wpfko.template.htmlBuilder(templateSource.text());
             templateSource['data']('precompiled', cached);
         }
         

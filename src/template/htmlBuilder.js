@@ -72,12 +72,14 @@ Class("wpfko.template.htmlBuilder", function () {
             }
             
             var html = wpfko.utils.html.createElements(returnVal.join(""));
-            var ids = htmlBuilder.getTemplateIds({childNodes: html});
+            enumerate(htmlBuilder.getTemplateIds({childNodes: html}), function(item, id) {
+                bindingContext.$data.templateItems[id] = item;
+            });
+                
+            if (bindingContext.$data instanceof wpfko.base.view)
+                bindingContext.$data.onInitialized();
             
-            return {
-                html: html,
-                ids: ids
-            };
+            return html;
         };
     };
     
