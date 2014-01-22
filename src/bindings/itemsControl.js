@@ -61,7 +61,6 @@ Binding("itemsControl", true, function () {
                                     viewModel.items.peek()[index - 1]._rootHtmlElement.__wpfko.insertAfter(container.open);
                                 }     
                                 
-                                //TODO: this is invalid. Does not update when re-ordered or item is deleted
                                 var acc = function() {
                                     return change.value;
                                 };

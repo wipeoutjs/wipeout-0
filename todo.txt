@@ -1,3 +1,5 @@
+itemsControl binding, still creating " ko " comments
+
 If html element is deleted outside of wo, dispose of its associated view
 
 Roadmap:
