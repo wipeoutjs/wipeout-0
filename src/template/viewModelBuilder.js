@@ -2,7 +2,6 @@
 Class("wpfko.template.viewModelBuilder", function () {
     
     var viewModelBuilder = function(xmlTemplate) {
-        this._builders = [];
         this.elementsWithId = [];
         this._addBuilders(xmlTemplate);
     };
@@ -37,21 +36,7 @@ Class("wpfko.template.viewModelBuilder", function () {
                 this._addBuilders(child, itemPrefix + i);
             } // non elements have no place here but we do want to enumerate over them to keep index in sync
         }, this);
-    };    
-    
-    viewModelBuilder.prototype.rebuild = function(bindingContext) {
-        for(var i in bindingContext.$data.templateItems) {
-            if(bindingContext.$data.templateItems[i] instanceof wpfko.base.visual) {
-                bindingContext.$data.templateItems[i].dispose();
-            }
-            
-            delete bindingContext.$data.templateItems[i];
-        }
-        
-        for(var i = 0, ii = this._builders.length; i < ii; i++) {
-            this._builders[i](bindingContext);
-        }
-    };
+    }; 
     
     var enumerate = function(items, callback, context) {
         

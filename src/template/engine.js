@@ -113,7 +113,6 @@ Class("wpfko.template.engine", function () {
         
         // wrap in a computed so that observable evaluations will not propogate to the template engine
         ko.dependentObservable(function() {
-            cached.rebuild(bindingContext);
             output = cached.render(bindingContext)
         }, this).dispose();
         

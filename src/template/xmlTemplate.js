@@ -35,9 +35,5 @@ Class("wpfko.template.xmlTemplate", function () {
         return html;
     };
     
-    xmlTemplate.prototype.rebuild = function(bindingContext) {
-        this.viewModelBuilder.rebuild(bindingContext);
-    };
-    
     return xmlTemplate;
 });
