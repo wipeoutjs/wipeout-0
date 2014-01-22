@@ -148,6 +148,4 @@ Class("wpfko.template.engine", function () {
     engine.instance = new engine();
     
     return engine;
-    
-    // look in build files for template engine definition
 });
