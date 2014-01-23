@@ -14,6 +14,10 @@ Binding("namedRender", true, function () {
         var templateChanged = function() {
             ko.bindingHandlers.template.update.call(_this, element, wpfko.bindings.namedRender.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
         };
+        
+        var previous = ko.utils.domData.get(element, wpfko.bindings.wpfko.utils.wpfkoKey); 
+        if(previous instanceof wpfko.base.visual)
+            previous.unRender();
 
         if (child) {
             if (child._rootHtmlElement)
