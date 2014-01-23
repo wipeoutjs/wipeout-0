@@ -30,18 +30,19 @@ Class("wpfko.template.engine", function () {
     };
     
     engine.prototype.rewriteTemplate = function (template, rewriterCallback, templateDocument) {
-                                
-        //TODO: if template is not a string
+        
         var script = document.getElementById(template);
+        if (script instanceof HTMLElement) {
+            this.wipeoutRewrite(script);
         
-        this.wipeoutRewrite(script);
-        
-        // if it is an anonymous template it will already have been rewritten
-        if(!engine.scriptHasBeenReWritten.test(script.textContent)) {
-            
-            ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
+            // if it is an anonymous template it will already have been rewritten
+            if (!engine.scriptHasBeenReWritten.test(script.textContent)) {
+                ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
+            } else {
+                //TODO: why does this case exist. Hint, the only one seems to be the default template for itemsControl
+            }
         } else {
-            //TODO: why does this case exist. Hint, the only one seems to be the default template for itemsControl
+            ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
         }
         
         this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
