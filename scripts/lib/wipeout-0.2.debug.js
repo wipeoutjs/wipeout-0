@@ -4,7 +4,9 @@ var enumerate = function(enumerate, action, context) {
     context = context || window;
     
     if(enumerate == null) return;
-    if(enumerate instanceof Array)
+    if(enumerate instanceof Array || 
+       enumerate instanceof HTMLCollection || 
+       enumerate instanceof NodeList)
         for(var i = 0, ii = enumerate.length; i < ii; i++)
             action.call(context, enumerate[i], i);
     else
@@ -242,31 +244,48 @@ Class("wpfko.base.visual", function () {
         //The template of the visual, giving it an appearance
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
     });
+        
+    visual.prototype.unRender = function() {
+        ///<summary>Prepares a visual to be re-rendered</summary>
+        
+        // dispose of all template items
+        enumerate(this.templateItems, function(item, i) {
+            if(item instanceof visual) 
+                item.dispose();
+            
+            delete this.templateItems[i];
+            
+            var index = this.renderedChildren.indexOf(item);
+            if(index !== -1)
+                this.renderedChildren.splice(index, 1);            
+        }, this);
+        
+        // dispose of all rendered children
+        enumerate(this.renderedChildren.splice(0, this.renderedChildren.length), function(child) {
+            if(child instanceof visual) 
+                child.dispose();
+        });
+        
+        // disassociate the visual from its root element and empty the root element
+        ko.utils.domData.set(this._rootHtmlElement, wpfko.bindings.wpfko.utils.wpfkoKey, undefined); 
+        ko.virtualElements.emptyNode(this._rootHtmlElement);
+        delete this._rootHtmlElement;
+    };
     
     visual.prototype.dispose = function() {
         ///<summary>Dispose of this visual</summary>
+        
+        this.unRender();
         
         // dispose of any computeds
         for(var i in this)
             if(ko.isObservable(this[i]) && this[i].dispose instanceof Function)
                 this[i].dispose();
-        
-        // dispose of all template items
-        for(var i in this.templateItems)
-            if(this.templateItems[i] instanceof visual) 
-                this.templateItems[i].dispose();
-        
-        // dispose of all rendered children
-        for(var i = 0, ii = this.renderedChildren.length; i < ii; i++)
-            if(this.renderedChildren[i] instanceof visual) 
-                this.renderedChildren[i].dispose();
-        
-        this.renderedChildren.length = 0;
-        this._rootHtmlElement = null;
                 
-        for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++)
-            this._routedEventSubscriptions[i].event.dispose();        
-        this._routedEventSubscriptions.length = 0;
+        // dispose of routed event subscriptions
+        enumerate(this._routedEventSubscriptions.splice(0, this._routedEventSubscriptions.length), function(event) {
+            event.dispose();
+        });
     };
     
     //TODO: move to util
@@ -525,6 +544,21 @@ Class("wpfko.base.view", function () {
                 }
             }
         };
+    };    
+    
+    view.elementHasModelBinding = function(element) {
+        
+        for(var i = 0, ii = element.attributes.length; i < ii; i++) {
+            if(element.attributes[i].nodeName === "model" || element.attributes[i].nodeName === "model-tw")
+                return true;
+        }
+        
+        for(var i = 0, ii = element.childNodes.length; i < ii; i++) {
+            if(element.childNodes[i].nodeType === 1 && element.childNodes[i].nodeName === "model")
+                return true;
+        }
+        
+        return false;
     };
     
     view.reservedPropertyNames = ["constructor", "constructor-tw", "id","id-tw"];
@@ -538,7 +572,7 @@ Class("wpfko.base.view", function () {
         if(!propertiesXml)
             return;
                 
-        if(!wpfko.template.htmlBuilder.elementHasModelBinding(propertiesXml) && wpfko.utils.ko.peek(this.model) == null) {
+        if(!view.elementHasModelBinding(propertiesXml) && wpfko.utils.ko.peek(this.model) == null) {
             this.bind('model', bindingContext.$parent.model);
         }
         
@@ -557,7 +591,7 @@ Class("wpfko.base.view", function () {
         
         enumerate(propertiesXml.childNodes, function(child, i) {
             
-            if(child.nodeType !== 1) return;
+            if(child.nodeType !== 1 || view.reservedPropertyNames.indexOf(child.nodeName) !== -1) return;
             
             // default
             var type = "string";
@@ -659,7 +693,7 @@ Class("wpfko.base.contentControl", function () {
         var templateArea = null;
         var i = Math.floor(Math.random() * 1000000000);
 
-        return function (templateString) {
+        return function (templateString, forceCreate) {
             ///<summary>Creates an anonymous template within the DOM and returns its id</summary>
 
             // lazy create div to place anonymous templates
@@ -671,16 +705,18 @@ Class("wpfko.base.contentControl", function () {
             templateString = templateString.replace(/^\s+|\s+$/g, '');
             var hash = contentControl.hashCode(templateString).toString();
 
-            // if we can, reuse an existing anonymous template
-            for (var j = 0, jj = templateArea.childNodes.length; j < jj; j++) {
-                if (templateArea.childNodes[j].nodeType === 1 &&
-                templateArea.childNodes[j].nodeName === "SCRIPT" &&
-                templateArea.childNodes[j].id &&
-                // first use a hash to avoid computationally expensive string compare if possible
-                templateArea.childNodes[j].attributes[dataTemplateHash] &&
-                templateArea.childNodes[j].attributes[dataTemplateHash].nodeValue === hash &&
-                templateArea.childNodes[j].innerHTML === templateString) {
-                    return templateArea.childNodes[j].id;
+            if(!forceCreate) {
+                // if we can, reuse an existing anonymous template
+                for (var j = 0, jj = templateArea.childNodes.length; j < jj; j++) {
+                    if (templateArea.childNodes[j].nodeType === 1 &&
+                    templateArea.childNodes[j].nodeName === "SCRIPT" &&
+                    templateArea.childNodes[j].id &&
+                    // first use a hash to avoid computationally expensive string compare if possible
+                    templateArea.childNodes[j].attributes[dataTemplateHash] &&
+                    templateArea.childNodes[j].attributes[dataTemplateHash].nodeValue === hash &&
+                    templateArea.childNodes[j].innerHTML === templateString) {
+                        return templateArea.childNodes[j].id;
+                    }
                 }
             }
 
@@ -774,37 +810,67 @@ Class("wpfko.base.event", function () {
 
 
 Class("wpfko.base.if", function () {
+ 
+    var sc = true;
+    var staticConstructor = function () {
+        if (!sc) return;
+        sc = false;
+        
+        _if.blankTemplateId = wpfko.base.contentControl.createAnonymousTemplate("", true);
+    };
     
     var _if = wpfko.base.contentControl.extend(function () {
         ///<summary>The if class is a content control which provides the functionality of the knockout if binding</summary>        
+        staticConstructor();
+        
         this._super.apply(this, arguments);
         
+        // if true, the template will be rendered, otherwise a blank template is rendered
         this.condition = ko.observable();
+        
+        // the template to render if the condition is false. Defaults to a blank template
+        this.elseTemplateId = ko.observable(_if.blankTemplateId);
+        this.elseTemplateId.subscribe(this.elseTemplateChanged, this);
+        
+        // anonymous version of elseTemplateId
+        this.elseTemplate = wpfko.base.contentControl.createTemplatePropertyFor(this.elseTemplateId, this);
+        
+        // stores the template id if the condition is false
+        this.__cachedTemplateId = this.templateId();
+        
         this.condition.subscribe(this.onConditionChanged, this);
         this.templateId.subscribe(this.copyTemplateId, this);
         
         this.copyTemplateId(this.templateId());
     });
     
-    _if.prototype.onConditionChanged = function(newVal) {
+    _if.prototype.elseTemplateChanged = function (newVal) {
+        if (!this.condition()) {
+            this.templateId(newVal);
+        }
+    };
+    
+    _if.prototype.onConditionChanged = function (newVal) {
         ///<summary>Set the template based on whether the condition is met</summary>     
-        if(this.__oldConditionVal && !newVal) {
-            this.templateId(wpfko.base.visual.getBlankTemplateId());
-        } else if(!this.__oldConditionVal && newVal) {
+        if (this.__oldConditionVal && !newVal) {
+            this.templateId(this.elseTemplateId());
+        } else if (!this.__oldConditionVal && newVal) {
             this.templateId(this.__cachedTemplateId);
         }
         
         this.__oldConditionVal = !!newVal;
     };
     
-    _if.prototype.copyTemplateId = function(templateId) {
+    _if.prototype.copyTemplateId = function (templateId) {
         ///<summary>Cache the template id and check whether correct template is applied</summary>     
-        this.__cachedTemplateId = templateId;
-        if(!this.condition() && templateId !== wpfko.base.visual.getBlankTemplateId()) {
-            this.templateId(wpfko.base.visual.getBlankTemplateId());
+        if (templateId !== this.elseTemplateId())
+            this.__cachedTemplateId = templateId;
+    
+        if (!this.condition() && templateId !== this.elseTemplateId()) {
+            this.templateId(this.elseTemplateId());
         }
     };
-
+    
     return _if;
 });
 
@@ -974,7 +1040,12 @@ Class("wpfko.base.itemsControl", function () {
     
     //virtual
     itemsControl.prototype.itemDeleted = function (item) {
-        ///<summary>Called just before an new item in the items control is disposed of</summary>
+        ///<summary>Disposes of deleted items</summary>        
+        var renderedChild = this.renderedChildren.indexOf(item);
+        if(renderedChild !== -1)
+            this.renderedChildren.splice(renderedChild, 1);
+        
+        item.dispose();
     };
 
     // virtual
@@ -1054,6 +1125,10 @@ Class("wpfko.base.routedEventRegistration", function () {
         this.event = new wpfko.base.event();
     };
     
+    routedEventRegistration.prototype.dispose = function() {
+        this.event.dispose();
+    };
+    
     return routedEventRegistration;
 });
 
@@ -1083,20 +1158,12 @@ Binding("itemsControl", true, function () {
                         return function() {
                             var elements;
                             if(change.moved != null) {
-                                elements = change.value._rootHtmlElement.__wpfko.allElements();
-                                move[change.moved + "." + change.index] = { vm: change.value, elements: elements };
+                                move[change.moved + "." + change.index] = { vm: change.value, elements: change.value._rootHtmlElement.__wpfko.allElements() };                            
+                                enumerate(move[change.moved + "." + change.index].elements, function(node) {
+                                    node.parentNode.removeChild(node);                                    
+                                });
                             } else {
-                                ko.virtualElements.emptyNode(change.value._rootHtmlElement);
-                                elements = change.value._rootHtmlElement.__wpfko.allElements();
-                            }
-                            
-                            for(var j = 0, jj= elements.length; j< jj; j++) {
-                                elements[j].parentNode.removeChild(elements[j]);
-                            }
-                            
-                            if(change.moved == null) {
                                 viewModel.itemDeleted(change.value);
-                                change.value.dispose();
                             }
                             
                             delPadIndex--;
@@ -1128,7 +1195,6 @@ Binding("itemsControl", true, function () {
                                     viewModel.items.peek()[index - 1]._rootHtmlElement.__wpfko.insertAfter(container.open);
                                 }     
                                 
-                                //TODO: this is invalid. Does not update when re-ordered or item is deleted
                                 var acc = function() {
                                     return change.value;
                                 };
@@ -1208,6 +1274,10 @@ Binding("namedRender", true, function () {
         var templateChanged = function() {
             ko.bindingHandlers.template.update.call(_this, element, wpfko.bindings.namedRender.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
         };
+        
+        var previous = ko.utils.domData.get(element, wpfko.bindings.wpfko.utils.wpfkoKey); 
+        if(previous instanceof wpfko.base.visual)
+            previous.unRender();
 
         if (child) {
             if (child._rootHtmlElement)
@@ -1233,6 +1303,7 @@ Binding("namedRender", true, function () {
             var value = ko.utils.unwrapObservable(oldValueAccessor());            
             var _child = ko.utils.unwrapObservable(value.item);
             return {
+                templateEngine: wpfko.template.engine.instance,
                 name: _child ? _child.templateId.peek() : "",
                 data: value.item || {},
                 afterRender: _child ? function(nodes, context) { 
@@ -1284,6 +1355,26 @@ Binding("render", true, function () {
         utils: {
             createValueAccessor: createValueAccessor
         }
+    };
+});
+
+
+Binding("renderFromScript", true, function () {
+        
+    var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        
+        var vals = wpfko.template.engine.scriptCache[valueAccessor()](bindingContext);
+        
+        if(vals.id)
+            viewModel.templateItems[vals.id] = vals.vm;
+        
+        var init = wpfko.bindings.render.init.call(this, element, function() { return vals.vm; }, allBindingsAccessor, viewModel, bindingContext);
+        wpfko.bindings.render.update.call(this, element, function() { return vals.vm; }, allBindingsAccessor, viewModel, bindingContext);
+        return init;
+    };
+    
+    return {
+        init: init
     };
 });
 
@@ -1360,14 +1451,18 @@ Binding("wpfko", true, function () {
 
 Class("wpfko.template.engine", function () {
     
-    var engine = function() { };
+    var engine = function() {
+        ///<summary>The wipeout template engine, inherits from ko.templateEngine</summary>
+    };
     engine.prototype = new ko.templateEngine();
     
     engine.createJavaScriptEvaluatorFunction = function(script) {
+        ///<summary>Modify a block of script so that it's running context is the bining context</summary>
         return new Function("bindingContext", "with(bindingContext) {\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
     }
     
     engine.createJavaScriptEvaluatorBlock = function(script) {
+        ///<summary>Add a function to the static script cache or cretate and add a script</summary>
         var scriptId = engine.newScriptId();
         
         if(script instanceof Function) {
@@ -1380,22 +1475,91 @@ Class("wpfko.template.engine", function () {
     };
     
     engine.prototype.createJavaScriptEvaluatorBlock = function(script) {
+        ///<summary>Add a function to the static script cache or cretate and add a script</summary>
         return engine.createJavaScriptEvaluatorBlock(script);
-    };    
-    
-    engine.prototype.isTemplateRewritten = function (template, templateDocument) {
-        //TODO: if template is not a string
-        if(template && template.constructor === String) {
-            var script = document.getElementById(template);
-            if(engine.scriptHasBeenReWritten.test(script.textContent))
-                this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
-        }
-        
-        return ko.templateEngine.prototype.isTemplateRewritten.apply(this, arguments);
     };
     
+    engine.prototype.rewriteTemplate = function (template, rewriterCallback, templateDocument) {
+                                
+        //TODO: if template is not a string
+        var script = document.getElementById(template);
+        
+        this.wipeoutRewrite(script);
+        
+        // if it is an anonymous template it will already have been rewritten
+        if(!engine.scriptHasBeenReWritten.test(script.textContent)) {
+            
+            ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
+        } else {
+            //TODO: why does this case exist. Hint, the only one seems to be the default template for itemsControl
+        }
+        
+        this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
+    };    
+    
+    engine.wipeoutRewrite = function(xmlElement) {
+        ///<summary>Recursively go through an xml element and replace all view models with render comments</summary>
+        if(wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName) !== -1) {
+            enumerate(xmlElement.childNodes, function(child) {
+                if(child.nodeType === 1)
+                    engine.wipeoutRewrite(child);
+            });
+        } else {
+            var newScriptId = engine.newScriptId();
+            engine.scriptCache[newScriptId] = function(parentBindingContext) {
+                var vm = wpfko.utils.obj.createObject(xmlElement.nodeName);                
+                var context = parentBindingContext.createChildContext(vm);
+                vm.initialize(xmlElement, context);                
+                return {
+                    vm: vm,
+                    bindingContext: context,
+                    id: engine.getId(xmlElement)
+                };
+            };
+            
+            var openingTag = " ko renderFromScript: " + newScriptId;
+            if(DEBUG)
+                openingTag += ", wipeout-comment: '" + xmlElement.nodeName + "'";
+            
+            xmlElement.parentElement.insertBefore(document.createComment(openingTag), xmlElement);
+            xmlElement.parentElement.insertBefore(document.createComment(" /ko "), xmlElement);
+            xmlElement.parentElement.removeChild(xmlElement);
+        }
+    };    
+    
+    engine.getId = function(xmlElement) {
+        for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
+            if(xmlElement.attributes[i].nodeName === "id") {
+                return xmlElement.attributes[i].value;
+            }
+        }
+        
+        return null;
+    };
+    
+    engine.prototype.wipeoutRewrite = function(script) {
+        
+        var ser = new XMLSerializer();
+        xmlTemplate = new DOMParser().parseFromString("<root>" + script.textContent + "</root>", "application/xml").documentElement;        
+        if(xmlTemplate.firstChild && xmlTemplate.firstChild.nodeName === "parsererror") {
+            //TODO: copy pasted
+			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
+		}
+        
+        var scriptContent = [];
+        // do not use ii, xmlTemplate.childNodes may change
+        for(var i = 0; i < xmlTemplate.childNodes.length; i++) {            
+            if(xmlTemplate.childNodes[i].nodeType === 1)
+                engine.wipeoutRewrite(xmlTemplate.childNodes[i]);
+            
+            scriptContent.push(ser.serializeToString(xmlTemplate.childNodes[i]));
+        }
+        
+        script.textContent = scriptContent.join("");
+    };
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
+        ///<summary>Build html from a template source</summary>
         
         // if data is not a view, cannot render.
         //TODO: default to native template engine
@@ -1404,7 +1568,7 @@ Class("wpfko.template.engine", function () {
         
         var cached = templateSource['data']('precompiled');
         if (!cached) {
-            cached = new wpfko.template.xmlTemplate(templateSource.text());
+            cached = new wpfko.template.htmlBuilder(templateSource.text());
             templateSource['data']('precompiled', cached);
         }
         
@@ -1412,7 +1576,6 @@ Class("wpfko.template.engine", function () {
         
         // wrap in a computed so that observable evaluations will not propogate to the template engine
         ko.dependentObservable(function() {
-            cached.rebuild(bindingContext);
             output = cached.render(bindingContext)
         }, this).dispose();
         
@@ -1422,6 +1585,7 @@ Class("wpfko.template.engine", function () {
     engine.newScriptId = (function() {        
         var i = Math.floor(Math.random() * 10000);        
         return function() {
+            ///<summary>Get a unique name for a script</summary>
             return (++i).toString();
         };
     })();
@@ -1431,63 +1595,63 @@ Class("wpfko.template.engine", function () {
     engine.closeCodeTag = "} -->";
     engine.scriptHasBeenReWritten = RegExp(engine.openCodeTag.replace("{", "\{") + "[0-9]+" + engine.closeCodeTag.replace("}", "\}"));
     
-    return engine;
+    engine.instance = new engine();
     
-    // look in build files for template engine definition
+    return engine;
 });
 
 Class("wpfko.template.htmlBuilder", function () {
     
     var htmlBuilder = function(xmlTemplate) {
         
-        this.render = htmlBuilder.generateRender(xmlTemplate);
+        this.preRendered = [];
+        this.generatePreRender(xmlTemplate);
     };
     
-    
-    var enumerate = function(items, callback, context) {
-        
-        for(var i = 0, ii = items.length; i < ii; i++) {
-            callback.call(context, items[i], i);
-        }        
-    };
-    
-    htmlBuilder.elementHasModelBinding = function(element) {
-        
-        for(var i = 0, ii = element.attributes.length; i < ii; i++) {
-            if(element.attributes[i].nodeName === "model" || element.attributes[i].nodeName === "model-tw")
-                return true;
+    htmlBuilder.prototype.render = function(bindingContext) {        
+        var contexts = [];
+        var returnVal = [];
+        for(var i = 0, ii = this.preRendered.length; i < ii; i++) {
+            if(this.preRendered[i] instanceof Function) {                    
+                var rendered = this.preRendered[i](bindingContext);                  
+                returnVal.push(rendered);
+            } else {
+                returnVal.push(this.preRendered[i]);
+            }
         }
         
-        for(var i = 0, ii = element.childNodes.length; i < ii; i++) {
-            if(element.childNodes[i].nodeType === 1 && element.childNodes[i].nodeName === "model")
-                return true;
-        }
+        var html = wpfko.utils.html.createElements(returnVal.join(""));
+        enumerate(htmlBuilder.getTemplateIds({childNodes: html}), function(item, id) {
+            bindingContext.$data.templateItems[id] = item;
+        });
+            
+        if (bindingContext.$data instanceof wpfko.base.view)
+            bindingContext.$data.onInitialized();
         
-        return false;
+        return html;
     };
     
-    htmlBuilder.constructorExists = function(constructor) {
+    //TODO: there is wastage here. Template string is parsed to xml to be passed in here, then parsed straight back to string to generate html
+    // but it seems to be necessary to clen up bad html (generated by previous xml parsing)
+    htmlBuilder.prototype.generatePreRender = function(templateString) {
+                   
+        var xmlTemplate = new DOMParser().parseFromString("<root>" + templateString + "</root>", "application/xml").documentElement;
         
-        constructor = constructor.split(".");
-        var current = window;
-        for(var i = 0, ii = constructor.length; i < ii; i++) {
-            current = current[constructor[i]];
-            if(!current) return false;
-        }
+        if(xmlTemplate.firstChild && xmlTemplate.firstChild.nodeName === "parsererror") {
+			var ser = new XMLSerializer();
+			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
+		}
         
-        return current instanceof Function;
-    };
-    
-    htmlBuilder.generateRender = function(xmlTemplate) {
         var open = wpfko.template.engine.openCodeTag;
         var close = wpfko.template.engine.closeCodeTag;
         
         var template = wpfko.template.htmlBuilder.generateTemplate(xmlTemplate);
-                 
+             
+        this.preRendered.length = 0;
+        
         var startTag, endTag;
-        var result = [];
         while((startTag = template.indexOf(open)) !== -1) {
-            result.push(template.substr(0, startTag));
+            this.preRendered.push(template.substr(0, startTag));
             template = template.substr(startTag);
             
             endTag = template.indexOf(close);
@@ -1495,7 +1659,7 @@ Class("wpfko.template.htmlBuilder", function () {
                 throw "Invalid wpfko_code tag.";
             }
             
-            result.push((function(scriptId) {
+            this.preRendered.push((function(scriptId) {
                 return function(bindingContext) {                    
                     return wpfko.template.engine.scriptCache[scriptId](bindingContext);                    
                 };
@@ -1504,80 +1668,36 @@ Class("wpfko.template.htmlBuilder", function () {
             template = template.substr(endTag + close.length);
         }
                 
-        result.push(template);
-        
-        var ii = result.length;
-        return function(bindingContext) {
-            var contexts = [];
-            var returnVal = [];
-            for(var i = 0; i < ii; i++) {
-                if(result[i] instanceof Function) {                    
-                    var rendered = result[i](bindingContext);
-                    if(rendered instanceof wpfko.template.switchBindingContext) {
-                        if(rendered.bindingContext) {
-                            contexts.push(bindingContext);
-                            bindingContext = rendered.bindingContext;
-                        } else {
-                            // empty rendered.bindingContext signifies we revert to the parent binding context
-                            bindingContext = contexts.pop();
-                        }
-                    } else {                    
-                        returnVal.push(rendered);
+        this.preRendered.push(template);
+    };
+    
+    //TODO: this is done at render time, can it be cached?
+    htmlBuilder.getTemplateIds = function (element) {
+        var ids = {};
+        enumerate(element.childNodes, function(node) {
+            if(node.nodeType === 1) {
+                for(var j = 0, jj = node.attributes.length; j < jj; j++) {
+                    if(node.attributes[j].nodeName === "id") {
+                        ids[node.attributes[j].nodeValue] = node;
+                        break;
                     }
-                } else {
-                    returnVal.push(result[i]);
                 }
-            }
-            
-            return wpfko.utils.html.createElements(returnVal.join(""));
-        };
-    };
-        
-    //TODO: if debug
-    htmlBuilder.renderFromMemo = function(name) {
-        return function(bindingContext) {
-            return ko.memoization.memoize(function(memo) { 
-                var comment1 = document.createComment(' ko ');
-                var comment2 = document.createComment(' /ko ');
-                var p = wpfko.utils.ko.virtualElements.parentElement(memo);
-                ko.virtualElements.insertAfter(p, comment1, memo);
-                ko.virtualElements.insertAfter(p, comment2, comment1);
-                    
-                var acc = function() {
-                    return { item: bindingContext.$data, comment: name };
-                };
                 
-                // renderFromMemo can only derive the parent/child from the binding context
-                wpfko.bindings.namedRender.init(comment1, acc, acc, wpfko.utils.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);
-                wpfko.bindings.namedRender.update(comment1, acc, acc, wpfko.utils.ko.peek(bindingContext.$parentContext.$data), bindingContext.$parentContext);            
-            });
-        };
+                enumerate(htmlBuilder.getTemplateIds(node), function(element, id) {
+                    ids[id] = element;
+                });
+            }                
+        });
+        
+        return ids;
     };
     
-    htmlBuilder.emptySwitchBindingContext = function(bindingContext) {
-        return new wpfko.template.switchBindingContext();
-    };
-    
-    htmlBuilder.switchBindingContextToTemplateItem = function(templateItemId) {
-        return function(bindingContext) {
-            return new wpfko.template.switchBindingContext(bindingContext.createChildContext(bindingContext.$data.templateItems[templateItemId]));
-        }
-    };
-    
-    htmlBuilder.generateTemplate = function(xmlTemplate, itemPrefix) {  
-        if(itemPrefix) itemPrefix += ".";
-        else itemPrefix = "";
+    htmlBuilder.generateTemplate = function(xmlTemplate) { 
         var result = [];
         var ser = new XMLSerializer();
         
-        enumerate(xmlTemplate.childNodes, function(child, i) {            
-            if(wpfko.template.xmlTemplate.isCustomElement(child)) {     
-                var id = wpfko.template.xmlTemplate.getId(child);
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.switchBindingContextToTemplateItem(id || (itemPrefix + i)))); 
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.renderFromMemo(child.nodeName + (id ? (" #" + id) : ""))));
-                result.push(wpfko.template.engine.createJavaScriptEvaluatorBlock(htmlBuilder.emptySwitchBindingContext));
-                
-            } else if(child.nodeType == 1) {
+        enumerate(xmlTemplate.childNodes, function(child) {            
+            if(child.nodeType == 1) {
                 
                 // create copy with no child nodes
                 var ch = new DOMParser().parseFromString(ser.serializeToString(child), "application/xml").documentElement;
@@ -1586,7 +1706,7 @@ Class("wpfko.template.htmlBuilder", function () {
                 }
                 
                 var html = wpfko.utils.html.createElement(ser.serializeToString(ch));
-                html.innerHTML = wpfko.template.htmlBuilder.generateTemplate(child, itemPrefix + i);                
+                html.innerHTML = wpfko.template.htmlBuilder.generateTemplate(child);                
                 result.push(wpfko.utils.html.outerHTML(html));
             } else if(child.nodeType === 3) {
                 result.push(child.data);
@@ -1607,125 +1727,6 @@ Class("wpfko.template.switchBindingContext", function () {
     return function(bindingContext) {
         this.bindingContext = bindingContext;
     }
-});
-
-
-Class("wpfko.template.viewModelBuilder", function () {
-    
-    var viewModelBuilder = function(xmlTemplate) {
-        this._builders = [];
-        this.elementsWithId = [];
-        this._addBuilders(xmlTemplate);
-    };
-    
-    viewModelBuilder.prototype.addReferencedElements = function(subject, renderedHtml) {
-        
-        enumerate(this.elementsWithId, function(id) {
-            // normalize, input vals will be in an array, not html tree
-            var current = {
-                childNodes: renderedHtml
-            };
-            
-            // get target node using psuedo xPath
-            enumerate(id.split("."), function(val, i) {
-                current = current.childNodes[parseInt(val)];
-            });
-            
-            if(!current.id) throw "Unexpected exception, could not find element id";
-            subject.templateItems[current.id] = current;
-        });
-    };    
-    
-    viewModelBuilder.prototype._addBuilders = function(xmlTemplate, itemPrefix) {
-        if(itemPrefix) itemPrefix += ".";
-        else itemPrefix = "";
-        enumerate(xmlTemplate.childNodes, function(child, i) {
-            if(wpfko.template.xmlTemplate.isCustomElement(child)) {
-                var id = wpfko.template.xmlTemplate.getId(child) || (itemPrefix + i);
-                this._builders.push(function(bindingContext) {
-                    bindingContext.$data.templateItems[id] = wpfko.utils.obj.createObject(child.nodeName);
-                    bindingContext.$data.templateItems[id].initialize(child, bindingContext.createChildContext(bindingContext.$data.templateItems[id]));
-                });
-            } else if(child.nodeType == 1) {
-                // if the element has an id, record it so that it can be appended during the building of the object
-                if(wpfko.template.xmlTemplate.getId(child))
-                    this.elementsWithId.push(itemPrefix + i);
-                
-                this._addBuilders(child, itemPrefix + i);
-            } // non elements have no place here but we do want to enumerate over them to keep index in sync
-        }, this);
-    };    
-    
-    viewModelBuilder.prototype.rebuild = function(bindingContext) {
-        for(var i in bindingContext.$data.templateItems) {
-            if(bindingContext.$data.templateItems[i] instanceof wpfko.base.visual) {
-                bindingContext.$data.templateItems[i].dispose();
-            }
-            
-            delete bindingContext.$data.templateItems[i];
-        }
-        
-        for(var i = 0, ii = this._builders.length; i < ii; i++) {
-            this._builders[i](bindingContext);
-        }
-    };
-    
-    var enumerate = function(items, callback, context) {
-        
-        for(var i = 0, ii = items.length; i < ii; i++) {
-            callback.call(context, items[i], i);
-        }        
-    };
-    
-    return viewModelBuilder;
-});
-
-
-
-Class("wpfko.template.xmlTemplate", function () {
-    
-    var xmlTemplate = function(xmlTemplate) {
-                
-        xmlTemplate = new DOMParser().parseFromString("<root>" + xmlTemplate + "</root>", "application/xml").documentElement;
-        
-        if(xmlTemplate.firstChild && xmlTemplate.firstChild.nodeName === "parsererror") {
-			var ser = new XMLSerializer();
-			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
-		}
-        
-        this.viewModelBuilder = new wpfko.template.viewModelBuilder(xmlTemplate);
-        this.htmlBuilder = new wpfko.template.htmlBuilder(xmlTemplate);
-    }
-    
-    xmlTemplate.isCustomElement = function(xmlElement) {
-        return xmlElement.nodeType == 1 && wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName.toLowerCase()) === -1;
-    };
-    
-    xmlTemplate.getId = function(xmlElement) {
-        for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
-            if(xmlElement.attributes[i].nodeName === "id") {
-                return xmlElement.attributes[i].value;
-            }
-        }
-        
-        return null;
-    };
-    
-    xmlTemplate.prototype.render = function(bindingContext) {        
-        var html = this.htmlBuilder.render(bindingContext);
-        this.viewModelBuilder.addReferencedElements(bindingContext.$data, html);
-            
-        if (bindingContext.$data instanceof wpfko.base.view)
-            bindingContext.$data.onInitialized();
-        
-        return html;
-    };
-    
-    xmlTemplate.prototype.rebuild = function(bindingContext) {
-        this.viewModelBuilder.rebuild(bindingContext);
-    };
-    
-    return xmlTemplate;
 });
 
 
@@ -2025,9 +2026,7 @@ enumerate(wpfko.base, function(item, i) {
 
 window.wo.utils = wpfko.utils;
 
-ko.setTemplateEngine(new wpfko.template.engine());
-
 window.wpfko = wpfko;
-var DEBUG = true;
+var DEBUG = wo.DEBUG = true;
 
 })();
