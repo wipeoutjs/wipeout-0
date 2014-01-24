@@ -102,10 +102,48 @@ Class("wpfko.template.engine", function () {
             if(xmlTemplate.childNodes[i].nodeType === 1)
                 engine.wipeoutRewrite(xmlTemplate.childNodes[i]);
             
-            scriptContent.push(ser.serializeToString(xmlTemplate.childNodes[i]));
+            // bug in chrome serializer. Attributes don't serialize too well
+            var serialized = ser.serializeToString(xmlTemplate.childNodes[i]);
+            if(serialized.indexOf("&gt;") !== -1 && xmlTemplate.childNodes[i].nodeType === 1111) {
+                serialized = engine.customSerialization(xmlTemplate.childNodes[i]);
+            }
+            
+            scriptContent.push(serialized);
         }
         
         script.textContent = scriptContent.join("");
+    };
+    
+    engine.customSerialization = function(xmlNode) {
+        if(xmlNode.nodeType == 1) {
+            var output = ["<", xmlNode.nodeName];
+            
+            enumerate(xmlNode.attributes, function(attr) {
+                output.push(" ");
+                output.push(attr.nodeName);
+                output.push("=\"");
+                output.push(attr.nodeValue);
+                output.push("\"");
+            });
+            
+            output.push(">");
+            
+            enumerate(xmlNode.childNodes, function(node) {
+                output.push(engine.customSerialization(node));
+            });
+            
+            output.push("</");
+            output.push(xmlNode.nodeName);
+            output.push(">");
+            
+            return output.join("");            
+        } else if(xmlNode.nodeType === 3) {
+            var ser = new XMLSerializer();
+            return ser.serializeToString(xmlNode);
+        } else {
+            var ser = new XMLSerializer();
+            return ser.serializeToString(xmlNode);
+        }
     };
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {

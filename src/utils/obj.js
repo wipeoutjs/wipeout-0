@@ -6,7 +6,8 @@ var enumerate = function(enumerate, action, context) {
     if(enumerate == null) return;
     if(enumerate instanceof Array || 
        enumerate instanceof HTMLCollection || 
-       enumerate instanceof NodeList)
+       enumerate instanceof NodeList || 
+       enumerate instanceof NamedNodeMap)
         for(var i = 0, ii = enumerate.length; i < ii; i++)
             action.call(context, enumerate[i], i);
     else
