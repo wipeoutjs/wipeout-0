@@ -51,10 +51,9 @@ Class("wpfko.template.engine", function () {
     engine.wipeoutRewrite = function(xmlElement) {
         ///<summary>Recursively go through an xml element and replace all view models with render comments</summary>
         if(wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName) !== -1) {
-            enumerate(xmlElement.childNodes, function(child) {
-                if(child.nodeType === 1)
-                    engine.wipeoutRewrite(child);
-            });
+            for(var i = 0; i < xmlElement.childNodes.length; i++)
+                if(xmlElement.childNodes[i].nodeType === 1)
+                    engine.wipeoutRewrite(xmlElement.childNodes[i]);
         } else {
             var newScriptId = engine.newScriptId();
             engine.scriptCache[newScriptId] = function(parentBindingContext) {
