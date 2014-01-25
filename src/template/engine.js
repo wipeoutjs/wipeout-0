@@ -32,20 +32,18 @@ Class("wpfko.template.engine", function () {
     engine.prototype.rewriteTemplate = function (template, rewriterCallback, templateDocument) {
         
         var script = document.getElementById(template);
-        if (script instanceof HTMLElement) {
-            this.wipeoutRewrite(script);
-        
+        if (script instanceof HTMLElement) {        
             // if it is an anonymous template it will already have been rewritten
             if (!engine.scriptHasBeenReWritten.test(script.textContent)) {
                 ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
             } else {
-                //TODO: why does this case exist. Hint, the only one seems to be the default template for itemsControl
+                this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
             }
+            
+            this.wipeoutRewrite(script);
         } else {
             ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
         }
-        
-        this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
     };    
     
     engine.wipeoutRewrite = function(xmlElement) {
