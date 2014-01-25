@@ -43,10 +43,12 @@ Class("wpfko.base.visual", function () {
                 child.dispose();
         });
         
-        // disassociate the visual from its root element and empty the root element
-        ko.utils.domData.set(this._rootHtmlElement, wpfko.bindings.wpfko.utils.wpfkoKey, undefined); 
-        ko.virtualElements.emptyNode(this._rootHtmlElement);
-        delete this._rootHtmlElement;
+        if(this._rootHtmlElement) {
+            // disassociate the visual from its root element and empty the root element
+            ko.utils.domData.set(this._rootHtmlElement, wpfko.bindings.wpfko.utils.wpfkoKey, undefined); 
+            ko.virtualElements.emptyNode(this._rootHtmlElement);
+            delete this._rootHtmlElement;
+        }
     };
     
     visual.prototype.dispose = function() {
