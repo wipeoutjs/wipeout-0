@@ -67,7 +67,7 @@ Class("wpfko.template.engine", function () {
             
             var openingTag = " ko renderFromScript: " + newScriptId;
             if(DEBUG)
-                openingTag += ", wipeout-comment: '" + xmlElement.nodeName + "'";
+                openingTag += ", wipeout-type: '" + xmlElement.nodeName + "'";
             
             xmlElement.parentElement.insertBefore(document.createComment(openingTag), xmlElement);
             xmlElement.parentElement.insertBefore(document.createComment(" /ko "), xmlElement);

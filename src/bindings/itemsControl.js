@@ -84,10 +84,6 @@ Binding("itemsControl", true, function () {
             for(i = 0, ii = add.length; i < ii; i++) {
                 add[i].call(this);
             }
-        
-            if(DEBUG) {
-                utils.addComments(viewModel.items());
-            }
         }
     };
     
@@ -110,12 +106,7 @@ Binding("itemsControl", true, function () {
         subscribeV3: function(element, viewModel, bindingContext) {            
             viewModel.items.subscribe(utils.itemsChanged(element, viewModel, bindingContext), window, "arrayChange");
         },
-        itemsChanged: itemsChanged,
-        addComments: function(values) {
-            enumerate(values, function(value, i) {
-                wpfko.bindings["wipeout-comment"].comment(value._rootHtmlElement, "itemsControl item: " + i.toString());
-            });
-        }
+        itemsChanged: itemsChanged
     };
     
     return {
