@@ -12,7 +12,7 @@ Binding("render", true, function () {
             throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
         
         if(child && viewModel && child === viewModel)
-            throw "A wo.view cannot be a child of itself.";
+            throw "A wo.visual cannot be a child of itself.";
         
         if (child && child._rootHtmlElement)
             throw "This visual has already been rendered. Call its unRender() function before rendering again.";
