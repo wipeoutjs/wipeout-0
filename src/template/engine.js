@@ -65,9 +65,11 @@ Class("wpfko.template.engine", function () {
                 };
             };
             
-            var openingTag = " ko renderFromScript: " + newScriptId;
+            var openingTag = " ko";
             if(DEBUG)
-                openingTag += ", wipeout-type: '" + xmlElement.nodeName + "'";
+                openingTag += " wipeout-type: '" + xmlElement.nodeName + "',";
+            
+            openingTag += " wo: " + newScriptId;
             
             xmlElement.parentElement.insertBefore(document.createComment(openingTag), xmlElement);
             xmlElement.parentElement.insertBefore(document.createComment(" /ko "), xmlElement);

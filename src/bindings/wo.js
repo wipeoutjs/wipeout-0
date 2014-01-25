@@ -1,5 +1,5 @@
-
-Binding("renderFromScript", true, function () {
+// Render From Script
+Binding("wo", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         
