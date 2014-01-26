@@ -35,6 +35,7 @@ Class("wpfko.base.if", function () {
     }, "_if");
     
     _if.prototype.elseTemplateChanged = function (newVal) {
+        ///<summary>Resets the template id to the else template if condition is not met</summary>     
         if (!this.condition()) {
             this.templateId(newVal);
         }

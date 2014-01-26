@@ -1,6 +1,8 @@
 
 Binding("itemsControl", true, function () {
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the items control binding</summary>
+        
         if (!(viewModel instanceof wpfko.base.itemsControl))
             throw "This binding can only be used within the context of a wo.itemsControl";
 
@@ -15,6 +17,7 @@ Binding("itemsControl", true, function () {
     };
     
     var itemsChanged = function(element, viewModel, bindingContext) {
+        ///<summary>Reorder, add and delete items to the DOM</summary>
         return function(changes) {                
             var del = [], add = [], move = {}, delPadIndex = 0;
             for(var i = 0, ii = changes.length; i < ii; i++) {
@@ -89,7 +92,7 @@ Binding("itemsControl", true, function () {
     
     var utils = {
         subscribeV2: function(element, viewModel, bindingContext) {            
-            ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl<summary>            
+            ///<summary>Bind items to itemSource for knockout v2.<summary>            
             
             var items = wpfko.utils.obj.copyArray(viewModel.items.peek());
             var handler = utils.itemsChanged(element, viewModel, bindingContext);
@@ -103,7 +106,8 @@ Binding("itemsControl", true, function () {
                 }
             });
         },
-        subscribeV3: function(element, viewModel, bindingContext) {            
+        subscribeV3: function(element, viewModel, bindingContext) {
+            ///<summary>Bind items to itemSource for knockout v3.</summary>
             viewModel.items.subscribe(utils.itemsChanged(element, viewModel, bindingContext), window, "arrayChange");
         },
         itemsChanged: itemsChanged

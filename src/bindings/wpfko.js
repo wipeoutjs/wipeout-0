@@ -2,6 +2,7 @@
 Binding("wpfko", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the wpfko binding</summary>
 
         //TODO: knockout standard way of controling element        
         //TODO: add optional inline properties to binding   
@@ -28,6 +29,7 @@ Binding("wpfko", true, function () {
     };
     
     var createValueAccessor = function(view) {
+        ///<summary>Create a value accessor for the render binding.</summary>
         return function() {
             return view;
         };

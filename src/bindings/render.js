@@ -2,10 +2,12 @@
 Binding("render", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the render binding</summary>
         return ko.bindingHandlers.template.init.call(this, element, wpfko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
     };
 
     var update = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Update the render binding</summary>
         
         var child = wpfko.utils.ko.peek(wpfko.utils.ko.peek(valueAccessor()));
         if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || (child && !(child instanceof wpfko.base.visual)))
@@ -39,6 +41,8 @@ Binding("render", true, function () {
     };
     
     var createValueAccessor = function(oldValueAccessor) {
+        ///<summary>Create a value accessor for the knockout template binding.</summary>
+        
         // ensure template id does not trigger another update
         // this will be handled within the binding
         return function () {

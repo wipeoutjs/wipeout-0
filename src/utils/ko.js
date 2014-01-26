@@ -5,6 +5,7 @@ Class("wpfko.utils.ko", function () {
     var _ko = {};
     
     _ko.version = function() {
+        ///<summary>Get the current knockout version as an array of numbers</summary>
         
         if(!ko || !ko.version)
             return null;
@@ -17,6 +18,8 @@ Class("wpfko.utils.ko", function () {
     };   
     
     _ko.peek = function(input) {
+        ///<summary>Like ko.unwrap, but peeks instead</summary>
+        
         if(ko.isObservable(input))
             return input.peek();
         else
@@ -33,12 +36,14 @@ Class("wpfko.utils.ko", function () {
     
     //TODO: this
     _ko.isObservableArray = function(test) {
+        ///<summary>Like ko.isObservable, but for observableArrays</summary>
         return ko.isObservable(test) && test.push && test.push.constructor === Function;
     };
     
     _ko.virtualElements = {
-        parentElement: function(element) {
-            var current = element.previousSibling;
+        parentElement: function(node) {
+            ///<summary>Returns the parent element or parent knockout virtual element of a node</summary>
+            var current = node.previousSibling;
             while(current) {
                 if(_ko.virtualElements.isVirtual(current)) {
                     return current;
@@ -47,33 +52,17 @@ Class("wpfko.utils.ko", function () {
                 current = current.previousSibling;
             }
             
-            return element.parentNode;
+            return node.parentNode;
         },
+        //TODO: this
         isVirtual: function(node) {
+            ///<summary>Whether a html node is a knockout virtual element or not</summary>
             return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0;
         },
+        //TODO: this
         isVirtualClosing: function(node) {
+            ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
             return node.nodeType === 8 && node.nodeValue.replace(/^\s+|\s+$/g, '') === "/ko";
-        },
-        elementWithChildren: function(element) {
-            if(!element) return [];
-            
-            if(!_ko.virtualElements.isVirtual(element)) return [element];
-            
-            var output = [element];
-            var depth = 1;
-            var current = element.nextSibling;
-            while (depth > 0) {
-                output.push(current);
-                if(_ko.virtualElements.isVirtualClosing(current))
-                    depth--;                
-                else if(_ko.virtualElements.isVirtual(current))
-                    depth++;
-                
-                current = current.nextSibling;
-            }            
-            
-            return output;
         }
     };
     

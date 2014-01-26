@@ -3,6 +3,7 @@
 Class("wpfko.utils.html", function () { 
         
     var outerHTML = function(element) {
+        ///<summary>Browser agnostic outerHTML function</summary>
         if(!element) return null;
         
         if(element.constructor === HTMLHtmlElement) throw "Cannot serialize a Html element using outerHTML";
@@ -16,6 +17,8 @@ Class("wpfko.utils.html", function () {
     
     var validHtmlCharacter = /[a-zA-Z0-9]/;
     var getTagName = function(openingTag) {
+        ///<summary>Get the tag name of the first element in the string</summary>
+        
         openingTag = openingTag.replace(/^\s+|\s+$/g, "");
         if(!openingTag || openingTag[0] !== "<")
             throw "Invalid html tag";
@@ -32,6 +35,8 @@ Class("wpfko.utils.html", function () {
     
     var stripHtmlComments = /<\!--[^>]*-->/g;
     var getFirstTagName = function(htmlContent) {
+        ///<summary>Get the tag name of the first element in the string</summary>
+        
         htmlContent = htmlContent.replace(stripHtmlComments, "").replace(/^\s+|\s+$/g, "");
         var i = 0;
         if((i = htmlContent.indexOf("<")) === -1)
@@ -62,6 +67,8 @@ Class("wpfko.utils.html", function () {
     };
         
     var createElement = function(htmlString) {
+        ///<summary>Create a html element from a string</summary>
+        
         if(!htmlString) return null;
         var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
         parent.innerHTML = htmlString;
@@ -71,6 +78,8 @@ Class("wpfko.utils.html", function () {
     }; 
        
     var createElements = function(htmlString) {
+        ///<summary>Create an array of html elements from a string</summary>
+        
         if(htmlString == null) return [];
         
         var sibling = getFirstTagName(htmlString) || "div";
@@ -131,6 +140,8 @@ Class("wpfko.utils.html", function () {
     };
  
     var getAllChildren = function (element) {
+        ///<summary>Get all of the children of a html element or knockout virtual element</summary>
+        
         var children = [];
         if (wpfko.utils.ko.virtualElements.isVirtual(element)) {
             var parent = wpfko.utils.ko.virtualElements.parentElement(element);
@@ -180,6 +191,7 @@ Class("wpfko.utils.html", function () {
     };
     
     var getViewModel = function(forHtmlNode) {
+        ///<summary>Get the view model associated with a html node</summary>
         return ko.utils.domData.get(forHtmlNode, wpfko.bindings.wpfko.utils.wpfkoKey);        
     };
     

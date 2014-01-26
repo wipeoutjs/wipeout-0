@@ -55,6 +55,7 @@ Class("wpfko.base.routedEventRegistration", function () {
     };
     
     routedEventRegistration.prototype.dispose = function() {
+        ///<summary>Dispose of the callbacks associated with this registration</summary>
         this.event.dispose();
     };
     

@@ -98,6 +98,7 @@ Class("wpfko.base.view", function () {
     };    
     
     view.elementHasModelBinding = function(element) {
+        ///<summary>returns whether the view defined in the element was explicitly given a model property</summary>
         
         for(var i = 0, ii = element.attributes.length; i < ii; i++) {
             if(element.attributes[i].nodeName === "model" || element.attributes[i].nodeName === "model-tw")

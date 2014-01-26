@@ -2,6 +2,7 @@
 Binding("wo", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the wo binding</summary>
         
         var vals = wpfko.template.engine.scriptCache[valueAccessor()](bindingContext);
         

@@ -7,12 +7,12 @@ Class("wpfko.template.engine", function () {
     engine.prototype = new ko.templateEngine();
     
     engine.createJavaScriptEvaluatorFunction = function(script) {
-        ///<summary>Modify a block of script so that it's running context is the bining context</summary>
+        ///<summary>Modify a block of script so that it's running context is bindingContext.$data first and biningContext second</summary>
         return new Function("bindingContext", "with(bindingContext) {\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
     }
     
     engine.createJavaScriptEvaluatorBlock = function(script) {
-        ///<summary>Add a function to the static script cache or cretate and add a script</summary>
+        ///<summary>Add a function to the static script cache or cretate and add a function from a string</summary>
         var scriptId = engine.newScriptId();
         
         if(script instanceof Function) {
@@ -25,11 +25,12 @@ Class("wpfko.template.engine", function () {
     };
     
     engine.prototype.createJavaScriptEvaluatorBlock = function(script) {
-        ///<summary>Add a function to the static script cache or cretate and add a script</summary>
+        ///<summary>Add a function to the static script cache or cretate and add a function from a string</summary>
         return engine.createJavaScriptEvaluatorBlock(script);
     };
     
     engine.prototype.rewriteTemplate = function (template, rewriterCallback, templateDocument) {
+        ///<summary>First re-write the template via knockout, the re-write the template via wipeout</summary>
         
         var script = document.getElementById(template);
         if (script instanceof HTMLElement) {        
@@ -78,6 +79,7 @@ Class("wpfko.template.engine", function () {
     };    
     
     engine.getId = function(xmlElement) {
+        ///<summary>Get the id property of the xmlElement if any</summary>
         for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
             if(xmlElement.attributes[i].nodeName === "id") {
                 return xmlElement.attributes[i].value;
@@ -88,6 +90,7 @@ Class("wpfko.template.engine", function () {
     };
     
     engine.prototype.wipeoutRewrite = function(script) {
+        ///<summary>Replace all wipeout views with render bindings</summary>
         
         var ser = new XMLSerializer();
         xmlTemplate = new DOMParser().parseFromString("<root>" + script.textContent + "</root>", "application/xml").documentElement;        

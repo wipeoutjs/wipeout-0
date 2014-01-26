@@ -1,6 +1,7 @@
 var wpfko = {};
     
 var enumerate = function(enumerate, action, context) {
+    ///<summary>Enumerate through an array or object</summary>
     context = context || window;
         
     if(enumerate == null) return;
@@ -17,10 +18,14 @@ var enumerate = function(enumerate, action, context) {
 };
 
 var enumerateDesc = function(enumerate, action, context) {
+    ///<summary>Enumerate through an array or object in a decending order</summary>
     context = context || window;
     
     if(enumerate == null) return;
-    if(enumerate instanceof Array)
+    if(enumerate instanceof Array || 
+       enumerate instanceof HTMLCollection || 
+       enumerate instanceof NodeList || 
+       enumerate instanceof NamedNodeMap)
         for(var i = enumerate.length - 1; i >= 0; i--)
             action.call(context, enumerate[i], i);
     else {
@@ -34,6 +39,7 @@ var enumerateDesc = function(enumerate, action, context) {
 };
 
 var Binding = function(bindingName, allowVirtual, accessorFunction) {
+    ///<summary>Create a knockout binding</summary>
     
     var cls = Class("wpfko.bindings." + bindingName, accessorFunction);    
     ko.bindingHandlers[bindingName] = {
@@ -46,6 +52,8 @@ var Binding = function(bindingName, allowVirtual, accessorFunction) {
 };
 
 var Class = function(classFullName, accessorFunction) {
+    ///<summary>Create a wipeout class</summary>
+    
     classFullName = classFullName.split(".");
     var namespace = classFullName.splice(0, classFullName.length - 1);
     
@@ -58,6 +66,8 @@ var Class = function(classFullName, accessorFunction) {
 };
 
 var Extend = function(namespace, extendWith) {
+    ///<summary>Similar to $.extend but with a namespace string which must begin with "wpfko"</summary>
+    
     namespace = namespace.split(".");
     
     if(namespace[0] !== "wpfko") throw "Root must be \"wpfko\".";
@@ -77,6 +87,7 @@ var Extend = function(namespace, extendWith) {
 Class("wpfko.utils.obj", function () {
         
     var createObject = function(constructorString, context) {
+        ///<summary>Create an object from string</summary>
         if(!context) context = window;
         
         var constructor = constructorString.split(".");
@@ -94,6 +105,7 @@ Class("wpfko.utils.obj", function () {
     };
 
     var copyArray = function(input) {
+        ///<summary>Make a deep copy of an array</summary>
         var output = [];
         for(var i = 0, ii = input.length; i < ii; i++) {
             output.push(input[i]);
