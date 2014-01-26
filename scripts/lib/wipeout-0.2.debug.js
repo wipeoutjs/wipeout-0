@@ -1,6 +1,7 @@
 (function () { var wpfko = {};
     
 var enumerate = function(enumerate, action, context) {
+    ///<summary>Enumerate through an array or object</summary>
     context = context || window;
         
     if(enumerate == null) return;
@@ -17,10 +18,14 @@ var enumerate = function(enumerate, action, context) {
 };
 
 var enumerateDesc = function(enumerate, action, context) {
+    ///<summary>Enumerate through an array or object in a decending order</summary>
     context = context || window;
     
     if(enumerate == null) return;
-    if(enumerate instanceof Array)
+    if(enumerate instanceof Array || 
+       enumerate instanceof HTMLCollection || 
+       enumerate instanceof NodeList || 
+       enumerate instanceof NamedNodeMap)
         for(var i = enumerate.length - 1; i >= 0; i--)
             action.call(context, enumerate[i], i);
     else {
@@ -34,6 +39,7 @@ var enumerateDesc = function(enumerate, action, context) {
 };
 
 var Binding = function(bindingName, allowVirtual, accessorFunction) {
+    ///<summary>Create a knockout binding</summary>
     
     var cls = Class("wpfko.bindings." + bindingName, accessorFunction);    
     ko.bindingHandlers[bindingName] = {
@@ -46,6 +52,8 @@ var Binding = function(bindingName, allowVirtual, accessorFunction) {
 };
 
 var Class = function(classFullName, accessorFunction) {
+    ///<summary>Create a wipeout class</summary>
+    
     classFullName = classFullName.split(".");
     var namespace = classFullName.splice(0, classFullName.length - 1);
     
@@ -58,6 +66,8 @@ var Class = function(classFullName, accessorFunction) {
 };
 
 var Extend = function(namespace, extendWith) {
+    ///<summary>Similar to $.extend but with a namespace string which must begin with "wpfko"</summary>
+    
     namespace = namespace.split(".");
     
     if(namespace[0] !== "wpfko") throw "Root must be \"wpfko\".";
@@ -77,6 +87,7 @@ var Extend = function(namespace, extendWith) {
 Class("wpfko.utils.obj", function () {
         
     var createObject = function(constructorString, context) {
+        ///<summary>Create an object from string</summary>
         if(!context) context = window;
         
         var constructor = constructorString.split(".");
@@ -94,6 +105,7 @@ Class("wpfko.utils.obj", function () {
     };
 
     var copyArray = function(input) {
+        ///<summary>Make a deep copy of an array</summary>
         var output = [];
         for(var i = 0, ii = input.length; i < ii; i++) {
             output.push(input[i]);
@@ -560,6 +572,7 @@ Class("wpfko.base.view", function () {
     };    
     
     view.elementHasModelBinding = function(element) {
+        ///<summary>returns whether the view defined in the element was explicitly given a model property</summary>
         
         for(var i = 0, ii = element.attributes.length; i < ii; i++) {
             if(element.attributes[i].nodeName === "model" || element.attributes[i].nodeName === "model-tw")
@@ -858,6 +871,7 @@ Class("wpfko.base.if", function () {
     }, "_if");
     
     _if.prototype.elseTemplateChanged = function (newVal) {
+        ///<summary>Resets the template id to the else template if condition is not met</summary>     
         if (!this.condition()) {
             this.templateId(newVal);
         }
@@ -1139,6 +1153,7 @@ Class("wpfko.base.routedEventRegistration", function () {
     };
     
     routedEventRegistration.prototype.dispose = function() {
+        ///<summary>Dispose of the callbacks associated with this registration</summary>
         this.event.dispose();
     };
     
@@ -1148,6 +1163,8 @@ Class("wpfko.base.routedEventRegistration", function () {
 
 Binding("itemsControl", true, function () {
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the items control binding</summary>
+        
         if (!(viewModel instanceof wpfko.base.itemsControl))
             throw "This binding can only be used within the context of a wo.itemsControl";
 
@@ -1162,6 +1179,7 @@ Binding("itemsControl", true, function () {
     };
     
     var itemsChanged = function(element, viewModel, bindingContext) {
+        ///<summary>Reorder, add and delete items to the DOM</summary>
         return function(changes) {                
             var del = [], add = [], move = {}, delPadIndex = 0;
             for(var i = 0, ii = changes.length; i < ii; i++) {
@@ -1236,7 +1254,7 @@ Binding("itemsControl", true, function () {
     
     var utils = {
         subscribeV2: function(element, viewModel, bindingContext) {            
-            ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl<summary>            
+            ///<summary>Bind items to itemSource for knockout v2.<summary>            
             
             var items = wpfko.utils.obj.copyArray(viewModel.items.peek());
             var handler = utils.itemsChanged(element, viewModel, bindingContext);
@@ -1250,7 +1268,8 @@ Binding("itemsControl", true, function () {
                 }
             });
         },
-        subscribeV3: function(element, viewModel, bindingContext) {            
+        subscribeV3: function(element, viewModel, bindingContext) {
+            ///<summary>Bind items to itemSource for knockout v3.</summary>
             viewModel.items.subscribe(utils.itemsChanged(element, viewModel, bindingContext), window, "arrayChange");
         },
         itemsChanged: itemsChanged
@@ -1266,10 +1285,12 @@ Binding("itemsControl", true, function () {
 Binding("render", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the render binding</summary>
         return ko.bindingHandlers.template.init.call(this, element, wpfko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
     };
 
     var update = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Update the render binding</summary>
         
         var child = wpfko.utils.ko.peek(wpfko.utils.ko.peek(valueAccessor()));
         if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || (child && !(child instanceof wpfko.base.visual)))
@@ -1303,6 +1324,8 @@ Binding("render", true, function () {
     };
     
     var createValueAccessor = function(oldValueAccessor) {
+        ///<summary>Create a value accessor for the knockout template binding.</summary>
+        
         // ensure template id does not trigger another update
         // this will be handled within the binding
         return function () {
@@ -1336,7 +1359,9 @@ Binding("wipeout-type", true, function () {
     
     // placeholder for binding which does nothing    
     return {
-        init: function() { }
+        init: function() {
+        ///<summary>Initialize the wipeout-type control binding. This binding does not actually do anything</summary>
+        }
     };
 });
 
@@ -1344,6 +1369,7 @@ Binding("wipeout-type", true, function () {
 Binding("wo", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the wo binding</summary>
         
         var vals = wpfko.template.engine.scriptCache[valueAccessor()](bindingContext);
         
@@ -1364,6 +1390,7 @@ Binding("wo", true, function () {
 Binding("wpfko", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the wpfko binding</summary>
 
         //TODO: knockout standard way of controling element        
         //TODO: add optional inline properties to binding   
@@ -1390,6 +1417,7 @@ Binding("wpfko", true, function () {
     };
     
     var createValueAccessor = function(view) {
+        ///<summary>Create a value accessor for the render binding.</summary>
         return function() {
             return view;
         };
@@ -1413,12 +1441,12 @@ Class("wpfko.template.engine", function () {
     engine.prototype = new ko.templateEngine();
     
     engine.createJavaScriptEvaluatorFunction = function(script) {
-        ///<summary>Modify a block of script so that it's running context is the bining context</summary>
+        ///<summary>Modify a block of script so that it's running context is bindingContext.$data first and biningContext second</summary>
         return new Function("bindingContext", "with(bindingContext) {\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
     }
     
     engine.createJavaScriptEvaluatorBlock = function(script) {
-        ///<summary>Add a function to the static script cache or cretate and add a script</summary>
+        ///<summary>Add a function to the static script cache or cretate and add a function from a string</summary>
         var scriptId = engine.newScriptId();
         
         if(script instanceof Function) {
@@ -1431,11 +1459,12 @@ Class("wpfko.template.engine", function () {
     };
     
     engine.prototype.createJavaScriptEvaluatorBlock = function(script) {
-        ///<summary>Add a function to the static script cache or cretate and add a script</summary>
+        ///<summary>Add a function to the static script cache or cretate and add a function from a string</summary>
         return engine.createJavaScriptEvaluatorBlock(script);
     };
     
     engine.prototype.rewriteTemplate = function (template, rewriterCallback, templateDocument) {
+        ///<summary>First re-write the template via knockout, the re-write the template via wipeout</summary>
         
         var script = document.getElementById(template);
         if (script instanceof HTMLElement) {        
@@ -1484,6 +1513,7 @@ Class("wpfko.template.engine", function () {
     };    
     
     engine.getId = function(xmlElement) {
+        ///<summary>Get the id property of the xmlElement if any</summary>
         for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
             if(xmlElement.attributes[i].nodeName === "id") {
                 return xmlElement.attributes[i].value;
@@ -1494,6 +1524,7 @@ Class("wpfko.template.engine", function () {
     };
     
     engine.prototype.wipeoutRewrite = function(script) {
+        ///<summary>Replace all wipeout views with render bindings</summary>
         
         var ser = new XMLSerializer();
         xmlTemplate = new DOMParser().parseFromString("<root>" + script.textContent + "</root>", "application/xml").documentElement;        
@@ -1559,12 +1590,15 @@ Class("wpfko.template.engine", function () {
 Class("wpfko.template.htmlBuilder", function () {
     
     var htmlBuilder = function(xmlTemplate) {
+        ///<summary>Pre-compile that needed to render html from a binding context from a given template</summary>
         
         this.preRendered = [];
         this.generatePreRender(xmlTemplate);
     };
     
-    htmlBuilder.prototype.render = function(bindingContext) {        
+    htmlBuilder.prototype.render = function(bindingContext) {
+        ///<summary>Build html elements from a binding context</summary>
+        
         var contexts = [];
         var returnVal = [];
         for(var i = 0, ii = this.preRendered.length; i < ii; i++) {
@@ -1590,6 +1624,7 @@ Class("wpfko.template.htmlBuilder", function () {
     //TODO: there is wastage here. Template string is parsed to xml to be passed in here, then parsed straight back to string to generate html
     // but it seems to be necessary to clen up bad html (generated by previous xml parsing)
     htmlBuilder.prototype.generatePreRender = function(templateString) {
+        ///<summary>Pre compile render code</summary>
                    
         var xmlTemplate = new DOMParser().parseFromString("<root>" + templateString + "</root>", "application/xml").documentElement;
         
@@ -1629,6 +1664,7 @@ Class("wpfko.template.htmlBuilder", function () {
     
     //TODO: this is done at render time, can it be cached?
     htmlBuilder.getTemplateIds = function (element) {
+        ///<summary>Return all html elements with an id</summary>
         var ids = {};
         enumerate(element.childNodes, function(node) {
             if(node.nodeType === 1) {
@@ -1649,6 +1685,7 @@ Class("wpfko.template.htmlBuilder", function () {
     };
     
     htmlBuilder.generateTemplate = function(xmlTemplate) { 
+        ///<summary>???</summary>
         var result = [];
         var ser = new XMLSerializer();
         
@@ -1678,18 +1715,11 @@ Class("wpfko.template.htmlBuilder", function () {
 });
 
 
-Class("wpfko.template.switchBindingContext", function () {
-    
-    return function(bindingContext) {
-        this.bindingContext = bindingContext;
-    }
-});
-
-
 
 Class("wpfko.utils.html", function () { 
         
     var outerHTML = function(element) {
+        ///<summary>Browser agnostic outerHTML function</summary>
         if(!element) return null;
         
         if(element.constructor === HTMLHtmlElement) throw "Cannot serialize a Html element using outerHTML";
@@ -1703,6 +1733,8 @@ Class("wpfko.utils.html", function () {
     
     var validHtmlCharacter = /[a-zA-Z0-9]/;
     var getTagName = function(openingTag) {
+        ///<summary>Get the tag name of the first element in the string</summary>
+        
         openingTag = openingTag.replace(/^\s+|\s+$/g, "");
         if(!openingTag || openingTag[0] !== "<")
             throw "Invalid html tag";
@@ -1719,6 +1751,8 @@ Class("wpfko.utils.html", function () {
     
     var stripHtmlComments = /<\!--[^>]*-->/g;
     var getFirstTagName = function(htmlContent) {
+        ///<summary>Get the tag name of the first element in the string</summary>
+        
         htmlContent = htmlContent.replace(stripHtmlComments, "").replace(/^\s+|\s+$/g, "");
         var i = 0;
         if((i = htmlContent.indexOf("<")) === -1)
@@ -1749,6 +1783,8 @@ Class("wpfko.utils.html", function () {
     };
         
     var createElement = function(htmlString) {
+        ///<summary>Create a html element from a string</summary>
+        
         if(!htmlString) return null;
         var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
         parent.innerHTML = htmlString;
@@ -1758,6 +1794,8 @@ Class("wpfko.utils.html", function () {
     }; 
        
     var createElements = function(htmlString) {
+        ///<summary>Create an array of html elements from a string</summary>
+        
         if(htmlString == null) return [];
         
         var sibling = getFirstTagName(htmlString) || "div";
@@ -1818,6 +1856,8 @@ Class("wpfko.utils.html", function () {
     };
  
     var getAllChildren = function (element) {
+        ///<summary>Get all of the children of a html element or knockout virtual element</summary>
+        
         var children = [];
         if (wpfko.utils.ko.virtualElements.isVirtual(element)) {
             var parent = wpfko.utils.ko.virtualElements.parentElement(element);
@@ -1867,6 +1907,7 @@ Class("wpfko.utils.html", function () {
     };
     
     var getViewModel = function(forHtmlNode) {
+        ///<summary>Get the view model associated with a html node</summary>
         return ko.utils.domData.get(forHtmlNode, wpfko.bindings.wpfko.utils.wpfkoKey);        
     };
     
@@ -1895,6 +1936,7 @@ Class("wpfko.utils.ko", function () {
     var _ko = {};
     
     _ko.version = function() {
+        ///<summary>Get the current knockout version as an array of numbers</summary>
         
         if(!ko || !ko.version)
             return null;
@@ -1907,6 +1949,8 @@ Class("wpfko.utils.ko", function () {
     };   
     
     _ko.peek = function(input) {
+        ///<summary>Like ko.unwrap, but peeks instead</summary>
+        
         if(ko.isObservable(input))
             return input.peek();
         else
@@ -1923,12 +1967,14 @@ Class("wpfko.utils.ko", function () {
     
     //TODO: this
     _ko.isObservableArray = function(test) {
+        ///<summary>Like ko.isObservable, but for observableArrays</summary>
         return ko.isObservable(test) && test.push && test.push.constructor === Function;
     };
     
     _ko.virtualElements = {
-        parentElement: function(element) {
-            var current = element.previousSibling;
+        parentElement: function(node) {
+            ///<summary>Returns the parent element or parent knockout virtual element of a node</summary>
+            var current = node.previousSibling;
             while(current) {
                 if(_ko.virtualElements.isVirtual(current)) {
                     return current;
@@ -1937,33 +1983,17 @@ Class("wpfko.utils.ko", function () {
                 current = current.previousSibling;
             }
             
-            return element.parentNode;
+            return node.parentNode;
         },
+        //TODO: this
         isVirtual: function(node) {
+            ///<summary>Whether a html node is a knockout virtual element or not</summary>
             return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0;
         },
+        //TODO: this
         isVirtualClosing: function(node) {
+            ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
             return node.nodeType === 8 && node.nodeValue.replace(/^\s+|\s+$/g, '') === "/ko";
-        },
-        elementWithChildren: function(element) {
-            if(!element) return [];
-            
-            if(!_ko.virtualElements.isVirtual(element)) return [element];
-            
-            var output = [element];
-            var depth = 1;
-            var current = element.nextSibling;
-            while (depth > 0) {
-                output.push(current);
-                if(_ko.virtualElements.isVirtualClosing(current))
-                    depth--;                
-                else if(_ko.virtualElements.isVirtual(current))
-                    depth++;
-                
-                current = current.nextSibling;
-            }            
-            
-            return output;
         }
     };
     
