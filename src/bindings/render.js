@@ -22,6 +22,10 @@ Binding("render", true, function () {
         var _this = this;
         var templateChanged = function() {
             ko.bindingHandlers.template.update.call(_this, element, wpfko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
+            
+            var bindings = allBindingsAccessor();
+            if(bindings["wipeout-type"])
+                wpfko.bindings["wipeout-type"].utils.comment(element, bindings["wipeout-type"]);
         };
         
         var previous = ko.utils.domData.get(element, wpfko.bindings.wpfko.utils.wpfkoKey); 

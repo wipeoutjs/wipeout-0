@@ -66,13 +66,13 @@ Class("wpfko.template.engine", function () {
                 };
             };
             
-            var openingTag = "<!-- ko";
+            var tags = "<!-- ko";
             if(DEBUG)
-                openingTag += " wipeout-type: '" + xmlElement.nodeName + "',";
+                tags += " wipeout-type: '" + xmlElement.nodeName + "',";
             
-            openingTag += " wo: " + newScriptId + " --><!-- /ko -->";
+            tags += " wo: " + newScriptId + " --><!-- /ko -->";
             
-            var nodes = new DOMParser().parseFromString("<root>" + rewriterCallback(openingTag) + "</root>", "application/xml").documentElement;
+            var nodes = new DOMParser().parseFromString("<root>" + rewriterCallback(tags) + "</root>", "application/xml").documentElement;
             while(nodes.childNodes.length) {
                 var node = nodes.childNodes[0];
                 node.parentElement.removeChild(node);
