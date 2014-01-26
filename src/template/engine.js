@@ -135,6 +135,20 @@ Class("wpfko.template.engine", function () {
         return output;
     };
     
+    // override functions for the sake of documentation
+    if(DEBUG) {
+        var override = function(toOverride) {
+            engine.prototype[toOverride] = function () {
+                ///<summary>Knockout native function</summary>
+                ko.templateEngine.prototype[toOverride].apply(this, arguments);
+            };
+        };
+        
+        override("isTemplateRewritten");
+        override("makeTemplateSource");
+        override("renderTemplate");
+    }
+    
     engine.newScriptId = (function() {        
         var i = Math.floor(Math.random() * 10000);        
         return function() {

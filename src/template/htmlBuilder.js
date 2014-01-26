@@ -3,6 +3,7 @@ Class("wpfko.template.htmlBuilder", function () {
     var htmlBuilder = function(xmlTemplate) {
         ///<summary>Pre-compile that needed to render html from a binding context from a given template</summary>
         
+        // pre rendered strings or string generating functions which make up the final html
         this.preRendered = [];
         this.generatePreRender(xmlTemplate);
     };
