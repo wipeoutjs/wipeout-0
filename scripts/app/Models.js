@@ -52,32 +52,114 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.content = ko.observable(new landingPage());
         
         var currentApi = new api();
-        
-        var objectBranch = new classTreeViewBranch("wo.object", currentApi.forClass("wo.object"));
-        var visualBranch = new classTreeViewBranch("wo.visual", currentApi.forClass("wo.visual"));
-        var viewBranch = new classTreeViewBranch("wo.view", currentApi.forClass("wo.view"));
-        var contentControlBranch = new classTreeViewBranch("wo.contentControl", currentApi.forClass("wo.contentControl"));
-        var contentControlBranch = new classTreeViewBranch("wo.if", currentApi.forClass("wo.if"));
-        var itemsControlBranch = new classTreeViewBranch("wo.itemsControl", currentApi.forClass("wo.itemsControl"));
-        var eventBranch = new classTreeViewBranch("wo.event", currentApi.forClass("wo.event"));
-        var routedEventBranch = new classTreeViewBranch("wo.routedEvent", currentApi.forClass("wo.routedEvent"));
-        var routedEventArgsBranch = new classTreeViewBranch("wo.routedEventArgs", currentApi.forClass("wo.routedEventArgs"));
-        var routedEventRegistrationBranch = new classTreeViewBranch("wo.routedEventRegistration", currentApi.forClass("wo.routedEventRegistration"));
+                
+        //wo
+        var _wo = (function() {
+            var objectBranch = new classTreeViewBranch("object", currentApi.forClass("wo.object"));
+            var visualBranch = new classTreeViewBranch("visual", currentApi.forClass("wo.visual"));
+            var viewBranch = new classTreeViewBranch("view", currentApi.forClass("wo.view"));
+            var contentControlBranch = new classTreeViewBranch("contentControl", currentApi.forClass("wo.contentControl"));
+            var ifBranch = new classTreeViewBranch("if", currentApi.forClass("wo.if"));
+            var itemsControlBranch = new classTreeViewBranch("itemsControl", currentApi.forClass("wo.itemsControl"));
+            var eventBranch = new classTreeViewBranch("event", currentApi.forClass("wo.event"));
+            var routedEventBranch = new classTreeViewBranch("routedEvent", currentApi.forClass("wo.routedEvent"));
+            var routedEventArgsBranch = new classTreeViewBranch("routedEventArgs", currentApi.forClass("wo.routedEventArgs"));
+            var routedEventRegistrationBranch = new classTreeViewBranch("routedEventRegistration", currentApi.forClass("wo.routedEventRegistration"));
+            
+            var htmlBranch = new classTreeViewBranch("html", currentApi.forClass("wo.html"));
+            var koVirtualElementsBranch = new classTreeViewBranch("virtualElements", currentApi.forClass("wo.ko.virtualElements"));
+            var koBranch = new classTreeViewBranch("ko", currentApi.forClass("wo.ko"), {staticProperties: {"virtualElements": koVirtualElementsBranch}});
+            var objBranch = new classTreeViewBranch("obj", currentApi.forClass("wo.obj"));
+            
+            return new treeViewBranch("wo", [
+                contentControlBranch,
+                eventBranch,
+                ifBranch,
+                htmlBranch,
+                itemsControlBranch,
+                koBranch,
+                objBranch,
+                objectBranch,
+                routedEventBranch,
+                routedEventArgsBranch,
+                routedEventRegistrationBranch,
+                viewBranch,
+                visualBranch
+            ]);
+        })();
+                                     
+        //wpfko
+        var _wpfko = (function() {
+            
+            var _base = (function() {
+                var objectBranch = new classTreeViewBranch("object", currentApi.forClass("wpfko.base.object"));
+                var visualBranch = new classTreeViewBranch("visual", currentApi.forClass("wpfko.base.visual"));
+                var viewBranch = new classTreeViewBranch("view", currentApi.forClass("wpfko.base.view"));
+                var contentControlBranch = new classTreeViewBranch("contentControl", currentApi.forClass("wpfko.base.contentControl"));
+                var ifBranch = new classTreeViewBranch("if", currentApi.forClass("wpfko.base.if"));
+                var itemsControlBranch = new classTreeViewBranch("itemsControl", currentApi.forClass("wpfko.base.itemsControl"));
+                var eventBranch = new classTreeViewBranch("event", currentApi.forClass("wpfko.base.event"));
+                var routedEventBranch = new classTreeViewBranch("routedEvent", currentApi.forClass("wpfko.base.routedEvent"));
+                var routedEventArgsBranch = new classTreeViewBranch("routedEventArgs", currentApi.forClass("wpfko.base.routedEventArgs"));
+                var routedEventRegistrationBranch = new classTreeViewBranch("routedEventRegistration", currentApi.forClass("wpfko.base.routedEventRegistration"));
+                
+                return new treeViewBranch("base", [
+                    contentControlBranch,
+                    eventBranch,
+                    ifBranch,
+                    itemsControlBranch,
+                    objectBranch,
+                    routedEventBranch,
+                    routedEventArgsBranch,
+                    routedEventRegistrationBranch,
+                    viewBranch,
+                    visualBranch
+                ]);
+            })();
+            
+            var _bindings = (function() {
+                
+                var itemsControl = new classTreeViewBranch("itemsControl", currentApi.forClass("wpfko.bindings.itemsControl"));
+                var render = new classTreeViewBranch("render", currentApi.forClass("wpfko.bindings.render"));
+                var wipeout_type = new classTreeViewBranch("wipeout-type", currentApi.forClass("wpfko.bindings.wipeout-type"));
+                var _wo = new classTreeViewBranch("wo", currentApi.forClass("wpfko.bindings.wo"));
+                var _wpfko = new classTreeViewBranch("wpfko", currentApi.forClass("wpfko.bindings.wpfko"));
+                
+                return new treeViewBranch("bindings", [
+                    itemsControl,
+                    render,
+                    wipeout_type,
+                    _wo,
+                    _wpfko
+                ]);
+            })();
+            
+            var _utils = (function() {
+                
+                var htmlBranch = new classTreeViewBranch("html", currentApi.forClass("wpfko.utils.html"));
+                var koVirtualElementsBranch = new classTreeViewBranch("virtualElements", currentApi.forClass("wpfko.utils.ko.virtualElements"));
+                var koBranch = new classTreeViewBranch("ko", currentApi.forClass("wpfko.utils.ko"), {staticProperties: {"virtualElements": koVirtualElementsBranch}});
+                var objBranch = new classTreeViewBranch("obj", currentApi.forClass("wpfko.utils.obj"));
+                
+                return new treeViewBranch("utils", [
+                    htmlBranch,
+                    koBranch,
+                    objBranch
+                ]);
+            })();
+            
+            return new treeViewBranch("wpfko", [
+                _base,
+                _bindings,
+                _utils
+            ]);
+        })();
         
         this.menu =
             new treeViewBranch("wipeout", [
                 new treeViewBranch("API", [
-                    new treeViewBranch("wo", [
-                        contentControlBranch,
-                        eventBranch,
-                        itemsControlBranch,
-                        objectBranch,
-                        routedEventBranch,
-                        routedEventArgsBranch,
-                        routedEventRegistrationBranch,
-                        viewBranch,
-                        visualBranch
-                    ])
+                    _wo,
+                    _wpfko
                 ])
         ]);        
     });
@@ -184,47 +266,51 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
             }
         }
         
-        var anInstance = new this.constructorFunction();        
-        for(var i in anInstance) {
-            if(anInstance.hasOwnProperty(i)) {                    
-                if(anInstance[i] instanceof wo.event) { 
-                    this.events.push(new eventDescription(this.constructorFunction, i, this.classFullName));
-                } else if(anInstance[i] instanceof Function && !ko.isObservable(anInstance[i])) { 
-                    this.functions.push(new functionDescription(anInstance[i], i, this.classFullName));
-                } else {
-                    this.properties.push(new propertyDescription(this.constructorFunction, i, this.classFullName));
+        if(this.constructorFunction.constructor === Function) {
+            var anInstance = new this.constructorFunction();        
+            for(var i in anInstance) {
+                if(anInstance.hasOwnProperty(i)) {                    
+                    if(anInstance[i] instanceof wo.event) { 
+                        this.events.push(new eventDescription(this.constructorFunction, i, this.classFullName));
+                    } else if(anInstance[i] instanceof Function && !ko.isObservable(anInstance[i])) { 
+                        this.functions.push(new functionDescription(anInstance[i], i, this.classFullName));
+                    } else {
+                        this.properties.push(new propertyDescription(this.constructorFunction, i, this.classFullName));
+                    }
                 }
             }
         }
         
-        var current = this.constructorFunction;
-        while((current = Object.getPrototypeOf(current.prototype).constructor) !== Object) {  
-            var parentClass = this.api.getClassDescription(current);
-            if(!parentClass)
-                throw "Class has not been defined yet";
-            
-            var copy = function(fromTo, nameProperty) {
-                enumerate(parentClass[fromTo], function(fn) { 
-                    if(this[fromTo].indexOf(fn) !== -1) return;
-                    
-                    for(var i = 0, ii = this[fromTo].length; i < ii; i++) {                    
-                        if(this[fromTo][i][nameProperty] === fn[nameProperty]) {
-                            if(!this[fromTo][i].overrides)
-                                this[fromTo][i].overrides = fn;
-                            
-                            return;
+        if(this.constructorFunction.constructor === Function) {
+            var current = this.constructorFunction;
+            while((current = Object.getPrototypeOf(current.prototype).constructor) !== Object) {  
+                var parentClass = this.api.getClassDescription(current);
+                if(!parentClass)
+                    throw "Class has not been defined yet";
+                
+                var copy = function(fromTo, nameProperty) {
+                    enumerate(parentClass[fromTo], function(fn) { 
+                        if(this[fromTo].indexOf(fn) !== -1) return;
+                        
+                        for(var i = 0, ii = this[fromTo].length; i < ii; i++) {                    
+                            if(this[fromTo][i][nameProperty] === fn[nameProperty]) {
+                                if(!this[fromTo][i].overrides)
+                                    this[fromTo][i].overrides = fn;
+                                
+                                return;
+                            }
                         }
-                    }
-                    
-                    this[fromTo].push(fn);
-                }, this);
-            };
-            
-            // instance items only (no statics)
-            copy.call(this, "events", "eventName");
-            copy.call(this, "properties", "propertyName");
-            copy.call(this, "functions", "functionName");
-        };
+                        
+                        this[fromTo].push(fn);
+                    }, this);
+                };
+                
+                // instance items only (no statics)
+                copy.call(this, "events", "eventName");
+                copy.call(this, "properties", "propertyName");
+                copy.call(this, "functions", "functionName");
+            }
+        }
         
         var pullSummaryFromOverride = function(fromTo) {
             enumerate(this[fromTo], function(item) {
@@ -273,37 +359,63 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         return classFullName[classFullName.length - 1];
     };
     
-    var classTreeViewBranch = pageTreeViewBranch.extend(function(name, classDescription) {
-        this._super(name, classDescription, classTreeViewBranch.compileBranches(classDescription));
+    var classTreeViewBranch = pageTreeViewBranch.extend(function(name, classDescription, customBranches) {
+        this._super(name, classDescription, classTreeViewBranch.compileBranches(classDescription, customBranches));
     });
     
-    classTreeViewBranch.compileBranches = function(classDescription) {
+    classTreeViewBranch.compileBranches = function(classDescription, customBranches /*optional*/) {
         var output = [];
+        
+        customBranches = customBranches || {};
+        customBranches.staticEvents = customBranches.staticEvents || {};
+        customBranches.staticProperties = customBranches.staticProperties || {};
+        customBranches.staticFunctions = customBranches.staticFunctions || {};
+        customBranches.events = customBranches.events || {};
+        customBranches.properties = customBranches.properties || {};
+        customBranches.functions = customBranches.functions || {};
         
         output.push(new pageTreeViewBranch("constructor"));    
         
         enumerate(classDescription.staticEvents, function(event) {
-            output.push(new pageTreeViewBranch(event.eventName, null));            
+            if(customBranches.staticEvents[event.eventName])
+                output.push(customBranches.staticEvents[event.eventName]);
+            else
+                output.push(new pageTreeViewBranch(event.eventName, null));            
         });
         
         enumerate(classDescription.staticProperties, function(property) {
-            output.push(new pageTreeViewBranch(property.propertyName, null));            
+            if(customBranches.staticProperties[property.propertyName])
+                output.push(customBranches.staticProperties[property.propertyName]);
+            else
+                output.push(new pageTreeViewBranch(property.propertyName, null));
         });
         
         enumerate(classDescription.staticFunctions, function(_function) {
-            output.push(new pageTreeViewBranch(_function.functionName, null));            
+            if(customBranches.staticFunctions[_function.functionName])
+                output.push(customBranches.staticFunctions[_function.functionName]);
+            else
+                output.push(new pageTreeViewBranch(_function.functionName, null));            
         });
         
         enumerate(classDescription.events, function(event) {
-            output.push(new pageTreeViewBranch(event.eventName, null));            
+            if(customBranches.events[event.eventName])
+                output.push(customBranches.events[event.eventName]);
+            else
+                output.push(new pageTreeViewBranch(event.eventName, null));            
         });
         
         enumerate(classDescription.properties, function(property) {
-            output.push(new pageTreeViewBranch(property.propertyName, null));            
+            if(customBranches.staticProperties[property.propertyName])
+                output.push(customBranches.staticProperties[property.propertyName]);
+            else
+                output.push(new pageTreeViewBranch(property.propertyName, null));            
         });
         
         enumerate(classDescription.functions, function(_function) {
-            output.push(new pageTreeViewBranch(_function.functionName, null));            
+            if(customBranches.functions[_function.functionName])
+                output.push(customBranches.functions[_function.functionName]);
+            else
+                output.push(new pageTreeViewBranch(_function.functionName, null));            
         });
         
         output.sort(function() { return arguments[0].name === "constructor" ? -1 : arguments[0].name.localeCompare(arguments[1].name); });
@@ -329,26 +441,26 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
     });
         
     functionDescription.getFunctionSummary = function(theFunction) {
-        theFunction = theFunction.toString();
+        var functionString = theFunction.toString();
         
         var isInlineComment = false;
         var isBlockComment = false;
         
         var removeFunctionDefinition = function() {
-            var firstInline = theFunction.indexOf("//");
-            var firstBlock = theFunction.indexOf("/*");
-            var openFunction = theFunction.indexOf("{");
+            var firstInline = functionString.indexOf("//");
+            var firstBlock = functionString.indexOf("/*");
+            var openFunction = functionString.indexOf("{");
             
             if(firstInline === -1) firstInline = Number.MAX_VALUE;
             if(firstBlock === -1) firstBlock = Number.MAX_VALUE;
                     
             if(openFunction < firstInline && openFunction < firstBlock) {
-                theFunction = theFunction.substr(openFunction + 1).replace(/^\s+|\s+$/g, '');
+                functionString = functionString.substr(openFunction + 1).replace(/^\s+|\s+$/g, '');
             } else { 
                 if(firstInline < firstBlock) {
-                    theFunction = theFunction.substr(theFunction.indexOf("\n")).replace(/^\s+|\s+$/g, '');
+                    functionString = functionString.substr(functionString.indexOf("\n")).replace(/^\s+|\s+$/g, '');
                 } else {
-                    theFunction = theFunction.substr(theFunction.indexOf("*/")).replace(/^\s+|\s+$/g, '');
+                    functionString = functionString.substr(functionString.indexOf("*/")).replace(/^\s+|\s+$/g, '');
                 }
                 
                 removeFunctionDefinition();
@@ -357,8 +469,8 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         
         removeFunctionDefinition();
         
-        if (theFunction.indexOf("///<summary>" === 0)) {
-            return theFunction.substring(12, theFunction.indexOf("</summary>"));
+        if (functionString.indexOf("///<summary>") === 0) {
+            return functionString.substring(12, functionString.indexOf("</summary>"));
         }
         
         return "";   
