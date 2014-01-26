@@ -9,10 +9,10 @@ test("specialTags", function() {
     // arrange    
     // act    
     //assert
-    wo.utils.obj.enumerate(wo.visual.reservedTags, function(tag) {
+    wo.obj.enumerate(wo.visual.reservedTags, function(tag) {
         if(tag === "html")
-            throws(function() { wo.utils.html.outerHTML(document.createElement(tag)); }, tag);
+            throws(function() { wo.html.outerHTML(document.createElement(tag)); }, tag);
         else
-            ok(wo.utils.html.outerHTML(document.createElement(tag)), tag);        
+            ok(wo.html.outerHTML(document.createElement(tag)), tag);        
     });    
 });

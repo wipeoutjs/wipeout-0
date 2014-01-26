@@ -23,7 +23,7 @@ Class("wpfko.base.object", function () {
                 cachedSuperMethods.children.splice(i, 1);
                 cachedSuperMethods.parents.splice(i, 1);
             }
-        };
+        }
     };
     
     // The virtual cache caches overridden methods for quick lookup later. It is not safe to use if two function prototypes which are not related share the same function, or function prototypes are modified after an application initilisation stage

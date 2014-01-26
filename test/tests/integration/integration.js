@@ -5,7 +5,7 @@ module("wipeout.tests.integration", {
         $application = $($fixture.children()[0]);
         
         ko.applyBindings({}, $application[0]);
-        application = wo.utils.html.getViewModel($application[0]);
+        application = wo.html.getViewModel($application[0]);
         
         window.views = {};
     },
@@ -113,14 +113,14 @@ test("un render", function() {
     var ctrls = [];
     var getAllChildren = function(forItem) {
         ctrls.push(forItem);
-        wo.utils.obj.enumerate(forItem.rendernedChildren, function(item) {
+        wo.obj.enumerate(forItem.rendernedChildren, function(item) {
             getAllChildren(item);
         });
     };
     
     getAllChildren(application);
         
-    wo.utils.obj.enumerate(ctrls, function(item) {
+    wo.obj.enumerate(ctrls, function(item) {
         ok(item._rootHtmlElement);
     });
     
@@ -128,7 +128,7 @@ test("un render", function() {
     application.unRender();
     
     // assert
-    wo.utils.obj.enumerate(ctrls, function(item) {
+    wo.obj.enumerate(ctrls, function(item) {
         ok(!item._rootHtmlElement);
     });
 });
