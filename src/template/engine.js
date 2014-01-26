@@ -30,12 +30,13 @@ Class("wpfko.template.engine", function () {
     };
     
     engine.prototype.rewriteTemplate = function (template, rewriterCallback, templateDocument) {
-        ///<summary>First re-write the template via knockout, the re-write the template via wipeout</summary>
+        ///<summary>First re-write the template via knockout, then re-write the template via wipeout</summary>
         
         var script = document.getElementById(template);
         if (script instanceof HTMLElement) {        
             // if it is an anonymous template it will already have been rewritten
             if (!engine.scriptHasBeenReWritten.test(script.textContent)) {
+                debugger;
                 ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
             } else {
                 this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
