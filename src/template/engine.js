@@ -36,24 +36,23 @@ Class("wpfko.template.engine", function () {
         if (script instanceof HTMLElement) {        
             // if it is an anonymous template it will already have been rewritten
             if (!engine.scriptHasBeenReWritten.test(script.textContent)) {
-                debugger;
                 ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
             } else {
                 this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
             }
             
-            this.wipeoutRewrite(script);
+            this.wipeoutRewrite(script, rewriterCallback);
         } else {
             ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
         }
     };    
     
-    engine.wipeoutRewrite = function(xmlElement) {
+    engine.wipeoutRewrite = function(xmlElement, rewriterCallback) {
         ///<summary>Recursively go through an xml element and replace all view models with render comments</summary>
         if(wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName) !== -1) {
             for(var i = 0; i < xmlElement.childNodes.length; i++)
                 if(xmlElement.childNodes[i].nodeType === 1)
-                    engine.wipeoutRewrite(xmlElement.childNodes[i]);
+                    engine.wipeoutRewrite(xmlElement.childNodes[i], rewriterCallback);
         } else {
             var newScriptId = engine.newScriptId();
             engine.scriptCache[newScriptId] = function(parentBindingContext) {
@@ -67,14 +66,19 @@ Class("wpfko.template.engine", function () {
                 };
             };
             
-            var openingTag = " ko";
+            var openingTag = "<!-- ko";
             if(DEBUG)
                 openingTag += " wipeout-type: '" + xmlElement.nodeName + "',";
             
-            openingTag += " wo: " + newScriptId;
+            openingTag += " wo: " + newScriptId + " --><!-- /ko -->";
             
-            xmlElement.parentElement.insertBefore(document.createComment(openingTag), xmlElement);
-            xmlElement.parentElement.insertBefore(document.createComment(" /ko "), xmlElement);
+            var nodes = new DOMParser().parseFromString("<root>" + rewriterCallback(openingTag) + "</root>", "application/xml").documentElement;
+            while(nodes.childNodes.length) {
+                var node = nodes.childNodes[0];
+                node.parentElement.removeChild(node);
+                xmlElement.parentElement.insertBefore(node, xmlElement);
+            };
+            
             xmlElement.parentElement.removeChild(xmlElement);
         }
     };    
@@ -90,7 +94,7 @@ Class("wpfko.template.engine", function () {
         return null;
     };
     
-    engine.prototype.wipeoutRewrite = function(script) {
+    engine.prototype.wipeoutRewrite = function(script, rewriterCallback) {
         ///<summary>Replace all wipeout views with render bindings</summary>
         
         var ser = new XMLSerializer();
@@ -104,7 +108,7 @@ Class("wpfko.template.engine", function () {
         // do not use ii, xmlTemplate.childNodes may change
         for(var i = 0; i < xmlTemplate.childNodes.length; i++) {            
             if(xmlTemplate.childNodes[i].nodeType === 1)
-                engine.wipeoutRewrite(xmlTemplate.childNodes[i]);
+                engine.wipeoutRewrite(xmlTemplate.childNodes[i], rewriterCallback);
             
             scriptContent.push(ser.serializeToString(xmlTemplate.childNodes[i]));
         }
