@@ -7,7 +7,7 @@ Class("wpfko.base.contentControl", function () {
 
         //The template which corresponds to the templateId for this item
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
-    });
+    }, "contentControl");
     
     contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
         ///<summary>Creates a computed for a template property which is bound to the templateIdObservable property</summary>

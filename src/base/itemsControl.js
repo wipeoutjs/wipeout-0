@@ -44,7 +44,7 @@ Class("wpfko.base.itemsControl", function () {
                 }
             }
         }, this);
-    });
+    }, "itemsControl");
     
     //TODO: private
     itemsControl.subscribeV2 = function() {

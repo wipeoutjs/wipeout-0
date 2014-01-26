@@ -32,7 +32,7 @@ Class("wpfko.base.if", function () {
         this.templateId.subscribe(this.copyTemplateId, this);
         
         this.copyTemplateId(this.templateId());
-    });
+    }, "_if");
     
     _if.prototype.elseTemplateChanged = function (newVal) {
         if (!this.condition()) {

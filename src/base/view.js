@@ -20,7 +20,7 @@ Class("wpfko.base.view", function () {
         
         //Placeholder to store binding disposeal objects
         this._bindings = {};
-    });    
+    }, "view");    
     
     var enumerate = function(items, callback, context) {
         

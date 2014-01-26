@@ -3,4 +3,6 @@ enumerate(wpfko.base, function(item, i) {
     window.wo[i] = item;
 });
 
-window.wo.utils = wpfko.utils;
+enumerate(wpfko.utils, function(item, i) {
+    window.wo[i] = item;
+});

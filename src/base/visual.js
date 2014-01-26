@@ -20,7 +20,7 @@ Class("wpfko.base.visual", function () {
         
         //The template of the visual, giving it an appearance
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
-    });
+    }, "visual");
         
     visual.prototype.unRender = function() {
         ///<summary>Prepares a visual to be re-rendered</summary>

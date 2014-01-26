@@ -85,7 +85,8 @@ Class("wpfko.base.object", function () {
         return cached.apply(this, arguments);
     };
 
-    object.extend = function (childClass) {
+    var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_]*$/;
+    object.extend = function (childClass, className/* optional */) {
         ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
  
         // static functions
@@ -93,13 +94,21 @@ Class("wpfko.base.object", function () {
             if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function)
                 childClass[p] = this[p];
  
-        // will ensure any subsequent changes to the parent class will reflect in child class
-        function prototypeTracker() { this.constructor = childClass; }
- 
-        prototypeTracker.prototype = this.prototype;
- 
-        // inherit
-        childClass.prototype = new prototypeTracker();
+        if(className) {
+            if(!validFunctionCharacters.test(className)) {
+                throw "Invalid class name. The class name is for debug purposes only and can contain alphanumeric characters only";
+            }
+            
+            eval("\
+            function " + className + "() { this.constructor = childClass; }\
+            " + className + ".prototype = this.prototype;\
+            childClass.prototype = new " + className + "();");
+        } else {        
+            function prototypeTracker() { this.constructor = childClass; }     
+            prototypeTracker.prototype = this.prototype;
+            childClass.prototype = new prototypeTracker();
+        }
+        
         return childClass;
     };
 
