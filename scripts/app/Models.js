@@ -134,6 +134,17 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 ]);
             })();
             
+            var _template = (function() {
+                currentApi.forClass("ko.templateEngine");
+                var engine = new classTreeViewBranch("engine", currentApi.forClass("wpfko.template.engine"));
+                var htmlBuilder = new classTreeViewBranch("htmlBuilder", currentApi.forClass("wpfko.template.htmlBuilder"));
+                
+                return new treeViewBranch("template", [
+                    engine,
+                    htmlBuilder
+                ]);
+            })();
+            
             var _utils = (function() {
                 
                 var htmlBranch = new classTreeViewBranch("html", currentApi.forClass("wpfko.utils.html"));
@@ -151,6 +162,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
             return new treeViewBranch("wpfko", [
                 _base,
                 _bindings,
+                _template,
                 _utils
             ]);
         })();
