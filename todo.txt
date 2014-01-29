@@ -5,3 +5,6 @@ If html element is deleted outside of wo, dispose of its associated view
 Roadmap:
 Big cleanup, unit testing, commenting, disposal of objects/observables, refactoring if needed
 Debug code
+
+If, poke template
+explicit disposeal of binding
