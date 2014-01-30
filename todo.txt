@@ -11,3 +11,5 @@ explicit disposeal of binding
 
 when a vm is created give it a __createdByTemplateEngine property
 if true, call dispose() on unRender, else call unRender()
+
+on unrender hook
