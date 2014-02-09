@@ -25,6 +25,8 @@ Class("wpfko.base.visual", function () {
     visual.prototype.unRender = function() {
         ///<summary>Prepares a visual to be re-rendered</summary>
         
+        this.onUnrender();
+        
         // dispose of all template items
         enumerate(this.templateItems, function(item, i) {
             if(item instanceof visual) 
@@ -169,6 +171,11 @@ Class("wpfko.base.visual", function () {
     // virtual
     visual.prototype.rootHtmlChanged = function (oldValue, newValue) {
         ///<summary>Triggered each time after a template is rendered</summary>    
+    };
+        
+    // virtual
+    visual.prototype.onUnrender = function () {
+        ///<summary>Triggered just before a visual is un rendered</summary>    
     };
         
     // virtual
