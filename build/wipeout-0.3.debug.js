@@ -1162,122 +1162,60 @@ Class("wpfko.base.routedEventRegistration", function () {
 
 
 Binding("itemsControl", true, function () {
+    
+    var itemsControlTemplate = "";
+    
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        ///<summary>Initialize the items control binding</summary>
-        
-        if (!(viewModel instanceof wpfko.base.itemsControl))
-            throw "This binding can only be used within the context of a wo.itemsControl";
-
-        ko.virtualElements.emptyNode(element);
-        if (wpfko.utils.ko.version()[0] < 3) {
-            utils.subscribeV2(element, viewModel, bindingContext);
-        } else {
-            utils.subscribeV3(element, viewModel, bindingContext);
+        if(!itemsControlTemplate) {
+            itemsControlTemplate = "<!-- ko ic-render: $data";
+            if(DEBUG) 
+                itemsControlTemplate += ", wipeout-type: 'items[' + wpfko.util.ko.peek($index) + ']'";
+            
+            itemsControlTemplate += " --><!-- /ko -->";
+            itemsControlTemplate = wpfko.base.contentControl.createAnonymousTemplate(itemsControlTemplate);
         }
-
-        itemsChanged(element, viewModel, bindingContext)(ko.utils.compareArrays([], viewModel.items.peek()));
+        
+        return ko.bindingHandlers.template.init.call(this, element, utils.createAccessor(viewModel), allBindingsAccessor, viewModel, bindingContext);
     };
     
-    var itemsChanged = function(element, viewModel, bindingContext) {
-        ///<summary>Reorder, add and delete items to the DOM</summary>
-        return function(changes) {                
-            var del = [], add = [], move = {}, delPadIndex = 0;
-            for(var i = 0, ii = changes.length; i < ii; i++) {
-                if(changes[i].status === wpfko.utils.ko.array.diff.retained) continue;            
-                else if(changes[i].status === wpfko.utils.ko.array.diff.deleted) {
-                    del.push((function(change) {
-                        return function() {
-                            var elements;
-                            if(change.moved != null) {
-                                move[change.moved + "." + change.index] = { vm: change.value, elements: change.value._rootHtmlElement.__wpfko.allElements() };                            
-                                enumerate(move[change.moved + "." + change.index].elements, function(node) {
-                                    node.parentNode.removeChild(node);                                    
-                                });
-                            } else {
-                                viewModel.itemDeleted(change.value);
-                            }
-                            
-                            delPadIndex--;
-                        };
-                    })(changes[i]));
-                } else if(changes[i].status === wpfko.utils.ko.array.diff.added) {
-                    add.push((function(change) {
-                        return function() {
-                            var index= viewModel.items.indexOf(change.value);
-                            if(change.moved != null) {  
-                                var item = move[change.index + "." + change.moved];
-                                if(index === 0) {
-                                    for(var j = item.elements.length - 1; j >= 0; j--) {
-                                        ko.virtualElements.prepend(element, item.elements[j]);
-                                    }                                        
-                                } else {
-                                    var before = viewModel.items.peek()[index -1];
-                                    for(var j = item.elements.length - 1; j >= 0; j--) {
-                                        before._rootHtmlElement.__wpfko.insertAfter(item.elements[j]);
-                                    }
-                                }                                
-                            } else {
-                                var container = wpfko.utils.html.createWpfkoComment();
-                                if(index === 0) {
-                                    ko.virtualElements.prepend(element, container.close);
-                                    ko.virtualElements.prepend(element, container.open);   
-                                } else {
-                                    viewModel.items.peek()[index - 1]._rootHtmlElement.__wpfko.insertAfter(container.close);
-                                    viewModel.items.peek()[index - 1]._rootHtmlElement.__wpfko.insertAfter(container.open);
-                                }     
-                                
-                                var acc = function() {
-                                    return change.value;
-                                };
-                                
-                                wpfko.bindings.render.init(container.open, acc, acc, viewModel, bindingContext);
-                                wpfko.bindings.render.update(container.open, acc, acc, viewModel, bindingContext);
-                                
-                                viewModel.itemRendered(change.value);
-                            }
-                        };
-                    })(changes[i]));
-                } else {
-                    throw "Unsupported status";
-                }
-            }
-            
-            for(i = 0, ii = del.length; i < ii; i++) {
-                del[i].call(this);
-            }
-            
-            for(i = 0, ii = add.length; i < ii; i++) {
-                add[i].call(this);
-            }
-        }
+    var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        
+        return ko.bindingHandlers.template.update.call(this, element, utils.createAccessor(viewModel), allBindingsAccessor, viewModel, bindingContext);
     };
     
     var utils = {
-        subscribeV2: function(element, viewModel, bindingContext) {            
-            ///<summary>Bind items to itemSource for knockout v2.<summary>            
-            
-            var items = wpfko.utils.obj.copyArray(viewModel.items.peek());
-            var handler = utils.itemsChanged(element, viewModel, bindingContext);
-                        
-            viewModel.items.subscribe(function() {            
-                try {
-                    var changes = ko.utils.compareArrays(items, arguments[0] || []);
-                    handler(changes);
-                } finally {
-                    items = wpfko.utils.obj.copyArray(viewModel.items.peek());
-                }
-            });
-        },
-        subscribeV3: function(element, viewModel, bindingContext) {
-            ///<summary>Bind items to itemSource for knockout v3.</summary>
-            viewModel.items.subscribe(utils.itemsChanged(element, viewModel, bindingContext), window, "arrayChange");
-        },
-        itemsChanged: itemsChanged
+        createAccessor: function(vm) {
+            return function() {
+                return {
+                    name: itemsControlTemplate,
+                    foreach: wpfko.utils.ko.peek(vm).items
+                };
+            }
+        }        
     };
     
     return {
         init: init,
+        update: update,
         utils: utils
+    };
+});
+
+Binding("ic-render", true, function () {
+    
+    var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        
+        return wpfko.bindings.render.init.call(this, element, valueAccessor, allBindingsAccessor, bindingContext.$parent, bindingContext);
+    };
+    
+    var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        
+        return wpfko.bindings.render.update.call(this, element, valueAccessor, allBindingsAccessor, bindingContext.$parent, bindingContext);
+    };
+    
+    return {
+        init: init,
+        update: update
     };
 });
 
@@ -1305,6 +1243,10 @@ Binding("render", true, function () {
         var _this = this;
         var templateChanged = function() {
             ko.bindingHandlers.template.update.call(_this, element, wpfko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
+            
+            var bindings = allBindingsAccessor();
+            if(bindings["wipeout-type"])
+                wpfko.bindings["wipeout-type"].utils.comment(element, bindings["wipeout-type"]);
         };
         
         var previous = ko.utils.domData.get(element, wpfko.bindings.wpfko.utils.wpfkoKey); 
@@ -1356,11 +1298,29 @@ Binding("render", true, function () {
 
 
 Binding("wipeout-type", true, function () {
-    
+        
     // placeholder for binding which does nothing    
     return {
         init: function() {
-        ///<summary>Initialize the wipeout-type control binding. This binding does not actually do anything</summary>
+            ///<summary>Initialize the wipeout-type control binding. Calling this binding does not actually do anything. It is gererally called form the render binding</summary>
+        },
+        utils: {
+            comment: function(element, text) {
+                ///<summary>Initialize the wipeout-type control binding. This binding does not actually do anything</summary>
+                text = wpfko.utils.ko.peek(text);
+                
+                if(element.nodeType === 1) {
+                    if(element.childNodes.length)
+                        element.insertBefore(document.createComment(text), element.childNodes[0]);
+                    else
+                        element.appendChild(document.createComment(text));
+                } else if(element.parentElement) {
+                    if(element.nextSibling)
+                        element.parentElement.insertBefore(document.createComment(text), element.nextSibling);
+                    else
+                        element.parentElement.append(document.createComment(text));
+                }
+            }
         }
     };
 });
@@ -1464,7 +1424,7 @@ Class("wpfko.template.engine", function () {
     };
     
     engine.prototype.rewriteTemplate = function (template, rewriterCallback, templateDocument) {
-        ///<summary>First re-write the template via knockout, the re-write the template via wipeout</summary>
+        ///<summary>First re-write the template via knockout, then re-write the template via wipeout</summary>
         
         var script = document.getElementById(template);
         if (script instanceof HTMLElement) {        
@@ -1475,18 +1435,18 @@ Class("wpfko.template.engine", function () {
                 this.makeTemplateSource(template, templateDocument).data("isRewritten", true);
             }
             
-            this.wipeoutRewrite(script);
+            this.wipeoutRewrite(script, rewriterCallback);
         } else {
             ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
         }
     };    
     
-    engine.wipeoutRewrite = function(xmlElement) {
+    engine.wipeoutRewrite = function(xmlElement, rewriterCallback) {
         ///<summary>Recursively go through an xml element and replace all view models with render comments</summary>
         if(wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName) !== -1) {
             for(var i = 0; i < xmlElement.childNodes.length; i++)
                 if(xmlElement.childNodes[i].nodeType === 1)
-                    engine.wipeoutRewrite(xmlElement.childNodes[i]);
+                    engine.wipeoutRewrite(xmlElement.childNodes[i], rewriterCallback);
         } else {
             var newScriptId = engine.newScriptId();
             engine.scriptCache[newScriptId] = function(parentBindingContext) {
@@ -1500,14 +1460,19 @@ Class("wpfko.template.engine", function () {
                 };
             };
             
-            var openingTag = " ko";
+            var tags = "<!-- ko";
             if(DEBUG)
-                openingTag += " wipeout-type: '" + xmlElement.nodeName + "',";
+                tags += " wipeout-type: '" + xmlElement.nodeName + "',";
             
-            openingTag += " wo: " + newScriptId;
+            tags += " wo: " + newScriptId + " --><!-- /ko -->";
             
-            xmlElement.parentElement.insertBefore(document.createComment(openingTag), xmlElement);
-            xmlElement.parentElement.insertBefore(document.createComment(" /ko "), xmlElement);
+            var nodes = new DOMParser().parseFromString("<root>" + rewriterCallback(tags) + "</root>", "application/xml").documentElement;
+            while(nodes.childNodes.length) {
+                var node = nodes.childNodes[0];
+                node.parentElement.removeChild(node);
+                xmlElement.parentElement.insertBefore(node, xmlElement);
+            };
+            
             xmlElement.parentElement.removeChild(xmlElement);
         }
     };    
@@ -1523,7 +1488,7 @@ Class("wpfko.template.engine", function () {
         return null;
     };
     
-    engine.prototype.wipeoutRewrite = function(script) {
+    engine.prototype.wipeoutRewrite = function(script, rewriterCallback) {
         ///<summary>Replace all wipeout views with render bindings</summary>
         
         var ser = new XMLSerializer();
@@ -1537,7 +1502,7 @@ Class("wpfko.template.engine", function () {
         // do not use ii, xmlTemplate.childNodes may change
         for(var i = 0; i < xmlTemplate.childNodes.length; i++) {            
             if(xmlTemplate.childNodes[i].nodeType === 1)
-                engine.wipeoutRewrite(xmlTemplate.childNodes[i]);
+                engine.wipeoutRewrite(xmlTemplate.childNodes[i], rewriterCallback);
             
             scriptContent.push(ser.serializeToString(xmlTemplate.childNodes[i]));
         }
@@ -1569,6 +1534,20 @@ Class("wpfko.template.engine", function () {
         return output;
     };
     
+    // override functions for the sake of documentation
+    if(DEBUG) {
+        var override = function(toOverride) {
+            engine.prototype[toOverride] = function () {
+                ///<summary>Knockout native function</summary>
+                ko.templateEngine.prototype[toOverride].apply(this, arguments);
+            };
+        };
+        
+        override("isTemplateRewritten");
+        override("makeTemplateSource");
+        override("renderTemplate");
+    }
+    
     engine.newScriptId = (function() {        
         var i = Math.floor(Math.random() * 10000);        
         return function() {
@@ -1592,6 +1571,7 @@ Class("wpfko.template.htmlBuilder", function () {
     var htmlBuilder = function(xmlTemplate) {
         ///<summary>Pre-compile that needed to render html from a binding context from a given template</summary>
         
+        // pre rendered strings or string generating functions which make up the final html
         this.preRendered = [];
         this.generatePreRender(xmlTemplate);
     };

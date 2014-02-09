@@ -12,7 +12,7 @@
         
         <script type="text/javascript" src="scripts/lib/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="scripts/lib/knockout-2.3.0.debug.js"></script>
-        <script type="text/javascript" src="scripts/lib/wipeout-0.2.debug.js"></script>
+        <script type="text/javascript" src="scripts/lib/wipeout-0.3.debug.js"></script>
         
         <script type="text/javascript" src="scripts/lib/prettify.js"></script>
         
@@ -93,7 +93,7 @@
         
         <script type="text/xml" id="wo.object_ClassUsages">
         <p>The wo.object class is the base class for all wipeout objects. It provides helpers to inhert from and call base methods of a class</p>
-        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
             <code>// create a parent class which inherits from wo.object        
 var person = wo.object.extend(function(name /* constructorArg */) {
     // call constructor on wo.object class
@@ -124,39 +124,39 @@ veryPolitePerson.prototype.greet = function(person) {
 var john = new person("John");
 var mark = new veryPolitePerson("Mark");
 
-// will alert: "Hi Mark. I am John."
-alert(john.greet(mark));
+// will log: "Hi Mark. I am John."
+console.log(john.greet(mark));
 
-// will alert: "Hi John. I am Mark. Pleased to meet you!"
-alert(mark.greet(john));</code>
-        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+// will log: "Hi John. I am Mark. Pleased to meet you!"
+console.log(mark.greet(john));</code>
+        </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
         </script>  
         
         <script type="text/xml" id="wo.event_ClassUsages">
         <p>The wo.event class provides object oriented event functionality within the wipeout framework. Example usage is as follows:</p>
-        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
             <code>// create event
 var myEvent = new wo.event();
 
 // subscribe to event
 var dispose1 = myEvent.register(function(eventArgs) {
-    alert("Handler 1: " + eventArgs);
+    console.log("Handler 1: " + eventArgs);
 });
 
 // subscribe to event again
 var dispose2 = myEvent.register(function(eventArgs) {
-    alert("Handler 2: " + eventArgs);
+    console.log("Handler 2: " + eventArgs);
 });
 
-// will alert "Handler 1: Event triggered" and "Handler 2: Event triggered"
+// will log "Handler 1: Event triggered" and "Handler 2: Event triggered"
 myEvent.trigger("Event triggered");
 
 // dispose of one of the handlers
 dispose1.dispose();
 
-// will alert "Handler 2: Event triggered again"
-myEvent.trigger("Event triggered again);</code>
-        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+// will log "Handler 2: Event triggered again"
+myEvent.trigger("Event triggered again");</code>
+        </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
         </script>                   
         
         <script type="text/xml" id="wo.routedEvent_ClassUsages">
@@ -184,7 +184,7 @@ myEvent.trigger("Event triggered again);</code>
         <h3>Inheriting from a view</h3>
         <p>The following creates a simple view model with collapsable content.</p> 
         <p>Javascript:</p> 
-        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
             <code>// create a custom view model
 window.collapsable = wo.view.extend(function() {
     // call wo.view constructor and give the template id for this view model
@@ -194,7 +194,7 @@ window.collapsable = wo.view.extend(function() {
 });
                 
 // a function which will show or hide the collapsable content
-window.collapsable.prototype.toggle = functon() {
+window.collapsable.prototype.toggle = function() {
     // "colapsableContent" is the id of the div to show/hide in the template for this view model
     if(this.open)
         this.templateItems.colapsableContent.style.display = "none";
@@ -203,68 +203,57 @@ window.collapsable.prototype.toggle = functon() {
                 
     this.open = !this.open;
 };</code>
-        </Wipeout.Docs.ViewModels.Components.CodeBlock>     
+        </Wipeout.Docs.ViewModels.Components.JsCodeBlock>     
         <p>Html template:</p> 
-        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
             <code>&lt;script type="text/xml" id="collapsable_template">
     &lt;!-- a link bound to the toggle function of the view model -->
-    &lt;a data-bind="click: toggle">Toggle&lt;/a>
+    &lt;a href="javascript: void(0)" data-bind="click: toggle">Toggle&lt;/a>
     &lt;!-- a div whos content is bound to the model of the view model. 
                 Its id is used to find this element within the view model -->
     &lt;div data-bind="html: model" id="colapsableContent">&lt;/div>
 &lt;/script></code>
-        </Wipeout.Docs.ViewModels.Components.CodeBlock>          
+        </Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>          
         <p>Usage:</p> 
-        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
             <code>&lt;collapsable model="'This is the content to be shown/hidden'">&lt;/collapsable></code>
-        </Wipeout.Docs.ViewModels.Components.CodeBlock>        
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>        
         <h3>Using a view as a dummy view model to render a template</h3>
         <p>Sometimes you may wish for a model to have an appearance without the need for dynamic view model code. In this case a wo.view can be used directly:</p> 
           
         <p>Html template:</p> 
-        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
             <code>&lt;script type="text/xml" id="displayPerson_template">
     &lt;label>First name:&lt;/label>
     &lt;span data-bind="html: model().firstName">&lt;/span>
     &lt;label>Last name:&lt;/label>
     &lt;span data-bind="html: model().lastName">&lt;/span>
 &lt;/script></code>
-        </Wipeout.Docs.ViewModels.Components.CodeBlock>          
+        </Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>          
         <p>Usage:</p> 
-        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
             <code>&lt;wo.view model="{firstName: 'John', lastName: 'Smith'}" templateId="'displayPerson_template'">&lt;/wo.view></code>
-        </Wipeout.Docs.ViewModels.Components.CodeBlock>        
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>        
         </script>
         
         <script type="text/xml" id="wo.contentControl_ClassUsages">
         <p>The wo.contentControl class is a wo.view class with the ability to set its template as a string as well as an Id. For example:</p>
-        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
             <code>&lt;wo.contentControl model="{firstName: 'John', lastName: 'Smith'}">
     &lt;template>
-        &lt;fieldset>
             &lt;label>First name:&lt;/label>
             &lt;span data-bind="html: model().firstName">&lt;/span>,
             &lt;label>Last name:&lt;/label>
             &lt;span data-bind="html: model().lastName">&lt;/span>
-        &lt;/fieldset>
     &lt;/template>
 &lt;/wo.contentControl></code>
-        </Wipeout.Docs.ViewModels.Components.CodeBlock>        
-        <p>Will render:</p>
-        <div>
-            <fieldset>
-                <label>First name:</label>
-                <span>John</span>,
-                <label>Last name:</label>
-                <span>Smith</span>
-            </fieldset>
-        </div>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
         <p>The template and templateId properties are tightly bound, so that if the template property is set the templateId property will reflect this change, and vice versa</p>        
         </script>       
         
         <!----><script type="text/xml" id="wo.itemsControl_ClassUsages"><!---->
         <p>The wo.itemsControl class is the wipeout method for dealing with collections. It has am itemsSource property, designed to accept an array of models. It also has an items property which will be auto populated with view models which correspond to the itemsSource models</p>
-        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
             <code>&lt;wo.itemsControl itemSource="[{firstName: 'John', lastName: 'Smith'}, {firstName: 'Mark', lastName: 'Walsh'}]">
     &lt;!--The template for the control as a whole-->
     &lt;template>
@@ -283,24 +272,7 @@ window.collapsable.prototype.toggle = functon() {
         &lt;/li>
     &lt;/itemTemplate>
 &lt;/wo.itemsControl></code>
-        </Wipeout.Docs.ViewModels.Components.CodeBlock>        
-        <p>Will render:</p>
-        <div>
-            <ul>
-                <li>
-                    <label>First name:</label>
-                    <span>John</span>,
-                    <label>Last name:</label>
-                    <span>Smith</span>
-                </li>
-                <li>
-                    <label>First name:</label>
-                    <span>Mark</span>,
-                    <label>Last name:</label>
-                    <span>Walsh</span>
-                </li>
-            </ul>
-        </div>        
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>  
         </script>       
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.EventPage">
@@ -310,6 +282,16 @@ window.collapsable.prototype.toggle = functon() {
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Components.CodeBlock">
         <div id="codeBlock">
             <pre class="prettyprint" data-bind="html: code"></pre>
+        </div>
+        </script>  
+        
+        <script type="text/xml" id="Wipeout.Docs.ViewModels.Components.UsageCodeBlock">
+        <div id="codeBlock">
+            <pre class="prettyprint" data-bind="html: code"></pre>
+        </div>
+        <p>Renders:</p>
+        <div style="border: 1px solid #888; padding: 5px;">
+            <wo.contentControl template="$parent.usage"></wo.contentControl>
         </div>
         </script>  
         

@@ -119,20 +119,70 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
         this._super("Wipeout.Docs.ViewModels.Pages.ClassItemTable", "Wipeout.Docs.ViewModels.Pages.ClassItemRow");
     });
     
-    var codeBlock = wo.view.extend(function() {
-        this._super("Wipeout.Docs.ViewModels.Components.CodeBlock");        
-        this.code = null;
+    var codeBlock = wo.view.extend(function(templateId) {
+        this._super(templateId || "Wipeout.Docs.ViewModels.Components.CodeBlock");        
+        this.code = ko.observable();
+        
+        this.code.subscribe(this.onCodeChanged, this);
     });
+    
+    codeBlock.prototype.onCodeChanged = function(newVal) {
+    };
     
     codeBlock.prototype.rootHtmlChanged = function() {
         this._super.apply(this, arguments);
         prettyPrint(null, this.templateItems.codeBlock);
     };
     
+    var templateCodeBlock = codeBlock.extend(function() {
+        templateCodeBlock.staticConstructor();
+        this._super.apply(this, arguments);
+    });
+    
+    var templateDiv;
+    templateCodeBlock.staticConstructor = function() {
+        if(templateDiv) return;
+        
+        templateDiv = document.createElement("div");
+        templateDiv.setAttribute("style", "display: none");
+        document.getElementsByTagName("body")[0].appendChild(templateDiv);
+    };
+    
+    templateCodeBlock.prototype.onCodeChanged = function(newVal) {  
+        templateDiv.innerHTML += newVal
+            .replace(/\&lt;/g, "<")
+            .replace(/\&gt;/g, ">");
+    };
+    
+    var jsCodeBlock = codeBlock.extend(function() {
+        this._super.apply(this, arguments);
+    });
+    
+    jsCodeBlock.prototype.onCodeChanged = function(newVal) {  
+        eval(newVal
+            .replace(/\&lt;/g, "<")
+            .replace(/\&gt;/g, ">"));
+    };
+    
+    var usageCodeBlock = codeBlock.extend(function() {
+        this._super("Wipeout.Docs.ViewModels.Components.UsageCodeBlock");
+        
+        this.usage = ko.observable();
+    });
+    
+    usageCodeBlock.prototype.onCodeChanged = function(newVal) {  
+        this.usage(newVal
+            .replace(/\&lt;/g, "<")
+            .replace(/\&gt;/g, ">"));
+    };
+    
     var components = {
         TreeViewBranch: treeViewBranch,
         DynamicRender: dynamicRender,
-        CodeBlock: codeBlock
+        CodeBlock: codeBlock,
+        TemplateCodeBlock: templateCodeBlock,
+        JsCodeBlock: jsCodeBlock,
+        UsageCodeBlock: usageCodeBlock
     };
     
     var pages = {
