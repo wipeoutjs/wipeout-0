@@ -29,9 +29,13 @@ Binding("render", true, function () {
         };
         
         var previous = ko.utils.domData.get(element, wpfko.bindings.wpfko.utils.wpfkoKey); 
-        if(previous instanceof wpfko.base.visual)
-            previous.unRender();
-
+        if(previous instanceof wpfko.base.visual) {
+            if(previous.__createdByWipeout)    
+                previous.dispose();
+            else    
+                previous.unRender();
+        }
+        
         if (child) {            
             ko.utils.domData.set(element, wpfko.bindings.wpfko.utils.wpfkoKey, child);
             child._rootHtmlElement = element;

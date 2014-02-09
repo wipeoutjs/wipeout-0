@@ -5,6 +5,9 @@ Class("wpfko.base.visual", function () {
         ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
         this._super();
         
+        //Flag to let the wipeout template engine know how to dispose of this visual
+        this.__createdByWipeout = false;
+        
         //Dictionary of items created within the current template. The items can be visuals or html elements
         this.templateItems = {};
         

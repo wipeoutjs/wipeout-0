@@ -169,7 +169,10 @@ Class("wpfko.base.view", function () {
                 }
             } else {
                 var val = wpfko.utils.obj.createObject(type);
-                val.initialize(child, bindingContext.createChildContext(val));
+                if(val instanceof wpfko.base.view) {
+                    val.__createdByWipeout = true;
+                    val.initialize(child, bindingContext.createChildContext(val));
+                }
                 
                 if(ko.isObservable(this[child.nodeName])) {
                     this[child.nodeName](val);       

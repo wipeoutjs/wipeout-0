@@ -56,7 +56,9 @@ Class("wpfko.template.engine", function () {
         } else {
             var newScriptId = engine.newScriptId();
             engine.scriptCache[newScriptId] = function(parentBindingContext) {
-                var vm = wpfko.utils.obj.createObject(xmlElement.nodeName);                
+                var vm = wpfko.utils.obj.createObject(xmlElement.nodeName);    
+                if(!(vm instanceof wpfko.base.view)) throw "Only wo.view elements can be created in this way";
+                vm.__createdByWipeout = true;
                 var context = parentBindingContext.createChildContext(vm);
                 vm.initialize(xmlElement, context);                
                 return {
