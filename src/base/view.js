@@ -47,7 +47,14 @@ Class("wpfko.base.view", function () {
         this._super();
         
         for(var i in this._bindings)
-            this._bindings[i].dispose();
+            this.disposeOfBinding(i);
+    };
+    
+    view.prototype.disposeOfBinding = function(propertyName) {
+        if(this._bindings[propertyName]) {
+            this._bindings[propertyName].dispose();
+            delete this._bindings[propertyName];
+        }
     };
     
     view.prototype.bind = function(property, valueAccessor, twoWay) {
@@ -56,10 +63,7 @@ Class("wpfko.base.view", function () {
         if(twoWay && (!ko.isObservable(this[property]) || !ko.isObservable(valueAccessor())))
            throw 'Two way bindings must be between 2 observables';
            
-        if(this._bindings[property]) {
-            this._bindings[property].dispose();
-            delete this._bindings[property];
-        }
+        this.disposeOfBinding(property);
         
         var toBind = ko.dependentObservable({ 
             read: function() { return ko.utils.unwrapObservable(valueAccessor()); },

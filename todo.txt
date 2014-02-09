@@ -7,7 +7,3 @@ Big cleanup, unit testing, commenting, disposal of objects/observables, refactor
 Debug code
 
 If, poke template
-explicit disposeal of binding
-
-when a vm is created give it a __createdByTemplateEngine property
-if true, call dispose() on unRender, else call unRender()
