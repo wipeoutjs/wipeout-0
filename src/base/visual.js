@@ -11,7 +11,6 @@ Class("wpfko.base.visual", function () {
         //Dictionary of items created within the current template. The items can be visuals or html elements
         this.templateItems = {};
         
-        //TODO: is this different to templateItems?
         //Array of visuals created within the current template.
         this.renderedChildren = [];        
         
