@@ -9,6 +9,8 @@ Binding("wipeout-type", true, function () {
         utils: {
             comment: function(element, text) {
                 ///<summary>Initialize the wipeout-type control binding. This binding does not actually do anything</summary>
+                text = wpfko.utils.ko.peek(text);
+                
                 if(element.nodeType === 1) {
                     if(element.childNodes.length)
                         element.insertBefore(document.createComment(text), element.childNodes[0]);
