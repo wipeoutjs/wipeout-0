@@ -7,3 +7,10 @@ Big cleanup, unit testing, commenting, disposal of objects/observables, refactor
 Debug code
 
 If, poke template
+
+
+
+
+seperate template ids for each item in items control
+add __createdByWipeout to each item created by items control
+ic-render => wpfko.bindings.render.init.call(this, element, valueAccessor, allBindingsAccessor, bindingContext.$parent, bindingContext.$parentContext);
