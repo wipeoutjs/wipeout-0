@@ -137,7 +137,7 @@ Class("wpfko.base.itemsControl", function () {
             } else if(changes[i].status === wpfko.utils.ko.array.diff.added) {
                 add.push((function(change) {
                     return function() {
-                        var added = change.moved != null ? move[change.index + "." + change.moved] : this.createItem(change.value);
+                        var added = change.moved != null ? move[change.index + "." + change.moved] : this._createItem(change.value);
                         items.splice(change.index, 0, added);
                     };
                 })(changes[i]));
@@ -173,6 +173,14 @@ Class("wpfko.base.itemsControl", function () {
     };
 
     // virtual
+    itemsControl.prototype._createItem = function (model) {
+        ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
+        var item = this.createItem(model);
+        item.__createdByWipeout = true;
+        return item;
+    };
+
+    // virtual
     itemsControl.prototype.createItem = function (model) {
         ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
         return new wpfko.base.view(this.itemTemplateId(), model);        
@@ -184,7 +192,7 @@ Class("wpfko.base.itemsControl", function () {
         var values = this.items();
         values.length = models.length;
         for (var i = 0, ii = models.length; i < ii; i++) {
-            values[i] = this.createItem(models[i]);
+            values[i] = this._createItem(models[i]);
         }
 
         this.items.valueHasMutated();
