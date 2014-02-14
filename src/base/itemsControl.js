@@ -116,7 +116,7 @@ Class("wpfko.base.itemsControl", function () {
         ///<summary>Dispose of this itemsControl</summary>
         this._super();
         
-        wpfko.contentControl.deleteAnonymousTemplate(this.__itemsTemplate);
+        wpfko.base.contentControl.deleteAnonymousTemplate(this.__itemsTemplate);
     };
 
     //TODO: private

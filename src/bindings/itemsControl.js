@@ -4,15 +4,15 @@ Binding("itemsControl", true, function () {
     var itemsControlTemplate = "";
     
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        var ic = wpfko.utils.ko.peek(valueAccessor());
-        if(ic && !(ic instanceof wo.itemsControl)) throw "This binding can only be used on itemsControls";
+        var ic = wpfko.utils.ko.peek(viewModel);
+        if(ic && !(ic instanceof wpfko.base.itemsControl)) throw "This binding can only be used on an itemsControl";
         
         return ko.bindingHandlers.template.init.call(this, element, utils.createAccessor(viewModel), allBindingsAccessor, viewModel, bindingContext);
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        var ic = wpfko.utils.ko.peek(valueAccessor());
-        if(ic && !(ic instanceof wo.itemsControl)) throw "This binding can only be used on itemsControls";
+        var ic = wpfko.utils.ko.peek(viewModel);
+        if(ic && !(ic instanceof wpfko.base.itemsControl)) throw "This binding can only be used on an itemsControl";
         
         return ko.bindingHandlers.template.update.call(this, element, utils.createAccessor(viewModel), allBindingsAccessor, viewModel, bindingContext);
     };

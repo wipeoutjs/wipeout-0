@@ -67,12 +67,12 @@ Class("wpfko.base.contentControl", function () {
                 ///<summary>Deletes an anonymous template with the given id</summary>
                 lazyCreateTemplateArea();
             
-                for (var j = 0, jj = templateArea.childNodes.length; j < jj; j++) {
+                for (var j = 0; j < templateArea.childNodes.length; j++) {
                     if (templateArea.childNodes[j].nodeType === 1 &&
                     templateArea.childNodes[j].nodeName === "SCRIPT" &&
                     templateArea.childNodes[j].id === templateId) {
-                        templateArea.removeChild(templateArea.childNodes[i]);
-                        i--;
+                        templateArea.removeChild(templateArea.childNodes[j]);
+                        j--;
                     }
                 }
             }
