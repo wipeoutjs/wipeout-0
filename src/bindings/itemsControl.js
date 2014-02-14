@@ -4,29 +4,26 @@ Binding("itemsControl", true, function () {
     var itemsControlTemplate = "";
     
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        if(!itemsControlTemplate) {
-            itemsControlTemplate = "<!-- ko ic-render: $data";
-            if(DEBUG) 
-                itemsControlTemplate += ", wipeout-type: 'items[' + wpfko.util.ko.peek($index) + ']'";
-            
-            itemsControlTemplate += " --><!-- /ko -->";
-            itemsControlTemplate = wpfko.base.contentControl.createAnonymousTemplate(itemsControlTemplate);
-        }
+        var ic = wpfko.utils.ko.peek(valueAccessor());
+        if(ic && !(ic instanceof wo.itemsControl)) throw "This binding can only be used on itemsControls";
         
         return ko.bindingHandlers.template.init.call(this, element, utils.createAccessor(viewModel), allBindingsAccessor, viewModel, bindingContext);
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        var ic = wpfko.utils.ko.peek(valueAccessor());
+        if(ic && !(ic instanceof wo.itemsControl)) throw "This binding can only be used on itemsControls";
         
         return ko.bindingHandlers.template.update.call(this, element, utils.createAccessor(viewModel), allBindingsAccessor, viewModel, bindingContext);
     };
     
     var utils = {
         createAccessor: function(vm) {
+            vm = wpfko.utils.ko.peek(vm);
             return function() {
                 return {
-                    name: itemsControlTemplate,
-                    foreach: wpfko.utils.ko.peek(vm).items
+                    name: vm.__itemsTemplate,
+                    foreach: vm.items
                 };
             }
         }        
