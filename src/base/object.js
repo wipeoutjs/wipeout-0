@@ -55,25 +55,33 @@ Class("wpfko.base.object", function () {
             
             // find the first instance of the current method in inheritance tree
             for(var i = 0, ii = inheritanceTree.length; i < ii; i++) {
-                for(var method in inheritanceTree[i]) {
-                    if(inheritanceTree[i][method] === arguments.callee.caller) {
-                        
-                        for(var j = i - 1; j >= 0; j--) {
-                            if(inheritanceTree[j][method] !== arguments.callee.caller) {
-                                cached = inheritanceTree[j][method];
-                                
-                                if(object.useVirtualCache) {
-                                    // map the current method to the method it overrides
-                                    cachedSuperMethods.children.push(arguments.callee.caller);
-                                    cachedSuperMethods.parents.push(cached);
+                // if it is a constructor
+                if(inheritanceTree[i] === arguments.callee.caller.prototype) {
+                    cached = inheritanceTree[i - 1].constructor;							
+                } else {
+                    for(var method in inheritanceTree[i]) {
+                        if(inheritanceTree[i][method] === arguments.callee.caller) {
+                            for(var j = i - 1; j >= 0; j--) {
+                                if(inheritanceTree[j][method] !== arguments.callee.caller) {
+                                    cached = inheritanceTree[j][method];
+                                    break;
                                 }
-                                
-                                break;
                             }
                         }
                         
-                        break;
+                        if(cached)
+                            break;
                     }
+                }
+					
+                if (cached) {
+                    if(object.useVirtualCache) {
+                        // map the current method to the method it overrides
+                        cachedSuperMethods.children.push(arguments.callee.caller);
+                        cachedSuperMethods.parents.push(cached);
+                    }
+
+                    break;
                 }
             }
             
