@@ -3,10 +3,24 @@ Binding("itemsControl", true, function () {
     
     var itemsControlTemplate = "";
     
+    var itemsTemplate = null;
+    var staticConstructor = function() {
+              
+        if(itemsTemplate) return;
+        var tmp = "<!-- ko ic-render: $data";
+        if(DEBUG) 
+            tmp += ", wipeout-type: 'items[' + wpfko.util.ko.peek($index) + ']'";
+
+        tmp += " --><!-- /ko -->";
+        
+        itemsTemplate = wpfko.base.contentControl.createAnonymousTemplate(tmp);
+    };
+    
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         var ic = wpfko.utils.ko.peek(viewModel);
         if(ic && !(ic instanceof wpfko.base.itemsControl)) throw "This binding can only be used on an itemsControl";
         
+        staticConstructor();
         return ko.bindingHandlers.template.init.call(this, element, utils.createAccessor(viewModel), allBindingsAccessor, viewModel, bindingContext);
     };
     
@@ -22,8 +36,9 @@ Binding("itemsControl", true, function () {
             vm = wpfko.utils.ko.peek(vm);
             return function() {
                 return {
-                    name: vm.__itemsTemplate,
-                    foreach: vm.items
+                    name: itemsTemplate,
+                    foreach: vm.items,
+                    templateEngine: wpfko.template.engine.instance
                 };
             }
         }        

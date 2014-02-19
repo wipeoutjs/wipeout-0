@@ -2,18 +2,10 @@
 Class("wpfko.base.itemsControl", function () {
     
     var deafaultTemplateId;
-    var itemsTemplate;
     var staticConstructor = function() {
         if(deafaultTemplateId) return;
         
-        deafaultTemplateId = wpfko.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");        
-        var tmp = "<!-- ko ic-render: $data";
-        if(DEBUG) 
-            tmp += ", wipeout-type: 'items[' + wpfko.util.ko.peek($index) + ']'";
-
-        tmp += " --><!-- /ko -->";
-        
-        itemsTemplate = tmp;
+        deafaultTemplateId = wpfko.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");  
     };
     
     var itemsControl = wpfko.base.contentControl.extend(function (templateId, itemTemplateId) {
@@ -39,10 +31,7 @@ Class("wpfko.base.itemsControl", function () {
         } else {
             itemsControl.subscribeV3.call(this);
         }
-        
-        //Each itemsSource requires a unique anonymous template of type: <!-- ko ic-render: $data" -->
-        this.__itemsTemplate = wpfko.base.contentControl.createAnonymousTemplate(itemsTemplate, true);
-        
+                
         this.items.subscribe(this.syncModelsAndViewModels, this);
 
         var itemTemplateId = this.itemTemplateId.peek();
@@ -115,8 +104,6 @@ Class("wpfko.base.itemsControl", function () {
     itemsControl.prototype.dispose = function() {
         ///<summary>Dispose of this itemsControl</summary>
         this._super();
-        
-        wpfko.base.contentControl.deleteAnonymousTemplate(this.__itemsTemplate);
     };
 
     //TODO: private
