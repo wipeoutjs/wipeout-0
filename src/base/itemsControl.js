@@ -148,6 +148,8 @@ Class("wpfko.base.itemsControl", function () {
                         var removed = items.splice(change.index + delPadIndex, 1)[0];
                         if(change.moved != null)
                             move[change.moved + "." + change.index] = removed;
+                        else
+                            this.itemDeleted(removed);
                         
                         delPadIndex--;
                     };
