@@ -100,11 +100,6 @@ Class("wpfko.base.itemsControl", function () {
                 this.itemSource.valueHasMutated();
         }
     };
-    
-    itemsControl.prototype.dispose = function() {
-        ///<summary>Dispose of this itemsControl</summary>
-        this._super();
-    };
 
     //TODO: private
     itemsControl.prototype.modelsAndViewModelsAreSynched = function() {
