@@ -22,6 +22,9 @@ Class("wpfko.base.visual", function () {
         
         //The template of the visual, giving it an appearance
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
+        
+        //A bag to put objects needed for the lifecycle of this object and its properties
+        this.__woBag = {};
     }, "visual");
         
     visual.prototype.unRender = function() {
@@ -150,7 +153,7 @@ Class("wpfko.base.visual", function () {
     };
     
     visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
-        ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual</summary>    
+        ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual. Overrides wo.object.triggerRoutedEvent</summary>    
         if(!(eventArgs instanceof wpfko.base.routedEventArgs)) {
             eventArgs = new wpfko.base.routedEventArgs(eventArgs, this);
         }

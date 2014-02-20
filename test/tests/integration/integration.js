@@ -84,6 +84,35 @@ test("routed event, handled", function() {
     ok(application.templateItems.item.__caught);
 });
 
+test("routed event, from model", function() {
+    // arrange
+    var eventArgs = {}, triggered1 = false, triggered2 = false;
+    var aRoutedEvent = new wo.routedEvent();
+    application.model({child:{child:{child:new wo.object()}}})
+    var open = "<wo.contentControl id='item' model='$parent.model().child'><template>", close = "</template></wo.contentControl>";
+    application.template(open + open + open + "<div>hi</div>" + close + close + close);
+    var secondDeepest = application.templateItems.item.templateItems.item;
+    var deepest = secondDeepest.templateItems.item;
+    
+    ok(deepest);
+    strictEqual(deepest.model().constructor, wo.object);
+    
+    deepest.registerRoutedEvent(aRoutedEvent, function() {
+        triggered1 = true;
+    });
+    
+    secondDeepest.registerRoutedEvent(aRoutedEvent, function() {
+        triggered2 = true;
+    });
+    
+    // act
+    deepest.model().triggerRoutedEvent(aRoutedEvent, eventArgs);
+    
+    // assert
+    ok(triggered2);
+    ok(triggered1);
+});
+
 test("basic knockout binding, non observable", function() {
     // arrange
     var val = "LIB:OIPHJKB:OIYHJB";

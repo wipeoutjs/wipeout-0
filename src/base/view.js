@@ -213,10 +213,26 @@ Class("wpfko.base.view", function () {
         }
     };
     
-    // virtual
+    var key = "wo.view.modelRoutedEvents";
+    
     view.prototype.modelChanged = function (oldValue, newValue) {
         ///<summary>Called when the model has changed</summary>
+        if(this.__woBag[key]) {
+            this.__woBag[key].dispose();
+            delete this.__woBag[key];
+        }
+        
+        if(newValue instanceof wpfko.base.object) {
+            this.__woBag[key] = newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this);
+        }
     };
+    
+    view.prototype.onModelRoutedEvent = function (eventArgs) {
+        ///<summary>When the model of this class fires a routed event, catch it and continue the traversal upwards</summary>
+        if(!(eventArgs.routedEvent instanceof wpfko.base.routedEvent)) throw "Invaid routed event";
+        
+        this.triggerRoutedEvent(eventArgs.routedEvent, eventArgs.eventArgs);
+    }
 
     return view;
 });
