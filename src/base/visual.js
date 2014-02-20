@@ -32,23 +32,16 @@ Class("wpfko.base.visual", function () {
         
         this.onUnrender();
         
-        // dispose of all template items
-        enumerate(this.templateItems, function(item, i) {
-            if(item instanceof visual) 
-                item.dispose();
-            
-            delete this.templateItems[i];
-            
-            var index = this.renderedChildren.indexOf(item);
-            if(index !== -1)
-                this.renderedChildren.splice(index, 1);            
-        }, this);
-        
         // dispose of all rendered children
         enumerate(this.renderedChildren.splice(0, this.renderedChildren.length), function(child) {
             if(child instanceof visual) 
                 child.dispose();
         });
+        
+        // dispose of all template items
+        enumerate(this.templateItems, function(item, i) {            
+            delete this.templateItems[i];
+        }, this);
         
         if(this._rootHtmlElement) {
             // disassociate the visual from its root element and empty the root element
