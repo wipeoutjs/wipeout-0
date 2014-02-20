@@ -21,6 +21,9 @@ Binding("render", true, function () {
         
         var _this = this;
         var templateChanged = function() {
+            if(child)
+                child.unTemplate();
+                
             ko.bindingHandlers.template.update.call(_this, element, wpfko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
             
             var bindings = allBindingsAccessor();

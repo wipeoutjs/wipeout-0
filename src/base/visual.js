@@ -26,27 +26,40 @@ Class("wpfko.base.visual", function () {
         //A bag to put objects needed for the lifecycle of this object and its properties
         this.__woBag = {};
     }, "visual");
+    
+    visual.prototype.unTemplate = function() {
+        ///<summary>Removes and disposes (if necessary) all of the children of the visual</summary>
+        
+        // dispose of all rendered children
+        enumerate(this.renderedChildren.splice(0, this.renderedChildren.length), function(child) {
+            if(child instanceof visual) { 
+                if(child.__createdByWipeout)
+                    child.dispose();
+                else
+                    child.unRender();
+            }
+        });
+        
+        // delete all template items
+        enumerate(this.templateItems, function(item, i) {            
+            delete this.templateItems[i];
+        }, this);
+        
+        if(this._rootHtmlElement) {
+            ko.virtualElements.emptyNode(this._rootHtmlElement);
+        }
+    };
         
     visual.prototype.unRender = function() {
         ///<summary>Prepares a visual to be re-rendered</summary>
         
         this.onUnrender();
         
-        // dispose of all rendered children
-        enumerate(this.renderedChildren.splice(0, this.renderedChildren.length), function(child) {
-            if(child instanceof visual) 
-                child.dispose();
-        });
-        
-        // dispose of all template items
-        enumerate(this.templateItems, function(item, i) {            
-            delete this.templateItems[i];
-        }, this);
-        
+        this.unTemplate();
+                
         if(this._rootHtmlElement) {
             // disassociate the visual from its root element and empty the root element
             ko.utils.domData.set(this._rootHtmlElement, wpfko.bindings.wpfko.utils.wpfkoKey, undefined); 
-            ko.virtualElements.emptyNode(this._rootHtmlElement);
             delete this._rootHtmlElement;
         }
     };
