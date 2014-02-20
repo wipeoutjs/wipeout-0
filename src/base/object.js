@@ -109,6 +109,7 @@ Class("wpfko.base.object", function () {
             if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function)
                 childClass[p] = this[p];
  
+        // use eval so that browser debugger will get class name
         if(className) {
             if(!validFunctionCharacters.test(className)) {
                 throw "Invalid class name. The class name is for debug purposes only and can contain alphanumeric characters only";
