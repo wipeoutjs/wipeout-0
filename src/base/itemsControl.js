@@ -49,24 +49,39 @@ Class("wpfko.base.itemsControl", function () {
     //TODO: private
     itemsControl.subscribeV2 = function() {
         ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl</summary>
-        var initial = this.itemSource.peek();
+        var initialItemSource = this.itemSource.peek();
         this.itemSource.subscribe(function() {
             try {
                 if(this.modelsAndViewModelsAreSynched())
                     return;
-                this.itemsChanged(ko.utils.compareArrays(initial, arguments[0] || []));
+                this.itemSourceChanged(ko.utils.compareArrays(initialItemSource, arguments[0] || []));
             } finally {
-                initial = wpfko.utils.obj.copyArray(arguments[0] || []);
+                initialItemSource = wpfko.utils.obj.copyArray(arguments[0] || []);
             }
         }, this);
         
+        var initialItems = this.items.peek();
+        this.items.subscribe(function() {
+            try {
+                this.itemsChanged(ko.utils.compareArrays(initialItems, arguments[0] || []));
+            } finally {
+                initialItems = wpfko.utils.obj.copyArray(arguments[0] || []);
+            }
+        }, this);        
     };
     
     //TODO: private
     itemsControl.subscribeV3 = function() {
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
-        this.itemSource.subscribe(this.itemsChanged, this, "arrayChange");
+        this.itemSource.subscribe(this.itemSourceChanged, this, "arrayChange");
+        this.items.subscribe(this.itemsChanged, this, "arrayChange");
         
+    };
+    
+    //TODO: private
+    itemsControl.prototype.dispose = function() {
+        debugger;
+        this._super();
     };
     
     //TODO: private
@@ -119,6 +134,14 @@ Class("wpfko.base.itemsControl", function () {
     };
 
     itemsControl.prototype.itemsChanged = function (changes) { 
+        ///<summary>Disposes of deleted items</summary>
+        enumerate(changes, function(change) {
+            if(change.status === wpfko.utils.ko.array.diff.deleted && change.moved == null)
+                this.itemDeleted(change.value);
+        }, this);
+    };
+
+    itemsControl.prototype.itemSourceChanged = function (changes) { 
         ///<summary>Adds, removes and moves view models depending on changes to the models array</summary>
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
@@ -130,8 +153,6 @@ Class("wpfko.base.itemsControl", function () {
                         var removed = items.splice(change.index + delPadIndex, 1)[0];
                         if(change.moved != null)
                             move[change.moved + "." + change.index] = removed;
-                        else
-                            this.itemDeleted(removed);
                         
                         delPadIndex--;
                     };
