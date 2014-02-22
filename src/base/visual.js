@@ -5,6 +5,9 @@ Class("wpfko.base.visual", function () {
         ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
         this._super();
         
+        //Specifies whether this object should be used as a binding context. If false, the binding context of this object will be it's parent. 
+        this.woInvisible = this.constructor.woInvisibleDefault;
+        
         //Flag to let the wipeout template engine know how to dispose of this visual
         this.__createdByWipeout = false;
         
@@ -26,6 +29,8 @@ Class("wpfko.base.visual", function () {
         //A bag to put objects needed for the lifecycle of this object and its properties
         this.__woBag = {};
     }, "visual");
+    
+    visual.woInvisibleDefault = false;
     
     visual.prototype.unTemplate = function() {
         ///<summary>Removes and disposes (if necessary) all of the children of the visual</summary>
