@@ -41,7 +41,7 @@ Class("wpfko.base.contentControl", function () {
 
                 lazyCreateTemplateArea();
 
-                templateString = templateString.replace(/^\s+|\s+$/g, '');
+                templateString = trim(templateString);
                 var hash = contentControl.hashCode(templateString).toString();
 
                 if(!forceCreate) {

@@ -158,14 +158,14 @@ Class("wpfko.base.view", function () {
                 }
             }
             
-            if (view.objectParser[type.replace(/^\s+|\s+$/g, '').toLowerCase()]) {
+            if (view.objectParser[trimToLower(type)]) {
                 var innerHTML = [];
                 var ser = ser || new XMLSerializer();
                 for (var j = 0, jj = child.childNodes.length; j < jj; j++) {
                     innerHTML.push(ser.serializeToString(child.childNodes[j]));
                 }
             
-                var val = view.objectParser[type.replace(/^\s+|\s+$/g, '').toLowerCase()](innerHTML.join(""));
+                var val = view.objectParser[trimToLower(type)](innerHTML.join(""));
                 if(ko.isObservable(this[child.nodeName])) {
                     this[child.nodeName](val);       
                 } else {
@@ -196,20 +196,20 @@ Class("wpfko.base.view", function () {
             return value;
         },
         "bool": function (value) {
-            var tmp = value.replace(/^\s+|\s+$/g, '').toLowerCase();
+            var tmp = trimToLower(value);
             return tmp ? tmp !== "false" && tmp !== "0" : false;
         },
         "int": function (value) {
-            return parseInt(value.replace(/^\s+|\s+$/g, ''));
+            return parseInt(trim(value));
         },
         "float": function (value) {
-            return parseFloat(value.replace(/^\s+|\s+$/g, ''));
+            return parseFloat(trim(value));
         },
         "regexp": function (value) {
-            return new RegExp(value.replace(/^\s+|\s+$/g, ''));
+            return new RegExp(trim(value));
         },
         "date": function (value) {
-            return new Date(value.replace(/^\s+|\s+$/g, ''));
+            return new Date(trim(value));
         }
     };
     

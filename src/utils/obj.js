@@ -83,6 +83,16 @@ var Extend = function(namespace, extendWith) {
         current[i] = item;
     });
 };
+    
+var _trimString = /^\s+|\s+$/g;
+var trim = function(string) {
+    ///<summary>Trims a string</summary>
+    return string ? string.replace(_trimString, '') : string;
+};
+
+var trimToLower = function(string) {
+    return string ? trim(string).toLowerCase() : string;
+};
 
 Class("wpfko.utils.obj", function () {
         
@@ -115,6 +125,8 @@ Class("wpfko.utils.obj", function () {
     };
     
     return {
+        trimToLower: trimToLower,
+        trim: trim,
         enumerate: enumerate,
         enumerateDesc: enumerateDesc,
         createObject: createObject,

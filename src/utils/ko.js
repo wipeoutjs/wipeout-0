@@ -62,7 +62,7 @@ Class("wpfko.utils.ko", function () {
         //TODO: this
         isVirtualClosing: function(node) {
             ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
-            return node.nodeType === 8 && node.nodeValue.replace(/^\s+|\s+$/g, '') === "/ko";
+            return node.nodeType === 8 && trim(node.nodeValue) === "/ko";
         }
     };
     
