@@ -19,6 +19,32 @@ module("wipeout.tests.integration", {
     }
 });
 
+test("woInvisible", function() {
+    ok(true);
+    return;
+    
+    // arrange
+    var container = "LKHLHKLH", val = "LKJGB*(PYGUBOPY", child = "LKGKJHFF";
+    
+    // act
+    application.template('<wo.contentControl id="' + container + '" anItem="\'' + val + '\'" depth="1">\
+    <template>\
+        <wo.contentControl woInvisible="true" depth="2">\
+            <template>\
+                <wo.view id="' + child + '" anItem="$parent.anItem" depth="3"></wo.view>\
+            </template>\
+        </wo.contentControl>\
+    </template>\
+</wo.contentControl>');
+    
+    var subject = application.templateItems[container];
+    ok(subject);
+    
+    // assert
+    ok(subject.templateItems[child]);
+    strictEqual(subject.templateItems[child].anItem, val);
+});
+
 test("wpfko.base.if", function() {
     // arrange
     application.hello = ko.observable({hello: "xxx"});
