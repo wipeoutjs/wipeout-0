@@ -12,10 +12,7 @@ Class("wpfko.base.visual", function () {
         this.templateItems = {};
         
         //Array of visuals created within the current template.
-        this.renderedChildren = [];        
-        
-        //The html element or virtual element which is the root node of the template of this visual
-        this._rootHtmlElement = null;        
+        this.renderedChildren = [];       
         
         //Collection event subsciptions for routed events triggered on this object
         this._routedEventSubscriptions = [];
@@ -26,7 +23,8 @@ Class("wpfko.base.visual", function () {
         //A bag to put objects needed for the lifecycle of this object and its properties
         this.__woBag = {
             disposables: {},
-            createdByWipeout: false
+            createdByWipeout: false,
+            rootHtmlElement: null
         };
     }, "visual");
     
@@ -76,8 +74,8 @@ Class("wpfko.base.visual", function () {
             delete this.templateItems[i];
         }, this);
         
-        if(this._rootHtmlElement) {
-            ko.virtualElements.emptyNode(this._rootHtmlElement);
+        if(this.__woBag.rootHtmlElement) {
+            ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
         }
     };
         
@@ -88,10 +86,10 @@ Class("wpfko.base.visual", function () {
         
         this.unTemplate();
                 
-        if(this._rootHtmlElement) {
+        if(this.__woBag.rootHtmlElement) {
             // disassociate the visual from its root element and empty the root element
-            ko.utils.domData.set(this._rootHtmlElement, wpfko.bindings.wipeout.utils.wpfkoKey, undefined); 
-            delete this._rootHtmlElement;
+            ko.utils.domData.set(this.__woBag.rootHtmlElement, wpfko.bindings.wipeout.utils.wpfkoKey, undefined); 
+            delete this.__woBag.rootHtmlElement;
         }
     };
     
@@ -150,7 +148,7 @@ Class("wpfko.base.visual", function () {
     visual.prototype.getParent = function() {
         ///<summary>Get the parent visual of this visual</summary>
         var nextTarget;
-        var current = visual.getParentElement(this._rootHtmlElement);
+        var current = visual.getParentElement(this.__woBag.rootHtmlElement);
         while(current) {
             if(nextTarget = ko.utils.domData.get(current, wpfko.bindings.wipeout.utils.wpfkoKey)) {
                 return nextTarget;

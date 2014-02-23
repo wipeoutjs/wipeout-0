@@ -16,7 +16,7 @@ Binding("render", true, function () {
         if(child && viewModel && child === viewModel)
             throw "A wo.visual cannot be a child of itself.";
         
-        if (child && child._rootHtmlElement)
+        if (child && child.__woBag.rootHtmlElement)
             throw "This visual has already been rendered. Call its unRender() function before rendering again.";
         
         var _this = this;
@@ -41,7 +41,7 @@ Binding("render", true, function () {
         
         if (child) {            
             ko.utils.domData.set(element, wpfko.bindings.wipeout.utils.wpfkoKey, child);
-            child._rootHtmlElement = element;
+            child.__woBag.rootHtmlElement = element;
             if (viewModel)
                 viewModel.renderedChildren.push(child);
             

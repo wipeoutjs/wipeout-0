@@ -193,7 +193,7 @@ test("un render", function() {
     getAllChildren(application);
         
     wo.obj.enumerate(ctrls, function(item) {
-        ok(item._rootHtmlElement);
+        ok(item.__woBag.rootHtmlElement);
     });
     
     // act
@@ -201,7 +201,7 @@ test("un render", function() {
     
     // assert
     wo.obj.enumerate(ctrls, function(item) {
-        ok(!item._rootHtmlElement);
+        ok(!item.__woBag.rootHtmlElement);
     });
 });
 
