@@ -226,7 +226,7 @@ test("basic knockout binding", function() {
     strictEqual($("#" + id).html(), val2);
 });
 
-test("basic items source. initial, add, remove, re-arrange", function() {
+test("basic items control. initial, add, remove, re-arrange", function() {
     // arrange
     var id1 = "JBKJBLKJBKJLBLKJB";
     var id2 = "oidshfp9usodnf";
