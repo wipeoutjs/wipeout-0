@@ -1,7 +1,7 @@
 module("wipeout.tests.integration", {
     setup: function() {
         $fixture = $("#qunit-fixture");
-        $fixture.html("<div data-bind='wpfko: wo.contentControl'></div>");
+        $fixture.html("<div data-bind='wipeout: wo.contentControl'></div>");
         $application = $($fixture.children()[0]);
         
         ko.applyBindings({}, $application[0]);

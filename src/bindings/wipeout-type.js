@@ -4,7 +4,7 @@ Binding("wipeout-type", true, function () {
     // placeholder for binding which does nothing    
     return {
         init: function() {
-            ///<summary>Initialize the wipeout-type control binding. Calling this binding does not actually do anything. It is gererally called form the render binding</summary>
+            ///<summary>Initialize the wipeout-type control binding. Calling this binding does not actually do anything. It is gererally called from the render binding</summary>
         },
         utils: {
             comment: function(element, text) {

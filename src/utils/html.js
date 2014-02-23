@@ -157,7 +157,7 @@ Class("wpfko.utils.html", function () {
     
     var getViewModel = function(forHtmlNode) {
         ///<summary>Get the view model associated with a html node</summary>
-        return ko.utils.domData.get(forHtmlNode, wpfko.bindings.wpfko.utils.wpfkoKey);        
+        return ko.utils.domData.get(forHtmlNode, wpfko.bindings.wipeout.utils.wpfkoKey);        
     };
     
     return {

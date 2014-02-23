@@ -80,7 +80,7 @@ Class("wpfko.base.itemsControl", function () {
     
     //TODO: private
     itemsControl.prototype.syncModelsAndViewModels = function() {
-        ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
+        ///<summary>Ensures that the itemsSource array and items array are in sync</summary>
         var changed = false, modelNull = false;
         var models = this.itemSource();
         if(models ==  null) {

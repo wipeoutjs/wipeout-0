@@ -31,7 +31,7 @@ Binding("render", true, function () {
                 wpfko.bindings["wipeout-type"].utils.comment(element, bindings["wipeout-type"]);
         };
         
-        var previous = ko.utils.domData.get(element, wpfko.bindings.wpfko.utils.wpfkoKey); 
+        var previous = ko.utils.domData.get(element, wpfko.bindings.wipeout.utils.wpfkoKey); 
         if(previous instanceof wpfko.base.visual) {
             if(previous.__createdByWipeout)    
                 previous.dispose();
@@ -40,7 +40,7 @@ Binding("render", true, function () {
         }
         
         if (child) {            
-            ko.utils.domData.set(element, wpfko.bindings.wpfko.utils.wpfkoKey, child);
+            ko.utils.domData.set(element, wpfko.bindings.wipeout.utils.wpfkoKey, child);
             child._rootHtmlElement = element;
             if (viewModel)
                 viewModel.renderedChildren.push(child);

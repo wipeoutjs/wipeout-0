@@ -2,7 +2,7 @@
 Binding("wo", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        ///<summary>Initialize the wo binding</summary>
+        ///<summary>Initialize the wo binding. The wo binding renders viewmodels. It is mostly used internally by wipeout</summary>
         
         var vals = wpfko.template.engine.scriptCache[valueAccessor()](bindingContext);
         if(vals.id) {

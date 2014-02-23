@@ -92,7 +92,7 @@ Class("wpfko.base.visual", function () {
                 
         if(this._rootHtmlElement) {
             // disassociate the visual from its root element and empty the root element
-            ko.utils.domData.set(this._rootHtmlElement, wpfko.bindings.wpfko.utils.wpfkoKey, undefined); 
+            ko.utils.domData.set(this._rootHtmlElement, wpfko.bindings.wipeout.utils.wpfkoKey, undefined); 
             delete this._rootHtmlElement;
         }
     };
@@ -154,7 +154,7 @@ Class("wpfko.base.visual", function () {
         var nextTarget;
         var current = visual.getParentElement(this._rootHtmlElement);
         while(current) {
-            if(nextTarget = ko.utils.domData.get(current, wpfko.bindings.wpfko.utils.wpfkoKey)) {
+            if(nextTarget = ko.utils.domData.get(current, wpfko.bindings.wipeout.utils.wpfkoKey)) {
                 return nextTarget;
             }
             
@@ -263,7 +263,7 @@ Class("wpfko.base.visual", function () {
             wpfko.utils.obj.enumerate(visual.visualGraph(child), output.push, output);
         });
  
-        var vm = ko.utils.domData.get(rootElement, wpfko.bindings.wpfko.utils.wpfkoKey);        
+        var vm = ko.utils.domData.get(rootElement, wpfko.bindings.wipeout.utils.wpfkoKey);        
         if (vm) {
             return [{ viewModel: vm, display: displayFunction(vm), children: output}];
         }

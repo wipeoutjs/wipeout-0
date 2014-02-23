@@ -17,6 +17,7 @@ Binding("itemsControl", true, function () {
     };
     
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the itemsControl binding</summary>
         var ic = wpfko.utils.ko.peek(viewModel);
         if(ic && !(ic instanceof wpfko.base.itemsControl)) throw "This binding can only be used on an itemsControl";
         
@@ -25,6 +26,7 @@ Binding("itemsControl", true, function () {
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Update the itemsControl binding</summary>
         var ic = wpfko.utils.ko.peek(viewModel);
         if(ic && !(ic instanceof wpfko.base.itemsControl)) throw "This binding can only be used on an itemsControl";
         
@@ -33,6 +35,7 @@ Binding("itemsControl", true, function () {
     
     var utils = {
         createAccessor: function(vm) {
+            ///<summary>Create a value accessor for the template binding</summary>
             vm = wpfko.utils.ko.peek(vm);
             return function() {
                 return {
@@ -54,11 +57,13 @@ Binding("itemsControl", true, function () {
 Binding("ic-render", true, function () {
     
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the ic-render binding</summary>
         
         return wpfko.bindings.render.init.call(this, element, valueAccessor, allBindingsAccessor, bindingContext.$parent, bindingContext.$parentContext);
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Update the ic-render binding</summary>
         
         return wpfko.bindings.render.update.call(this, element, valueAccessor, allBindingsAccessor, bindingContext.$parent, bindingContext.$parentContext);
     };
