@@ -27,10 +27,33 @@ Class("wpfko.base.visual", function () {
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
         
         //A bag to put objects needed for the lifecycle of this object and its properties
-        this.__woBag = {};
+        this.__woBag = {
+            disposables: {}
+        };
     }, "visual");
     
     visual.woInvisibleDefault = false;
+    
+    visual.prototype.disposeOf = function(key) {
+        if(this.__woBag.disposables[key]) {
+            this.__woBag.disposables[key]();
+            delete this.__woBag.disposables[key];
+        }
+    };
+    
+    visual.prototype.disposeOfAll = function() {
+        for(var i in this.__woBag.disposables)
+            this.disposeOf(i);
+    };
+    
+    visual.prototype.registerDisposable = (function() {
+        var i = 0;
+        return function(disposeFunction) {
+            var id = (++i).toString();            
+            this.__woBag.disposables[id] = disposeFunction;            
+            return id;
+        };
+    })();
     
     visual.prototype.unTemplate = function() {
         ///<summary>Removes and disposes (if necessary) all of the children of the visual</summary>

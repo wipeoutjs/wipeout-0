@@ -11,7 +11,6 @@ If, poke template
 
 
 
-seperate template ids for each item in items control
 
 itemeControl.reDraw needs attention
 
