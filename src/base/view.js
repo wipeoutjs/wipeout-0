@@ -127,12 +127,16 @@ Class("wpfko.base.view", function () {
         
         if(!propertiesXml)
             return;
+        
+        var prop = propertiesXml.getAttribute("woInvisible");
+        if(prop)
+            this.woInvisible = parseBool(prop);
                 
-        var bindingContext = parentBindingContext.createChildContext(this);
         if(!view.elementHasModelBinding(propertiesXml) && wpfko.utils.ko.peek(this.model) == null) {
-            this.bind('model', bindingContext.$parent.model);
+            this.bind('model', parentBindingContext.$data.model);
         }
         
+        var bindingContext = this.woInvisible ? parentBindingContext : parentBindingContext.createChildContext(this);        
         enumerate(propertiesXml.attributes, function(attr) {
             // reserved
             if(view.reservedPropertyNames.indexOf(attr.nodeName) !== -1) return;
@@ -143,8 +147,13 @@ Class("wpfko.base.view", function () {
                 setter = ",\n\t\t\tfunction(val) {\n\t\t\t\tif(!ko.isObservable(" + attr.value + "))\n\t\t\t\t\tthrow 'Two way bindings must be between 2 observables';\n\t\t\t\t" + attr.value + "(val);\n\t\t\t}";
             }
             
-            wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t$data.bind('" + name + "', function() {\n\t\t\t\treturn " + attr.value + ";\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
-        });
+            try {
+                bindingContext.__$woCurrent = this;
+                wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t__$woCurrent.bind('" + name + "', function() {\n\t\t\t\treturn " + attr.value + ";\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
+            } finally {
+                delete bindingContext.__$woCurrent;
+            }
+        }, this);
         
         enumerate(propertiesXml.childNodes, function(child, i) {
             

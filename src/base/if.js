@@ -35,7 +35,7 @@ Class("wpfko.base.if", function () {
     }, "_if");
     
     // picked up by wpfko.base.visual constructor
-    _if.woInvisibleDefault = false;
+    _if.woInvisibleDefault = true;
     
     _if.prototype.elseTemplateChanged = function (newVal) {
         ///<summary>Resets the template id to the else template if condition is not met</summary>     

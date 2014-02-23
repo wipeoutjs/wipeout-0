@@ -59,10 +59,10 @@ Binding("render", true, function () {
         return function () {
             var child = oldValueAccessor();
             var _child = ko.utils.unwrapObservable(child);
-            return {
+            
+            var output = {
                 templateEngine: wpfko.template.engine.instance,
-                name: _child ? _child.templateId.peek() : "",
-                data: child || {},
+                name: _child ? _child.templateId.peek() : "",                
                 afterRender: _child ? function(nodes, context) { 
                     
                     var old = _child.nodes || [];
@@ -70,6 +70,11 @@ Binding("render", true, function () {
                     _child.rootHtmlChanged(old, nodes);
                 } : undefined
             };
+            
+            if(child && !child.woInvisible)
+                output.data = child || {};
+                
+            return output;
         };
     };
     
