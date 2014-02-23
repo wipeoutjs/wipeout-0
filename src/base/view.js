@@ -23,7 +23,7 @@ Class("wpfko.base.view", function () {
         var _this = this;
                                 
         //Placeholder to store binding disposeal objects
-        this._bindings = {};
+        this.__woBag.bindings = {};
     }, "view"); 
     
     var setObservable = function(obj, property, value) {
@@ -36,9 +36,9 @@ Class("wpfko.base.view", function () {
     
     view.prototype.disposeOfBinding = function(propertyName) {
         ///<summary>Un-bind this property.</summary>
-        if(this._bindings[propertyName]) {
-            this._bindings[propertyName].dispose();
-            delete this._bindings[propertyName];
+        if(this.__woBag.bindings[propertyName]) {
+            this.__woBag.bindings[propertyName].dispose();
+            delete this.__woBag.bindings[propertyName];
         }
     };
     
@@ -51,7 +51,7 @@ Class("wpfko.base.view", function () {
             delete this.__woBag[modelRoutedEventKey];
         }
         
-        for(var i in this._bindings)
+        for(var i in this.__woBag.bindings)
             this.disposeOfBinding(i);
     };
 
@@ -85,7 +85,7 @@ Class("wpfko.base.view", function () {
             }, this) :
             null;
         
-        this._bindings[property] = {
+        this.__woBag.bindings[property] = {
             dispose: function() {
                 if(subscription1) {
                     subscription1.dispose();
