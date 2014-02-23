@@ -120,7 +120,7 @@ Class("wpfko.base.view", function () {
     view.reservedPropertyNames = ["constructor", "constructor-tw", "id","id-tw"];
     
     //TODO private
-    view.prototype.initialize = function(propertiesXml, bindingContext) {
+    view.prototype.initialize = function(propertiesXml, parentBindingContext) {
         ///<summary>Takes an xml fragment and binding context and sets its properties accordingly</summary>
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
@@ -128,6 +128,7 @@ Class("wpfko.base.view", function () {
         if(!propertiesXml)
             return;
                 
+        var bindingContext = parentBindingContext.createChildContext(this);
         if(!view.elementHasModelBinding(propertiesXml) && wpfko.utils.ko.peek(this.model) == null) {
             this.bind('model', bindingContext.$parent.model);
         }
@@ -175,7 +176,7 @@ Class("wpfko.base.view", function () {
                 var val = wpfko.utils.obj.createObject(type);
                 if(val instanceof wpfko.base.view) {
                     val.__createdByWipeout = true;
-                    val.initialize(child, bindingContext.createChildContext(val));
+                    val.initialize(child, bindingContext);
                 }
                 
                 if(ko.isObservable(this[child.nodeName])) {

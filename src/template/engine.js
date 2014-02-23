@@ -59,11 +59,9 @@ Class("wpfko.template.engine", function () {
                 var vm = wpfko.utils.obj.createObject(xmlElement.nodeName);    
                 if(!(vm instanceof wpfko.base.view)) throw "Only wo.view elements can be created in this way";
                 vm.__createdByWipeout = true;
-                var context = parentBindingContext.createChildContext(vm);
-                vm.initialize(xmlElement, context);                
+                vm.initialize(xmlElement, parentBindingContext);                
                 return {
                     vm: vm,
-                    bindingContext: context,
                     id: engine.getId(xmlElement)
                 };
             };

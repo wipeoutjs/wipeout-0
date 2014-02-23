@@ -94,6 +94,14 @@ var trimToLower = function(string) {
     return string ? trim(string).toLowerCase() : string;
 };
 
+var parseBool = function(input) {
+    if(input == null) return false;
+        
+    input = trimToLower(input);
+    
+    return input && input !== "false" && input !== "0";
+};
+
 Class("wpfko.utils.obj", function () {
         
     var createObject = function(constructorString, context) {
@@ -125,6 +133,7 @@ Class("wpfko.utils.obj", function () {
     };
     
     return {
+        parseBool: parseBool,
         trimToLower: trimToLower,
         trim: trim,
         enumerate: enumerate,

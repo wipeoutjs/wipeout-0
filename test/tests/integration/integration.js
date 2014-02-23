@@ -20,8 +20,6 @@ module("wipeout.tests.integration", {
 });
 
 test("woInvisible", function() {
-    ok(true);
-    return;
     
     // arrange
     var container = "LKHLHKLH", val = "LKJGB*(PYGUBOPY", child = "LKGKJHFF";
