@@ -132,6 +132,8 @@ Class("wpfko.base.itemsControl", function () {
         enumerate(changes, function(change) {
             if(change.status === wpfko.utils.ko.array.diff.deleted && change.moved == null)
                 this.itemDeleted(change.value);
+            else if(change.status === wpfko.utils.ko.array.diff.added && change.moved == null)
+                this.itemRendered(change.value);
         }, this);
     };
 
