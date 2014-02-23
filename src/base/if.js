@@ -20,7 +20,7 @@ Class("wpfko.base.if", function () {
         
         // the template to render if the condition is false. Defaults to a blank template
         this.elseTemplateId = ko.observable(_if.blankTemplateId);
-        this.elseTemplateId.subscribe(this.elseTemplateChanged, this);
+        this.registerDisposable(this.elseTemplateId.subscribe(this.elseTemplateChanged, this).dispose);
         
         // anonymous version of elseTemplateId
         this.elseTemplate = wpfko.base.contentControl.createTemplatePropertyFor(this.elseTemplateId, this);
@@ -28,8 +28,8 @@ Class("wpfko.base.if", function () {
         // stores the template id if the condition is false
         this.__cachedTemplateId = this.templateId();
         
-        this.condition.subscribe(this.onConditionChanged, this);
-        this.templateId.subscribe(this.copyTemplateId, this);
+        this.registerDisposable(this.condition.subscribe(this.onConditionChanged, this).dispose);
+        this.registerDisposable(this.templateId.subscribe(this.copyTemplateId, this).dispose);
         
         this.copyTemplateId(this.templateId());
     }, "_if");

@@ -131,14 +131,14 @@ test("routed event, from model", function() {
     // arrange
     var eventArgs = {}, triggered1 = false, triggered2 = false;
     var aRoutedEvent = new wo.routedEvent();
-    application.model({child:{child:{child:new wo.object()}}})
+    application.model({child:{child:{child:new wo.routedEventModel()}}})
     var open = "<wo.contentControl id='item' model='$parent.model().child'><template>", close = "</template></wo.contentControl>";
     application.template(open + open + open + "<div>hi</div>" + close + close + close);
     var secondDeepest = application.templateItems.item.templateItems.item;
     var deepest = secondDeepest.templateItems.item;
     
     ok(deepest);
-    strictEqual(deepest.model().constructor, wo.object);
+    strictEqual(deepest.model().constructor, wo.routedEventModel);
     
     deepest.registerRoutedEvent(aRoutedEvent, function() {
         triggered1 = true;

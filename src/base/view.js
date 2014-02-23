@@ -12,24 +12,19 @@ Class("wpfko.base.view", function () {
         this.model = ko.observable(model || null);
         
         var model = null;
-        this.model.subscribe(function(newVal) {
+        this.registerDisposable(this.model.subscribe(function(newVal) {
             try {
                 this.modelChanged(model, newVal);
             } finally {
                 model = newVal;
             }                                          
-        }, this);
+        }, this).dispose);
         
+        var _this = this;
+                                
         //Placeholder to store binding disposeal objects
         this._bindings = {};
-    }, "view");    
-    
-    var enumerate = function(items, callback, context) {
-        
-        for(var i = 0, ii = items.length; i < ii; i++) {
-            callback.call(context, items[i], i);
-        }        
-    };
+    }, "view"); 
     
     var setObservable = function(obj, property, value) {
         if(ko.isObservable(obj[property])) {
@@ -39,10 +34,12 @@ Class("wpfko.base.view", function () {
         }
     };
     
-    // virtual
-    view.prototype.onInitialized = function() {
-        ///<summary>Called by the template engine after a view is created and all of its properties are set</summary>    
-    }
+    view.prototype.disposeOfBinding = function(propertyName) {
+        if(this._bindings[propertyName]) {
+            this._bindings[propertyName].dispose();
+            delete this._bindings[propertyName];
+        }
+    };
     
     view.prototype.dispose = function() {
         ///<summary>Dispose of view specific items</summary>    
@@ -56,12 +53,11 @@ Class("wpfko.base.view", function () {
         for(var i in this._bindings)
             this.disposeOfBinding(i);
     };
+
     
-    view.prototype.disposeOfBinding = function(propertyName) {
-        if(this._bindings[propertyName]) {
-            this._bindings[propertyName].dispose();
-            delete this._bindings[propertyName];
-        }
+    // virtual
+    view.prototype.onInitialized = function() {
+        ///<summary>Called by the template engine after a view is created and all of its properties are set</summary>    
     };
     
     view.prototype.bind = function(property, valueAccessor, twoWay) {
@@ -232,13 +228,11 @@ Class("wpfko.base.view", function () {
         
     view.prototype.modelChanged = function (oldValue, newValue) {
         ///<summary>Called when the model has changed</summary>
-        if(this.__woBag[modelRoutedEventKey]) {
-            this.__woBag[modelRoutedEventKey].dispose();
-            delete this.__woBag[modelRoutedEventKey];
-        }
+        
+        this.disposeOf(this.__woBag[modelRoutedEventKey]);
         
         if(newValue instanceof wpfko.base.routedEventModel) {
-            this.__woBag[modelRoutedEventKey] = newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this);
+            this.__woBag[modelRoutedEventKey] = this.registerDisposable(newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this).dispose);
         }
     };
     

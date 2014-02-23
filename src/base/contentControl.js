@@ -11,7 +11,7 @@ Class("wpfko.base.contentControl", function () {
     
     contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
         ///<summary>Creates a computed for a template property which is bound to the templateIdObservable property</summary>
-        return ko.dependentObservable({
+        var output = ko.dependentObservable({
             read: function () {
                 var script = document.getElementById(templateIdObservable());
                 return script ? script.textContent : "";
@@ -21,6 +21,11 @@ Class("wpfko.base.contentControl", function () {
             },
             owner: owner
         });
+        
+        if(owner instanceof wpfko.base.visual)
+            owner.registerDisposable(output.dispose);
+        
+        return output;
     };
     
     var dataTemplateHash = "data-templatehash";  

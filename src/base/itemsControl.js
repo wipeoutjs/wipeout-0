@@ -31,11 +31,11 @@ Class("wpfko.base.itemsControl", function () {
         } else {
             itemsControl.subscribeV3.call(this);
         }
-                
-        this.items.subscribe(this.syncModelsAndViewModels, this);
+        
+        this.registerDisposable(this.items.subscribe(this.syncModelsAndViewModels, this).dispose);
 
         var itemTemplateId = this.itemTemplateId.peek();
-        this.itemTemplateId.subscribe(function (newValue) {
+        this.registerDisposable(this.itemTemplateId.subscribe(function (newValue) {
             if (itemTemplateId !== newValue) {
                 try {
                     this.reDrawItems();
@@ -43,14 +43,14 @@ Class("wpfko.base.itemsControl", function () {
                     itemTemplateId = newValue;
                 }
             }
-        }, this);
+        }, this).dispose);
     }, "itemsControl");
     
     //TODO: private
     itemsControl.subscribeV2 = function() {
         ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl</summary>
         var initialItemSource = this.itemSource.peek();
-        this.itemSource.subscribe(function() {
+        this.registerDisposable(this.itemSource.subscribe(function() {
             try {
                 if(this.modelsAndViewModelsAreSynched())
                     return;
@@ -58,30 +58,24 @@ Class("wpfko.base.itemsControl", function () {
             } finally {
                 initialItemSource = wpfko.utils.obj.copyArray(arguments[0] || []);
             }
-        }, this);
+        }, this).dispose);
         
         var initialItems = this.items.peek();
-        this.items.subscribe(function() {
+        this.registerDisposable(this.items.subscribe(function() {
             try {
                 this.itemsChanged(ko.utils.compareArrays(initialItems, arguments[0] || []));
             } finally {
                 initialItems = wpfko.utils.obj.copyArray(arguments[0] || []);
             }
-        }, this);        
+        }, this).dispose);        
     };
     
     //TODO: private
     itemsControl.subscribeV3 = function() {
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
-        this.itemSource.subscribe(this.itemSourceChanged, this, "arrayChange");
-        this.items.subscribe(this.itemsChanged, this, "arrayChange");
+        this.registerDisposable(this.itemSource.subscribe(this.itemSourceChanged, this, "arrayChange").dispose);
+        this.registerDisposable(this.items.subscribe(this.itemsChanged, this, "arrayChange").dispose);
         
-    };
-    
-    //TODO: private
-    itemsControl.prototype.dispose = function() {
-        debugger;
-        this._super();
     };
     
     //TODO: private
