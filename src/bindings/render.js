@@ -43,7 +43,7 @@ Binding("render", true, function () {
             ko.utils.domData.set(element, wpfko.bindings.wipeout.utils.wpfkoKey, child);
             child.__woBag.rootHtmlElement = element;
             if (viewModel)
-                viewModel.renderedChildren.push(child);
+                viewModel.__woBag.renderedChildren.push(child);
             
             child.templateId.subscribe(templateChanged);
         }

@@ -184,9 +184,9 @@ Class("wpfko.base.itemsControl", function () {
     //virtual
     itemsControl.prototype.itemDeleted = function (item) {
         ///<summary>Disposes of deleted items</summary>        
-        var renderedChild = this.renderedChildren.indexOf(item);
+        var renderedChild = this.__woBag.renderedChildren.indexOf(item);
         if(renderedChild !== -1)
-            this.renderedChildren.splice(renderedChild, 1);
+            this.__woBag.renderedChildren.splice(renderedChild, 1);
         
         item.dispose();
     };

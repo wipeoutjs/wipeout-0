@@ -11,9 +11,6 @@ Class("wpfko.base.visual", function () {
         //Dictionary of items created within the current template. The items can be visuals or html elements
         this.templateItems = {};
         
-        //Array of visuals created within the current template.
-        this.renderedChildren = []; 
-        
         //The template of the visual, giving it an appearance
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
         
@@ -22,7 +19,8 @@ Class("wpfko.base.visual", function () {
             disposables: {},
             createdByWipeout: false,
             rootHtmlElement: null,
-            routedEventSubscriptions: []
+            routedEventSubscriptions: [],
+            renderedChildren: []
         };
     }, "visual");
     
@@ -58,7 +56,7 @@ Class("wpfko.base.visual", function () {
         ///<summary>Removes and disposes (if necessary) all of the children of the visual</summary>
         
         // dispose of all rendered children
-        enumerate(this.renderedChildren.splice(0, this.renderedChildren.length), function(child) {
+        enumerate(this.__woBag.renderedChildren.splice(0, this.__woBag.renderedChildren.length), function(child) {
             if(child instanceof visual) { 
                 if(child.__woBag.createdByWipeout)
                     child.dispose();
