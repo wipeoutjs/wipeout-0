@@ -1,6 +1,8 @@
 
 Class("wpfko.base.view", function () {    
 
+    var modelRoutedEventKey = "wo.view.modelRoutedEvents";
+    
     var view = wpfko.base.visual.extend(function (templateId, model /*optional*/) {        
         ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>    
 
@@ -45,6 +47,11 @@ Class("wpfko.base.view", function () {
     view.prototype.dispose = function() {
         ///<summary>Dispose of view specific items</summary>    
         this._super();
+        
+        if(this.__woBag[modelRoutedEventKey]) {
+            this.__woBag[modelRoutedEventKey].dispose();
+            delete this.__woBag[modelRoutedEventKey];
+        }
         
         for(var i in this._bindings)
             this.disposeOfBinding(i);
@@ -222,18 +229,16 @@ Class("wpfko.base.view", function () {
             return new Date(trim(value));
         }
     };
-    
-    var key = "wo.view.modelRoutedEvents";
-    
+        
     view.prototype.modelChanged = function (oldValue, newValue) {
         ///<summary>Called when the model has changed</summary>
-        if(this.__woBag[key]) {
-            this.__woBag[key].dispose();
-            delete this.__woBag[key];
+        if(this.__woBag[modelRoutedEventKey]) {
+            this.__woBag[modelRoutedEventKey].dispose();
+            delete this.__woBag[modelRoutedEventKey];
         }
         
-        if(newValue instanceof wpfko.base.object) {
-            this.__woBag[key] = newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this);
+        if(newValue instanceof wpfko.base.routedEventModel) {
+            this.__woBag[modelRoutedEventKey] = newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this);
         }
     };
     

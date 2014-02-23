@@ -2,9 +2,7 @@
 Class("wpfko.base.object", function () {
     
     var object = function () {
-        ///<summary>The object class is the base class for all wipeout objects. It has base functionality for inheritance and parent methods</summary>
-        
-        this.__triggerRoutedEventOnVM = new wo.event();
+        ///<summary>The object class is the base class for all wipeout objects. It has base functionality for inheritance and parent methods</summary>        
     };
     
     var cachedSuperMethods = {
@@ -93,11 +91,6 @@ Class("wpfko.base.object", function () {
                 
         // execute parent class method
         return cached.apply(this, arguments);
-    };
-    
-    object.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
-        ///<summary>Trigger a routed event which will propogate to any view models where this object is it's model and continue to bubble from there</summary>  
-        this.__triggerRoutedEventOnVM.trigger({routedEvent: routedEvent, eventArgs: eventArgs});
     };
 
     var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_]*$/;
