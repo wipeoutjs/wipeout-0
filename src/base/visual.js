@@ -12,10 +12,7 @@ Class("wpfko.base.visual", function () {
         this.templateItems = {};
         
         //Array of visuals created within the current template.
-        this.renderedChildren = [];       
-        
-        //Collection event subsciptions for routed events triggered on this object
-        this._routedEventSubscriptions = [];
+        this.renderedChildren = []; 
         
         //The template of the visual, giving it an appearance
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
@@ -24,7 +21,8 @@ Class("wpfko.base.visual", function () {
         this.__woBag = {
             disposables: {},
             createdByWipeout: false,
-            rootHtmlElement: null
+            rootHtmlElement: null,
+            routedEventSubscriptions: []
         };
     }, "visual");
     
@@ -104,7 +102,7 @@ Class("wpfko.base.visual", function () {
                 this[i].dispose();
                 
         // dispose of routed event subscriptions
-        enumerate(this._routedEventSubscriptions.splice(0, this._routedEventSubscriptions.length), function(event) {
+        enumerate(this.__woBag.routedEventSubscriptions.splice(0, this.__woBag.routedEventSubscriptions.length), function(event) {
             event.dispose();
         });
     };
@@ -160,9 +158,9 @@ Class("wpfko.base.visual", function () {
     
     visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {  
         ///<summary>Unregister from a routed event. The callback and callback context must tbe the same as those passed in during registration</summary>      
-        for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
-            if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
-                this._routedEventSubscriptions[i].event.unRegister(callback, context);
+        for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
+            if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
+                this.__woBag.routedEventSubscriptions[i].event.unRegister(callback, context);
                 return;
             }
         }  
@@ -172,16 +170,16 @@ Class("wpfko.base.visual", function () {
         ///<summary>Register for a routed event</summary>    
         
         var rev;
-        for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
-            if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
-                rev = this._routedEventSubscriptions[i];
+        for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
+            if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
+                rev = this.__woBag.routedEventSubscriptions[i];
                 break;
             }
         }
         
         if(!rev) {
             rev = new wpfko.base.routedEventRegistration(routedEvent);
-            this._routedEventSubscriptions.push(rev);
+            this.__woBag.routedEventSubscriptions.push(rev);
         }
         
         rev.event.register(callback, callbackContext);
@@ -193,10 +191,10 @@ Class("wpfko.base.visual", function () {
             eventArgs = new wpfko.base.routedEventArgs(eventArgs, this);
         }
         
-        for(var i = 0, ii = this._routedEventSubscriptions.length; i < ii; i++) {
+        for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
             if(eventArgs.handled) return;
-            if(this._routedEventSubscriptions[i].routedEvent === routedEvent) {
-                this._routedEventSubscriptions[i].event.trigger(eventArgs);
+            if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
+                this.__woBag.routedEventSubscriptions[i].event.trigger(eventArgs);
             }
         }
         

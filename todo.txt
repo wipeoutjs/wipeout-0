@@ -7,4 +7,6 @@ Debug code
 
 If, poke template
 
-changes: wpfko -> wipeout
+changes:    wpfko -> wipeout
+            createdByWipeout
+            rootHtmlElement
