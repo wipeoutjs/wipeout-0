@@ -195,7 +195,7 @@ Class("wpfko.base.itemsControl", function () {
     itemsControl.prototype._createItem = function (model) {
         ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
         var item = this.createItem(model);
-        item.__createdByWipeout = true;
+        item.__woBag.createdByWipeout = true;
         return item;
     };
 

@@ -8,9 +8,6 @@ Class("wpfko.base.visual", function () {
         //Specifies whether this object should be used as a binding context. If false, the binding context of this object will be it's parent. 
         this.woInvisible = this.constructor.woInvisibleDefault;
         
-        //Flag to let the wipeout template engine know how to dispose of this visual
-        this.__createdByWipeout = false;
-        
         //Dictionary of items created within the current template. The items can be visuals or html elements
         this.templateItems = {};
         
@@ -28,7 +25,8 @@ Class("wpfko.base.visual", function () {
         
         //A bag to put objects needed for the lifecycle of this object and its properties
         this.__woBag = {
-            disposables: {}
+            disposables: {},
+            createdByWipeout: false
         };
     }, "visual");
     
@@ -66,7 +64,7 @@ Class("wpfko.base.visual", function () {
         // dispose of all rendered children
         enumerate(this.renderedChildren.splice(0, this.renderedChildren.length), function(child) {
             if(child instanceof visual) { 
-                if(child.__createdByWipeout)
+                if(child.__woBag.createdByWipeout)
                     child.dispose();
                 else
                     child.unRender();

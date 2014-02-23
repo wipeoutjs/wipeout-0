@@ -33,7 +33,7 @@ Binding("render", true, function () {
         
         var previous = ko.utils.domData.get(element, wpfko.bindings.wipeout.utils.wpfkoKey); 
         if(previous instanceof wpfko.base.visual) {
-            if(previous.__createdByWipeout)    
+            if(previous.__woBag.createdByWipeout)    
                 previous.dispose();
             else    
                 previous.unRender();

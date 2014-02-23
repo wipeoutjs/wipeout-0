@@ -188,7 +188,7 @@ Class("wpfko.base.view", function () {
             } else {
                 var val = wpfko.utils.obj.createObject(type);
                 if(val instanceof wpfko.base.view) {
-                    val.__createdByWipeout = true;
+                    val.__woBag.createdByWipeout = true;
                     val.initialize(child, bindingContext);
                 }
                 
