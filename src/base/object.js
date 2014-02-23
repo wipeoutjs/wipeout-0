@@ -93,7 +93,7 @@ Class("wpfko.base.object", function () {
         return cached.apply(this, arguments);
     };
 
-    var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_]*$/;
+    var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_0-9]*$/;
     object.extend = function (childClass, className/* optional */) {
         ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
  
