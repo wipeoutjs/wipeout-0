@@ -46,18 +46,37 @@ test("woInvisible", function() {
 test("wpfko.base.if", function() {
     // arrange
     application.hello = ko.observable({hello: "xxx"});
-    application.template('<wo.if condition="$parent.hello">\
+    application.template('<wo.if woInvisible="false" condition="$parent.hello">\
     <template>\
-        <div data-bind="html: $parent.hello().hello"></div>\
+        <div id="myDiv" data-bind="html: $parent.hello().hello"></div>\
     </template>\
 </wo.if>');
+    
+    ok(document.getElementById("myDiv"));
     
     // act
     application.hello(null);
     
     // assert
-    // no exception means it is ok
-    ok(true);
+    ok(!document.getElementById("myDiv"));
+});
+
+test("wpfko.base.if, woInvisible", function() {
+    // arrange
+    application.hello = ko.observable({hello: "xxx"});
+    application.template('<wo.if condition="hello">\
+    <template>\
+        <div id="myDiv" data-bind="html: hello().hello"></div>\
+    </template>\
+</wo.if>');
+    
+    ok(document.getElementById("myDiv"));
+    
+    // act
+    application.hello(null);
+    
+    // assert
+    ok(!document.getElementById("myDiv"));
 });
 
 test("templateItems", function() {
