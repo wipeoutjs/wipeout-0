@@ -35,6 +35,7 @@ Class("wpfko.base.visual", function () {
     visual.woInvisibleDefault = false;
     
     visual.prototype.disposeOf = function(key) {
+        ///<summary>Dispose of an item registered as a disposable</summary>
         if(this.__woBag.disposables[key]) {
             this.__woBag.disposables[key]();
             delete this.__woBag.disposables[key];
@@ -42,6 +43,7 @@ Class("wpfko.base.visual", function () {
     };
     
     visual.prototype.disposeOfAll = function() {
+        ///<summary>Dispose of all items registered as a disposable</summary>
         for(var i in this.__woBag.disposables)
             this.disposeOf(i);
     };
@@ -49,6 +51,9 @@ Class("wpfko.base.visual", function () {
     visual.prototype.registerDisposable = (function() {
         var i = 0;
         return function(disposeFunction) {
+            ///<summary>Register a dispose function which will be called when this object is disposed of.</summary>
+            if(!disposeFunction || disposeFunction.constructor !== Function) throw "The dispose function must be a Function";
+            
             var id = (++i).toString();            
             this.__woBag.disposables[id] = disposeFunction;            
             return id;

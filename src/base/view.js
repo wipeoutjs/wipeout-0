@@ -35,6 +35,7 @@ Class("wpfko.base.view", function () {
     };
     
     view.prototype.disposeOfBinding = function(propertyName) {
+        ///<summary>Un-bind this property.</summary>
         if(this._bindings[propertyName]) {
             this._bindings[propertyName].dispose();
             delete this._bindings[propertyName];
