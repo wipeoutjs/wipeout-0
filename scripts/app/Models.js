@@ -56,6 +56,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         //wo
         var _wo = (function() {
             var objectBranch = new classTreeViewBranch("object", currentApi.forClass("wo.object"));
+            var routedEventModelBranch = new classTreeViewBranch("routedEventModel", currentApi.forClass("wo.routedEventModel"));
             var visualBranch = new classTreeViewBranch("visual", currentApi.forClass("wo.visual"));
             var viewBranch = new classTreeViewBranch("view", currentApi.forClass("wo.view"));
             var contentControlBranch = new classTreeViewBranch("contentControl", currentApi.forClass("wo.contentControl"));
@@ -82,9 +83,30 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 objectBranch,
                 routedEventBranch,
                 routedEventArgsBranch,
+                routedEventModelBranch,
                 routedEventRegistrationBranch,
                 viewBranch,
                 visualBranch
+            ]);
+        })();
+        
+        // bindings
+        var _bindings = (function() {
+            
+            var itemsControl = new classTreeViewBranch("itemsControl", currentApi.forClass("wpfko.bindings.itemsControl"));
+            var render = new classTreeViewBranch("render", currentApi.forClass("wpfko.bindings.render"));
+            var wipeout_type = new classTreeViewBranch("wipeout-type", currentApi.forClass("wpfko.bindings.wipeout-type"));
+            var _wo = new classTreeViewBranch("wo", currentApi.forClass("wpfko.bindings.wo"));
+            var _wpfko = new classTreeViewBranch("wpfko", currentApi.forClass("wpfko.bindings.wpfko"));
+            var _icRender = new classTreeViewBranch("ic-render", currentApi.forClass("wpfko.bindings.ic-render"));
+            
+            return new treeViewBranch("bindings", [
+                _icRender,
+                itemsControl,
+                render,
+                wipeout_type,
+                _wo,
+                _wpfko
             ]);
         })();
                                      
@@ -92,16 +114,17 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         var _wpfko = (function() {
             
             var _base = (function() {
-                var objectBranch = new classTreeViewBranch("object", currentApi.forClass("wpfko.base.object"));
-                var visualBranch = new classTreeViewBranch("visual", currentApi.forClass("wpfko.base.visual"));
-                var viewBranch = new classTreeViewBranch("view", currentApi.forClass("wpfko.base.view"));
-                var contentControlBranch = new classTreeViewBranch("contentControl", currentApi.forClass("wpfko.base.contentControl"));
-                var ifBranch = new classTreeViewBranch("if", currentApi.forClass("wpfko.base.if"));
-                var itemsControlBranch = new classTreeViewBranch("itemsControl", currentApi.forClass("wpfko.base.itemsControl"));
-                var eventBranch = new classTreeViewBranch("event", currentApi.forClass("wpfko.base.event"));
-                var routedEventBranch = new classTreeViewBranch("routedEvent", currentApi.forClass("wpfko.base.routedEvent"));
-                var routedEventArgsBranch = new classTreeViewBranch("routedEventArgs", currentApi.forClass("wpfko.base.routedEventArgs"));
-                var routedEventRegistrationBranch = new classTreeViewBranch("routedEventRegistration", currentApi.forClass("wpfko.base.routedEventRegistration"));
+                var objectBranch = new classTreeViewBranch("object", currentApi.forClass("wo.object"));
+                var routedEventModelBranch = new classTreeViewBranch("routedEventModel", currentApi.forClass("wo.routedEventModel"));
+                var visualBranch = new classTreeViewBranch("visual", currentApi.forClass("wo.visual"));
+                var viewBranch = new classTreeViewBranch("view", currentApi.forClass("wo.view"));
+                var contentControlBranch = new classTreeViewBranch("contentControl", currentApi.forClass("wo.contentControl"));
+                var ifBranch = new classTreeViewBranch("if", currentApi.forClass("wo.if"));
+                var itemsControlBranch = new classTreeViewBranch("itemsControl", currentApi.forClass("wo.itemsControl"));
+                var eventBranch = new classTreeViewBranch("event", currentApi.forClass("wo.event"));
+                var routedEventBranch = new classTreeViewBranch("routedEvent", currentApi.forClass("wo.routedEvent"));
+                var routedEventArgsBranch = new classTreeViewBranch("routedEventArgs", currentApi.forClass("wo.routedEventArgs"));
+                var routedEventRegistrationBranch = new classTreeViewBranch("routedEventRegistration", currentApi.forClass("wo.routedEventRegistration"));
                 
                 return new treeViewBranch("base", [
                     contentControlBranch,
@@ -111,6 +134,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                     objectBranch,
                     routedEventBranch,
                     routedEventArgsBranch,
+                    routedEventModelBranch,
                     routedEventRegistrationBranch,
                     viewBranch,
                     visualBranch
@@ -124,8 +148,10 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 var wipeout_type = new classTreeViewBranch("wipeout-type", currentApi.forClass("wpfko.bindings.wipeout-type"));
                 var _wo = new classTreeViewBranch("wo", currentApi.forClass("wpfko.bindings.wo"));
                 var _wpfko = new classTreeViewBranch("wpfko", currentApi.forClass("wpfko.bindings.wpfko"));
+                var _icRender = new classTreeViewBranch("ic-render", currentApi.forClass("wpfko.bindings.ic-render"));
                 
                 return new treeViewBranch("bindings", [
+                    _icRender,
                     itemsControl,
                     render,
                     wipeout_type,
@@ -159,7 +185,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 ]);
             })();
             
-            return new treeViewBranch("wpfko", [
+            return new treeViewBranch("wpfko (debug mode only)", [
                 _base,
                 _bindings,
                 _template,
@@ -171,6 +197,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
             new treeViewBranch("wipeout", [
                 new treeViewBranch("API", [
                     _wo,
+                    _bindings,
                     _wpfko
                 ])
         ]);        
