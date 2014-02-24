@@ -71,7 +71,7 @@ Class("wipeout.base.visual", function () {
         }, this);
         
         if(this.__woBag.rootHtmlElement) {
-            if(this.__woBag.rootHtmlElement.parentElement)
+            if(document.contains(this.__woBag.rootHtmlElement))
                 ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
             else
                 console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout)");
