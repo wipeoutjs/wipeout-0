@@ -9,7 +9,7 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
         }, this);
     });
     
-    application.prototype.rootHtmlChanged = function() {
+    application.prototype.onRendered = function() {
         this._super.apply(this, arguments);
         
         //TODO: this
@@ -24,7 +24,7 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     treeViewBranch.leafTemplate = "Wipeout.Docs.ViewModels.Components.TreeViewBranch_leaf";
     treeViewBranch.nullTemplate = wo.visual.getBlankTemplateId();
     
-    treeViewBranch.prototype.modelChanged = function(oldVal, newVal) {
+    treeViewBranch.prototype.onModelChanged = function(oldVal, newVal) {
         this._super(oldVal, newVal);
         if(newVal && (newVal.branches || newVal.payload())) {
             this.templateId(treeViewBranch.branchTemplate);
@@ -55,7 +55,7 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
         this.template("<!-- ko render: content --><!-- /ko -->");
     });
     
-    dynamicRender.prototype.modelChanged = function(oldVal, newVal) {
+    dynamicRender.prototype.onModelChanged = function(oldVal, newVal) {
         this._super(oldVal, newVal);
                
         var oldVal = this.content();
@@ -125,7 +125,7 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     codeBlock.prototype.onCodeChanged = function(newVal) {
     };
     
-    codeBlock.prototype.rootHtmlChanged = function() {
+    codeBlock.prototype.onRendered = function() {
         this._super.apply(this, arguments);
         prettyPrint(null, this.templateItems.codeBlock);
     };
