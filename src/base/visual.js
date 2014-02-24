@@ -158,7 +158,7 @@ Class("wipeout.base.visual", function () {
     };
     
     visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {  
-        ///<summary>Unregister from a routed event. The callback and callback context must tbe the same as those passed in during registration</summary>      
+        ///<summary>Unregister from a routed event. The callback and callback context must be the same as those passed in during registration</summary>      
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
             if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
                 this.__woBag.routedEventSubscriptions[i].event.unRegister(callback, context);
