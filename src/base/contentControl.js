@@ -1,9 +1,9 @@
 
-Class("wpfko.base.contentControl", function () {    
+Class("wipeout.base.contentControl", function () {    
 
-    var contentControl = wpfko.base.view.extend(function (templateId) {
+    var contentControl = wipeout.base.view.extend(function (templateId) {
         ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
-        this._super(templateId || wpfko.base.visual.getBlankTemplateId());
+        this._super(templateId || wipeout.base.visual.getBlankTemplateId());
 
         //The template which corresponds to the templateId for this item
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
@@ -17,12 +17,12 @@ Class("wpfko.base.contentControl", function () {
                 return script ? script.textContent : "";
             },
             write: function (newValue) {
-                templateIdObservable(wpfko.base.contentControl.createAnonymousTemplate(newValue));
+                templateIdObservable(wipeout.base.contentControl.createAnonymousTemplate(newValue));
             },
             owner: owner
         });
         
-        if(owner instanceof wpfko.base.visual)
+        if(owner instanceof wipeout.base.visual)
             owner.registerDisposable(output.dispose);
         
         return output;
@@ -35,7 +35,7 @@ Class("wpfko.base.contentControl", function () {
         
         var lazyCreateTemplateArea = function() {
             if (!templateArea) {
-                templateArea = wpfko.utils.html.createElement("<div style='display: none'></div>");
+                templateArea = wipeout.utils.html.createElement("<div style='display: none'></div>");
                 document.body.appendChild(templateArea);
             }
         };

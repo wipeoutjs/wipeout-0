@@ -1,5 +1,5 @@
 
-Class("wpfko.base.routedEvent", function () {
+Class("wipeout.base.routedEvent", function () {
     
     var routedEvent = function() {
         ///<summary>A routed event is triggerd on a visual and travels up to ancestor visuals all the way to the root of the application</summary>
@@ -7,7 +7,7 @@ Class("wpfko.base.routedEvent", function () {
 
     routedEvent.prototype.trigger = function(triggerOnVisual, eventArgs) {
         ///<summary>Trigger a routed event on a visual</summary>
-        triggerOnVisual.triggerRoutedEvent(this, new wpfko.base.routedEventArgs(eventArgs, triggerOnVisual));
+        triggerOnVisual.triggerRoutedEvent(this, new wipeout.base.routedEventArgs(eventArgs, triggerOnVisual));
     };
     
     routedEvent.prototype.unRegister = function (callback, triggerOnVisual, context /* optional */) {
@@ -23,7 +23,7 @@ Class("wpfko.base.routedEvent", function () {
     return routedEvent;
 });
 
-Class("wpfko.base.routedEventArgs", function () {
+Class("wipeout.base.routedEventArgs", function () {
     
     var routedEventArgs = function(eventArgs, originator) { 
         ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>
@@ -42,7 +42,7 @@ Class("wpfko.base.routedEventArgs", function () {
 });
     
 
-Class("wpfko.base.routedEventRegistration", function () {
+Class("wipeout.base.routedEventRegistration", function () {
     //TODO: private
     var routedEventRegistration = function(routedEvent) {  
         ///<summary>Holds routed event registration details</summary>
@@ -51,7 +51,7 @@ Class("wpfko.base.routedEventRegistration", function () {
         this.routedEvent = routedEvent;
         
         //An inner event to handler triggering callbacks
-        this.event = new wpfko.base.event();
+        this.event = new wipeout.base.event();
     };
     
     routedEventRegistration.prototype.dispose = function() {

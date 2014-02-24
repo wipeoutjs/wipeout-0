@@ -1,4 +1,4 @@
-var wpfko = {};
+var wipeout = {};
     
 var enumerate = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object</summary>
@@ -41,7 +41,7 @@ var enumerateDesc = function(enumerate, action, context) {
 var Binding = function(bindingName, allowVirtual, accessorFunction) {
     ///<summary>Create a knockout binding</summary>
     
-    var cls = Class("wpfko.bindings." + bindingName, accessorFunction);    
+    var cls = Class("wipeout.bindings." + bindingName, accessorFunction);    
     ko.bindingHandlers[bindingName] = {
         init: cls.init,
         update: cls.update
@@ -66,14 +66,14 @@ var Class = function(classFullName, accessorFunction) {
 };
 
 var Extend = function(namespace, extendWith) {
-    ///<summary>Similar to $.extend but with a namespace string which must begin with "wpfko"</summary>
+    ///<summary>Similar to $.extend but with a namespace string which must begin with "wipeout"</summary>
     
     namespace = namespace.split(".");
     
-    if(namespace[0] !== "wpfko") throw "Root must be \"wpfko\".";
+    if(namespace[0] !== "wipeout") throw "Root must be \"wipeout\".";
     namespace.splice(0, 1);
     
-    var current = wpfko;
+    var current = wipeout;
     enumerate(namespace, function(nsPart) {
         current = current[nsPart] || (current[nsPart] = {});
     });
@@ -102,7 +102,7 @@ var parseBool = function(input) {
     return input && input !== "false" && input !== "0";
 };
 
-Class("wpfko.utils.obj", function () {
+Class("wipeout.utils.obj", function () {
         
     var createObject = function(constructorString, context) {
         ///<summary>Create an object from string</summary>
@@ -144,6 +144,6 @@ Class("wpfko.utils.obj", function () {
 });
 
 //legacy
-Class("wpfko.util.obj", function () { 
-    return wpfko.utils.obj;
+Class("wipeout.util.obj", function () { 
+    return wipeout.utils.obj;
 });

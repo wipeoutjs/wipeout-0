@@ -43,7 +43,7 @@ test("woInvisible", function() {
     strictEqual(subject.templateItems[child].anItem, val);
 });
 
-test("wpfko.base.if", function() {
+test("wipeout.base.if", function() {
     // arrange
     application.hello = ko.observable({hello: "xxx"});
     application.template('<wo.if woInvisible="false" condition="$parent.hello">\
@@ -61,7 +61,7 @@ test("wpfko.base.if", function() {
     ok(!document.getElementById("myDiv"));
 });
 
-test("wpfko.base.if, woInvisible", function() {
+test("wipeout.base.if, woInvisible", function() {
     // arrange
     application.hello = ko.observable({hello: "xxx"});
     application.template('<wo.if condition="hello">\

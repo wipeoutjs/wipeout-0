@@ -1,9 +1,9 @@
 
-Class("wpfko.base.view", function () {    
+Class("wipeout.base.view", function () {    
 
     var modelRoutedEventKey = "wo.view.modelRoutedEvents";
     
-    var view = wpfko.base.visual.extend(function (templateId, model /*optional*/) {        
+    var view = wipeout.base.visual.extend(function (templateId, model /*optional*/) {        
         ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>    
 
         this._super(templateId);
@@ -136,7 +136,7 @@ Class("wpfko.base.view", function () {
         if(prop)
             this.woInvisible = parseBool(prop);
                 
-        if(!view.elementHasModelBinding(propertiesXml) && wpfko.utils.ko.peek(this.model) == null) {
+        if(!view.elementHasModelBinding(propertiesXml) && wipeout.utils.ko.peek(this.model) == null) {
             this.bind('model', parentBindingContext.$data.model);
         }
         
@@ -153,7 +153,7 @@ Class("wpfko.base.view", function () {
             
             try {
                 bindingContext.__$woCurrent = this;
-                wpfko.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t__$woCurrent.bind('" + name + "', function() {\n\t\t\t\treturn " + attr.value + ";\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
+                wipeout.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t__$woCurrent.bind('" + name + "', function() {\n\t\t\t\treturn " + attr.value + ";\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
             } finally {
                 delete bindingContext.__$woCurrent;
             }
@@ -186,8 +186,8 @@ Class("wpfko.base.view", function () {
                     this[child.nodeName] = val;       
                 }
             } else {
-                var val = wpfko.utils.obj.createObject(type);
-                if(val instanceof wpfko.base.view) {
+                var val = wipeout.utils.obj.createObject(type);
+                if(val instanceof wipeout.base.view) {
                     val.__woBag.createdByWipeout = true;
                     val.initialize(child, bindingContext);
                 }
@@ -232,14 +232,14 @@ Class("wpfko.base.view", function () {
         
         this.disposeOf(this.__woBag[modelRoutedEventKey]);
         
-        if(newValue instanceof wpfko.base.routedEventModel) {
+        if(newValue instanceof wipeout.base.routedEventModel) {
             this.__woBag[modelRoutedEventKey] = this.registerDisposable(newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this).dispose);
         }
     };
     
     view.prototype.onModelRoutedEvent = function (eventArgs) {
         ///<summary>When the model of this class fires a routed event, catch it and continue the traversal upwards</summary>
-        if(!(eventArgs.routedEvent instanceof wpfko.base.routedEvent)) throw "Invaid routed event";
+        if(!(eventArgs.routedEvent instanceof wipeout.base.routedEvent)) throw "Invaid routed event";
         
         this.triggerRoutedEvent(eventArgs.routedEvent, eventArgs.eventArgs);
     }

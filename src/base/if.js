@@ -1,15 +1,15 @@
 
-Class("wpfko.base.if", function () {
+Class("wipeout.base.if", function () {
  
     var sc = true;
     var staticConstructor = function () {
         if (!sc) return;
         sc = false;
         
-        _if.blankTemplateId = wpfko.base.contentControl.createAnonymousTemplate("", true);
+        _if.blankTemplateId = wipeout.base.contentControl.createAnonymousTemplate("", true);
     };
     
-    var _if = wpfko.base.contentControl.extend(function () {
+    var _if = wipeout.base.contentControl.extend(function () {
         ///<summary>The if class is a content control which provides the functionality of the knockout if binding</summary>        
         staticConstructor();
         
@@ -23,7 +23,7 @@ Class("wpfko.base.if", function () {
         this.registerDisposable(this.elseTemplateId.subscribe(this.elseTemplateChanged, this).dispose);
         
         // anonymous version of elseTemplateId
-        this.elseTemplate = wpfko.base.contentControl.createTemplatePropertyFor(this.elseTemplateId, this);
+        this.elseTemplate = wipeout.base.contentControl.createTemplatePropertyFor(this.elseTemplateId, this);
         
         // stores the template id if the condition is false
         this.__cachedTemplateId = this.templateId();
@@ -34,7 +34,7 @@ Class("wpfko.base.if", function () {
         this.copyTemplateId(this.templateId());
     }, "_if");
     
-    // picked up by wpfko.base.visual constructor
+    // picked up by wipeout.base.visual constructor
     _if.woInvisibleDefault = true;
     
     _if.prototype.elseTemplateChanged = function (newVal) {

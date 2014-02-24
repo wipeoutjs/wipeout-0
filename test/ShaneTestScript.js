@@ -2,7 +2,7 @@
     
     aRoutedEvent = new wo.routedEvent();
     
-    initializeView = wpfko.base.contentControl.extend(function() {
+    initializeView = wipeout.base.contentControl.extend(function() {
         this._super();
         
         this.template("<div id='theDiv'>If this text is still here something went wrong</div>");
@@ -14,12 +14,12 @@
         
     };
     
-    childView = wpfko.base.contentControl.extend(function() {
+    childView = wipeout.base.contentControl.extend(function() {
         this._super();
         this.value = ko.observable("initial");
     });
     
-    rootView = wpfko.base.contentControl.extend(function() {
+    rootView = wipeout.base.contentControl.extend(function() {
         this._super("rootView");
         
         this.justDone = ko.observable("");

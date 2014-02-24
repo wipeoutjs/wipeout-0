@@ -3,14 +3,14 @@ Binding("render", true, function () {
         
     var init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         ///<summary>Initialize the render binding</summary>
-        return ko.bindingHandlers.template.init.call(this, element, wpfko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
+        return ko.bindingHandlers.template.init.call(this, element, wipeout.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, viewModel, bindingContext);
     };
 
     var update = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         ///<summary>Update the render binding</summary>
         
-        var child = wpfko.utils.ko.peek(wpfko.utils.ko.peek(valueAccessor()));
-        if ((viewModel && !(viewModel instanceof wpfko.base.visual)) || (child && !(child instanceof wpfko.base.visual)))
+        var child = wipeout.utils.ko.peek(wipeout.utils.ko.peek(valueAccessor()));
+        if ((viewModel && !(viewModel instanceof wipeout.base.visual)) || (child && !(child instanceof wipeout.base.visual)))
             throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
         
         if(child && viewModel && child === viewModel)
@@ -24,15 +24,15 @@ Binding("render", true, function () {
             if(child)
                 child.unTemplate();
                 
-            ko.bindingHandlers.template.update.call(_this, element, wpfko.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
+            ko.bindingHandlers.template.update.call(_this, element, wipeout.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
             
             var bindings = allBindingsAccessor();
             if(bindings["wipeout-type"])
-                wpfko.bindings["wipeout-type"].utils.comment(element, bindings["wipeout-type"]);
+                wipeout.bindings["wipeout-type"].utils.comment(element, bindings["wipeout-type"]);
         };
         
-        var previous = ko.utils.domData.get(element, wpfko.bindings.wipeout.utils.wpfkoKey); 
-        if(previous instanceof wpfko.base.visual) {
+        var previous = ko.utils.domData.get(element, wipeout.bindings.wipeout.utils.wipeoutKey); 
+        if(previous instanceof wipeout.base.visual) {
             if(previous.__woBag.createdByWipeout)    
                 previous.dispose();
             else    
@@ -40,7 +40,7 @@ Binding("render", true, function () {
         }
         
         if (child) {            
-            ko.utils.domData.set(element, wpfko.bindings.wipeout.utils.wpfkoKey, child);
+            ko.utils.domData.set(element, wipeout.bindings.wipeout.utils.wipeoutKey, child);
             child.__woBag.rootHtmlElement = element;
             if (viewModel)
                 viewModel.__woBag.renderedChildren.push(child);
@@ -61,7 +61,7 @@ Binding("render", true, function () {
             var _child = ko.utils.unwrapObservable(child);
             
             var output = {
-                templateEngine: wpfko.template.engine.instance,
+                templateEngine: wipeout.template.engine.instance,
                 name: _child ? _child.templateId.peek() : "",                
                 afterRender: _child ? function(nodes, context) { 
                     

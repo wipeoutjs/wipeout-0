@@ -1,7 +1,7 @@
 
-Class("wpfko.base.visual", function () {
+Class("wipeout.base.visual", function () {
     
-    var visual = wpfko.base.object.extend(function (templateId) {
+    var visual = wipeout.base.object.extend(function (templateId) {
         ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
         this._super();
         
@@ -84,7 +84,7 @@ Class("wpfko.base.visual", function () {
                 
         if(this.__woBag.rootHtmlElement) {
             // disassociate the visual from its root element and empty the root element
-            ko.utils.domData.set(this.__woBag.rootHtmlElement, wpfko.bindings.wipeout.utils.wpfkoKey, undefined); 
+            ko.utils.domData.set(this.__woBag.rootHtmlElement, wipeout.bindings.wipeout.utils.wipeoutKey, undefined); 
             delete this.__woBag.rootHtmlElement;
         }
     };
@@ -112,11 +112,11 @@ Class("wpfko.base.visual", function () {
         var depth = 0;
         var current = element.previousSibling;
         while(current) {
-            if(wpfko.utils.ko.virtualElements.isVirtualClosing(current)) {
+            if(wipeout.utils.ko.virtualElements.isVirtualClosing(current)) {
                 depth--;
             }
             
-            if(wpfko.utils.ko.virtualElements.isVirtual(current)) {
+            if(wipeout.utils.ko.virtualElements.isVirtual(current)) {
                 if(depth === 0)
                     return current;
                 
@@ -146,7 +146,7 @@ Class("wpfko.base.visual", function () {
         var nextTarget;
         var current = visual.getParentElement(this.__woBag.rootHtmlElement);
         while(current) {
-            if(nextTarget = ko.utils.domData.get(current, wpfko.bindings.wipeout.utils.wpfkoKey)) {
+            if(nextTarget = ko.utils.domData.get(current, wipeout.bindings.wipeout.utils.wipeoutKey)) {
                 return nextTarget;
             }
             
@@ -176,7 +176,7 @@ Class("wpfko.base.visual", function () {
         }
         
         if(!rev) {
-            rev = new wpfko.base.routedEventRegistration(routedEvent);
+            rev = new wipeout.base.routedEventRegistration(routedEvent);
             this.__woBag.routedEventSubscriptions.push(rev);
         }
         
@@ -185,8 +185,8 @@ Class("wpfko.base.visual", function () {
     
     visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
         ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual. Overrides wo.object.triggerRoutedEvent</summary>    
-        if(!(eventArgs instanceof wpfko.base.routedEventArgs)) {
-            eventArgs = new wpfko.base.routedEventArgs(eventArgs, this);
+        if(!(eventArgs instanceof wipeout.base.routedEventArgs)) {
+            eventArgs = new wipeout.base.routedEventArgs(eventArgs, this);
         }
         
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
@@ -216,7 +216,7 @@ Class("wpfko.base.visual", function () {
         
     // virtual
     visual.prototype.applicationInitialized = function () {
-        ///<summary>Triggered after the entire application has been initialized. Will only be triggered on the viewModel created directly by the wpfko binding</summary>    
+        ///<summary>Triggered after the entire application has been initialized. Will only be triggered on the viewModel created directly by the wipeout binding</summary>    
     };
     
     visual.getDefaultTemplateId = (function () {
@@ -224,7 +224,7 @@ Class("wpfko.base.visual", function () {
         return function () {
             ///<summary>Returns the Id for the default template</summary>    
             if (!templateId) {
-                templateId = wpfko.base.contentControl.createAnonymousTemplate("<span>No template has been specified</span>");
+                templateId = wipeout.base.contentControl.createAnonymousTemplate("<span>No template has been specified</span>");
             }
 
             return templateId;
@@ -236,7 +236,7 @@ Class("wpfko.base.visual", function () {
         return function () {
             ///<summary>Returns the Id for an empty template</summary>    
             if (!templateId) {
-                templateId = wpfko.base.contentControl.createAnonymousTemplate("");
+                templateId = wipeout.base.contentControl.createAnonymousTemplate("");
             }
 
             return templateId;
@@ -251,11 +251,11 @@ Class("wpfko.base.visual", function () {
         displayFunction = displayFunction || function() { return typeof arguments[0]; };
  
         var output = [];
-        wpfko.utils.obj.enumerate(wpfko.utils.html.getAllChildren(rootElement), function (child) {
-            wpfko.utils.obj.enumerate(visual.visualGraph(child), output.push, output);
+        wipeout.utils.obj.enumerate(wipeout.utils.html.getAllChildren(rootElement), function (child) {
+            wipeout.utils.obj.enumerate(visual.visualGraph(child), output.push, output);
         });
  
-        var vm = ko.utils.domData.get(rootElement, wpfko.bindings.wipeout.utils.wpfkoKey);        
+        var vm = ko.utils.domData.get(rootElement, wipeout.bindings.wipeout.utils.wipeoutKey);        
         if (vm) {
             return [{ viewModel: vm, display: displayFunction(vm), children: output}];
         }

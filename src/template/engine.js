@@ -1,5 +1,5 @@
 
-Class("wpfko.template.engine", function () {
+Class("wipeout.template.engine", function () {
     
     var engine = function() {
         ///<summary>The wipeout template engine, inherits from ko.templateEngine</summary>
@@ -49,15 +49,15 @@ Class("wpfko.template.engine", function () {
     
     engine.wipeoutRewrite = function(xmlElement, rewriterCallback) {
         ///<summary>Recursively go through an xml element and replace all view models with render comments</summary>
-        if(wpfko.base.visual.reservedTags.indexOf(xmlElement.nodeName) !== -1) {
+        if(wipeout.base.visual.reservedTags.indexOf(xmlElement.nodeName) !== -1) {
             for(var i = 0; i < xmlElement.childNodes.length; i++)
                 if(xmlElement.childNodes[i].nodeType === 1)
                     engine.wipeoutRewrite(xmlElement.childNodes[i], rewriterCallback);
         } else {
             var newScriptId = engine.newScriptId();
             engine.scriptCache[newScriptId] = function(parentBindingContext) {
-                var vm = wpfko.utils.obj.createObject(xmlElement.nodeName);    
-                if(!(vm instanceof wpfko.base.view)) throw "Only wo.view elements can be created in this way";
+                var vm = wipeout.utils.obj.createObject(xmlElement.nodeName);    
+                if(!(vm instanceof wipeout.base.view)) throw "Only wo.view elements can be created in this way";
                 vm.__woBag.createdByWipeout = true;
                 vm.initialize(xmlElement, parentBindingContext);                
                 return {
@@ -121,12 +121,12 @@ Class("wpfko.template.engine", function () {
         
         // if data is not a view, cannot render.
         //TODO: default to native template engine
-        if (!(bindingContext.$data instanceof wpfko.base.view))
+        if (!(bindingContext.$data instanceof wipeout.base.view))
             return [];
         
         var cached = templateSource['data']('precompiled');
         if (!cached) {
-            cached = new wpfko.template.htmlBuilder(templateSource.text());
+            cached = new wipeout.template.htmlBuilder(templateSource.text());
             templateSource['data']('precompiled', cached);
         }
         
@@ -163,7 +163,7 @@ Class("wpfko.template.engine", function () {
     })();
     
     engine.scriptCache = {};
-    engine.openCodeTag = "<!-- wpfko_code: {"
+    engine.openCodeTag = "<!-- wipeout_code: {"
     engine.closeCodeTag = "} -->";
     engine.scriptHasBeenReWritten = RegExp(engine.openCodeTag.replace("{", "\{") + "[0-9]+" + engine.closeCodeTag.replace("}", "\}"));
     

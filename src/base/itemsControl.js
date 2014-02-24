@@ -1,14 +1,14 @@
 
-Class("wpfko.base.itemsControl", function () {
+Class("wipeout.base.itemsControl", function () {
     
     var deafaultTemplateId;
     var staticConstructor = function() {
         if(deafaultTemplateId) return;
         
-        deafaultTemplateId = wpfko.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");  
+        deafaultTemplateId = wipeout.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");  
     };
     
-    var itemsControl = wpfko.base.contentControl.extend(function (templateId, itemTemplateId) {
+    var itemsControl = wipeout.base.contentControl.extend(function (templateId, itemTemplateId) {
         ///<summary>Bind a list of models (itemSource) to a list of view models (items) and render accordingly</summary>
         
         staticConstructor();
@@ -18,7 +18,7 @@ Class("wpfko.base.itemsControl", function () {
         this.itemTemplateId = ko.observable(itemTemplateId);
 
         //The template which corresponds to the itemTemplateId for this object
-        this.itemTemplate = wpfko.base.contentControl.createTemplatePropertyFor(this.itemTemplateId, this);
+        this.itemTemplate = wipeout.base.contentControl.createTemplatePropertyFor(this.itemTemplateId, this);
         
         //An array of models to render
         this.itemSource = ko.observableArray([]);
@@ -26,7 +26,7 @@ Class("wpfko.base.itemsControl", function () {
         //An array of viewmodels, each corresponding to a mode in the itemSource property
         this.items = ko.observableArray([]);
 
-        if(wpfko.utils.ko.version()[0] < 3) {
+        if(wipeout.utils.ko.version()[0] < 3) {
             itemsControl.subscribeV2.call(this);
         } else {
             itemsControl.subscribeV3.call(this);
@@ -56,7 +56,7 @@ Class("wpfko.base.itemsControl", function () {
                     return;
                 this.itemSourceChanged(ko.utils.compareArrays(initialItemSource, arguments[0] || []));
             } finally {
-                initialItemSource = wpfko.utils.obj.copyArray(arguments[0] || []);
+                initialItemSource = wipeout.utils.obj.copyArray(arguments[0] || []);
             }
         }, this).dispose);
         
@@ -65,7 +65,7 @@ Class("wpfko.base.itemsControl", function () {
             try {
                 this.itemsChanged(ko.utils.compareArrays(initialItems, arguments[0] || []));
             } finally {
-                initialItems = wpfko.utils.obj.copyArray(arguments[0] || []);
+                initialItems = wipeout.utils.obj.copyArray(arguments[0] || []);
             }
         }, this).dispose);        
     };
@@ -130,9 +130,9 @@ Class("wpfko.base.itemsControl", function () {
     itemsControl.prototype.itemsChanged = function (changes) { 
         ///<summary>Disposes of deleted items</summary>
         enumerate(changes, function(change) {
-            if(change.status === wpfko.utils.ko.array.diff.deleted && change.moved == null)
+            if(change.status === wipeout.utils.ko.array.diff.deleted && change.moved == null)
                 this.itemDeleted(change.value);
-            else if(change.status === wpfko.utils.ko.array.diff.added && change.moved == null)
+            else if(change.status === wipeout.utils.ko.array.diff.added && change.moved == null)
                 this.itemRendered(change.value);
         }, this);
     };
@@ -142,8 +142,8 @@ Class("wpfko.base.itemsControl", function () {
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
         for(var i = 0, ii = changes.length; i < ii; i++) {
-            if(changes[i].status === wpfko.utils.ko.array.diff.retained) continue;            
-            else if(changes[i].status === wpfko.utils.ko.array.diff.deleted) {
+            if(changes[i].status === wipeout.utils.ko.array.diff.retained) continue;            
+            else if(changes[i].status === wipeout.utils.ko.array.diff.deleted) {
                 del.push((function(change) {
                     return function() {
                         var removed = items.splice(change.index + delPadIndex, 1)[0];
@@ -153,7 +153,7 @@ Class("wpfko.base.itemsControl", function () {
                         delPadIndex--;
                     };
                 })(changes[i]));
-            } else if(changes[i].status === wpfko.utils.ko.array.diff.added) {
+            } else if(changes[i].status === wipeout.utils.ko.array.diff.added) {
                 add.push((function(change) {
                     return function() {
                         var added = change.moved != null ? move[change.index + "." + change.moved] : this._createItem(change.value);
@@ -202,7 +202,7 @@ Class("wpfko.base.itemsControl", function () {
     // virtual
     itemsControl.prototype.createItem = function (model) {
         ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
-        return new wpfko.base.view(this.itemTemplateId(), model);        
+        return new wipeout.base.view(this.itemTemplateId(), model);        
     };
 
     itemsControl.prototype.reDrawItems = function () {

@@ -1,6 +1,6 @@
 
 
-Class("wpfko.utils.html", function () { 
+Class("wipeout.utils.html", function () { 
         
     var outerHTML = function(element) {
         ///<summary>Browser agnostic outerHTML function</summary>
@@ -108,8 +108,8 @@ Class("wpfko.utils.html", function () {
         ///<summary>Get all of the children of a html element or knockout virtual element</summary>
         
         var children = [];
-        if (wpfko.utils.ko.virtualElements.isVirtual(element)) {
-            var parent = wpfko.utils.ko.virtualElements.parentElement(element);
+        if (wipeout.utils.ko.virtualElements.isVirtual(element)) {
+            var parent = wipeout.utils.ko.virtualElements.parentElement(element);
             
             // find index of "element"
             for (var i = 0, ii = parent.childNodes.length; i < ii; i++) {
@@ -133,7 +133,7 @@ Class("wpfko.utils.html", function () {
         var depth = 0;
  
         for (var i = 0, ii = children.length; i < ii; i++) {
-            if (wpfko.utils.ko.virtualElements.isVirtualClosing(children[i])) {
+            if (wipeout.utils.ko.virtualElements.isVirtualClosing(children[i])) {
                 depth--;
                 
                 // we are in a virtual parent element
@@ -148,7 +148,7 @@ Class("wpfko.utils.html", function () {
             output.push(children[i]);
             
             // the next element will be in a virtual child
-            if (wpfko.utils.ko.virtualElements.isVirtual(children[i]))
+            if (wipeout.utils.ko.virtualElements.isVirtual(children[i]))
                 depth++;
         }
  
@@ -157,7 +157,7 @@ Class("wpfko.utils.html", function () {
     
     var getViewModel = function(forHtmlNode) {
         ///<summary>Get the view model associated with a html node</summary>
-        return ko.utils.domData.get(forHtmlNode, wpfko.bindings.wipeout.utils.wpfkoKey);        
+        return ko.utils.domData.get(forHtmlNode, wipeout.bindings.wipeout.utils.wipeoutKey);        
     };
     
     return {
@@ -173,6 +173,6 @@ Class("wpfko.utils.html", function () {
 });
 
 //legacy
-Class("wpfko.util.html", function () { 
-    return wpfko.utils.html;
+Class("wipeout.util.html", function () { 
+    return wipeout.utils.html;
 });

@@ -1,5 +1,5 @@
 
-window.wpfko = wpfko;
+window.wipeout = wipeout;
 var DEBUG = wo.DEBUG = true;
 
 (function() {
@@ -18,7 +18,7 @@ var DEBUG = wo.DEBUG = true;
                         case 1:
                             enumerate(node.childNodes, recursive);
                         case 8:
-                            if((vm = wpfko.utils.html.getViewModel(node)) &&
+                            if((vm = wipeout.utils.html.getViewModel(node)) &&
                               (!renderedItemType || vm.constructor === renderedItemType)) {
                                 values.push(vm);
                             }

@@ -1,4 +1,4 @@
-Class("wpfko.template.htmlBuilder", function () {
+Class("wipeout.template.htmlBuilder", function () {
     
     var htmlBuilder = function(xmlTemplate) {
         ///<summary>Pre-compile that needed to render html from a binding context from a given template</summary>
@@ -22,12 +22,12 @@ Class("wpfko.template.htmlBuilder", function () {
             }
         }
         
-        var html = wpfko.utils.html.createElements(returnVal.join(""));
+        var html = wipeout.utils.html.createElements(returnVal.join(""));
         enumerate(htmlBuilder.getTemplateIds({childNodes: html}), function(item, id) {
             bindingContext.$data.templateItems[id] = item;
         });
             
-        if (bindingContext.$data instanceof wpfko.base.view)
+        if (bindingContext.$data instanceof wipeout.base.view)
             bindingContext.$data.onInitialized();
         
         return html;
@@ -45,10 +45,10 @@ Class("wpfko.template.htmlBuilder", function () {
 			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
 		}
         
-        var open = wpfko.template.engine.openCodeTag;
-        var close = wpfko.template.engine.closeCodeTag;
+        var open = wipeout.template.engine.openCodeTag;
+        var close = wipeout.template.engine.closeCodeTag;
         
-        var template = wpfko.template.htmlBuilder.generateTemplate(xmlTemplate);
+        var template = wipeout.template.htmlBuilder.generateTemplate(xmlTemplate);
              
         this.preRendered.length = 0;
         
@@ -59,12 +59,12 @@ Class("wpfko.template.htmlBuilder", function () {
             
             endTag = template.indexOf(close);
             if(endTag === -1) {
-                throw "Invalid wpfko_code tag.";
+                throw "Invalid wipeout_code tag.";
             }
             
             this.preRendered.push((function(scriptId) {
                 return function(bindingContext) {                    
-                    return wpfko.template.engine.scriptCache[scriptId](bindingContext);                    
+                    return wipeout.template.engine.scriptCache[scriptId](bindingContext);                    
                 };
             })(template.substr(open.length, endTag - open.length)));
                         
@@ -110,9 +110,9 @@ Class("wpfko.template.htmlBuilder", function () {
                     ch.removeChild(ch.childNodes[0]);
                 }
                 
-                var html = wpfko.utils.html.createElement(ser.serializeToString(ch));
-                html.innerHTML = wpfko.template.htmlBuilder.generateTemplate(child);                
-                result.push(wpfko.utils.html.outerHTML(html));
+                var html = wipeout.utils.html.createElement(ser.serializeToString(ch));
+                html.innerHTML = wipeout.template.htmlBuilder.generateTemplate(child);                
+                result.push(wipeout.utils.html.outerHTML(html));
             } else if(child.nodeType === 3) {
                 result.push(child.data);
             } else {

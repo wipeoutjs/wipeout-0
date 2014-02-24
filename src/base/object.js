@@ -1,5 +1,5 @@
 
-Class("wpfko.base.object", function () {
+Class("wipeout.base.object", function () {
     
     var object = function () {
         ///<summary>The object class is the base class for all wipeout objects. It has base functionality for inheritance and parent methods</summary>        

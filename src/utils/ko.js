@@ -1,6 +1,6 @@
 
 
-Class("wpfko.utils.ko", function () {
+Class("wipeout.utils.ko", function () {
     
     var _ko = {};
     
@@ -70,6 +70,6 @@ Class("wpfko.utils.ko", function () {
 });
 
 //legacy
-Class("wpfko.util.ko", function () { 
-    return wpfko.utils.ko;
+Class("wipeout.util.ko", function () { 
+    return wipeout.utils.ko;
 });

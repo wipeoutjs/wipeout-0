@@ -1,8 +1,8 @@
 
-var wpfko = wpfko || {};
-wpfko.base = wpfko.base || {};
+var wipeout = wipeout || {};
+wipeout.base = wipeout.base || {};
 
-Class("wpfko.base.event", function () {
+Class("wipeout.base.event", function () {
     
     var event = function() {
         ///<summary>Defines a new event with register and trigger functinality</summary>
@@ -14,7 +14,7 @@ Class("wpfko.base.event", function () {
     event.prototype.trigger = function(eventArgs) {
         ///<summary>Trigger the event, passing the eventArgs to each subscriber</summary>
         for(var i = 0, ii = this._registrations.length; i < ii; i++) {
-            if(eventArgs instanceof wpfko.base.routedEventArgs && eventArgs.handled) return;
+            if(eventArgs instanceof wipeout.base.routedEventArgs && eventArgs.handled) return;
             
             this._registrations[i].callback.call(this._registrations[i].context, eventArgs);
         }

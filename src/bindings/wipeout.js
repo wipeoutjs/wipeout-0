@@ -7,7 +7,7 @@ Binding("wipeout", true, function () {
         //TODO: knockout standard way of controling element        
         //TODO: add optional inline properties to binding   
         
-        if(ko.utils.domData.get(element, wpfko.bindings.wipeout.utils.wpfkoKey))
+        if(ko.utils.domData.get(element, wipeout.bindings.wipeout.utils.wipeoutKey))
             throw "This element is already bound to another model";
         
         var type = valueAccessor();
@@ -15,7 +15,7 @@ Binding("wipeout", true, function () {
             throw "Invalid view type";
             
         var view = new type();
-        if(!(view instanceof wpfko.base.view))
+        if(!(view instanceof wipeout.base.view))
             throw "Invalid view type";        
         
         view.model(viewModel);   
@@ -39,7 +39,7 @@ Binding("wipeout", true, function () {
         init: init,
         utils: {
             createValueAccessor: createValueAccessor,
-            wpfkoKey: "__wpfko"
+            wipeoutKey: "__wipeout"
         }
     };
 });
