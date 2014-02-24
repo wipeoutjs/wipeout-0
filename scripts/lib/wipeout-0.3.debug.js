@@ -347,7 +347,10 @@ Class("wipeout.base.visual", function () {
         }, this);
         
         if(this.__woBag.rootHtmlElement) {
-            ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
+            if(document.contains(this.__woBag.rootHtmlElement))
+                ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
+            else
+                console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout)");
         }
     };
         
@@ -431,7 +434,7 @@ Class("wipeout.base.visual", function () {
     };
     
     visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {  
-        ///<summary>Unregister from a routed event. The callback and callback context must tbe the same as those passed in during registration</summary>      
+        ///<summary>Unregister from a routed event. The callback and callback context must be the same as those passed in during registration</summary>      
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
             if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
                 this.__woBag.routedEventSubscriptions[i].event.unRegister(callback, context);
@@ -481,7 +484,7 @@ Class("wipeout.base.visual", function () {
     };
         
     // virtual
-    visual.prototype.rootHtmlChanged = function (oldValue, newValue) {
+    visual.prototype.onRendered = function (oldValue, newValue) {
         ///<summary>Triggered each time after a template is rendered</summary>    
     };
         
@@ -491,7 +494,7 @@ Class("wipeout.base.visual", function () {
     };
         
     // virtual
-    visual.prototype.applicationInitialized = function () {
+    visual.prototype.onApplicationInitialized = function () {
         ///<summary>Triggered after the entire application has been initialized. Will only be triggered on the viewModel created directly by the wipeout binding</summary>    
     };
     
@@ -561,7 +564,7 @@ Class("wipeout.base.view", function () {
         var model = null;
         this.registerDisposable(this.model.subscribe(function(newVal) {
             try {
-                this.modelChanged(model, newVal);
+                this.onModelChanged(model, newVal);
             } finally {
                 model = newVal;
             }                                          
@@ -774,7 +777,7 @@ Class("wipeout.base.view", function () {
         }
     };
         
-    view.prototype.modelChanged = function (oldValue, newValue) {
+    view.prototype.onModelChanged = function (oldValue, newValue) {
         ///<summary>Called when the model has changed</summary>
         
         this.disposeOf(this.__woBag[modelRoutedEventKey]);
@@ -1092,7 +1095,7 @@ Class("wipeout.base.itemsControl", function () {
             try {
                 if(this.modelsAndViewModelsAreSynched())
                     return;
-                this.itemSourceChanged(ko.utils.compareArrays(initialItemSource, arguments[0] || []));
+                this._itemSourceChanged(ko.utils.compareArrays(initialItemSource, arguments[0] || []));
             } finally {
                 initialItemSource = wipeout.utils.obj.copyArray(arguments[0] || []);
             }
@@ -1101,7 +1104,7 @@ Class("wipeout.base.itemsControl", function () {
         var initialItems = this.items.peek();
         this.registerDisposable(this.items.subscribe(function() {
             try {
-                this.itemsChanged(ko.utils.compareArrays(initialItems, arguments[0] || []));
+                this._itemsChanged(ko.utils.compareArrays(initialItems, arguments[0] || []));
             } finally {
                 initialItems = wipeout.utils.obj.copyArray(arguments[0] || []);
             }
@@ -1111,8 +1114,8 @@ Class("wipeout.base.itemsControl", function () {
     //TODO: private
     itemsControl.subscribeV3 = function() {
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
-        this.registerDisposable(this.itemSource.subscribe(this.itemSourceChanged, this, "arrayChange").dispose);
-        this.registerDisposable(this.items.subscribe(this.itemsChanged, this, "arrayChange").dispose);
+        this.registerDisposable(this.itemSource.subscribe(this._itemSourceChanged, this, "arrayChange").dispose);
+        this.registerDisposable(this.items.subscribe(this._itemsChanged, this, "arrayChange").dispose);
         
     };
     
@@ -1165,17 +1168,17 @@ Class("wipeout.base.itemsControl", function () {
         return true;
     };
 
-    itemsControl.prototype.itemsChanged = function (changes) { 
+    itemsControl.prototype._itemsChanged = function (changes) { 
         ///<summary>Disposes of deleted items</summary>
         enumerate(changes, function(change) {
             if(change.status === wipeout.utils.ko.array.diff.deleted && change.moved == null)
-                this.itemDeleted(change.value);
+                this.onItemDeleted(change.value);
             else if(change.status === wipeout.utils.ko.array.diff.added && change.moved == null)
-                this.itemRendered(change.value);
+                this.onItemRendered(change.value);
         }, this);
     };
 
-    itemsControl.prototype.itemSourceChanged = function (changes) { 
+    itemsControl.prototype._itemSourceChanged = function (changes) { 
         ///<summary>Adds, removes and moves view models depending on changes to the models array</summary>
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
@@ -1215,12 +1218,12 @@ Class("wipeout.base.itemsControl", function () {
     };
     
     //virtual
-    itemsControl.prototype.itemRendered = function (item) {
+    itemsControl.prototype.onItemRendered = function (item) {
         ///<summary>Called after a new item items control is rendered</summary>
     };
     
     //virtual
-    itemsControl.prototype.itemDeleted = function (item) {
+    itemsControl.prototype.onItemDeleted = function (item) {
         ///<summary>Disposes of deleted items</summary>        
         var renderedChild = this.__woBag.renderedChildren.indexOf(item);
         if(renderedChild !== -1)
@@ -1485,7 +1488,7 @@ Binding("render", true, function () {
                     
                     var old = _child.nodes || [];
                     _child.nodes = nodes;
-                    _child.rootHtmlChanged(old, nodes);
+                    _child.onRendered(old, nodes);
                 } : undefined
             };
             
@@ -1507,7 +1510,9 @@ Binding("render", true, function () {
 
 
 Binding("wipeout-type", true, function () {
-        
+    
+    var wipeoutTypeKey = "wipeout-type";    
+    
     // placeholder for binding which does nothing    
     return {
         init: function() {
@@ -1523,11 +1528,13 @@ Binding("wipeout-type", true, function () {
                         element.insertBefore(document.createComment(text), element.childNodes[0]);
                     else
                         element.appendChild(document.createComment(text));
-                } else if(element.parentElement) {
-                    if(element.nextSibling)
-                        element.parentElement.insertBefore(document.createComment(text), element.nextSibling);
-                    else
-                        element.parentElement.append(document.createComment(text));
+                } else if(element.nodeType === 8) {
+                    var originalText;
+                    if(!(originalText = ko.utils.domData.get(element, wipeoutTypeKey))) {
+                        ko.utils.domData.set(element, wipeoutTypeKey, originalText = element.textContent);
+                    }
+                    
+                    element.textContent = originalText + " wipeout-type: " + text;
                 }
             }
         }
@@ -1559,7 +1566,7 @@ Binding("wipeout", true, function () {
         var output = ko.bindingHandlers.render.init.call(this, element, createValueAccessor(view), allBindingsAccessor, null, bindingContext);
         ko.bindingHandlers.render.update.call(this, element, createValueAccessor(view), allBindingsAccessor, null, bindingContext);
         
-        view.applicationInitialized();
+        view.onApplicationInitialized();
         
         return output;
     };
