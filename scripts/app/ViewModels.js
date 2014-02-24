@@ -170,6 +170,7 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     usageCodeBlock.prototype.onCodeChanged = function(newVal) {  
         this.usage(newVal
             .replace(/\&lt;/g, "<")
+            .replace(/\&amp;/g, "&")
             .replace(/\&gt;/g, ">"));
     };
     
