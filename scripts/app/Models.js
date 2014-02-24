@@ -93,12 +93,12 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         // bindings
         var _bindings = (function() {
             
-            var itemsControl = new classTreeViewBranch("itemsControl", currentApi.forClass("wpfko.bindings.itemsControl"));
-            var render = new classTreeViewBranch("render", currentApi.forClass("wpfko.bindings.render"));
-            var wipeout_type = new classTreeViewBranch("wipeout-type", currentApi.forClass("wpfko.bindings.wipeout-type"));
-            var _wo = new classTreeViewBranch("wo", currentApi.forClass("wpfko.bindings.wo"));
-            var _wpfko = new classTreeViewBranch("wpfko", currentApi.forClass("wpfko.bindings.wpfko"));
-            var _icRender = new classTreeViewBranch("ic-render", currentApi.forClass("wpfko.bindings.ic-render"));
+            var itemsControl = new classTreeViewBranch("itemsControl", currentApi.forClass("wipeout.bindings.itemsControl"));
+            var render = new classTreeViewBranch("render", currentApi.forClass("wipeout.bindings.render"));
+            var wipeout_type = new classTreeViewBranch("wipeout-type", currentApi.forClass("wipeout.bindings.wipeout-type"));
+            var _wo = new classTreeViewBranch("wo", currentApi.forClass("wipeout.bindings.wo"));
+            var _wipeout = new classTreeViewBranch("wipeout", currentApi.forClass("wipeout.bindings.wipeout"));
+            var _icRender = new classTreeViewBranch("ic-render", currentApi.forClass("wipeout.bindings.ic-render"));
             
             return new treeViewBranch("bindings", [
                 _icRender,
@@ -106,12 +106,12 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 render,
                 wipeout_type,
                 _wo,
-                _wpfko
+                _wipeout
             ]);
         })();
                                      
-        //wpfko
-        var _wpfko = (function() {
+        //wipeout
+        var _wipeout = (function() {
             
             var _base = (function() {
                 var objectBranch = new classTreeViewBranch("object", currentApi.forClass("wo.object"));
@@ -143,12 +143,12 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
             
             var _bindings = (function() {
                 
-                var itemsControl = new classTreeViewBranch("itemsControl", currentApi.forClass("wpfko.bindings.itemsControl"));
-                var render = new classTreeViewBranch("render", currentApi.forClass("wpfko.bindings.render"));
-                var wipeout_type = new classTreeViewBranch("wipeout-type", currentApi.forClass("wpfko.bindings.wipeout-type"));
-                var _wo = new classTreeViewBranch("wo", currentApi.forClass("wpfko.bindings.wo"));
-                var _wpfko = new classTreeViewBranch("wpfko", currentApi.forClass("wpfko.bindings.wpfko"));
-                var _icRender = new classTreeViewBranch("ic-render", currentApi.forClass("wpfko.bindings.ic-render"));
+                var itemsControl = new classTreeViewBranch("itemsControl", currentApi.forClass("wipeout.bindings.itemsControl"));
+                var render = new classTreeViewBranch("render", currentApi.forClass("wipeout.bindings.render"));
+                var wipeout_type = new classTreeViewBranch("wipeout-type", currentApi.forClass("wipeout.bindings.wipeout-type"));
+                var _wo = new classTreeViewBranch("wo", currentApi.forClass("wipeout.bindings.wo"));
+                var _wipeout = new classTreeViewBranch("wipeout", currentApi.forClass("wipeout.bindings.wipeout"));
+                var _icRender = new classTreeViewBranch("ic-render", currentApi.forClass("wipeout.bindings.ic-render"));
                 
                 return new treeViewBranch("bindings", [
                     _icRender,
@@ -156,14 +156,14 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                     render,
                     wipeout_type,
                     _wo,
-                    _wpfko
+                    _wipeout
                 ]);
             })();
             
             var _template = (function() {
                 currentApi.forClass("ko.templateEngine");
-                var engine = new classTreeViewBranch("engine", currentApi.forClass("wpfko.template.engine"));
-                var htmlBuilder = new classTreeViewBranch("htmlBuilder", currentApi.forClass("wpfko.template.htmlBuilder"));
+                var engine = new classTreeViewBranch("engine", currentApi.forClass("wipeout.template.engine"));
+                var htmlBuilder = new classTreeViewBranch("htmlBuilder", currentApi.forClass("wipeout.template.htmlBuilder"));
                 
                 return new treeViewBranch("template", [
                     engine,
@@ -173,10 +173,10 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
             
             var _utils = (function() {
                 
-                var htmlBranch = new classTreeViewBranch("html", currentApi.forClass("wpfko.utils.html"));
-                var koVirtualElementsBranch = new classTreeViewBranch("virtualElements", currentApi.forClass("wpfko.utils.ko.virtualElements"));
-                var koBranch = new classTreeViewBranch("ko", currentApi.forClass("wpfko.utils.ko"), {staticProperties: {"virtualElements": koVirtualElementsBranch}});
-                var objBranch = new classTreeViewBranch("obj", currentApi.forClass("wpfko.utils.obj"));
+                var htmlBranch = new classTreeViewBranch("html", currentApi.forClass("wipeout.utils.html"));
+                var koVirtualElementsBranch = new classTreeViewBranch("virtualElements", currentApi.forClass("wipeout.utils.ko.virtualElements"));
+                var koBranch = new classTreeViewBranch("ko", currentApi.forClass("wipeout.utils.ko"), {staticProperties: {"virtualElements": koVirtualElementsBranch}});
+                var objBranch = new classTreeViewBranch("obj", currentApi.forClass("wipeout.utils.obj"));
                 
                 return new treeViewBranch("utils", [
                     htmlBranch,
@@ -185,7 +185,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 ]);
             })();
             
-            return new treeViewBranch("wpfko (debug mode only)", [
+            return new treeViewBranch("wipeout (debug mode only)", [
                 _base,
                 _bindings,
                 _template,
@@ -198,7 +198,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                 new treeViewBranch("API", [
                     _wo,
                     _bindings,
-                    _wpfko
+                    _wipeout
                 ])
         ]);        
     });
