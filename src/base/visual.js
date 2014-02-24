@@ -208,7 +208,7 @@ Class("wipeout.base.visual", function () {
     };
         
     // virtual
-    visual.prototype.rootHtmlChanged = function (oldValue, newValue) {
+    visual.prototype.onRendered = function (oldValue, newValue) {
         ///<summary>Triggered each time after a template is rendered</summary>    
     };
         
@@ -218,7 +218,7 @@ Class("wipeout.base.visual", function () {
     };
         
     // virtual
-    visual.prototype.applicationInitialized = function () {
+    visual.prototype.onApplicationInitialized = function () {
         ///<summary>Triggered after the entire application has been initialized. Will only be triggered on the viewModel created directly by the wipeout binding</summary>    
     };
     

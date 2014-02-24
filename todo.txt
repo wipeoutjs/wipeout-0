@@ -9,3 +9,8 @@ If, poke template
 
 changes:    createdByWipeout
             rootHtmlElement
+            applicationInitialized -> onApplicationInitialized
+            itemDeleted -> onItemDeleted
+            itemRendered -> onItemRendered
+            modelChanged -> onModelChanged
+            rootHtmlChanged -> onRendered

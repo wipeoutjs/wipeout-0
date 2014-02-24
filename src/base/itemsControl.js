@@ -54,7 +54,7 @@ Class("wipeout.base.itemsControl", function () {
             try {
                 if(this.modelsAndViewModelsAreSynched())
                     return;
-                this.itemSourceChanged(ko.utils.compareArrays(initialItemSource, arguments[0] || []));
+                this._itemSourceChanged(ko.utils.compareArrays(initialItemSource, arguments[0] || []));
             } finally {
                 initialItemSource = wipeout.utils.obj.copyArray(arguments[0] || []);
             }
@@ -63,7 +63,7 @@ Class("wipeout.base.itemsControl", function () {
         var initialItems = this.items.peek();
         this.registerDisposable(this.items.subscribe(function() {
             try {
-                this.itemsChanged(ko.utils.compareArrays(initialItems, arguments[0] || []));
+                this._itemsChanged(ko.utils.compareArrays(initialItems, arguments[0] || []));
             } finally {
                 initialItems = wipeout.utils.obj.copyArray(arguments[0] || []);
             }
@@ -73,8 +73,8 @@ Class("wipeout.base.itemsControl", function () {
     //TODO: private
     itemsControl.subscribeV3 = function() {
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
-        this.registerDisposable(this.itemSource.subscribe(this.itemSourceChanged, this, "arrayChange").dispose);
-        this.registerDisposable(this.items.subscribe(this.itemsChanged, this, "arrayChange").dispose);
+        this.registerDisposable(this.itemSource.subscribe(this._itemSourceChanged, this, "arrayChange").dispose);
+        this.registerDisposable(this.items.subscribe(this._itemsChanged, this, "arrayChange").dispose);
         
     };
     
@@ -127,17 +127,17 @@ Class("wipeout.base.itemsControl", function () {
         return true;
     };
 
-    itemsControl.prototype.itemsChanged = function (changes) { 
+    itemsControl.prototype._itemsChanged = function (changes) { 
         ///<summary>Disposes of deleted items</summary>
         enumerate(changes, function(change) {
             if(change.status === wipeout.utils.ko.array.diff.deleted && change.moved == null)
-                this.itemDeleted(change.value);
+                this.onItemDeleted(change.value);
             else if(change.status === wipeout.utils.ko.array.diff.added && change.moved == null)
-                this.itemRendered(change.value);
+                this.onItemRendered(change.value);
         }, this);
     };
 
-    itemsControl.prototype.itemSourceChanged = function (changes) { 
+    itemsControl.prototype._itemSourceChanged = function (changes) { 
         ///<summary>Adds, removes and moves view models depending on changes to the models array</summary>
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
@@ -177,12 +177,12 @@ Class("wipeout.base.itemsControl", function () {
     };
     
     //virtual
-    itemsControl.prototype.itemRendered = function (item) {
+    itemsControl.prototype.onItemRendered = function (item) {
         ///<summary>Called after a new item items control is rendered</summary>
     };
     
     //virtual
-    itemsControl.prototype.itemDeleted = function (item) {
+    itemsControl.prototype.onItemDeleted = function (item) {
         ///<summary>Disposes of deleted items</summary>        
         var renderedChild = this.__woBag.renderedChildren.indexOf(item);
         if(renderedChild !== -1)

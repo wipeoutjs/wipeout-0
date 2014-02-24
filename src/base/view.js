@@ -14,7 +14,7 @@ Class("wipeout.base.view", function () {
         var model = null;
         this.registerDisposable(this.model.subscribe(function(newVal) {
             try {
-                this.modelChanged(model, newVal);
+                this.onModelChanged(model, newVal);
             } finally {
                 model = newVal;
             }                                          
@@ -227,7 +227,7 @@ Class("wipeout.base.view", function () {
         }
     };
         
-    view.prototype.modelChanged = function (oldValue, newValue) {
+    view.prototype.onModelChanged = function (oldValue, newValue) {
         ///<summary>Called when the model has changed</summary>
         
         this.disposeOf(this.__woBag[modelRoutedEventKey]);

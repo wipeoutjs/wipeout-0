@@ -67,7 +67,7 @@ Binding("render", true, function () {
                     
                     var old = _child.nodes || [];
                     _child.nodes = nodes;
-                    _child.rootHtmlChanged(old, nodes);
+                    _child.onRendered(old, nodes);
                 } : undefined
             };
             
