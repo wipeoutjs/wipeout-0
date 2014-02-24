@@ -157,6 +157,7 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     jsCodeBlock.prototype.onCodeChanged = function(newVal) {  
         eval(newVal
             .replace(/\&lt;/g, "<")
+            .replace(/\&amp;/g, "&")
             .replace(/\&gt;/g, ">"));
     };
     
