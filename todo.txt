@@ -7,8 +7,8 @@ Debug code
 
 If, poke template
 
-changes:    createdByWipeout
-            rootHtmlElement
+changes:    __createdByWipeout -> __woBag.createdByWipeout
+            _rootHtmlElement -> __woBag.rootHtmlElement
             applicationInitialized -> onApplicationInitialized
             itemDeleted -> onItemDeleted
             itemRendered -> onItemRendered
