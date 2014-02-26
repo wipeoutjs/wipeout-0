@@ -109,10 +109,10 @@ Class("wipeout.base.object", function () {
             }
             
             // or rather, YUI doesn't like eval, use new function
-            new Function("childClass", "\
+            new Function("childClass", "parentClass", "\
             function " + className + "() { this.constructor = childClass; }\
-            " + className + ".prototype = this.prototype;\
-            childClass.prototype = new " + className + "();")(childClass);
+            " + className + ".prototype = parentClass.prototype;\
+            childClass.prototype = new " + className + "();")(childClass, this);
         } else {        
             function prototypeTracker() { this.constructor = childClass; }     
             prototypeTracker.prototype = this.prototype;
