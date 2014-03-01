@@ -63,10 +63,16 @@ Wipeout.compiler = (function () {
                         className = className.substr(className.lastIndexOf(".") + 1);
                     
                     var newClass = this.classes[i].constructor();
+                    var statics = {};
+                    for (var j in newClass)
+                        statics[j] = newClass[j];
+                    
                     var proto = newClass.prototype;
                     newClass = this.getClass(this.classes[i].parentClass).extend(newClass, className);
-                    for(var j in proto)
+                    for(j in proto)
                         newClass.prototype[j] = proto[j];
+                    for(j in statics)
+                        newClass[j] = statics[j];
                     
                     this.compiled.push({
                         name: this.classes[i].className,
@@ -922,15 +928,19 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
 });
 
 compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "Wipeout.Docs.Models.Descriptions.ClassItem", function() {
-    var propertyDescription = function(constructorFunction, propertyName, classFullName) {
-        this._super(propertyName, propertyDescription.getPropertySummary(constructorFunction, propertyName));
+    var property = function(constructorFunction, propertyName, classFullName) {
+        this._super(propertyName, property.getPropertySummary(constructorFunction, propertyName, classFullName));
         
         this.propertyName = propertyName;
         this.classFullName = classFullName;
     };
     
     var inlineCommentOnly = /^\/\//;
-    propertyDescription.getPropertySummary = function(constructorFunction, propertyName) {
+    property.getPropertySummary = function(constructorFunction, propertyName, classFullName) {
+        var result;
+        if(result =  property.getPropertyDescriptionOverride(classFullName + "." + propertyName))
+            return result;
+        
         constructorFunction = constructorFunction.toString();
                 
         var search = function(regex) {
@@ -950,14 +960,62 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
             }
         }
         
-        var result = search(new RegExp("\\s*this\\s*\\.\\s*" + propertyName + "\\s*="));
+        result = search(new RegExp("\\s*this\\s*\\.\\s*" + propertyName + "\\s*="));
         if(result)
             return result;
                 
         return search(new RegExp("\\s*this\\s*\\[\\s*\"" + propertyName + "\"\\s*\\]\\s*="));        
     };
     
-    return propertyDescription;
+    property.getPropertyDescriptionOverride = function(classDelimitedPropertyName) {
+        
+        var current = property.descriptionOverrides;
+        enumerate(classDelimitedPropertyName.split("."), function(item) {
+            if(!current) return;
+            current = current[item];
+        });
+        
+        return current;
+    };
+        
+    property.descriptionOverrides = {
+        wo: {
+            'if': {
+                woInvisibleDefault: "The default value for woInvisible for the wo.if class."
+            },
+            html: {
+                specialTags: "A list of html tags which cannot be placed inside a div element."
+            },
+            ko: {
+                //TODO: give this a page
+                array: "Utils for operating on observableArrays",
+                //TODO: give this a page
+                virtualElements: "Utils for operating on knockout virtual elements"
+            },
+            object: {
+                useVirtualCache: "When _super methods are called, the result of the lookup is cached for next time. Set this to false and call clearVirtualCache() to disable this feature."
+            },
+            view: {
+                //TODO: give this a page
+                objectParser: "Used to parse string values into a given type",
+                //TODO: give this a page
+                reservedPropertyNames: "Properties which cannot be set on a wipeout object via the template"
+            },
+            visual: {
+                reservedTags: "A list of names which cannot be used as wipeout object names. These are mostle html tag names",
+                woInvisibleDefault: "The default value for woInvisible for the wo.visual class."
+            }
+        },
+        wipeout: {
+            closeCodeTag: "Signifies the end of a wipeout code block. \"" + wipeout.template.engine.closeCodeTag + "\".",
+            instance: "An instance of a wipeout.template.engine which is used by the render binding.",
+            openCodeTag: "Signifies the end of a wipeout code block. \"" + wipeout.template.engine.openCodeTag + "\".",
+            scriptCache: "A placeholder for precompiled scripts.",
+            scriptHasBeenReWritten: "TODO"
+        }
+    };
+    
+    return property;
 });
 
 compiler.registerClass("Wipeout.Docs.Models.Pages.DisplayItem", "wo.object", function() {

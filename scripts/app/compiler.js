@@ -63,10 +63,16 @@ Wipeout.compiler = (function () {
                         className = className.substr(className.lastIndexOf(".") + 1);
                     
                     var newClass = this.classes[i].constructor();
+                    var statics = {};
+                    for (var j in newClass)
+                        statics[j] = newClass[j];
+                    
                     var proto = newClass.prototype;
                     newClass = this.getClass(this.classes[i].parentClass).extend(newClass, className);
-                    for(var j in proto)
+                    for(j in proto)
                         newClass.prototype[j] = proto[j];
+                    for(j in statics)
+                        newClass[j] = statics[j];
                     
                     this.compiled.push({
                         name: this.classes[i].className,
