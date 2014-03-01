@@ -394,60 +394,13 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Pages.PropertyPage", "wo.view", 
     };
 });
 
-
-$.extend(NS("Wipeout.Docs.Models"), (function() {
+compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function() {
     
-    var enumerate = function(enumerate, callback, context) {
-        context = context || window;
-        
-        if(enumerate)
-            for(var i = 0, ii = enumerate.length; i < ii; i++)
-                callback.call(context, enumerate[i], i);
-    };
-    
-    var get = function(item, root) {
-        
-        var current = root || window;
-        enumerate(item.split("."), function(item) {
-            current = current[item];
-        });
-        
-        return current;
-    };
-    
-    var api = wo.object.extend(function(rootNamespace) {
-        this._super();
-        
-        this.classes = [];
-    });
-    
-    api.prototype.getClassDescription = function(classConstructor) {
-        for(var i = 0, ii = this.classes.length; i < ii; i++)            
-            if(this.classes[i].classConstructor === classConstructor)
-                return this.classes[i].classDescription;
-    };
-    
-    api.prototype.forClass = function(className) {
-        
-        var classConstructor = get(className);
-        var result = this.getClassDescription(classConstructor);
-        if(result)
-            return result;
-        
-        var desc = new classDescription(className, this);
-        this.classes.push({
-            classDescription: desc,
-            classConstructor: classConstructor
-        });
-        
-        return desc;
-    };
-    
-    var application = wo.object.extend(function() {
+    return function() {
         
         this.content = ko.observable(new landingPage());
         
-        var currentApi = new api();
+        var currentApi = new Wipeout.Docs.Models.Components.Api();
                 
         //wo
         var _wo = (function() {
@@ -597,59 +550,265 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                     _wipeout
                 ])
         ]);        
-    }, "Application");
+    };
+});
+
+
+$.extend(NS("Wipeout.Docs.Models"), (function() {
     
-    //#######################################################
-    //## Base
-    //#######################################################
-    
-    var displayItem = wo.object.extend(function(name) {
-        this._super();
+    var enumerate = function(enumerate, callback, context) {
+        context = context || window;
         
-        this.title = name;
+        if(enumerate)
+            for(var i = 0, ii = enumerate.length; i < ii; i++)
+                callback.call(context, enumerate[i], i);
+    };
+    
+    var get = function(item, root) {
+        
+        var current = root || window;
+        enumerate(item.split("."), function(item) {
+            current = current[item];
+        });
+        
+        return current;
+    };
+    
+    //#######################################################
+    //## END: Class
+    //#######################################################
+    
+    //#######################################################
+    //## Function
+    //#######################################################
+    
+    
+    //#######################################################
+    //## END: Function
+    //#######################################################
+    
+    //#######################################################
+    //## Property
+    //#######################################################
+    
+    var propertyDescription = classDescriptionItem.extend(function(constructorFunction, propertyName, classFullName) {
+        this._super(propertyName, propertyDescription.getPropertySummary(constructorFunction, propertyName));
+        
+        this.propertyName = propertyName;
+        this.classFullName = classFullName;
     });
     
-    var landingPage =  displayItem.extend(function(title) {
-       this._super(title); 
-    }); 
+    var inlineCommentOnly = /^\/\//;
+    propertyDescription.getPropertySummary = function(constructorFunction, propertyName) {
+        constructorFunction = constructorFunction.toString();
+                
+        var search = function(regex) {
+            var i = constructorFunction.search(regex);
+            if(i !== -1) {
+                var func = constructorFunction.substring(0, i);
+                var lastLine = func.lastIndexOf("\n");
+                if(lastLine > 0) {
+                    func = func.substring(lastLine);
+                } 
+                
+                func = func.replace(/^\s+|\s+$/g, '');
+                if(inlineCommentOnly.test(func))
+                    return func.substring(2);
+                else
+                    return null;
+            }
+        }
+        
+        var result = search(new RegExp("\\s*this\\s*\\.\\s*" + propertyName + "\\s*="));
+        if(result)
+            return result;
+                
+        return search(new RegExp("\\s*this\\s*\\[\\s*\"" + propertyName + "\"\\s*\\]\\s*="));        
+    };
+    
+    //#######################################################
+    //## END: Property
+    //#######################################################  
+    
+    //#######################################################
+    //## Event
+    //#######################################################
+    
+    var eventDescription = classDescriptionItem.extend(function(constructorFunction, eventName, classFullName) {
+        this._super(eventName, propertyDescription.getPropertySummary(constructorFunction, eventName));
+        
+        this.eventName = eventName;
+        this.classFullName = classFullName;
+    });
+    
+    //#######################################################
+    //## END: Event
+    //#######################################################  
+    
+    //#######################################################
+    //## Export
+    //#######################################################
+    
+    var components = {
+        TreeViewBranch: treeViewBranch,
+        PageTreeViewBranch: pageTreeViewBranch/*,
+        ClassTreeViewBranch: classTreeViewBranch*/
+    };
+    
+    var pages = {
+        LandingPage: landingPage
+    };
+    
+    var descriptions = {
+        LandingPage: landingPage,
+        Class: classDescription,
+        //EventPage: eventPage,
+        //PropertyPage: propertyPage,
+        //FunctionPage: functionPage
+    };
+    
+    return {
+        Application: application,
+        Components: components,
+        Pages: pages,
+        Descriptions: descriptions
+    };
+})());
+
+compiler.registerClass("Wipeout.Docs.Models.Components.Api", "wo.object", function() {    
+    
+    var api = function(rootNamespace) {
+        this._super();
+        
+        this.classes = [];
+    };
+    
+    api.prototype.getClassDescription = function(classConstructor) {
+        for(var i = 0, ii = this.classes.length; i < ii; i++)            
+            if(this.classes[i].classConstructor === classConstructor)
+                return this.classes[i].classDescription;
+    };
+    
+    api.prototype.forClass = function(className) {
+        
+        var classConstructor = get(className);
+        var result = this.getClassDescription(classConstructor);
+        if(result)
+            return result;
+        
+        var desc = new classDescription(className, this);
+        this.classes.push({
+            classDescription: desc,
+            classConstructor: classConstructor
+        });
+        
+        return desc;
+    };
+    
+    return api;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wipeout.Docs.Models.Components.PageTreeViewBranch", function() {
+    var classTreeViewBranch = function(name, classDescription, customBranches) {
+        this._super(name, classDescription, classTreeViewBranch.compileBranches(classDescription, customBranches));
+    };
+    
+    classTreeViewBranch.compileBranches = function(classDescription, customBranches /*optional*/) {
+        var output = [];
+        
+        customBranches = customBranches || {};
+        customBranches.staticEvents = customBranches.staticEvents || {};
+        customBranches.staticProperties = customBranches.staticProperties || {};
+        customBranches.staticFunctions = customBranches.staticFunctions || {};
+        customBranches.events = customBranches.events || {};
+        customBranches.properties = customBranches.properties || {};
+        customBranches.functions = customBranches.functions || {};
+        
+        output.push(new pageTreeViewBranch("constructor"));    
+        
+        enumerate(classDescription.staticEvents, function(event) {
+            if(customBranches.staticEvents[event.eventName])
+                output.push(customBranches.staticEvents[event.eventName]);
+            else
+                output.push(new pageTreeViewBranch(event.eventName, null));            
+        });
+        
+        enumerate(classDescription.staticProperties, function(property) {
+            if(customBranches.staticProperties[property.propertyName])
+                output.push(customBranches.staticProperties[property.propertyName]);
+            else
+                output.push(new pageTreeViewBranch(property.propertyName, null));
+        });
+        
+        enumerate(classDescription.staticFunctions, function(_function) {
+            if(customBranches.staticFunctions[_function.functionName])
+                output.push(customBranches.staticFunctions[_function.functionName]);
+            else
+                output.push(new pageTreeViewBranch(_function.functionName, null));            
+        });
+        
+        enumerate(classDescription.events, function(event) {
+            if(customBranches.events[event.eventName])
+                output.push(customBranches.events[event.eventName]);
+            else
+                output.push(new pageTreeViewBranch(event.eventName, null));            
+        });
+        
+        enumerate(classDescription.properties, function(property) {
+            if(customBranches.staticProperties[property.propertyName])
+                output.push(customBranches.staticProperties[property.propertyName]);
+            else
+                output.push(new pageTreeViewBranch(property.propertyName, null));            
+        });
+        
+        enumerate(classDescription.functions, function(_function) {
+            if(customBranches.functions[_function.functionName])
+                output.push(customBranches.functions[_function.functionName]);
+            else
+                output.push(new pageTreeViewBranch(_function.functionName, null));            
+        });
+        
+        output.sort(function() { return arguments[0].name === "constructor" ? -1 : arguments[0].name.localeCompare(arguments[1].name); });
+        return output;
+    };
+    
+    return classTreeViewBranch;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Components.PageTreeViewBranch", "Wipeout.Docs.Models.Components.TreeViewBranch", function() {
+    var pageTreeViewBranch = function(name, page, branches) {
+        this._super(name, branches);
             
-    var treeViewBranch =  wo.object.extend(function(name, branches) {
+        this.page = page;
+    };
+    
+    pageTreeViewBranch.prototype.payload = function() {
+        return this.page;
+    };
+    
+    return pageTreeViewBranch;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Components.TreeViewBranch", "wo.object", function() {
+    var treeViewBranch = function(name, branches) {
         this._super();
             
         this.name = name;
         this.branches = branches;
-    }); 
-            
+    };
+    
     treeViewBranch.prototype.payload = function() {
         return null;
     };
-            
-    var pageTreeViewBranch = treeViewBranch.extend(function(name, page, branches) {
-        this._super(name, branches);
-            
-        this.page = page;
-    });
-            
-    pageTreeViewBranch.prototype.payload = function() {
-        return this.page;
-    };
-        
-    var classDescriptionItem = wo.object.extend(function(itemName, itemSummary) {
-        this._super();
-        
-        this.name = itemName;
-        this.summary = itemSummary;
-    });
     
-    //#######################################################
-    //## END: Base
-    //#######################################################
-    
-    //#######################################################
-    //## Class
-    //#######################################################
-        
-    var classDescription = wo.object.extend(function(classFullName, api) {
+    return treeViewBranch;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", function() {
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Descriptions.ClassDescription", "wo.object", function() {
+    var classDescription = function(classFullName, api) {
         this._super();
         
         this.className = classDescription.getClassName(classFullName);
@@ -666,7 +825,12 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.staticFunctions = [];
         
         this.rebuild();
-    });
+    };
+    
+    classDescription.getClassName = function(classFullName) {
+        classFullName = classFullName.split(".");
+        return classFullName[classFullName.length - 1];
+    };
     
     classDescription.prototype.rebuild = function() {
         this.classConstructor = null;
@@ -789,83 +953,21 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.staticFunctions.sort(sort);
     };
     
-    classDescription.getClassName = function(classFullName) {
-        classFullName = classFullName.split(".");
-        return classFullName[classFullName.length - 1];
-    };
+    return classDescription;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Descriptions.ClassDescriptionItem", "wo.object", function() {
+    return function(itemName, itemSummary) {
+        this._super();
+        
+        this.name = itemName;
+        this.summary = itemSummary;
+    }
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Descriptions.FunctionDescription", "Wipeout.Docs.Models.Descriptions.ClassDescriptionItem", function() {
     
-    var classTreeViewBranch = pageTreeViewBranch.extend(function(name, classDescription, customBranches) {
-        this._super(name, classDescription, classTreeViewBranch.compileBranches(classDescription, customBranches));
-    });
-    
-    classTreeViewBranch.compileBranches = function(classDescription, customBranches /*optional*/) {
-        var output = [];
-        
-        customBranches = customBranches || {};
-        customBranches.staticEvents = customBranches.staticEvents || {};
-        customBranches.staticProperties = customBranches.staticProperties || {};
-        customBranches.staticFunctions = customBranches.staticFunctions || {};
-        customBranches.events = customBranches.events || {};
-        customBranches.properties = customBranches.properties || {};
-        customBranches.functions = customBranches.functions || {};
-        
-        output.push(new pageTreeViewBranch("constructor"));    
-        
-        enumerate(classDescription.staticEvents, function(event) {
-            if(customBranches.staticEvents[event.eventName])
-                output.push(customBranches.staticEvents[event.eventName]);
-            else
-                output.push(new pageTreeViewBranch(event.eventName, null));            
-        });
-        
-        enumerate(classDescription.staticProperties, function(property) {
-            if(customBranches.staticProperties[property.propertyName])
-                output.push(customBranches.staticProperties[property.propertyName]);
-            else
-                output.push(new pageTreeViewBranch(property.propertyName, null));
-        });
-        
-        enumerate(classDescription.staticFunctions, function(_function) {
-            if(customBranches.staticFunctions[_function.functionName])
-                output.push(customBranches.staticFunctions[_function.functionName]);
-            else
-                output.push(new pageTreeViewBranch(_function.functionName, null));            
-        });
-        
-        enumerate(classDescription.events, function(event) {
-            if(customBranches.events[event.eventName])
-                output.push(customBranches.events[event.eventName]);
-            else
-                output.push(new pageTreeViewBranch(event.eventName, null));            
-        });
-        
-        enumerate(classDescription.properties, function(property) {
-            if(customBranches.staticProperties[property.propertyName])
-                output.push(customBranches.staticProperties[property.propertyName]);
-            else
-                output.push(new pageTreeViewBranch(property.propertyName, null));            
-        });
-        
-        enumerate(classDescription.functions, function(_function) {
-            if(customBranches.functions[_function.functionName])
-                output.push(customBranches.functions[_function.functionName]);
-            else
-                output.push(new pageTreeViewBranch(_function.functionName, null));            
-        });
-        
-        output.sort(function() { return arguments[0].name === "constructor" ? -1 : arguments[0].name.localeCompare(arguments[1].name); });
-        return output;
-    };
-    
-    //#######################################################
-    //## END: Class
-    //#######################################################
-    
-    //#######################################################
-    //## Function
-    //#######################################################
-    
-    var functionDescription = classDescriptionItem.extend(function(theFunction, functionName, classFullName) {
+    var functionDescription = function(theFunction, functionName, classFullName) {
         this._super(functionName, functionDescription.getFunctionSummary(theFunction));
         
         this["function"] = theFunction;
@@ -873,7 +975,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         this.classFullName = classFullName;
         
         this.overrides = null;
-    });
+    };
         
     functionDescription.getFunctionSummary = function(theFunction) {
         var functionString = theFunction.toString();
@@ -911,97 +1013,25 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         return "";   
     };  
     
-    //#######################################################
-    //## END: Function
-    //#######################################################
-    
-    //#######################################################
-    //## Property
-    //#######################################################
-    
-    var propertyDescription = classDescriptionItem.extend(function(constructorFunction, propertyName, classFullName) {
-        this._super(propertyName, propertyDescription.getPropertySummary(constructorFunction, propertyName));
+    return functionDescription;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Descriptions.LandingPage", "wo.object", function() {
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Pages.DisplayItem", "wo.object", function() {
+    return function(name) {
+        this._super();
         
-        this.propertyName = propertyName;
-        this.classFullName = classFullName;
-    });
-    
-    var inlineCommentOnly = /^\/\//;
-    propertyDescription.getPropertySummary = function(constructorFunction, propertyName) {
-        constructorFunction = constructorFunction.toString();
-                
-        var search = function(regex) {
-            var i = constructorFunction.search(regex);
-            if(i !== -1) {
-                var func = constructorFunction.substring(0, i);
-                var lastLine = func.lastIndexOf("\n");
-                if(lastLine > 0) {
-                    func = func.substring(lastLine);
-                } 
-                
-                func = func.replace(/^\s+|\s+$/g, '');
-                if(inlineCommentOnly.test(func))
-                    return func.substring(2);
-                else
-                    return null;
-            }
-        }
-        
-        var result = search(new RegExp("\\s*this\\s*\\.\\s*" + propertyName + "\\s*="));
-        if(result)
-            return result;
-                
-        return search(new RegExp("\\s*this\\s*\\[\\s*\"" + propertyName + "\"\\s*\\]\\s*="));        
+        this.title = name;
     };
-    
-    //#######################################################
-    //## END: Property
-    //#######################################################  
-    
-    //#######################################################
-    //## Event
-    //#######################################################
-    
-    var eventDescription = classDescriptionItem.extend(function(constructorFunction, eventName, classFullName) {
-        this._super(eventName, propertyDescription.getPropertySummary(constructorFunction, eventName));
-        
-        this.eventName = eventName;
-        this.classFullName = classFullName;
-    });
-    
-    //#######################################################
-    //## END: Event
-    //#######################################################  
-    
-    //#######################################################
-    //## Export
-    //#######################################################
-    
-    var components = {
-        TreeViewBranch: treeViewBranch,
-        PageTreeViewBranch: pageTreeViewBranch/*,
-        ClassTreeViewBranch: classTreeViewBranch*/
-    };
-    
-    var pages = {
-        LandingPage: landingPage
-    };
-    
-    var descriptions = {
-        LandingPage: landingPage,
-        Class: classDescription,
-        //EventPage: eventPage,
-        //PropertyPage: propertyPage,
-        //FunctionPage: functionPage
-    };
-    
-    return {
-        Application: application,
-        Components: components,
-        Pages: pages,
-        Descriptions: descriptions
-    };
-})());
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Pages.LandingPage", "Wipeout.Docs.Models.Pages.DisplayItem", function() {
+    return function(title) {
+       this._super(title); 
+    }
+});
 
 compiler.compile(window.Wipeout);
 
