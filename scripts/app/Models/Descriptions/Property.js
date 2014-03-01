@@ -65,7 +65,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
                 array: { 
                     description: "Utils for operating on observableArrays",
                     diff: {
-                        description: "ko constants for operating on arran changes (\"added\", \"deleted\", \"retained\")."
+                        description: "ko constants for operating on array changes (\"added\", \"deleted\", \"retained\")."
                     }
                 },
                 virtualElements: { 
