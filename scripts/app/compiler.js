@@ -1,15 +1,18 @@
 window.Wipeout = {};
 Wipeout.compiler = (function () {
     
-    var innerCompiler = function(classes, baseClass) {        
+    var innerCompiler = function(classes, baseClasses) {        
         this.classes = [];
         for(var i = 0, ii = classes.length; i < ii; i++)
             this.classes.push(classes[i]);
         
-        this.compiled = [{
-            name: baseClass,
-            value: get(baseClass)
-        }];
+        this.compiled = [];
+        for(var i = 0, ii = baseClasses.length; i < ii; i++) {
+            this.compiled.push({
+                name: baseClasses[i],
+                value: get(baseClasses[i])
+            });
+        }
     };
     
     function get(namespacedObject) {
@@ -57,11 +60,17 @@ Wipeout.compiler = (function () {
                 if(this.checkDependencies(this.classes[i].dependencies)) {
                     var className = this.classes[i].className;
                     if(className.indexOf(".") !== -1)
-                        className = className.substr(className.lastIndexOf("."));
+                        className = className.substr(className.lastIndexOf(".") + 1);
+                    
+                    var newClass = this.classes[i].constructor();
+                    var proto = newClass.prototype;
+                    newClass = this.getClass(this.classes[i].parentClass).extend(newClass, className);
+                    for(var j in proto)
+                        newClass.prototype[j] = proto[j];
                     
                     this.compiled.push({
                         name: this.classes[i].className,
-                        value: this.getClass(this.classes[i].parentClass).extend(this.classes[i].constructor(), className)
+                        value: newClass
                     });
                     this.classes.splice(i, 1);
                     i--;
@@ -77,9 +86,10 @@ Wipeout.compiler = (function () {
         }
     }
         
-    var compiler = function(rootNamespace, baseClass) {
+    function compiler(rootNamespace, baseClass, dependencies) {
         this.rootNamespace = rootNamespace;
         this.baseClass = baseClass;
+        this.dependencies = dependencies || [];
         this.classes = [];
     };
     
@@ -123,7 +133,12 @@ Wipeout.compiler = (function () {
     compiler.prototype.compile = function(root /* optional */) {
         root = root || {};
         
-        var ic = new innerCompiler(this.classes, this.baseClass);
+        var baseClasses = [this.baseClass];
+        for(var i = 0, ii = this.dependencies.length; i < ii; i++) {
+            baseClasses.push(this.dependencies[i]);
+        }
+        
+        var ic = new innerCompiler(this.classes, baseClasses);
         ic.compile();
         
         // skip base class
@@ -137,4 +152,6 @@ Wipeout.compiler = (function () {
     
 })();
 
-var compiler = new Wipeout.compiler("Wipeout", "wo.object");
+var compiler = new Wipeout.compiler("Wipeout", "wo.object", [
+    "wo.visual", "wo.view", "wo.contentControl", "wo.itemsControl", "wo.if"
+]);

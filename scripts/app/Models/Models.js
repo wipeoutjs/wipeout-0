@@ -201,7 +201,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
                     _wipeout
                 ])
         ]);        
-    });
+    }, "Application");
     
     //#######################################################
     //## Base

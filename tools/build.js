@@ -1,4 +1,4 @@
-compiler.compile();
+compiler.compile(window.Wipeout);
 
 
 //window.Wipeout = Wipeout;
