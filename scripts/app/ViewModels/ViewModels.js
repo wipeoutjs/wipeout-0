@@ -1,20 +1,6 @@
 
 $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     
-    var application = wo.view.extend(function() {
-        this._super("Wipeout.Docs.ViewModels.Application");
-        
-        this.registerRoutedEvent(treeViewBranch.renderPage, function (args) {
-            this.model().content(args.data);
-        }, this);
-    });
-    
-    application.prototype.onRendered = function() {
-        this._super.apply(this, arguments);
-        
-        //TODO: this
-        this.templateItems.treeView.select();
-    };
     
     var treeViewBranch =  wo.view.extend(function() {
         this._super(treeViewBranch.nullTemplate);        
@@ -155,10 +141,10 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     });
     
     jsCodeBlock.prototype.onCodeChanged = function(newVal) {  
-        eval(newVal
+        new Function(newVal
             .replace(/\&lt;/g, "<")
             .replace(/\&amp;/g, "&")
-            .replace(/\&gt;/g, ">"));
+            .replace(/\&gt;/g, ">"))();
     };
     
     var usageCodeBlock = codeBlock.extend(function() {
@@ -192,7 +178,6 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     };
     
     return {
-        Application: application,
         Components: components,
         Pages: pages
     };

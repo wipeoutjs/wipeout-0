@@ -137,6 +137,8 @@ Wipeout.compiler = (function () {
     
 })();
 
+var compiler = new Wipeout.compiler("Wipeout", "wo.object");
+
 
 window.NS = function(namespace) {
     
@@ -158,22 +160,24 @@ window.vmChooser = function(model) {
 };
 
 
-$.extend(NS("Wipeout.Docs.ViewModels"), (function() {
-    
-    var application = wo.view.extend(function() {
+    NS("Wipeout.Docs.ViewModels").Application = wo.view.extend(function() {
         this._super("Wipeout.Docs.ViewModels.Application");
         
-        this.registerRoutedEvent(treeViewBranch.renderPage, function (args) {
+        this.registerRoutedEvent(Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage, function (args) {
             this.model().content(args.data);
         }, this);
     });
     
-    application.prototype.onRendered = function() {
+    Wipeout.Docs.ViewModels.Application.prototype.onRendered = function() {
         this._super.apply(this, arguments);
         
         //TODO: this
         this.templateItems.treeView.select();
     };
+
+
+$.extend(NS("Wipeout.Docs.ViewModels"), (function() {
+    
     
     var treeViewBranch =  wo.view.extend(function() {
         this._super(treeViewBranch.nullTemplate);        
@@ -314,10 +318,10 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     });
     
     jsCodeBlock.prototype.onCodeChanged = function(newVal) {  
-        eval(newVal
+        new Function(newVal
             .replace(/\&lt;/g, "<")
             .replace(/\&amp;/g, "&")
-            .replace(/\&gt;/g, ">"));
+            .replace(/\&gt;/g, ">"))();
     };
     
     var usageCodeBlock = codeBlock.extend(function() {
@@ -351,7 +355,6 @@ $.extend(NS("Wipeout.Docs.ViewModels"), (function() {
     };
     
     return {
-        Application: application,
         Components: components,
         Pages: pages
     };
@@ -965,6 +968,9 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
         Descriptions: descriptions
     };
 })());
+
+compiler.compile();
+
 
 //window.Wipeout = Wipeout;
 

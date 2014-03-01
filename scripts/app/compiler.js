@@ -136,3 +136,5 @@ Wipeout.compiler = (function () {
     return compiler;
     
 })();
+
+var compiler = new Wipeout.compiler("Wipeout", "wo.object");
