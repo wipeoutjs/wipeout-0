@@ -424,7 +424,8 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             
             var htmlBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("html", currentApi.forClass("wo.html"));
             var koVirtualElementsBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("virtualElements", currentApi.forClass("wo.ko.virtualElements"));
-            var koBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("ko", currentApi.forClass("wo.ko"), {staticProperties: {"virtualElements": koVirtualElementsBranch}});
+            var koArrayBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("array", currentApi.forClass("wipeout.utils.ko.array"));
+            var koBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("ko", currentApi.forClass("wo.ko"), {staticProperties: {"virtualElements": koVirtualElementsBranch, "array": koArrayBranch}});
             var objBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("obj", currentApi.forClass("wo.obj"));
             
             return new Wipeout.Docs.Models.Components.TreeViewBranch("wo", [
@@ -530,7 +531,8 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
                 
                 var htmlBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("html", currentApi.forClass("wipeout.utils.html"));
                 var koVirtualElementsBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("virtualElements", currentApi.forClass("wipeout.utils.ko.virtualElements"));
-                var koBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("ko", currentApi.forClass("wipeout.utils.ko"), {staticProperties: {"virtualElements": koVirtualElementsBranch}});
+                var koArrayBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("array", currentApi.forClass("wipeout.utils.ko.array"));
+                var koBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("ko", currentApi.forClass("wipeout.utils.ko"), {staticProperties: {"virtualElements": koVirtualElementsBranch, "array": koArrayBranch}});
                 var objBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("obj", currentApi.forClass("wipeout.utils.obj"));
                 
                 return new Wipeout.Docs.Models.Components.TreeViewBranch("utils", [
@@ -987,9 +989,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
                 specialTags: "A list of html tags which cannot be placed inside a div element."
             },
             ko: {
-                //TODO: give this a page
                 array: "Utils for operating on observableArrays",
-                //TODO: give this a page
                 virtualElements: "Utils for operating on knockout virtual elements"
             },
             object: {
@@ -1002,16 +1002,19 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
                 reservedPropertyNames: "Properties which cannot be set on a wipeout object via the template"
             },
             visual: {
-                reservedTags: "A list of names which cannot be used as wipeout object names. These are mostle html tag names",
+                reservedTags: "A list of names which cannot be used as wipeout object names. These are mostly html tag names",
                 woInvisibleDefault: "The default value for woInvisible for the wo.visual class."
             }
         },
         wipeout: {
+            template: {
+                engine: {
             closeCodeTag: "Signifies the end of a wipeout code block. \"" + wipeout.template.engine.closeCodeTag + "\".",
             instance: "An instance of a wipeout.template.engine which is used by the render binding.",
-            openCodeTag: "Signifies the end of a wipeout code block. \"" + wipeout.template.engine.openCodeTag + "\".",
+            openCodeTag: "Signifies the beginning of a wipeout code block. \"" + wipeout.template.engine.openCodeTag + "\".",
             scriptCache: "A placeholder for precompiled scripts.",
             scriptHasBeenReWritten: "TODO"
+                }}
         }
     };
     

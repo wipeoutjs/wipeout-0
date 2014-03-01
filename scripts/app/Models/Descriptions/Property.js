@@ -58,9 +58,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
                 specialTags: "A list of html tags which cannot be placed inside a div element."
             },
             ko: {
-                //TODO: give this a page
                 array: "Utils for operating on observableArrays",
-                //TODO: give this a page
                 virtualElements: "Utils for operating on knockout virtual elements"
             },
             object: {
@@ -78,11 +76,15 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
             }
         },
         wipeout: {
-            closeCodeTag: "Signifies the end of a wipeout code block. \"" + wipeout.template.engine.closeCodeTag + "\".",
-            instance: "An instance of a wipeout.template.engine which is used by the render binding.",
-            openCodeTag: "Signifies the end of a wipeout code block. \"" + wipeout.template.engine.openCodeTag + "\".",
-            scriptCache: "A placeholder for precompiled scripts.",
-            scriptHasBeenReWritten: "TODO"
+            template: {
+                engine: {
+                    closeCodeTag: "Signifies the end of a wipeout code block: \"" + wipeout.template.engine.closeCodeTag + "\".",
+                    instance: "An instance of a wipeout.template.engine which is used by the render binding.",
+                    openCodeTag: "Signifies the beginning of a wipeout code block: \"" + wipeout.template.engine.openCodeTag + "\".",
+                    scriptCache: "A placeholder for precompiled scripts.",
+                    scriptHasBeenReWritten: "TODO"
+                }
+            }
         }
     };
     
