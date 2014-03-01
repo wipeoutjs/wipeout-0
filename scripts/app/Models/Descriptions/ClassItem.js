@@ -1,4 +1,4 @@
-compiler.registerClass("Wipeout.Docs.Models.Descriptions.ClassDescriptionItem", "wo.object", function() {
+compiler.registerClass("Wipeout.Docs.Models.Descriptions.ClassItem", "wo.object", function() {
     return function(itemName, itemSummary) {
         this._super();
         

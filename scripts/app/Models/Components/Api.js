@@ -19,7 +19,7 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Api", "wo.object", functi
         if(result)
             return result;
         
-        var desc = new classDescription(className, this);
+        var desc = new Wipeout.Docs.Models.Descriptions.Class(className, this);
         this.classes.push({
             classDescription: desc,
             classConstructor: classConstructor

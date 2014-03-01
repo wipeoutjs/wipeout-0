@@ -1,4 +1,4 @@
-compiler.registerClass("Wipeout.Docs.Models.Descriptions.FunctionDescription", "Wipeout.Docs.Models.Descriptions.ClassDescriptionItem", function() {
+compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Docs.Models.Descriptions.ClassItem", function() {
     
     var functionDescription = function(theFunction, functionName, classFullName) {
         this._super(functionName, functionDescription.getFunctionSummary(theFunction));

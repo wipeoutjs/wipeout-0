@@ -1,4 +1,4 @@
-compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "Wipeout.Docs.Models.Descriptions.ClassDescriptionItem", function() {
+compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "Wipeout.Docs.Models.Descriptions.ClassItem", function() {
     var propertyDescription = function(constructorFunction, propertyName, classFullName) {
         this._super(propertyName, propertyDescription.getPropertySummary(constructorFunction, propertyName));
         
