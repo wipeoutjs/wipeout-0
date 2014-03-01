@@ -1,4 +1,4 @@
-
+window.Wipeout = {};
 Wipeout.compiler = (function () {
     
     var innerCompiler = function(classes, baseClass) {        

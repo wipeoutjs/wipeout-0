@@ -1,1 +1,1 @@
-window.oobj = oobj;
+//window.Wipeout = Wipeout;

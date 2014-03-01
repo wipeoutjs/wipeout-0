@@ -1,4 +1,4 @@
-(function () { 
+(function () { window.Wipeout = {};
 Wipeout.compiler = (function () {
     
     var innerCompiler = function(classes, baseClass) {        
@@ -966,7 +966,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
     };
 })());
 
-window.oobj = oobj;
+//window.Wipeout = Wipeout;
 
 
 
