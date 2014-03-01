@@ -472,7 +472,7 @@ $.extend(NS("Wipeout.Docs.Models"), (function() {
     var functionDescription = classDescriptionItem.extend(function(theFunction, functionName, classFullName) {
         this._super(functionName, functionDescription.getFunctionSummary(theFunction));
         
-        this.function = theFunction;
+        this["function"] = theFunction;
         this.functionName = functionName;
         this.classFullName = classFullName;
         
