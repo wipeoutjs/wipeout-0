@@ -258,10 +258,11 @@ Class("wipeout.base.object", function () {
                 throw "Invalid class name. The class name is for debug purposes and can contain alphanumeric characters only";
             }
             
-            eval("\
+            // or rather, YUI doesn't like eval, use new function
+            new Function("childClass", "parentClass", "\
             function " + className + "() { this.constructor = childClass; }\
-            " + className + ".prototype = this.prototype;\
-            childClass.prototype = new " + className + "();");
+            " + className + ".prototype = parentClass.prototype;\
+            childClass.prototype = new " + className + "();")(childClass, this);
         } else {        
             function prototypeTracker() { this.constructor = childClass; }     
             prototypeTracker.prototype = this.prototype;
