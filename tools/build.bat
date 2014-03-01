@@ -1,0 +1,2 @@
+Yui\YuiBuildProcess "../scripts/app/compiler.js" "../scripts/app/Utils" "../scripts/app/ViewModels" "../scripts/app/Models" "build.js" "build.debug.js" -out "../scripts/app/wipeoutDocs.debug.js" -wrap true -compress true
+Yui\YuiBuildProcess "../scripts/app/compiler.js" "../scripts/app/Utils" "../scripts/app/ViewModels" "../scripts/app/Models" "build.js" "build.debug.js" -out "../scripts/app/wipeoutDocs.js" -wrap true -compress false
