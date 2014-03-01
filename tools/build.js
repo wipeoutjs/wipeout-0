@@ -1,4 +1,2 @@
 compiler.compile(window.Wipeout);
-
-
-//window.Wipeout = Wipeout;
+delete compiler;

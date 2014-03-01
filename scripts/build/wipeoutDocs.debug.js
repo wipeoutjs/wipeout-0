@@ -732,7 +732,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
     };
     
     property.getPropertyDescriptionOverride = function(classDelimitedPropertyName) {
-        if(classDelimitedPropertyName.indexOf("diff")!==-1)debugger;
+        
         var current = property.descriptionOverrides;
         enumerate(classDelimitedPropertyName.split("."), function(item) {
             if(!current) return;
@@ -758,7 +758,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
                 array: { 
                     description: "Utils for operating on observableArrays",
                     diff: {
-                        description: "ko constants for operating on arran changes (\"added\", \"deleted\", \"retained\")."
+                        description: "ko constants for operating on array changes (\"added\", \"deleted\", \"retained\")."
                     }
                 },
                 virtualElements: { 
@@ -805,7 +805,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
                         description: "A placeholder for precompiled scripts."
                     },
                     scriptHasBeenReWritten: { 
-                        description: "TODO"
+                        description: "Regex to determine whether knockout has rewritten a template."
                     }
                 }
             }
@@ -1004,6 +1004,8 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.UsageCodeBlock", "Wip
 compiler.registerClass("Wipeout.Docs.ViewModels.Pages.ClassItemTable", "wo.itemsControl", function() {
     return function() {
         this._super("Wipeout.Docs.ViewModels.Pages.ClassItemTable", "Wipeout.Docs.ViewModels.Pages.ClassItemRow");
+        
+        this.itemType = "Function";
     };
 });
 
@@ -1048,9 +1050,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Pages.PropertyPage", "wo.view", 
 });
 
 compiler.compile(window.Wipeout);
-
-
-//window.Wipeout = Wipeout;
+delete compiler;
 
 
 

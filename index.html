@@ -55,7 +55,7 @@
                 <table class="classTable">
                     <thead>
                         <tr>
-                            <th>Function</th>
+                            <th data-bind="text: itemType"></th>
                             <th>Summary</th>
                         </tr>
                     </thead>
@@ -81,12 +81,12 @@
                 </h2>
                 <wo.view templateId="$parent.usagesTemplateId" model="$parent.model().classConstructor" />
             </div>
-            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticProperties" title="'Static Properties'" />
-            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticFunctions" title="'Static Functions'" />
-            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticEvents" title="'Static Events'" />
-            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().properties" title="'Properties'" />
-            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().functions" title="'Functions'" />
-            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().events" title="'Events'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticProperties" title="'Static Properties'" itemType="'Property'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticFunctions" title="'Static Functions'" itemType="'Function'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticEvents" title="'Static Events'" itemType="'Event'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().properties" title="'Properties'" itemType="'Property'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().functions" title="'Functions'" itemType="'Function'" />
+            <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().events" title="'Events'" itemType="'Event'" />
         </script>
         
         <script type="text/xml" id="wo.object_ClassUsages">

@@ -112,7 +112,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
                         description: "A placeholder for precompiled scripts."
                     },
                     scriptHasBeenReWritten: { 
-                        description: "TODO"
+                        description: "Regex to determine whether knockout has rewritten a template."
                     }
                 }
             }
