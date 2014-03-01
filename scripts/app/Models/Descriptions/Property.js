@@ -9,8 +9,8 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
     var inlineCommentOnly = /^\/\//;
     property.getPropertySummary = function(constructorFunction, propertyName, classFullName) {
         var result;
-        if(result =  property.getPropertyDescriptionOverride(classFullName + "." + propertyName))
-            return result;
+        if(result = property.getPropertyDescriptionOverride(classFullName + "." + propertyName))
+            return result.description;
         
         constructorFunction = constructorFunction.toString();
                 
@@ -52,37 +52,68 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "
     property.descriptionOverrides = {
         wo: {
             'if': {
-                woInvisibleDefault: "The default value for woInvisible for the wo.if class."
+                woInvisibleDefault: { 
+                    description: "The default value for woInvisible for the wo.if class."
+                }
             },
             html: {
-                specialTags: "A list of html tags which cannot be placed inside a div element."
+                specialTags: { 
+                    description: "A list of html tags which cannot be placed inside a div element."
+                }
             },
             ko: {
-                array: "Utils for operating on observableArrays",
-                virtualElements: "Utils for operating on knockout virtual elements"
+                array: { 
+                    description: "Utils for operating on observableArrays",
+                    diff: {
+                        description: "ko constants for operating on arran changes (\"added\"\removed"\"\"\")."
+                    }
+                },
+                virtualElements: { 
+                    description: "Utils for operating on knockout virtual elements"
+                }
             },
             object: {
-                useVirtualCache: "When _super methods are called, the result of the lookup is cached for next time. Set this to false and call clearVirtualCache() to disable this feature."
+                useVirtualCache: { 
+                    description: "When _super methods are called, the result of the lookup is cached for next time. Set this to false and call clearVirtualCache() to disable this feature."
+                }
             },
             view: {
                 //TODO: give this a page
-                objectParser: "Used to parse string values into a given type",
+                objectParser: { 
+                    description: "Used to parse string values into a given type"
+                },
                 //TODO: give this a page
-                reservedPropertyNames: "Properties which cannot be set on a wipeout object via the template"
+                reservedPropertyNames: { 
+                    description: "Properties which cannot be set on a wipeout object via the template"
+                }
             },
             visual: {
-                reservedTags: "A list of names which cannot be used as wipeout object names. These are mostly html tag names",
-                woInvisibleDefault: "The default value for woInvisible for the wo.visual class."
+                reservedTags: { 
+                    description: "A list of names which cannot be used as wipeout object names. These are mostly html tag names"
+                },
+                woInvisibleDefault: { 
+                    description: "The default value for woInvisible for the wo.visual class."
+                }
             }
         },
         wipeout: {
             template: {
                 engine: {
-                    closeCodeTag: "Signifies the end of a wipeout code block: \"" + wipeout.template.engine.closeCodeTag + "\".",
-                    instance: "An instance of a wipeout.template.engine which is used by the render binding.",
-                    openCodeTag: "Signifies the beginning of a wipeout code block: \"" + wipeout.template.engine.openCodeTag + "\".",
-                    scriptCache: "A placeholder for precompiled scripts.",
-                    scriptHasBeenReWritten: "TODO"
+                    closeCodeTag: { 
+                        description: "Signifies the end of a wipeout code block: \"" + wipeout.template.engine.closeCodeTag + "\"."
+                    },
+                    instance: { 
+                        description: "An instance of a wipeout.template.engine which is used by the render binding."
+                    },
+                    openCodeTag: { 
+                        description: "Signifies the beginning of a wipeout code block: \"" + wipeout.template.engine.openCodeTag + "\"."
+                    },
+                    scriptCache: { 
+                        description: "A placeholder for precompiled scripts."
+                    },
+                    scriptHasBeenReWritten: { 
+                        description: "TODO"
+                    }
                 }
             }
         }

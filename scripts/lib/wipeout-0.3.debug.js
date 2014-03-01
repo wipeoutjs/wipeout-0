@@ -91,10 +91,12 @@ var trim = function(string) {
 };
 
 var trimToLower = function(string) {
+    ///<summary>Trims a string and converts it to lower case</summary>
     return string ? trim(string).toLowerCase() : string;
 };
 
 var parseBool = function(input) {
+    ///<summary>Parses a String into a Boolean</summary>
     if(input == null) return false;
         
     input = trimToLower(input);
@@ -1331,13 +1333,14 @@ Class("wipeout.base.routedEventModel", function () {
     
     
     var routedEventModel = wipeout.base.object.extend(function () {
-        ///<summary>THe base class for models if they wish to invoke routed events on their viewModel</summary>
+        ///<summary>The base class for models if they wish to invoke routed events on their viewModel</summary>
         
         this.__triggerRoutedEventOnVM = new wo.event();
     });
         
     routedEventModel.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
-        ///<summary>Trigger a routed event which will propogate to any view models where this object is it's model and continue to bubble from there</summary>  
+        ///<summary>Trigger a routed event which will propogate to any view models where this object is it's model and continue to bubble from there</summary>
+        
         this.__triggerRoutedEventOnVM.trigger({routedEvent: routedEvent, eventArgs: eventArgs});
     };;
     
@@ -1760,6 +1763,7 @@ Class("wipeout.template.engine", function () {
         var override = function(toOverride) {
             engine.prototype[toOverride] = function () {
                 ///<summary>Knockout native function</summary>
+                
                 ko.templateEngine.prototype[toOverride].apply(this, arguments);
             };
         };
@@ -1886,7 +1890,7 @@ Class("wipeout.template.htmlBuilder", function () {
     };
     
     htmlBuilder.generateTemplate = function(xmlTemplate) { 
-        ///<summary>???</summary>
+        ///<summary>Convert an xml template to a string</summary>
         var result = [];
         var ser = new XMLSerializer();
         
