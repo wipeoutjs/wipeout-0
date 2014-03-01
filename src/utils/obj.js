@@ -91,10 +91,12 @@ var trim = function(string) {
 };
 
 var trimToLower = function(string) {
+    ///<summary>Trims a string and converts it to lower case</summary>
     return string ? trim(string).toLowerCase() : string;
 };
 
 var parseBool = function(input) {
+    ///<summary>Parses a String into a Boolean</summary>
     if(input == null) return false;
         
     input = trimToLower(input);

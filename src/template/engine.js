@@ -145,6 +145,7 @@ Class("wipeout.template.engine", function () {
         var override = function(toOverride) {
             engine.prototype[toOverride] = function () {
                 ///<summary>Knockout native function</summary>
+                
                 ko.templateEngine.prototype[toOverride].apply(this, arguments);
             };
         };

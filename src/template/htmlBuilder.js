@@ -97,7 +97,7 @@ Class("wipeout.template.htmlBuilder", function () {
     };
     
     htmlBuilder.generateTemplate = function(xmlTemplate) { 
-        ///<summary>???</summary>
+        ///<summary>Convert an xml template to a string</summary>
         var result = [];
         var ser = new XMLSerializer();
         
