@@ -147,8 +147,8 @@ Wipeout.compiler = (function () {
         var ic = new innerCompiler(this.classes, baseClasses);
         ic.compile();
         
-        // skip base class
-        for(i = 1, ii = ic.compiled.length; i < ii; i++)
+        // skip base classes
+        for(i = 1 + this.dependencies.length, ii = ic.compiled.length; i < ii; i++)
             compiler.append(ic.compiled[i], root);
         
         return root;
