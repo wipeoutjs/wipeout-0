@@ -8,11 +8,14 @@ Class("wipeout.base.itemsControl", function () {
         deafaultTemplateId = wipeout.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");  
     };
     
-    var itemsControl = wipeout.base.contentControl.extend(function (templateId, itemTemplateId) {
+    var itemsControl = wipeout.base.contentControl.extend(function (templateId, itemTemplateId, model) {
         ///<summary>Bind a list of models (itemSource) to a list of view models (items) and render accordingly</summary>
+        ///<param name="templateId" type="String" optional="true">The template id. If not set, defaults to a div to render items</param>
+        ///<param name="itemTemplateId" type="String" optional="true">The initial template id for each item</param>
+        ///<param name="model" type="Any" optional="true">The initial model to use</param>
         
         staticConstructor();
-        this._super(templateId || deafaultTemplateId);
+        this._super(templateId || deafaultTemplateId, model);
 
         //The id of the template to render for each item
         this.itemTemplateId = ko.observable(itemTemplateId);
@@ -128,7 +131,9 @@ Class("wipeout.base.itemsControl", function () {
     };
 
     itemsControl.prototype._itemsChanged = function (changes) { 
-        ///<summary>Disposes of deleted items</summary>
+        ///<summary>Runs onItemDeleted and onItemRendered on deleted and created items respectively</summary>
+        ///<param name="changes" type="Array" optional="false">A knockout diff of changes to the items</param>
+        
         enumerate(changes, function(change) {
             if(change.status === wipeout.utils.ko.array.diff.deleted && change.moved == null)
                 this.onItemDeleted(change.value);
@@ -139,6 +144,7 @@ Class("wipeout.base.itemsControl", function () {
 
     itemsControl.prototype._itemSourceChanged = function (changes) { 
         ///<summary>Adds, removes and moves view models depending on changes to the models array</summary>
+        ///<param name="changes" type="Array" optional="false">A knockout diff of changes to the itemSource</param>
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
         for(var i = 0, ii = changes.length; i < ii; i++) {
@@ -179,11 +185,13 @@ Class("wipeout.base.itemsControl", function () {
     //virtual
     itemsControl.prototype.onItemRendered = function (item) {
         ///<summary>Called after a new item items control is rendered</summary>
+        ///<param name="item" type="wo.view" optional="false">The item rendered</param>
     };
     
     //virtual
     itemsControl.prototype.onItemDeleted = function (item) {
-        ///<summary>Disposes of deleted items</summary>        
+        ///<summary>Disposes of deleted items</summary> 
+        ///<param name="item" type="wo.view" optional="false">The item deleted</param>       
         var renderedChild = this.__woBag.renderedChildren.indexOf(item);
         if(renderedChild !== -1)
             this.__woBag.renderedChildren.splice(renderedChild, 1);
@@ -194,6 +202,9 @@ Class("wipeout.base.itemsControl", function () {
     // virtual
     itemsControl.prototype._createItem = function (model) {
         ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
+        ///<param name="model" type="Any" optional="false">The model for the view to create</param>
+        ///<returns type="wo.view">The newly created item</returns>
+        
         var item = this.createItem(model);
         item.__woBag.createdByWipeout = true;
         return item;
@@ -202,6 +213,8 @@ Class("wipeout.base.itemsControl", function () {
     // virtual
     itemsControl.prototype.createItem = function (model) {
         ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
+        ///<param name="model" type="Any" optional="false">The model for the view to create</param>
+        ///<returns type="wo.view">The newly created item</returns>
         return new wipeout.base.view(this.itemTemplateId(), model);        
     };
 

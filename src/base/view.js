@@ -4,7 +4,9 @@ Class("wipeout.base.view", function () {
     var modelRoutedEventKey = "wo.view.modelRoutedEvents";
     
     var view = wipeout.base.visual.extend(function (templateId, model /*optional*/) {        
-        ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>    
+        ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>  
+        ///<param name="templateId" type="String" optional="true">An initial template id</param>
+        ///<param name="model" type="Any" optional="true">An initial model</param>
 
         this._super(templateId);
         
@@ -36,6 +38,8 @@ Class("wipeout.base.view", function () {
     
     view.prototype.disposeOfBinding = function(propertyName) {
         ///<summary>Un-bind this property.</summary>
+        ///<param name="propertyName" type="String" optional="false">The name of the property to un-bind</param>
+        
         if(this.__woBag.bindings[propertyName]) {
             this.__woBag.bindings[propertyName].dispose();
             delete this.__woBag.bindings[propertyName];
@@ -63,6 +67,9 @@ Class("wipeout.base.view", function () {
     
     view.prototype.bind = function(property, valueAccessor, twoWay) {
         ///<summary>Bind the value returned by valueAccessor to this[property]</summary>
+        ///<param name="property" type="String" optional="false">The name of the property to bind</param>
+        ///<param name="valueAccessor" type="Function" optional="false">A function which returns an observable or object to bind to</param>
+        ///<param name="twoWay" type="Boolean" optional="true">Specifies whether to bind the destination to the source as well</param>
         
         if(twoWay && (!ko.isObservable(this[property]) || !ko.isObservable(valueAccessor())))
            throw 'Two way bindings must be between 2 observables';
@@ -107,6 +114,7 @@ Class("wipeout.base.view", function () {
     
     view.elementHasModelBinding = function(element) {
         ///<summary>returns whether the view defined in the element was explicitly given a model property</summary>
+        ///<param name="element" type="Element" optional="false">The element to check for a model setter property</param>
         
         for(var i = 0, ii = element.attributes.length; i < ii; i++) {
             if(element.attributes[i].nodeName === "model" || element.attributes[i].nodeName === "model-tw")
@@ -126,6 +134,8 @@ Class("wipeout.base.view", function () {
     //TODO private
     view.prototype.initialize = function(propertiesXml, parentBindingContext) {
         ///<summary>Takes an xml fragment and binding context and sets its properties accordingly</summary>
+        ///<param name="propertiesXml" type="Element" optional="false">An XML element containing property setters for the view</param>
+        ///<param name="parentBindingContext" type="ko.bindingContext" optional="false">The binding context of the wipeout node just above this one</param>
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
         
@@ -133,7 +143,6 @@ Class("wipeout.base.view", function () {
             return;
         
         var prop = propertiesXml.getAttribute("woInvisible");
-        if(prop)
             this.woInvisible = parseBool(prop);
                 
         if(!view.elementHasModelBinding(propertiesXml) && wipeout.utils.ko.peek(this.model) == null) {
@@ -229,6 +238,8 @@ Class("wipeout.base.view", function () {
         
     view.prototype.onModelChanged = function (oldValue, newValue) {
         ///<summary>Called when the model has changed</summary>
+        ///<param name="oldValue" type="Any" optional="false">The old model</param>
+        ///<param name="newValue" type="Any" optional="false">The new mode</param>
         
         this.disposeOf(this.__woBag[modelRoutedEventKey]);
         
@@ -239,6 +250,8 @@ Class("wipeout.base.view", function () {
     
     view.prototype.onModelRoutedEvent = function (eventArgs) {
         ///<summary>When the model of this class fires a routed event, catch it and continue the traversal upwards</summary>
+        ///<param name="eventArgs" type="wo.routedEventArgs" optional="false">The routed event args</param>
+        
         if(!(eventArgs.routedEvent instanceof wipeout.base.routedEvent)) throw "Invaid routed event";
         
         this.triggerRoutedEvent(eventArgs.routedEvent, eventArgs.eventArgs);

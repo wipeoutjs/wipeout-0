@@ -12,6 +12,8 @@ Class("wipeout.base.object", function () {
     
     object.clearVirtualCache = function(forMethod /*optional*/) {
         ///<summary>Lookup results for _super methods are cached. This could cause problems in the rare cases when a class prototype is altered after one of its methods are called. Clearing the cache will solve this</summary>
+        ///<param name="forMethod" type="Function" optional="true">A method to clear from the cache</param>
+        
         if(!forMethod) {
             cachedSuperMethods.parents.length = 0;
             cachedSuperMethods.children.length = 0;
@@ -31,6 +33,7 @@ Class("wipeout.base.object", function () {
     
     object.prototype._super = function() {        
         ///<summary>Call the current method or constructor of the parent class with arguments</summary>
+        ///<returns type="Any">Whatever the overridden method returns</returns>
         
         // try to find a cached version to skip lookup of parent class method
         var cached = null;
@@ -96,14 +99,17 @@ Class("wipeout.base.object", function () {
     var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_0-9]*$/;
     object.extend = function (childClass, className/* optional */) {
         ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
- 
+        ///<param name="childClass" type="Function" optional="false">The constructor of a class to create</param>
+        ///<param name="className" type="String" optional="true">The name of the class for debugger console purposes</param>
+        ///<returns type="Function">The newly created class</returns>
+        
         // static functions
         for (var p in this)
             if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache)
                 childClass[p] = this[p];
  
         // use eval so that browser debugger will get class name
-        if(className) {
+        if(className && DEBUG) {
             if(!validFunctionCharacters.test(className)) {
                 throw "Invalid class name. The class name is for debug purposes and can contain alphanumeric characters only";
             }

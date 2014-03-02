@@ -3,6 +3,7 @@ Class("wipeout.base.visual", function () {
     
     var visual = wipeout.base.object.extend(function (templateId) {
         ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
+        ///<param name="templateId" type="String" optional="true">A default template id</param>
         this._super();
         
         //Specifies whether this object should be used as a binding context. If false, the binding context of this object will be it's parent. 
@@ -28,6 +29,7 @@ Class("wipeout.base.visual", function () {
     
     visual.prototype.disposeOf = function(key) {
         ///<summary>Dispose of an item registered as a disposable</summary>
+        ///<param name="key" type="String" optional="false">The key of the item to dispose</param>
         if(this.__woBag.disposables[key]) {
             this.__woBag.disposables[key]();
             delete this.__woBag.disposables[key];
@@ -44,6 +46,8 @@ Class("wipeout.base.visual", function () {
         var i = 0;
         return function(disposeFunction) {
             ///<summary>Register a dispose function which will be called when this object is disposed of.</summary>
+            ///<param name="disposeFunction" type="Function" optional="false">The function to call when on dispose</param>
+            
             if(!disposeFunction || disposeFunction.constructor !== Function) throw "The dispose function must be a Function";
             
             var id = (++i).toString();            
@@ -109,11 +113,12 @@ Class("wipeout.base.visual", function () {
     };
     
     //TODO: move to util
-    visual.getParentElement = function(element) {
+    visual.getParentElement = function(node) {
         ///<summary>Gets the parent or virtual parent of the element</summary>
+        ///<param name="node" type="HTMLNode" optional="false">The node to find the parent of</param>
         
         var depth = 0;
-        var current = element.previousSibling;
+        var current = node.previousSibling;
         while(current) {
             if(wipeout.utils.ko.virtualElements.isVirtualClosing(current)) {
                 depth--;
@@ -129,7 +134,7 @@ Class("wipeout.base.visual", function () {
             current = current.previousSibling;
         }
         
-        return element.parentElement;
+        return node.parentElement;
     };
     
     visual.prototype.getParents = function() {
@@ -158,7 +163,11 @@ Class("wipeout.base.visual", function () {
     };
     
     visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {  
-        ///<summary>Unregister from a routed event. The callback and callback context must be the same as those passed in during registration</summary>      
+        ///<summary>Unregister from a routed event. The callback and callback context must be the same as those passed in during registration</summary>  
+        ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
+        ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event to un register from</param>
+        ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
+        
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
             if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
                 this.__woBag.routedEventSubscriptions[i].event.unRegister(callback, context);
@@ -168,7 +177,11 @@ Class("wipeout.base.visual", function () {
     };
     
     visual.prototype.registerRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {
-        ///<summary>Register for a routed event</summary>    
+        ///<summary>Register for a routed event</summary>   
+        ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
+        ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
+        ///<param name="context" type="Any" optional="true">The context "this" to use within the callback</param>
+         
         
         var rev;
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
@@ -187,7 +200,9 @@ Class("wipeout.base.visual", function () {
     };
     
     visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
-        ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual. Overrides wo.object.triggerRoutedEvent</summary>    
+        ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual. Overrides wo.object.triggerRoutedEvent</summary>        
+        ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
+        ///<param name="eventArgs" type="Any" optional="true">The event args to bubble up with the routed event</param>
         if(!(eventArgs instanceof wipeout.base.routedEventArgs)) {
             eventArgs = new wipeout.base.routedEventArgs(eventArgs, this);
         }
@@ -208,8 +223,10 @@ Class("wipeout.base.visual", function () {
     };
         
     // virtual
-    visual.prototype.onRendered = function (oldValue, newValue) {
-        ///<summary>Triggered each time after a template is rendered</summary>    
+    visual.prototype.onRendered = function (oldValues, newValues) {
+        ///<summary>Triggered each time after a template is rendered</summary>   
+        ///<param name="oldValues" type="Array" optional="false">A list of HTMLNodes removed</param>
+        ///<param name="newValues" type="Array" optional="false">A list of HTMLNodes rendered</param>
     };
         
     // virtual
@@ -248,6 +265,10 @@ Class("wipeout.base.visual", function () {
         
     visual.visualGraph = function (rootElement, displayFunction) {
         ///<summary>Compiles a tree of all visual elements in a block of html, starting at the rootElement</summary>    
+        ///<param name="rootElement" type="HTMLNode" optional="false">The root node of the visual tree</param>
+        ///<param name="displayFunction" type="" optional="true">A function to convert view models found into a custom type</param>
+        ///<returns type="Array">The visual graph</returns>
+        
         if (!rootElement)
             return [];
  

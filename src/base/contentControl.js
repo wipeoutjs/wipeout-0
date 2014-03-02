@@ -1,8 +1,10 @@
 
 Class("wipeout.base.contentControl", function () {    
 
-    var contentControl = wipeout.base.view.extend(function (templateId) {
+    var contentControl = wipeout.base.view.extend(function (templateId, model) {
         ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
+        ///<param name="templateId" type="string" optional="true">The template id. If not set, defaults to a blank template</param>
+        ///<param name="model" type="Any" optional="true">The initial model to use</param>
         this._super(templateId || wipeout.base.visual.getBlankTemplateId());
 
         //The template which corresponds to the templateId for this item
@@ -11,6 +13,9 @@ Class("wipeout.base.contentControl", function () {
     
     contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
         ///<summary>Creates a computed for a template property which is bound to the templateIdObservable property</summary>
+        ///<param name="templateIdObservable" type="String" optional="false">The observable containing the templateId to create a template property for</param>
+        ///<param name="owner" type="Object" optional="false">The new owner of the created template property</param>
+        ///<returns type="String">A template property bound to the template id</returns>
         var output = ko.dependentObservable({
             read: function () {
                 var script = document.getElementById(templateIdObservable());
@@ -43,7 +48,10 @@ Class("wipeout.base.contentControl", function () {
         return { 
             create: function (templateString, forceCreate) {
                 ///<summary>Creates an anonymous template within the DOM and returns its id</summary>
-
+                ///<param name="templateString" type="String" optional="false">Gets a template id for an anonymous template</param>
+                ///<param name="forceCreate" type="Boolean" optional="true">Force the creation of a new template, regardless of whether there is an existing clone</param>
+                ///<returns type="String">The template id</returns>
+                
                 lazyCreateTemplateArea();
 
                 templateString = trim(templateString);
@@ -70,6 +78,8 @@ Class("wipeout.base.contentControl", function () {
             },
             del: function(templateId) {
                 ///<summary>Deletes an anonymous template with the given id</summary>
+                ///<param name="templateId" type="String" optional="false">The id of the template to delete</param>
+                ///<returns type="void"></returns>
                 lazyCreateTemplateArea();
             
                 for (var j = 0; j < templateArea.childNodes.length; j++) {
@@ -90,6 +100,8 @@ Class("wipeout.base.contentControl", function () {
     //http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
     contentControl.hashCode = function (str) {        
         ///<summary>Creates a rough has code for the given string</summary>
+        ///<param name="str" type="String" optional="false">The string to hash</param>
+        ///<returns type="Number">The hash code</returns>
         var hash = 0;
         for (var i = 0, ii = str.length; i < ii; i++) {
             var ch = str.charCodeAt(i);
