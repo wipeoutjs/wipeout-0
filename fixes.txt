@@ -1,0 +1,2 @@
+wo.visual.getBlankTemplateId
+wo.visual.registerRoutedEvent

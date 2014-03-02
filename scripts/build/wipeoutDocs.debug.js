@@ -774,7 +774,9 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
             };
         }
         
-        return null;   
+        return {
+            type: "void"
+        };   
     };  
     
     return functionDescription;

@@ -164,6 +164,8 @@ Class("wipeout.base.object", function () {
     
     object.clearVirtualCache = function(forMethod /*optional*/) {
         ///<summary>Lookup results for _super methods are cached. This could cause problems in the rare cases when a class prototype is altered after one of its methods are called. Clearing the cache will solve this</summary>
+        ///<param name="forMethod" type="Function" optional="true">A method to clear from the cache</param>
+        
         if(!forMethod) {
             cachedSuperMethods.parents.length = 0;
             cachedSuperMethods.children.length = 0;
@@ -183,6 +185,7 @@ Class("wipeout.base.object", function () {
     
     object.prototype._super = function() {        
         ///<summary>Call the current method or constructor of the parent class with arguments</summary>
+        ///<returns type="Any">Whatever the overridden method returns</returns>
         
         // try to find a cached version to skip lookup of parent class method
         var cached = null;
@@ -247,18 +250,18 @@ Class("wipeout.base.object", function () {
 
     var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_0-9]*$/;
     object.extend = function (childClass, className/* optional */) {
-        /// <summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
-        /// <param name="childClass" type="Function" optional="false">The constructor of the new class.</param>
-        /// <param name="className" type="String" optional="true">An optional class name for the sake of the debugger description.</param>
-        /// <returns type="Function">childClass, having now been made a subclass of the parent</returns>
- 
+        ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
+        ///<param name="childClass" type="Function" optional="false">The constructor of a class to create</param>
+        ///<param name="className" type="String" optional="true">The name of the class for debugger console purposes</param>
+        ///<returns type="Function">The newly created class</returns>
+        
         // static functions
         for (var p in this)
-            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function)
+            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache)
                 childClass[p] = this[p];
  
         // use eval so that browser debugger will get class name
-        if(className) {
+        if(className && DEBUG) {
             if(!validFunctionCharacters.test(className)) {
                 throw "Invalid class name. The class name is for debug purposes and can contain alphanumeric characters only";
             }
@@ -285,6 +288,7 @@ Class("wipeout.base.visual", function () {
     
     var visual = wipeout.base.object.extend(function (templateId) {
         ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
+        ///<param name="templateId" type="String" optional="true">A default template id</param>
         this._super();
         
         //Specifies whether this object should be used as a binding context. If false, the binding context of this object will be it's parent. 
@@ -310,6 +314,7 @@ Class("wipeout.base.visual", function () {
     
     visual.prototype.disposeOf = function(key) {
         ///<summary>Dispose of an item registered as a disposable</summary>
+        ///<param name="key" type="String" optional="false">The key of the item to dispose</param>
         if(this.__woBag.disposables[key]) {
             this.__woBag.disposables[key]();
             delete this.__woBag.disposables[key];
@@ -326,6 +331,8 @@ Class("wipeout.base.visual", function () {
         var i = 0;
         return function(disposeFunction) {
             ///<summary>Register a dispose function which will be called when this object is disposed of.</summary>
+            ///<param name="disposeFunction" type="Function" optional="false">The function to call when on dispose</param>
+            
             if(!disposeFunction || disposeFunction.constructor !== Function) throw "The dispose function must be a Function";
             
             var id = (++i).toString();            
@@ -391,11 +398,12 @@ Class("wipeout.base.visual", function () {
     };
     
     //TODO: move to util
-    visual.getParentElement = function(element) {
+    visual.getParentElement = function(node) {
         ///<summary>Gets the parent or virtual parent of the element</summary>
+        ///<param name="node" type="HTMLNode" optional="false">The node to find the parent of</param>
         
         var depth = 0;
-        var current = element.previousSibling;
+        var current = node.previousSibling;
         while(current) {
             if(wipeout.utils.ko.virtualElements.isVirtualClosing(current)) {
                 depth--;
@@ -411,7 +419,7 @@ Class("wipeout.base.visual", function () {
             current = current.previousSibling;
         }
         
-        return element.parentElement;
+        return node.parentElement;
     };
     
     visual.prototype.getParents = function() {
@@ -440,7 +448,11 @@ Class("wipeout.base.visual", function () {
     };
     
     visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {  
-        ///<summary>Unregister from a routed event. The callback and callback context must be the same as those passed in during registration</summary>      
+        ///<summary>Unregister from a routed event. The callback and callback context must be the same as those passed in during registration</summary>  
+        ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
+        ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event to un register from</param>
+        ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
+        
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
             if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
                 this.__woBag.routedEventSubscriptions[i].event.unRegister(callback, context);
@@ -450,7 +462,11 @@ Class("wipeout.base.visual", function () {
     };
     
     visual.prototype.registerRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {
-        ///<summary>Register for a routed event</summary>    
+        ///<summary>Register for a routed event</summary>   
+        ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
+        ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
+        ///<param name="context" type="Any" optional="true">The context "this" to use within the callback</param>
+         
         
         var rev;
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
@@ -469,7 +485,9 @@ Class("wipeout.base.visual", function () {
     };
     
     visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
-        ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual. Overrides wo.object.triggerRoutedEvent</summary>    
+        ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual. Overrides wo.object.triggerRoutedEvent</summary>        
+        ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
+        ///<param name="eventArgs" type="Any" optional="true">The event args to bubble up with the routed event</param>
         if(!(eventArgs instanceof wipeout.base.routedEventArgs)) {
             eventArgs = new wipeout.base.routedEventArgs(eventArgs, this);
         }
@@ -490,8 +508,10 @@ Class("wipeout.base.visual", function () {
     };
         
     // virtual
-    visual.prototype.onRendered = function (oldValue, newValue) {
-        ///<summary>Triggered each time after a template is rendered</summary>    
+    visual.prototype.onRendered = function (oldValues, newValues) {
+        ///<summary>Triggered each time after a template is rendered</summary>   
+        ///<param name="oldValues" type="Array" optional="false">A list of HTMLNodes removed</param>
+        ///<param name="newValues" type="Array" optional="false">A list of HTMLNodes rendered</param>
     };
         
     // virtual
@@ -530,6 +550,10 @@ Class("wipeout.base.visual", function () {
         
     visual.visualGraph = function (rootElement, displayFunction) {
         ///<summary>Compiles a tree of all visual elements in a block of html, starting at the rootElement</summary>    
+        ///<param name="rootElement" type="HTMLNode" optional="false">The root node of the visual tree</param>
+        ///<param name="displayFunction" type="" optional="true">A function to convert view models found into a custom type</param>
+        ///<returns type="Array">The visual graph</returns>
+        
         if (!rootElement)
             return [];
  
@@ -560,7 +584,9 @@ Class("wipeout.base.view", function () {
     var modelRoutedEventKey = "wo.view.modelRoutedEvents";
     
     var view = wipeout.base.visual.extend(function (templateId, model /*optional*/) {        
-        ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>    
+        ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>  
+        ///<param name="templateId" type="String" optional="true">An initial template id</param>
+        ///<param name="model" type="Any" optional="true">An initial model</param>
 
         this._super(templateId);
         
@@ -592,6 +618,8 @@ Class("wipeout.base.view", function () {
     
     view.prototype.disposeOfBinding = function(propertyName) {
         ///<summary>Un-bind this property.</summary>
+        ///<param name="propertyName" type="String" optional="false">The name of the property to un-bind</param>
+        
         if(this.__woBag.bindings[propertyName]) {
             this.__woBag.bindings[propertyName].dispose();
             delete this.__woBag.bindings[propertyName];
@@ -619,6 +647,9 @@ Class("wipeout.base.view", function () {
     
     view.prototype.bind = function(property, valueAccessor, twoWay) {
         ///<summary>Bind the value returned by valueAccessor to this[property]</summary>
+        ///<param name="property" type="String" optional="false">The name of the property to bind</param>
+        ///<param name="valueAccessor" type="Function" optional="false">A function which returns an observable or object to bind to</param>
+        ///<param name="twoWay" type="Boolean" optional="true">Specifies whether to bind the destination to the source as well</param>
         
         if(twoWay && (!ko.isObservable(this[property]) || !ko.isObservable(valueAccessor())))
            throw 'Two way bindings must be between 2 observables';
@@ -663,6 +694,7 @@ Class("wipeout.base.view", function () {
     
     view.elementHasModelBinding = function(element) {
         ///<summary>returns whether the view defined in the element was explicitly given a model property</summary>
+        ///<param name="element" type="Element" optional="false">The element to check for a model setter property</param>
         
         for(var i = 0, ii = element.attributes.length; i < ii; i++) {
             if(element.attributes[i].nodeName === "model" || element.attributes[i].nodeName === "model-tw")
@@ -682,6 +714,8 @@ Class("wipeout.base.view", function () {
     //TODO private
     view.prototype.initialize = function(propertiesXml, parentBindingContext) {
         ///<summary>Takes an xml fragment and binding context and sets its properties accordingly</summary>
+        ///<param name="propertiesXml" type="Element" optional="false">An XML element containing property setters for the view</param>
+        ///<param name="parentBindingContext" type="ko.bindingContext" optional="false">The binding context of the wipeout node just above this one</param>
         if(this._initialized) throw "Cannot call initialize item twice";
         this._initialized = true;
         
@@ -689,7 +723,6 @@ Class("wipeout.base.view", function () {
             return;
         
         var prop = propertiesXml.getAttribute("woInvisible");
-        if(prop)
             this.woInvisible = parseBool(prop);
                 
         if(!view.elementHasModelBinding(propertiesXml) && wipeout.utils.ko.peek(this.model) == null) {
@@ -785,6 +818,8 @@ Class("wipeout.base.view", function () {
         
     view.prototype.onModelChanged = function (oldValue, newValue) {
         ///<summary>Called when the model has changed</summary>
+        ///<param name="oldValue" type="Any" optional="false">The old model</param>
+        ///<param name="newValue" type="Any" optional="false">The new mode</param>
         
         this.disposeOf(this.__woBag[modelRoutedEventKey]);
         
@@ -795,6 +830,8 @@ Class("wipeout.base.view", function () {
     
     view.prototype.onModelRoutedEvent = function (eventArgs) {
         ///<summary>When the model of this class fires a routed event, catch it and continue the traversal upwards</summary>
+        ///<param name="eventArgs" type="wo.routedEventArgs" optional="false">The routed event args</param>
+        
         if(!(eventArgs.routedEvent instanceof wipeout.base.routedEvent)) throw "Invaid routed event";
         
         this.triggerRoutedEvent(eventArgs.routedEvent, eventArgs.eventArgs);
@@ -807,8 +844,10 @@ Class("wipeout.base.view", function () {
 
 Class("wipeout.base.contentControl", function () {    
 
-    var contentControl = wipeout.base.view.extend(function (templateId) {
+    var contentControl = wipeout.base.view.extend(function (templateId, model) {
         ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
+        ///<param name="templateId" type="string" optional="true">The template id. If not set, defaults to a blank template</param>
+        ///<param name="model" type="Any" optional="true">The initial model to use</param>
         this._super(templateId || wipeout.base.visual.getBlankTemplateId());
 
         //The template which corresponds to the templateId for this item
@@ -817,6 +856,9 @@ Class("wipeout.base.contentControl", function () {
     
     contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
         ///<summary>Creates a computed for a template property which is bound to the templateIdObservable property</summary>
+        ///<param name="templateIdObservable" type="String" optional="false">The observable containing the templateId to create a template property for</param>
+        ///<param name="owner" type="Object" optional="false">The new owner of the created template property</param>
+        ///<returns type="String">A template property bound to the template id</returns>
         var output = ko.dependentObservable({
             read: function () {
                 var script = document.getElementById(templateIdObservable());
@@ -849,7 +891,10 @@ Class("wipeout.base.contentControl", function () {
         return { 
             create: function (templateString, forceCreate) {
                 ///<summary>Creates an anonymous template within the DOM and returns its id</summary>
-
+                ///<param name="templateString" type="String" optional="false">Gets a template id for an anonymous template</param>
+                ///<param name="forceCreate" type="Boolean" optional="true">Force the creation of a new template, regardless of whether there is an existing clone</param>
+                ///<returns type="String">The template id</returns>
+                
                 lazyCreateTemplateArea();
 
                 templateString = trim(templateString);
@@ -876,6 +921,8 @@ Class("wipeout.base.contentControl", function () {
             },
             del: function(templateId) {
                 ///<summary>Deletes an anonymous template with the given id</summary>
+                ///<param name="templateId" type="String" optional="false">The id of the template to delete</param>
+                ///<returns type="void"></returns>
                 lazyCreateTemplateArea();
             
                 for (var j = 0; j < templateArea.childNodes.length; j++) {
@@ -896,6 +943,8 @@ Class("wipeout.base.contentControl", function () {
     //http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
     contentControl.hashCode = function (str) {        
         ///<summary>Creates a rough has code for the given string</summary>
+        ///<param name="str" type="String" optional="false">The string to hash</param>
+        ///<returns type="Number">The hash code</returns>
         var hash = 0;
         for (var i = 0, ii = str.length; i < ii; i++) {
             var ch = str.charCodeAt(i);
@@ -924,6 +973,8 @@ Class("wipeout.base.event", function () {
 
     event.prototype.trigger = function(eventArgs) {
         ///<summary>Trigger the event, passing the eventArgs to each subscriber</summary>
+        ///<param name="eventArgs" type="Any" optional="true">The arguments to pass to event handlers</param>
+        
         for(var i = 0, ii = this._registrations.length; i < ii; i++) {
             if(eventArgs instanceof wipeout.base.routedEventArgs && eventArgs.handled) return;
             
@@ -933,6 +984,9 @@ Class("wipeout.base.event", function () {
     
     event.prototype.unRegister = function (callback, context /* optional */) {
         ///<summary>Un subscribe to an event. The callback and context must be the same as those passed in the original registration</summary>
+        ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
+        ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
+        
         context = context == null ? window : context;
         for(var i = 0, ii = this._registrations.length; i < ii; i++) {
             if(this._registrations[i].callback === callback && this._registrations[i].context === context) {
@@ -949,6 +1003,10 @@ Class("wipeout.base.event", function () {
     
     event.prototype.register = function(callback, context /* optional */) {
         ///<summary>Subscribe to an event</summary>
+        ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
+        ///<param name="context" type="Any" optional="true">The context "this" to use within the calback</param>
+        ///<returns type="Object">An object with the details of the registration, including a dispose() function</returns>
+        
         if(!(callback instanceof Function))
             throw "Invalid event callback";
         
@@ -986,11 +1044,14 @@ Class("wipeout.base.if", function () {
         _if.blankTemplateId = wipeout.base.contentControl.createAnonymousTemplate("", true);
     };
     
-    var _if = wipeout.base.contentControl.extend(function () {
-        ///<summary>The if class is a content control which provides the functionality of the knockout if binding</summary>        
+    var _if = wipeout.base.contentControl.extend(function (templateId, model) {
+        ///<summary>The if class is a content control which provides the functionality of the knockout if binding</summary> 
+        ///<param name="templateId" type="String" optional="true">The template id. If not set, defaults to a blank template</param>
+        ///<param name="model" type="Any" optional="true">The initial model to use</param>
+        
         staticConstructor();
         
-        this._super.apply(this, arguments);
+        this._super(templateId, model);
         
         // if true, the template will be rendered, otherwise a blank template is rendered
         this.condition = ko.observable();
@@ -1015,14 +1076,16 @@ Class("wipeout.base.if", function () {
     _if.woInvisibleDefault = true;
     
     _if.prototype.elseTemplateChanged = function (newVal) {
-        ///<summary>Resets the template id to the else template if condition is not met</summary>     
+        ///<summary>Resets the template id to the else template if condition is not met</summary>  
+        ///<param name="newVal" type="String" optional="false">The else template Id</param>   
         if (!this.condition()) {
             this.templateId(newVal);
         }
     };
     
     _if.prototype.onConditionChanged = function (newVal) {
-        ///<summary>Set the template based on whether the condition is met</summary>     
+        ///<summary>Set the template based on whether the condition is met</summary>      
+        ///<param name="newVal" type="Boolean" optional="false">The condition</param>   
         if (this.__oldConditionVal && !newVal) {
             this.templateId(this.elseTemplateId());
         } else if (!this.__oldConditionVal && newVal) {
@@ -1033,7 +1096,8 @@ Class("wipeout.base.if", function () {
     };
     
     _if.prototype.copyTemplateId = function (templateId) {
-        ///<summary>Cache the template id and check whether correct template is applied</summary>     
+        ///<summary>Cache the template id and check whether correct template is applied</summary>  
+        ///<param name="templateId" type="String" optional="false">The template id to cache</param>      
         if (templateId !== this.elseTemplateId())
             this.__cachedTemplateId = templateId;
     
@@ -1055,11 +1119,14 @@ Class("wipeout.base.itemsControl", function () {
         deafaultTemplateId = wipeout.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");  
     };
     
-    var itemsControl = wipeout.base.contentControl.extend(function (templateId, itemTemplateId) {
+    var itemsControl = wipeout.base.contentControl.extend(function (templateId, itemTemplateId, model) {
         ///<summary>Bind a list of models (itemSource) to a list of view models (items) and render accordingly</summary>
+        ///<param name="templateId" type="String" optional="true">The template id. If not set, defaults to a div to render items</param>
+        ///<param name="itemTemplateId" type="String" optional="true">The initial template id for each item</param>
+        ///<param name="model" type="Any" optional="true">The initial model to use</param>
         
         staticConstructor();
-        this._super(templateId || deafaultTemplateId);
+        this._super(templateId || deafaultTemplateId, model);
 
         //The id of the template to render for each item
         this.itemTemplateId = ko.observable(itemTemplateId);
@@ -1175,7 +1242,9 @@ Class("wipeout.base.itemsControl", function () {
     };
 
     itemsControl.prototype._itemsChanged = function (changes) { 
-        ///<summary>Disposes of deleted items</summary>
+        ///<summary>Runs onItemDeleted and onItemRendered on deleted and created items respectively</summary>
+        ///<param name="changes" type="Array" optional="false">A knockout diff of changes to the items</param>
+        
         enumerate(changes, function(change) {
             if(change.status === wipeout.utils.ko.array.diff.deleted && change.moved == null)
                 this.onItemDeleted(change.value);
@@ -1186,6 +1255,7 @@ Class("wipeout.base.itemsControl", function () {
 
     itemsControl.prototype._itemSourceChanged = function (changes) { 
         ///<summary>Adds, removes and moves view models depending on changes to the models array</summary>
+        ///<param name="changes" type="Array" optional="false">A knockout diff of changes to the itemSource</param>
         var items = this.items();
         var del = [], add = [], move = {}, delPadIndex = 0;
         for(var i = 0, ii = changes.length; i < ii; i++) {
@@ -1226,11 +1296,13 @@ Class("wipeout.base.itemsControl", function () {
     //virtual
     itemsControl.prototype.onItemRendered = function (item) {
         ///<summary>Called after a new item items control is rendered</summary>
+        ///<param name="item" type="wo.view" optional="false">The item rendered</param>
     };
     
     //virtual
     itemsControl.prototype.onItemDeleted = function (item) {
-        ///<summary>Disposes of deleted items</summary>        
+        ///<summary>Disposes of deleted items</summary> 
+        ///<param name="item" type="wo.view" optional="false">The item deleted</param>       
         var renderedChild = this.__woBag.renderedChildren.indexOf(item);
         if(renderedChild !== -1)
             this.__woBag.renderedChildren.splice(renderedChild, 1);
@@ -1241,6 +1313,9 @@ Class("wipeout.base.itemsControl", function () {
     // virtual
     itemsControl.prototype._createItem = function (model) {
         ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
+        ///<param name="model" type="Any" optional="false">The model for the view to create</param>
+        ///<returns type="wo.view">The newly created item</returns>
+        
         var item = this.createItem(model);
         item.__woBag.createdByWipeout = true;
         return item;
@@ -1249,6 +1324,8 @@ Class("wipeout.base.itemsControl", function () {
     // virtual
     itemsControl.prototype.createItem = function (model) {
         ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
+        ///<param name="model" type="Any" optional="false">The model for the view to create</param>
+        ///<returns type="wo.view">The newly created item</returns>
         return new wipeout.base.view(this.itemTemplateId(), model);        
     };
 
@@ -1276,16 +1353,27 @@ Class("wipeout.base.routedEvent", function () {
 
     routedEvent.prototype.trigger = function(triggerOnVisual, eventArgs) {
         ///<summary>Trigger a routed event on a visual</summary>
+        ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual where the routed event starts</param>
+        ///<param name="eventArgs" type="Any" optional="true">The event args to bubble up with the routed event</param>
+        
         triggerOnVisual.triggerRoutedEvent(this, new wipeout.base.routedEventArgs(eventArgs, triggerOnVisual));
     };
     
     routedEvent.prototype.unRegister = function (callback, triggerOnVisual, context /* optional */) {
         ///<summary>Unregister a routed event on a visual</summary>
+        ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
+        ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual passed into the register function</param>
+        ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
         triggerOnVisual.unRegisterRoutedEvent(this, callback, context);
     }
     
+    //TODO: return dispose function
     routedEvent.prototype.register = function(callback, triggerOnVisual, context /* optional */) {
         ///<summary>Register a routed event on a visual</summary>
+        ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
+        ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual registered to the routed event</param>
+        ///<param name="context" type="Any" optional="true">The context "this" to use within the callback</param>
+        
         triggerOnVisual.registerRoutedEvent(this, callback, context);
     };
     
@@ -1296,6 +1384,8 @@ Class("wipeout.base.routedEventArgs", function () {
     
     var routedEventArgs = function(eventArgs, originator) { 
         ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>
+        ///<param name="eventArgs" type="Any" optional="true">The inner event args</param>
+        ///<param name="originator" type="Any" optional="false">A pointer to event raise object</param>
         
         //Signals whether the routed event has been handled and should not propagate any further
         this.handled = false;
@@ -1315,6 +1405,7 @@ Class("wipeout.base.routedEventRegistration", function () {
     //TODO: private
     var routedEventRegistration = function(routedEvent) {  
         ///<summary>Holds routed event registration details</summary>
+        ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
         
         // The routed event
         this.routedEvent = routedEvent;
@@ -1343,7 +1434,10 @@ Class("wipeout.base.routedEventModel", function () {
         
     routedEventModel.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
         ///<summary>Trigger a routed event which will propogate to any view models where this object is it's model and continue to bubble from there</summary>
+        ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event to trigger</param>
+        ///<param name="eventArgs" type="Any" optional="true">The routed event args</param>
         
+        // Used by wo.model to acertain when a routed event should be fired
         this.__triggerRoutedEventOnVM.trigger({routedEvent: routedEvent, eventArgs: eventArgs});
     };;
     
