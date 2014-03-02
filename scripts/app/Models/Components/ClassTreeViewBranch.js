@@ -27,7 +27,7 @@ compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wi
             if(customBranches.staticProperties[property.propertyName])
                 output.push(customBranches.staticProperties[property.propertyName]);
             else
-                output.push(new Wipeout.Docs.Models.Components.PageTreeViewBranch(property.propertyName, null));
+                output.push(new Wipeout.Docs.Models.Components.PropertyTreeViewBranch(property));
         });
         
         enumerate(classDescription.staticFunctions, function(_function) {
@@ -48,7 +48,7 @@ compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wi
             if(customBranches.staticProperties[property.propertyName])
                 output.push(customBranches.staticProperties[property.propertyName]);
             else
-                output.push(new Wipeout.Docs.Models.Components.PageTreeViewBranch(property.propertyName, null));            
+                output.push(new Wipeout.Docs.Models.Components.PropertyTreeViewBranch(property));            
         });
         
         enumerate(classDescription.functions, function(_function) {

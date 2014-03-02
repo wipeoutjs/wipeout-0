@@ -326,7 +326,15 @@ window.collapsable.prototype.toggle = function() {
         </script>  
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.PropertyPage">
-        Property
+            <h2 data-bind="text: model().fullyQualifiedName"></h2>
+            <div data-bind="html: model().summary"></div>
+            <div data-bind="visible: usagesTemplateId() !== wo.contentControl.getBlankTemplateId()">
+                <h2>
+                    <span>Using</span>
+                    <span data-bind="html: model().propertyName"></span>
+                </h2>
+                <wo.view templateId="$parent.usagesTemplateId" model="$parent.model().classConstructor" />
+            </div>
         </script>  
         
         <script type="text/xml" id="wo.object._super_FunctionUsages">

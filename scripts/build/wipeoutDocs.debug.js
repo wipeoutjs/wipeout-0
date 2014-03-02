@@ -404,7 +404,7 @@ compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wi
             if(customBranches.staticProperties[property.propertyName])
                 output.push(customBranches.staticProperties[property.propertyName]);
             else
-                output.push(new Wipeout.Docs.Models.Components.PageTreeViewBranch(property.propertyName, null));
+                output.push(new Wipeout.Docs.Models.Components.PropertyTreeViewBranch(property));
         });
         
         enumerate(classDescription.staticFunctions, function(_function) {
@@ -425,7 +425,7 @@ compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wi
             if(customBranches.staticProperties[property.propertyName])
                 output.push(customBranches.staticProperties[property.propertyName]);
             else
-                output.push(new Wipeout.Docs.Models.Components.PageTreeViewBranch(property.propertyName, null));            
+                output.push(new Wipeout.Docs.Models.Components.PropertyTreeViewBranch(property));            
         });
         
         enumerate(classDescription.functions, function(_function) {
@@ -462,6 +462,14 @@ compiler.registerClass("Wipeout.Docs.Models.Components.PageTreeViewBranch", "Wip
     };
     
     return pageTreeViewBranch;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Components.PropertyTreeViewBranch", "Wipeout.Docs.Models.Components.PageTreeViewBranch", function() {
+    var propertyTreeViewBranch = function(propertyDescription) {
+        this._super(propertyDescription.propertyName, propertyDescription);
+    };
+    
+    return propertyTreeViewBranch;
 });
 
 compiler.registerClass("Wipeout.Docs.Models.Components.TreeViewBranch", "wo.object", function() {
@@ -788,6 +796,10 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
         
         this.propertyName = propertyName;
         this.classFullName = classFullName;
+                
+        this.fullyQualifiedName = ko.computed(function() {
+            return this.classFullName + "." + this.propertyName;
+        }, this);
     };
     
     var inlineCommentOnly = /^\/\//;
@@ -1150,9 +1162,23 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Pages.LandingPage", "wo.view", f
 });
 
 compiler.registerClass("Wipeout.Docs.ViewModels.Pages.PropertyPage", "wo.view", function() {
-    return function() {
+    function propertyPage() {
         this._super("Wipeout.Docs.ViewModels.Pages.PropertyPage");
+        
+        this.usagesTemplateId = ko.computed(function() {
+            if(this.model()) {
+                var name = this.model().fullyQualifiedName() + propertyPage.classUsagesTemplateSuffix;
+                if(document.getElementById(name))
+                    return name;
+            }
+
+            return wo.contentControl.getBlankTemplateId();
+        }, this);
     };
+    
+    propertyPage.classUsagesTemplateSuffix = "_PropertyUsages";
+    
+    return propertyPage;
 });
 
 compiler.compile(window.Wipeout);

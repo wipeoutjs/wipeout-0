@@ -4,6 +4,10 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
         
         this.propertyName = propertyName;
         this.classFullName = classFullName;
+                
+        this.fullyQualifiedName = ko.computed(function() {
+            return this.classFullName + "." + this.propertyName;
+        }, this);
     };
     
     var inlineCommentOnly = /^\/\//;
