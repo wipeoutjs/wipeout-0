@@ -23,7 +23,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.TreeViewBranch", "wo.
             $(this.templateItems.content).toggle();
         
         var payload = this.model().payload();
-        if ($(this.templateItems.content).filter(":visible").length && payload) {
+        if (($(this.templateItems.content).filter(":visible").length || !this.model().branches || !this.model().branches.length) && payload) {
             this.triggerRoutedEvent(treeViewBranch.renderPage, payload);
         }
     };

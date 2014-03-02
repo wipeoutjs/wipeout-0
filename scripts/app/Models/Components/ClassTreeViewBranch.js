@@ -33,8 +33,8 @@ compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wi
         enumerate(classDescription.staticFunctions, function(_function) {
             if(customBranches.staticFunctions[_function.functionName])
                 output.push(customBranches.staticFunctions[_function.functionName]);
-            else
-                output.push(new Wipeout.Docs.Models.Components.PageTreeViewBranch(_function.functionName, null));            
+            else {
+                output.push(new Wipeout.Docs.Models.Components.FunctionTreeViewBranch(_function));            }
         });
         
         enumerate(classDescription.events, function(event) {
@@ -55,7 +55,7 @@ compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wi
             if(customBranches.functions[_function.functionName])
                 output.push(customBranches.functions[_function.functionName]);
             else
-                output.push(new Wipeout.Docs.Models.Components.PageTreeViewBranch(_function.functionName, null));            
+                output.push(new Wipeout.Docs.Models.Components.FunctionTreeViewBranch(_function));            
         });
         
         output.sort(function() { return arguments[0].name === "constructor" ? -1 : arguments[0].name.localeCompare(arguments[1].name); });

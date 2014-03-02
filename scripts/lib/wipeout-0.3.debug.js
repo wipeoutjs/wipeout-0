@@ -247,7 +247,10 @@ Class("wipeout.base.object", function () {
 
     var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_0-9]*$/;
     object.extend = function (childClass, className/* optional */) {
-        ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
+        /// <summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
+        /// <param name="childClass" type="Function" optional="false">The constructor of the new class.</param>
+        /// <param name="className" type="String" optional="true">An optional class name for the sake of the debugger description.</param>
+        /// <returns type="Function">childClass, having now been made a subclass of the parent</returns>
  
         // static functions
         for (var p in this)

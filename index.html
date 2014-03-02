@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="content/style/style.css">
         <link rel="stylesheet" type="text/css" href="content/style/prettify.css">
     
-        <div data-bind="wipeout: Wipeout.Docs.ViewModels.Application"></div>
+        <div data-bind="wipeout: Wipeout.Docs.ViewModels.Application">Compiling API...</div>
         
         <script type="text/javascript" src="scripts/lib/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="scripts/lib/knockout-2.3.0.debug.js"></script>
@@ -20,8 +20,10 @@
             
         <script type="text/javascript">
             $(function() {
-                window.model = new Wipeout.Docs.Models.Application();
-                ko.applyBindings(window.model);
+                setTimeout(function() {
+                    window.model = new Wipeout.Docs.Models.Application();
+                    ko.applyBindings(window.model);
+                }, 1);
             });
         </script>
         
@@ -239,10 +241,10 @@ window.collapsable.prototype.toggle = function() {
         <Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
             <code>&lt;wo.contentControl model="{firstName: 'John', lastName: 'Smith'}">
     &lt;template>
-            &lt;label>First name:&lt;/label>
-            &lt;span data-bind="html: model().firstName">&lt;/span>,
-            &lt;label>Last name:&lt;/label>
-            &lt;span data-bind="html: model().lastName">&lt;/span>
+        &lt;label>First name:&lt;/label>
+        &lt;span data-bind="html: model().firstName">&lt;/span>,
+        &lt;label>Last name:&lt;/label>
+        &lt;span data-bind="html: model().lastName">&lt;/span>
     &lt;/template>
 &lt;/wo.contentControl></code>
         </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
@@ -325,10 +327,46 @@ window.collapsable.prototype.toggle = function() {
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.PropertyPage">
         Property
-        </script>        
+        </script>  
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.FunctionPage">
-        Function
+            <h2 data-bind="text: model().fullyQualifiedName"></h2>
+            <div data-bind="html: model().summary"></div>
+            <h3>Arguments</h3>
+            <wo.itemsControl itemSource="model().arguments">
+                <template>
+                    <table class="classTable">
+                        <thead>
+                            <tr>
+                                <th>Argument</th>
+                                <th>Summary</th>
+                                <th>Type</th>
+                                <th>Optional</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="itemsControl: null"></tbody>
+                    </table>
+                </template>
+                <itemTemplate>
+                    <tr>
+                        <td data-bind="text: model().name"></td>
+                        <td data-bind="text: model().description"></td>
+                        <td data-bind="text: model().type"></td>
+                        <td data-bind="text: model().optional ? 'Yes' : 'No'"></td>
+                    </tr>
+                </itemTemplate>
+            </wo.itemsControl>
+            <h2>
+                Returns: <span data-bind="text: model().returns.type"></span>
+            </h2>
+            <span data-bind="text: model().returns.summary"></span>
+            <div data-bind="visible: usagesTemplateId() !== wo.contentControl.getBlankTemplateId()">
+                <h2>
+                    <span>Using</span>
+                    <span data-bind="html: model().functionName"></span>
+                </h2>
+                <wo.view templateId="$parent.usagesTemplateId" model="$parent.model().classConstructor" />
+            </div>
         </script>    
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Application">

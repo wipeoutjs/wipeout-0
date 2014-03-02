@@ -16,6 +16,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.DynamicRender", "wo.c
             this.content(null);
         } else {
             var newVm = null;
+            
             if(newVal instanceof Wipeout.Docs.Models.Pages.LandingPage) {
                 newVm = new Wipeout.Docs.ViewModels.Pages.LandingPage();
             } else if(newVal instanceof Wipeout.Docs.Models.Descriptions.Class) {

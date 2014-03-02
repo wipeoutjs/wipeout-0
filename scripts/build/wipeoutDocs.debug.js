@@ -410,8 +410,8 @@ compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wi
         enumerate(classDescription.staticFunctions, function(_function) {
             if(customBranches.staticFunctions[_function.functionName])
                 output.push(customBranches.staticFunctions[_function.functionName]);
-            else
-                output.push(new Wipeout.Docs.Models.Components.PageTreeViewBranch(_function.functionName, null));            
+            else {
+                output.push(new Wipeout.Docs.Models.Components.FunctionTreeViewBranch(_function));            }
         });
         
         enumerate(classDescription.events, function(event) {
@@ -432,7 +432,7 @@ compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wi
             if(customBranches.functions[_function.functionName])
                 output.push(customBranches.functions[_function.functionName]);
             else
-                output.push(new Wipeout.Docs.Models.Components.PageTreeViewBranch(_function.functionName, null));            
+                output.push(new Wipeout.Docs.Models.Components.FunctionTreeViewBranch(_function));            
         });
         
         output.sort(function() { return arguments[0].name === "constructor" ? -1 : arguments[0].name.localeCompare(arguments[1].name); });
@@ -442,10 +442,18 @@ compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wi
     return classTreeViewBranch;
 });
 
+compiler.registerClass("Wipeout.Docs.Models.Components.FunctionTreeViewBranch", "Wipeout.Docs.Models.Components.PageTreeViewBranch", function() {
+    var functionTreeViewBranch = function(functionDescription) {
+        this._super(functionDescription.functionName, functionDescription);
+    };
+    
+    return functionTreeViewBranch;
+});
+
 compiler.registerClass("Wipeout.Docs.Models.Components.PageTreeViewBranch", "Wipeout.Docs.Models.Components.TreeViewBranch", function() {
     var pageTreeViewBranch = function(name, page, branches) {
         this._super(name, branches);
-            
+        
         this.page = page;
     };
     
@@ -469,6 +477,17 @@ compiler.registerClass("Wipeout.Docs.Models.Components.TreeViewBranch", "wo.obje
     };
     
     return treeViewBranch;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Descriptions.Argument", "wo.object", function() {
+    return function(itemDetails) {
+        this._super();
+        
+        this.name = itemDetails.name;
+        this.type = itemDetails.type;
+        this.optional = !!itemDetails.optional;
+        this.description = itemDetails.description;
+    }
 });
 
 compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", function() {
@@ -512,7 +531,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
                 } else if(this.constructorFunction[i] instanceof Function && !ko.isObservable(this.constructorFunction[i])) {
                     this.staticFunctions.push(new Wipeout.Docs.Models.Descriptions.Function(this.constructorFunction[i], i, this.classFullName));
                 } else {
-                    this.staticProperties.push(new Wipeout.Docs.Models.Descriptions.PropertyDescription(this.constructorFunction, i, this.classFullName));
+                    this.staticProperties.push(new Wipeout.Docs.Models.Descriptions.Property(this.constructorFunction, i, this.classFullName));
                 }
             }
         }
@@ -524,7 +543,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
                 } else if(this.constructorFunction.prototype[i] instanceof Function && !ko.isObservable(this.constructorFunction.prototype[i])) {
                     this.functions.push(new Wipeout.Docs.Models.Descriptions.Function(this.constructorFunction.prototype[i], i, this.classFullName));
                 } else {
-                    this.properties.push(new Wipeout.Docs.Models.Descriptions.PropertyDescription(this.constructorFunction, i, this.classFullName));
+                    this.properties.push(new Wipeout.Docs.Models.Descriptions.Property(this.constructorFunction, i, this.classFullName));
                 }
             }
         }
@@ -538,7 +557,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
                     } else if(anInstance[i] instanceof Function && !ko.isObservable(anInstance[i])) { 
                         this.functions.push(new Wipeout.Docs.Models.Descriptions.Function(anInstance[i], i, this.classFullName));
                     } else {
-                        this.properties.push(new Wipeout.Docs.Models.Descriptions.PropertyDescription(this.constructorFunction, i, this.classFullName));
+                        this.properties.push(new Wipeout.Docs.Models.Descriptions.Property(this.constructorFunction, i, this.classFullName));
                     }
                 }
             }
@@ -631,7 +650,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.ClassItem", "wo.object"
 
 compiler.registerClass("Wipeout.Docs.Models.Descriptions.Event", "Wipeout.Docs.Models.Descriptions.ClassItem", function() {
     var eventDescription = function(constructorFunction, eventName, classFullName) {
-        this._super(eventName, Wipeout.Docs.Models.Descriptions.PropertyDescription.getPropertySummary(constructorFunction, eventName));
+        this._super(eventName, Wipeout.Docs.Models.Descriptions.Property.getPropertySummary(constructorFunction, eventName));
         
         this.eventName = eventName;
         this.classFullName = classFullName;
@@ -649,49 +668,119 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
         this.functionName = functionName;
         this.classFullName = classFullName;
         
+        this.arguments = functionDescription.getArguments(theFunction);
+        
+        this.returns = functionDescription.getReturnSummary(theFunction);
+        
         this.overrides = null;
+        
+        this.fullyQualifiedName = ko.computed(function() {
+            return this.classFullName + "." + this.functionName;
+        }, this);
     };
-        
-    functionDescription.getFunctionSummary = function(theFunction) {
-        var functionString = theFunction.toString();
-        
-        var isInlineComment = false;
-        var isBlockComment = false;
-        
-        var removeFunctionDefinition = function() {
-            var firstInline = functionString.indexOf("//");
-            var firstBlock = functionString.indexOf("/*");
-            var openFunction = functionString.indexOf("{");
             
-            if(firstInline === -1) firstInline = Number.MAX_VALUE;
-            if(firstBlock === -1) firstBlock = Number.MAX_VALUE;
-                    
-            if(openFunction < firstInline && openFunction < firstBlock) {
-                functionString = functionString.substr(openFunction + 1).replace(/^\s+|\s+$/g, '');
-            } else { 
-                if(firstInline < firstBlock) {
-                    functionString = functionString.substr(functionString.indexOf("\n")).replace(/^\s+|\s+$/g, '');
-                } else {
-                    functionString = functionString.substr(functionString.indexOf("*/")).replace(/^\s+|\s+$/g, '');
-                }
-                
-                removeFunctionDefinition();
+    var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+    var COMMA = /([^\s,]+)/g;
+    functionDescription.getArguments = function(theFunction) {
+        if(!theFunction || !(theFunction instanceof Function)) return [];
+        
+        var fnStr = theFunction.toString().replace(STRIP_COMMENTS, '')
+        var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(COMMA);
+        
+        if(!result)
+            return [];
+        
+        for(var i = 0, ii = result.length; i < ii; i++) {
+            result[i] = new Wipeout.Docs.Models.Descriptions.Argument(functionDescription.getArgumentSummary(result[i], theFunction));
+        }
+        
+        return result;
+    }; 
+        
+    functionDescription.removeFunctionDefinition = function(functionString) {
+        var firstInline = functionString.indexOf("//");
+        var firstBlock = functionString.indexOf("/*");
+        var openFunction = functionString.indexOf("{");
+
+        if(firstInline === -1) firstInline = Number.MAX_VALUE;
+        if(firstBlock === -1) firstBlock = Number.MAX_VALUE;
+
+        if(openFunction < firstInline && openFunction < firstBlock) {
+            functionString = functionString.substr(openFunction + 1).replace(/^\s+|\s+$/g, '');
+        } else { 
+            if(firstInline < firstBlock) {
+                functionString = functionString.substr(functionString.indexOf("\n")).replace(/^\s+|\s+$/g, '');
+            } else {
+                functionString = functionString.substr(functionString.indexOf("*/")).replace(/^\s+|\s+$/g, '');
             }
-        };
+
+            functionString = functionDescription.removeFunctionDefinition(functionString);
+        }
+
+        return functionString;
+    };
+    
+    functionDescription.getCommentsAsXml = function(theFunction, commentRegex) {
+        var functionString = functionDescription.removeFunctionDefinition(theFunction.toString());
         
-        removeFunctionDefinition();
+        var i;
+        if ((i = functionString.search(commentRegex)) !== -1) {
+            // get rid of "///"
+            var current = functionString.substr(i + 3);            
+            return new DOMParser().parseFromString(current.substr(0, current.indexOf("\n")), "application/xml").documentElement;
+        }
         
-        if (functionString.indexOf("///<summary>") === 0) {
-            return functionString.substring(12, functionString.indexOf("</summary>"));
+        return null;
+    }
+        
+    functionDescription.getArgumentSummary = function(argument, theFunction) {
+        
+        var regex = new RegExp("///\\s*<param\\s*name=\"" + argument + "\"\\s*(\\s+type=\".*\"){0,1}>.*</param>\\s*\n");
+        var comment = functionDescription.getCommentsAsXml(theFunction, regex);
+        
+        if(comment) {  
+            return {
+                name: argument,
+                type: comment.getAttribute("type"),
+                optional: wo.view.objectParser.bool(comment.getAttribute("optional")),
+                description: comment.innerHTML
+            };  
+        }
+        
+        return {
+            name: argument
+        };   
+    };   
+            
+    functionDescription.getFunctionSummary = function(theFunction) {        
+        var regex = new RegExp("///\\s*<summary>.*</summary>\\s*\n");
+        var comment = functionDescription.getCommentsAsXml(theFunction, regex);
+        if(comment) {  
+            return comment.innerHTML;
         }
         
         return "";   
+    };   
+            
+    functionDescription.getReturnSummary = function(theFunction) {  
+        var regex = new RegExp("///\\s*<returns\\s*(type=\".*\"){0,1}>.*</returns>\\s*\n");
+        var comment = functionDescription.getCommentsAsXml(theFunction, regex);
+        if(comment) {
+            if(comment.getAttribute("type") === "void") return null;
+            
+            return {
+                summary: comment.innerHTML,
+                type: comment.getAttribute("type")
+            };
+        }
+        
+        return null;   
     };  
     
     return functionDescription;
 });
 
-compiler.registerClass("Wipeout.Docs.Models.Descriptions.PropertyDescription", "Wipeout.Docs.Models.Descriptions.ClassItem", function() {
+compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Docs.Models.Descriptions.ClassItem", function() {
     var property = function(constructorFunction, propertyName, classFullName) {
         this._super(propertyName, property.getPropertySummary(constructorFunction, propertyName, classFullName));
         
@@ -887,6 +976,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.DynamicRender", "wo.c
             this.content(null);
         } else {
             var newVm = null;
+            
             if(newVal instanceof Wipeout.Docs.Models.Pages.LandingPage) {
                 newVm = new Wipeout.Docs.ViewModels.Pages.LandingPage();
             } else if(newVal instanceof Wipeout.Docs.Models.Descriptions.Class) {
@@ -973,7 +1063,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.TreeViewBranch", "wo.
             $(this.templateItems.content).toggle();
         
         var payload = this.model().payload();
-        if ($(this.templateItems.content).filter(":visible").length && payload) {
+        if (($(this.templateItems.content).filter(":visible").length || !this.model().branches || !this.model().branches.length) && payload) {
             this.triggerRoutedEvent(treeViewBranch.renderPage, payload);
         }
     };
@@ -1031,9 +1121,23 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Pages.ClassItemTable", "wo.items
     });
 
 compiler.registerClass("Wipeout.Docs.ViewModels.Pages.FunctionPage", "wo.view", function() {
-    return function() {
+    var functionPage = function() {
         this._super("Wipeout.Docs.ViewModels.Pages.FunctionPage");
+        
+        this.usagesTemplateId = ko.computed(function() {
+            if(this.model()) {
+                var name = this.model().fullyQualifiedName() + functionPage.classUsagesTemplateSuffix;
+                if(document.getElementById(name))
+                    return name;
+            }
+
+            return wo.contentControl.getBlankTemplateId();
+        }, this);
     };
+    
+    functionPage.classUsagesTemplateSuffix = "_FunctionUsages";
+    
+    return functionPage;
 });
 
 

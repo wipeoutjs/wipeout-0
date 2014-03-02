@@ -39,7 +39,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
                 } else if(this.constructorFunction[i] instanceof Function && !ko.isObservable(this.constructorFunction[i])) {
                     this.staticFunctions.push(new Wipeout.Docs.Models.Descriptions.Function(this.constructorFunction[i], i, this.classFullName));
                 } else {
-                    this.staticProperties.push(new Wipeout.Docs.Models.Descriptions.PropertyDescription(this.constructorFunction, i, this.classFullName));
+                    this.staticProperties.push(new Wipeout.Docs.Models.Descriptions.Property(this.constructorFunction, i, this.classFullName));
                 }
             }
         }
@@ -51,7 +51,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
                 } else if(this.constructorFunction.prototype[i] instanceof Function && !ko.isObservable(this.constructorFunction.prototype[i])) {
                     this.functions.push(new Wipeout.Docs.Models.Descriptions.Function(this.constructorFunction.prototype[i], i, this.classFullName));
                 } else {
-                    this.properties.push(new Wipeout.Docs.Models.Descriptions.PropertyDescription(this.constructorFunction, i, this.classFullName));
+                    this.properties.push(new Wipeout.Docs.Models.Descriptions.Property(this.constructorFunction, i, this.classFullName));
                 }
             }
         }
@@ -65,7 +65,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
                     } else if(anInstance[i] instanceof Function && !ko.isObservable(anInstance[i])) { 
                         this.functions.push(new Wipeout.Docs.Models.Descriptions.Function(anInstance[i], i, this.classFullName));
                     } else {
-                        this.properties.push(new Wipeout.Docs.Models.Descriptions.PropertyDescription(this.constructorFunction, i, this.classFullName));
+                        this.properties.push(new Wipeout.Docs.Models.Descriptions.Property(this.constructorFunction, i, this.classFullName));
                     }
                 }
             }
