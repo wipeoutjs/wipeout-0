@@ -329,6 +329,33 @@ window.collapsable.prototype.toggle = function() {
         Property
         </script>  
         
+        <script type="text/xml" id="wo.object._super_FunctionUsages">
+        This function can be used in two ways.
+        <h3>1. Calling the constructor of the base class</h3>
+        Calling the constructor of the base class should always be the first line of code in a child class:
+        <Wipeout.Docs.ViewModels.Components.CodeBlock> 
+            <code>
+var childView = wo.view.extend(function(templateId) {
+    this._super(templateId);
+    
+    // custom logic....
+});
+            </code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock> 
+        <h3>2. Calling an overriden method in a base class</h3>
+        When overriding a base class method the _super method can be used to call overriden method
+        <Wipeout.Docs.ViewModels.Components.CodeBlock> 
+            <code>
+// using childView from previous example and overriding onRendered function from wo.view
+childView.prototype.onRendered = function (oldNodes, newNodes) {
+    this._super(oldNodes, newNodes);
+    
+    // custom logic....
+};
+            </code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock> 
+        </script>
+        
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.FunctionPage">
             <h2 data-bind="text: model().fullyQualifiedName"></h2>
             <div data-bind="html: model().summary"></div>
