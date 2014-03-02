@@ -16,3 +16,4 @@ changes:    __createdByWipeout -> __woBag.createdByWipeout
             itemRendered -> onItemRendered
             modelChanged -> onModelChanged
             rootHtmlChanged -> onRendered
+            wpfko -> wipeout
