@@ -2,6 +2,10 @@
     
 var enumerate = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object</summary>
+    ///<param name="enumerate" type="Array or Object">An item to enumerate over</param>
+    ///<param name="action" type="Function">The callback to apply to each item</param>
+    ///<param name="context" type="Any" optional="true">The context to apply to the callback</param>
+    
     context = context || window;
         
     if(enumerate == null) return;
@@ -19,6 +23,9 @@ var enumerate = function(enumerate, action, context) {
 
 var enumerateDesc = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object in a decending order</summary>
+    ///<param name="enumerate" type="Array or Object">An item to enumerate over</param>
+    ///<param name="action" type="Function">The callback to apply to each item</param>
+    ///<param name="context" type="Any" optional="true">The context to apply to the callback</param>
     context = context || window;
     
     if(enumerate == null) return;
@@ -40,6 +47,9 @@ var enumerateDesc = function(enumerate, action, context) {
 
 var Binding = function(bindingName, allowVirtual, accessorFunction) {
     ///<summary>Create a knockout binding</summary>
+    ///<param name="bindingName" type="String">The name of the binding</param>
+    ///<param name="allowVirtual" type="Boolean">Specify whether the binding can be used with virtual elements</param>
+    ///<param name="accessorFunction" type="Function">A function which returns the binding</param>
     
     var cls = Class("wipeout.bindings." + bindingName, accessorFunction);    
     ko.bindingHandlers[bindingName] = {
@@ -53,6 +63,8 @@ var Binding = function(bindingName, allowVirtual, accessorFunction) {
 
 var Class = function(classFullName, accessorFunction) {
     ///<summary>Create a wipeout class</summary>
+    ///<param name="classFullName" type="String">The name of the class</param>
+    ///<param name="accessorFunction" type="Function">A function which returns the class</param>
     
     classFullName = classFullName.split(".");
     var namespace = classFullName.splice(0, classFullName.length - 1);
@@ -67,6 +79,8 @@ var Class = function(classFullName, accessorFunction) {
 
 var Extend = function(namespace, extendWith) {
     ///<summary>Similar to $.extend but with a namespace string which must begin with "wipeout"</summary>
+    ///<param name="namespace" type="String">The namespace to add to</param>
+    ///<param name="extendWith" type="Object">The object to add to the namespace</param>
     
     namespace = namespace.split(".");
     
@@ -87,16 +101,25 @@ var Extend = function(namespace, extendWith) {
 var _trimString = /^\s+|\s+$/g;
 var trim = function(string) {
     ///<summary>Trims a string</summary>
+    ///<param name="string" type="String">The string to trim</param>
+    ///<returns type="String">The trimmed string</returns>
+    
     return string ? string.replace(_trimString, '') : string;
 };
 
 var trimToLower = function(string) {
     ///<summary>Trims a string and converts it to lower case</summary>
+    ///<param name="string" type="String">The string to trim</param>
+    ///<returns type="String">The trimmed string</returns>
+    
     return string ? trim(string).toLowerCase() : string;
 };
 
 var parseBool = function(input) {
     ///<summary>Parses a String into a Boolean</summary>
+    ///<param name="input" type="String">The string to parse</param>
+    ///<returns type="Boolean">The parsed boolean</returns>
+    
     if(input == null) return false;
         
     input = trimToLower(input);
@@ -108,6 +131,9 @@ Class("wipeout.utils.obj", function () {
         
     var createObject = function(constructorString, context) {
         ///<summary>Create an object from string</summary>
+        ///<param name="constructorString" type="String">A pointer to the object to create</param>
+        ///<param name="context" type="String">The root context</param>
+        ///<returns type="Any">The created object</returns>
         if(!context) context = window;
         
         var constructor = constructorString.split(".");
@@ -126,6 +152,8 @@ Class("wipeout.utils.obj", function () {
 
     var copyArray = function(input) {
         ///<summary>Make a deep copy of an array</summary>
+        ///<param name="input" type="Array">The array to copy</param>
+        ///<returns type="Array">The copied array</returns>
         var output = [];
         for(var i = 0, ii = input.length; i < ii; i++) {
             output.push(input[i]);
@@ -1723,11 +1751,15 @@ Class("wipeout.template.engine", function () {
     
     engine.createJavaScriptEvaluatorFunction = function(script) {
         ///<summary>Modify a block of script so that it's running context is bindingContext.$data first and biningContext second</summary>
+        ///<param name="script" type="String">The script to modify</param>
+        ///<returns type="Function">The compiled script</returns>
         return new Function("bindingContext", "with(bindingContext) {\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
     }
     
     engine.createJavaScriptEvaluatorBlock = function(script) {
         ///<summary>Add a function to the static script cache or cretate and add a function from a string</summary>
+        ///<param name="script" type="String or Function">A function or string to add to the script cache. A string will be passed through createJavaScriptEvaluatorFunction before being added as a Function</param>
+        ///<returns type="String">A reference to the newly created script</returns>
         var scriptId = engine.newScriptId();
         
         if(script instanceof Function) {
@@ -1741,11 +1773,16 @@ Class("wipeout.template.engine", function () {
     
     engine.prototype.createJavaScriptEvaluatorBlock = function(script) {
         ///<summary>Add a function to the static script cache or cretate and add a function from a string</summary>
+        ///<param name="script" type="String or Function">A function or string to add to the script cache. A string will be passed through createJavaScriptEvaluatorFunction before being added as a Function</param>
+        ///<returns type="String">A reference to the newly created script</returns>
         return engine.createJavaScriptEvaluatorBlock(script);
     };
     
     engine.prototype.rewriteTemplate = function (template, rewriterCallback, templateDocument) {
         ///<summary>First re-write the template via knockout, then re-write the template via wipeout</summary>
+        ///<param name="template" type="String">The id of the template</param>
+        ///<param name="rewriterCallback" type="Function">A function which will do the re-writing</param>
+        ///<param name="templateDocument"></param>
         
         var script = document.getElementById(template);
         if (script instanceof HTMLElement) {        
@@ -1764,6 +1801,8 @@ Class("wipeout.template.engine", function () {
     
     engine.wipeoutRewrite = function(xmlElement, rewriterCallback) {
         ///<summary>Recursively go through an xml element and replace all view models with render comments</summary>
+        ///<param name="xmlElement" type="Element">The template</param>
+        ///<param name="rewriterCallback" type="Function">A function which will do the re-writing (provided by knockout)</param>
         if(wipeout.base.visual.reservedTags.indexOf(xmlElement.nodeName) !== -1) {
             for(var i = 0; i < xmlElement.childNodes.length; i++)
                 if(xmlElement.childNodes[i].nodeType === 1)
@@ -1800,6 +1839,8 @@ Class("wipeout.template.engine", function () {
     
     engine.getId = function(xmlElement) {
         ///<summary>Get the id property of the xmlElement if any</summary>
+        ///<param name="xmlElement" type="Element">Pull the id attribute from an element if possible</param>
+        ///<returns type="String">The id or null</returns>
         for(var i = 0, ii = xmlElement.attributes.length; i < ii; i++) {
             if(xmlElement.attributes[i].nodeName === "id") {
                 return xmlElement.attributes[i].value;
@@ -1811,6 +1852,8 @@ Class("wipeout.template.engine", function () {
     
     engine.prototype.wipeoutRewrite = function(script, rewriterCallback) {
         ///<summary>Replace all wipeout views with render bindings</summary>
+        ///<param name="script" type="HTMLElement">The template</param>
+        ///<param name="rewriterCallback" type="Function">A function which will do the re-writing (provided by knockout)</param>
         
         var ser = new XMLSerializer();
         xmlTemplate = new DOMParser().parseFromString("<root>" + script.textContent + "</root>", "application/xml").documentElement;        
@@ -1833,6 +1876,11 @@ Class("wipeout.template.engine", function () {
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
         ///<summary>Build html from a template source</summary>
+        //TODO: check object types
+        ///<param name="templateSource" type="Object">The template</param>
+        ///<param name="bindingContext" type="ko.bindingContext">The current binding context to apply to the template</param>
+        ///<param name="options" type="Object">The knockout template options</param>
+        ///<returns type="Array">An array of html nodes to insert</returns>
         
         // if data is not a view, cannot render.
         //TODO: default to native template engine
@@ -1874,6 +1922,7 @@ Class("wipeout.template.engine", function () {
         var i = Math.floor(Math.random() * 10000);        
         return function() {
             ///<summary>Get a unique name for a script</summary>
+            ///<returns type="String">A unique id</returns>
             return (++i).toString();
         };
     })();
@@ -1892,6 +1941,7 @@ Class("wipeout.template.htmlBuilder", function () {
     
     var htmlBuilder = function(xmlTemplate) {
         ///<summary>Pre-compile that needed to render html from a binding context from a given template</summary>
+        ///<param name="xmlTemplate" type="Element">The template to build html from</param>
         
         // pre rendered strings or string generating functions which make up the final html
         this.preRendered = [];
@@ -1900,6 +1950,8 @@ Class("wipeout.template.htmlBuilder", function () {
     
     htmlBuilder.prototype.render = function(bindingContext) {
         ///<summary>Build html elements from a binding context</summary>
+        ///<param name="bindingContext" type="ko.bindingContext">The bindingContext to build html from</param>
+        //<returns type="Array">An array of elements</returns>
         
         var contexts = [];
         var returnVal = [];
@@ -1927,6 +1979,7 @@ Class("wipeout.template.htmlBuilder", function () {
     // but it seems to be necessary to clen up bad html (generated by previous xml parsing)
     htmlBuilder.prototype.generatePreRender = function(templateString) {
         ///<summary>Pre compile render code</summary>
+        ///<param name="templateString">The template</param>
                    
         var xmlTemplate = new DOMParser().parseFromString("<root>" + templateString + "</root>", "application/xml").documentElement;
         
@@ -1967,6 +2020,9 @@ Class("wipeout.template.htmlBuilder", function () {
     //TODO: this is done at render time, can it be cached?
     htmlBuilder.getTemplateIds = function (element) {
         ///<summary>Return all html elements with an id</summary>
+        ///<param name="element">The parent element to query</param>
+        ///<returns type="Object">A dictionary of elements and ids</returns>
+        
         var ids = {};
         enumerate(element.childNodes, function(node) {
             if(node.nodeType === 1) {
@@ -1988,6 +2044,8 @@ Class("wipeout.template.htmlBuilder", function () {
     
     htmlBuilder.generateTemplate = function(xmlTemplate) { 
         ///<summary>Convert an xml template to a string</summary>
+        ///<param name="xmlTemplate" type="Element">The template</param>
+        ///<returns type="String">A string version of the template<returns>
         var result = [];
         var ser = new XMLSerializer();
         
@@ -2022,6 +2080,9 @@ Class("wipeout.utils.html", function () {
         
     var outerHTML = function(element) {
         ///<summary>Browser agnostic outerHTML function</summary>
+        ///<param name="elemet" type="HTMLElement">The elemet to get the outer html<param>
+        ///<returns type="String">The outer html of the input</returns>
+        
         if(!element) return null;
         
         if(element.constructor === HTMLHtmlElement) throw "Cannot serialize a Html element using outerHTML";
@@ -2036,6 +2097,8 @@ Class("wipeout.utils.html", function () {
     var validHtmlCharacter = /[a-zA-Z0-9]/;
     var getTagName = function(openingTag) {
         ///<summary>Get the tag name of the first element in the string</summary>
+        ///<param name="openingTag" type="String">A string of html<param>
+        ///<returns type="String">The name of the first tag</returns>
         
         openingTag = openingTag.replace(/^\s+|\s+$/g, "");
         if(!openingTag || openingTag[0] !== "<")
@@ -2054,6 +2117,8 @@ Class("wipeout.utils.html", function () {
     var stripHtmlComments = /<\!--[^>]*-->/g;
     var getFirstTagName = function(htmlContent) {
         ///<summary>Get the tag name of the first element in the string</summary>
+        ///<param name="htmlContent" type="String">A string of html<param>
+        ///<returns type="String">The name of the first tag</returns>
         
         htmlContent = htmlContent.replace(stripHtmlComments, "").replace(/^\s+|\s+$/g, "");
         var i = 0;
@@ -2086,6 +2151,8 @@ Class("wipeout.utils.html", function () {
         
     var createElement = function(htmlString) {
         ///<summary>Create a html element from a string</summary>
+        ///<param name="htmlString" type="String">A string of html<param>
+        ///<returns type="HTMLElement">The first element in the string as a HTMLElement</returns>
         
         if(!htmlString) return null;
         var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
@@ -2097,6 +2164,8 @@ Class("wipeout.utils.html", function () {
        
     var createElements = function(htmlString) {
         ///<summary>Create an array of html elements from a string</summary>
+        ///<param name="htmlString" type="String">A string of html<param>
+        ///<returns type="HTMLElement">The string as an array of HTMLElements</returns>
         
         if(htmlString == null) return [];
         
@@ -2124,6 +2193,8 @@ Class("wipeout.utils.html", function () {
  
     var getAllChildren = function (element) {
         ///<summary>Get all of the children of a html element or knockout virtual element</summary>
+        ///<param name="element" type="HTMLNode">An element or knockout virtual element<param>
+        ///<returns type="Array">All of the nodes in the element</returns>
         
         var children = [];
         if (wipeout.utils.ko.virtualElements.isVirtual(element)) {
@@ -2175,6 +2246,8 @@ Class("wipeout.utils.html", function () {
     
     var getViewModel = function(forHtmlNode) {
         ///<summary>Get the view model associated with a html node</summary>
+        ///<param name="forHtmlNode" type="HTMLNode">The element which is the root node of a wo.view<param>
+        ///<returns type="wo.view">The view model associated with this node, or null</returns>
         return ko.utils.domData.get(forHtmlNode, wipeout.bindings.wipeout.utils.wipeoutKey);        
     };
     
@@ -2203,6 +2276,7 @@ Class("wipeout.utils.ko", function () {
     
     _ko.version = function() {
         ///<summary>Get the current knockout version as an array of numbers</summary>
+        ///<returns type="Array">The knockout version</returns>
         
         if(!ko || !ko.version)
             return null;
@@ -2216,6 +2290,8 @@ Class("wipeout.utils.ko", function () {
     
     _ko.peek = function(input) {
         ///<summary>Like ko.unwrap, but peeks instead</summary>
+        ///<param name="input" type="Any">An observable or regular object</param>
+        ///<returns type="Any">The value of the observable or object</returns>
         
         if(ko.isObservable(input))
             return input.peek();
@@ -2234,12 +2310,16 @@ Class("wipeout.utils.ko", function () {
     //TODO: this
     _ko.isObservableArray = function(test) {
         ///<summary>Like ko.isObservable, but for observableArrays</summary>
+        ///<param name="test" type="Any">An object to test</param>
+        ///<returns type="Boolean"></returns>
         return ko.isObservable(test) && test.push && test.push.constructor === Function;
     };
     
     _ko.virtualElements = {
         parentElement: function(node) {
             ///<summary>Returns the parent element or parent knockout virtual element of a node</summary>
+            ///<param name="node" type="HTMLNode">The child element</param>
+            ///<returns type="HTMLNode">The parent</returns>
             var current = node.previousSibling;
             while(current) {
                 if(_ko.virtualElements.isVirtual(current)) {
@@ -2254,11 +2334,15 @@ Class("wipeout.utils.ko", function () {
         //TODO: this
         isVirtual: function(node) {
             ///<summary>Whether a html node is a knockout virtual element or not</summary>
+            ///<param name="node" type="HTMLNode">The node to test</param>
+            ///<returns type="Boolean"></returns>
             return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0;
         },
         //TODO: this
         isVirtualClosing: function(node) {
             ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
+            ///<param name="node" type="HTMLNode">The node to test</param>
+            ///<returns type="Boolean"></returns>
             return node.nodeType === 8 && trim(node.nodeValue) === "/ko";
         }
     };
