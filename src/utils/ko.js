@@ -6,6 +6,7 @@ Class("wipeout.utils.ko", function () {
     
     _ko.version = function() {
         ///<summary>Get the current knockout version as an array of numbers</summary>
+        ///<returns type="Array">The knockout version</returns>
         
         if(!ko || !ko.version)
             return null;
@@ -19,6 +20,8 @@ Class("wipeout.utils.ko", function () {
     
     _ko.peek = function(input) {
         ///<summary>Like ko.unwrap, but peeks instead</summary>
+        ///<param name="input" type="Any">An observable or regular object</param>
+        ///<returns type="Any">The value of the observable or object</returns>
         
         if(ko.isObservable(input))
             return input.peek();
@@ -37,12 +40,16 @@ Class("wipeout.utils.ko", function () {
     //TODO: this
     _ko.isObservableArray = function(test) {
         ///<summary>Like ko.isObservable, but for observableArrays</summary>
+        ///<param name="test" type="Any">An object to test</param>
+        ///<returns type="Boolean"></returns>
         return ko.isObservable(test) && test.push && test.push.constructor === Function;
     };
     
     _ko.virtualElements = {
         parentElement: function(node) {
             ///<summary>Returns the parent element or parent knockout virtual element of a node</summary>
+            ///<param name="node" type="HTMLNode">The child element</param>
+            ///<returns type="HTMLNode">The parent</returns>
             var current = node.previousSibling;
             while(current) {
                 if(_ko.virtualElements.isVirtual(current)) {
@@ -57,11 +64,15 @@ Class("wipeout.utils.ko", function () {
         //TODO: this
         isVirtual: function(node) {
             ///<summary>Whether a html node is a knockout virtual element or not</summary>
+            ///<param name="node" type="HTMLNode">The node to test</param>
+            ///<returns type="Boolean"></returns>
             return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0;
         },
         //TODO: this
         isVirtualClosing: function(node) {
             ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
+            ///<param name="node" type="HTMLNode">The node to test</param>
+            ///<returns type="Boolean"></returns>
             return node.nodeType === 8 && trim(node.nodeValue) === "/ko";
         }
     };
