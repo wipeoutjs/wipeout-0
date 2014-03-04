@@ -143,6 +143,7 @@ Class("wipeout.base.view", function () {
             return;
         
         var prop = propertiesXml.getAttribute("woInvisible");
+        if(prop)
             this.woInvisible = parseBool(prop);
                 
         if(!view.elementHasModelBinding(propertiesXml) && wipeout.utils.ko.peek(this.model) == null) {
