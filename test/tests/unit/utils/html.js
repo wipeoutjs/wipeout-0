@@ -24,7 +24,10 @@ test("createElement", function() {
     wo.obj.enumerate(wo.visual.reservedTags, function(tag) {
         if(tag === "html")
             throws(function() { wo.html.createElement("<" + createElement + "></" + createElement + ">"); }, tag);
-        else
-            strictEqual(wo.html.createElement("<" + tag + "></" + tag + ">").tagName.toLowerCase(), tag, tag);        
+        else {
+            var element = wo.html.createElement("<" + tag + "></" + tag + ">");
+            ok(element instanceof HTMLElement);
+            strictEqual(element.tagName.toLowerCase(), tag, tag);
+        }
     });    
 });

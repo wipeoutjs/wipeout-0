@@ -84,15 +84,12 @@ Class("wipeout.utils.html", function () {
         var parent = document.createElement(specialTags[tagName] || "div");
         parent.innerHTML = htmlString;
         for(var i  = 0, ii = parent.childNodes.length; i < ii; i++) {
+            // IE might create some other elements along with the one specified
             if(parent.childNodes[i].nodeType === 1 && parent.childNodes[i].tagName.toLowerCase() === tagName) {
                 var element = parent.childNodes[i];
-                break;
+                parent.removeChild(element);
+                return element;
             }
-        }
-        
-        if(element) {
-            parent.removeChild(element);
-            return element;
         }
         
         return null;
