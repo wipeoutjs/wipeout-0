@@ -86,11 +86,11 @@ Class("wipeout.template.engine", function () {
             var nodes = new DOMParser().parseFromString("<root>" + rewriterCallback(tags) + "</root>", "application/xml").documentElement;
             while(nodes.childNodes.length) {
                 var node = nodes.childNodes[0];
-                node.parentElement.removeChild(node);
-                xmlElement.parentElement.insertBefore(node, xmlElement);
+                node.parentNode.removeChild(node);
+                xmlElement.parentNode.insertBefore(node, xmlElement);
             };
             
-            xmlElement.parentElement.removeChild(xmlElement);
+            xmlElement.parentNode.removeChild(xmlElement);
         }
     };    
     

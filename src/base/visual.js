@@ -134,7 +134,7 @@ Class("wipeout.base.visual", function () {
             current = current.previousSibling;
         }
         
-        return node.parentElement;
+        return node.parentNode;
     };
     
     visual.prototype.getParents = function() {
