@@ -13,7 +13,7 @@ Class("wipeout.utils.html", function () {
         
         var tagName = element.nodeType === 1 ? (specialTags[element.tagName.toLowerCase()] || "div") : "div";
         var div = document.createElement(tagName);
-        div.innerHTML = element.outerHTML;
+        div.appendChild(element.cloneNode(true));
         
         return div.innerHTML;        
     };  

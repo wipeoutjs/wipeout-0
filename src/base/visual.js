@@ -75,10 +75,20 @@ Class("wipeout.base.visual", function () {
         }, this);
         
         if(this.__woBag.rootHtmlElement) {
-            if(document.contains(this.__woBag.rootHtmlElement))
-                ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
-            else
-                console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout)");
+            //IE does not have document.contains
+            var doc = document.contains ? document : document.getElementsByTagName("body")[0];
+            if(doc) {
+                if(doc.contains(this.__woBag.rootHtmlElement))
+                    ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
+                else
+                    console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout)");
+            } else {
+                try {
+                    ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
+                } catch(e) {
+                    console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout)");
+                }
+            }
         }
     };
         
