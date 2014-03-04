@@ -65,6 +65,7 @@ Class("wipeout.utils.html", function () {
         frameset: "html",
         head: "html",
         li: "ul",
+        option: "select",
         tbody: "table",
         td: "tr",
         tfoot: "table",
@@ -73,17 +74,28 @@ Class("wipeout.utils.html", function () {
         tr: "tbody"
     };
         
+    var validTag1 = /\s*<[a-zA-Z]+(\s+[a-zA-Z0-9\-]+="")/
     var createElement = function(htmlString) {
         ///<summary>Create a html element from a string</summary>
         ///<param name="htmlString" type="String">A string of html<param>
         ///<returns type="HTMLElement">The first element in the string as a HTMLElement</returns>
         
-        if(!htmlString) return null;
-        var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
+        var tagName = getTagName(htmlString);
+        var parent = document.createElement(specialTags[tagName] || "div");
         parent.innerHTML = htmlString;
-        var element = parent.firstChild;
-        parent.removeChild(element);
-        return element;        
+        for(var i  = 0, ii = parent.childNodes.length; i < ii; i++) {
+            if(parent.childNodes[i].nodeType === 1 && parent.childNodes[i].tagName.toLowerCase() === tagName) {
+                var element = parent.childNodes[i];
+                break;
+            }
+        }
+        
+        if(element) {
+            parent.removeChild(element);
+            return element;
+        }
+        
+        return null;
     }; 
        
     var createElements = function(htmlString) {
