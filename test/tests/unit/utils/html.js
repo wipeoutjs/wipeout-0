@@ -22,7 +22,7 @@ test("createElement", function() {
     // act    
     //assert
     wo.obj.enumerate(wo.visual.reservedTags, function(tag) {
-        if(tag === "html")
+        if(wo.html.cannotCreateTags[tag])
             throws(function() { wo.html.createElement("<" + createElement + "></" + createElement + ">"); }, tag);
         else {
             var element = wo.html.createElement("<" + tag + "></" + tag + ">");
