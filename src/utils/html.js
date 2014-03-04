@@ -52,6 +52,10 @@ Class("wipeout.utils.html", function () {
         return getTagName(htmlContent.substring(i));
     };
     
+    /*
+<ruby>
+ <rt><rp>*/
+    
     var specialTags = {
         area: "map",
         base: "head",
@@ -65,7 +69,11 @@ Class("wipeout.utils.html", function () {
         frameset: "html",
         head: "html",
         li: "ul",
+        optgroup: "select",
         option: "select",
+        rp: "rt",
+        rt: "ruby",
+        source: "audio",
         tbody: "table",
         td: "tr",
         tfoot: "table",
@@ -73,15 +81,60 @@ Class("wipeout.utils.html", function () {
         thead: "table",
         tr: "tbody"
     };
-        
-    var validTag1 = /\s*<[a-zA-Z]+(\s+[a-zA-Z0-9\-]+="")/
+    
+    var cannotCreateTags = {
+        html:true,
+        basefont: true,
+        base: true,
+        body: true,
+        frame: true,
+        frameset: true,
+        head: true
+    };
+    
+    function firstChildOfType(parentElement, childType) {
+        for(var i = 0, ii = parentElement.childNodes.length; i < ii; i++) {
+            var child = parentElement.childNodes[i];
+            if (child.nodeType === 1 && wipeout.utils.obj.trimToLower(child.tagName) === wipeout.utils.obj.trimToLower(childType)) {
+                return child;
+            }
+        }
+    }
+    
+    var ieReadonlyElements = {
+        audio: true,
+        col: true, 
+        colgroup: true,
+        frameset: true,
+        head: true,
+        rp: true,
+        rt: true,
+        ruby: true,
+        select: true,
+        style: true,
+        table: true,
+        tbody: true,
+        tfooy: true,
+        thead: true,
+        title: true,
+        tr: true
+    };
+    
     var createElement = function(htmlString) {
         ///<summary>Create a html element from a string</summary>
         ///<param name="htmlString" type="String">A string of html<param>
         ///<returns type="HTMLElement">The first element in the string as a HTMLElement</returns>
         
-        var tagName = getTagName(htmlString);
-        var parent = document.createElement(specialTags[tagName] || "div");
+        var tagName = wipeout.utils.obj.trimToLower(getTagName(htmlString));
+        if(cannotCreateTags[tagName]) throw "Cannot create an instance of the \"" + tagName + "\" tag.";
+        
+        var parentTagName = specialTags[tagName] || "div";
+        
+        // the innerHTML for some tags is readonly in IE
+        if(ko.utils.ieVersion && ieReadonlyElements[parentTagName])
+            return firstChildOfType(createElement("<" + parentTagName + ">" + htmlString + "</" + parentTagName + ">"), tagName);
+            
+        var parent = document.createElement(parentTagName);
         parent.innerHTML = htmlString;
         for(var i  = 0, ii = parent.childNodes.length; i < ii; i++) {
             // IE might create some other elements along with the one specified
@@ -185,6 +238,7 @@ Class("wipeout.utils.html", function () {
     };
     
     return {
+        cannotCreateTags: cannotCreateTags,
         specialTags: specialTags,
         getFirstTagName: getFirstTagName,
         getTagName: getTagName,
