@@ -369,3 +369,83 @@ test("multi-dimentional binding", function() {
     // re-assert
     strictEqual($("#" + id2).html(), val);
 });
+
+test("binding subscriptions one way", function() {
+    // arrange
+    var id = "KJKHFGGGH";
+    views.view = wo.view.extend(function() {
+        this._super();
+        
+        this.property = ko.observable();
+    });
+    
+    application.property = ko.observable();
+        
+    application.template("<views.view property='$parent.property' id='" + id + "'></views.view>");
+    
+    var view = application.templateItems[id];
+    
+    var v = [];
+    view.property.subscribe(function() {
+        v.push(arguments[0]);
+    });
+    
+    var a = [];
+    application.property.subscribe(function() {
+        a.push(arguments[0]);
+    });
+    
+    
+    // act
+    view.property(1);
+    application.property(2);
+    view.property(3);
+    application.property(4);
+    view.property(5);
+    application.property(6);
+    view.property(7);
+    
+    // assert
+    deepEqual(v, [1, 2, 3, 4, 5, 6, 7]);
+    deepEqual(a, [2, 4, 6]);
+});
+
+test("binding subscriptions two way", function() {
+    // arrange
+    var id = "KJKHFGGGH";
+    views.view = wo.view.extend(function() {
+        this._super();
+        
+        this.property = ko.observable();
+    });
+    
+    application.property = ko.observable();
+        
+    application.template("<views.view property-tw='$parent.property' id='" + id + "'></views.view>");
+    
+    var view = application.templateItems[id];
+    
+    var v = [];
+    view.property.subscribe(function() {
+        v.push(arguments[0]);
+    });
+    
+    var a = [];
+    application.property.subscribe(function() {
+        a.push(arguments[0]);
+    });
+    
+    
+    // act
+    view.property(1);
+    application.property(2);
+    view.property(3);
+    application.property(4);
+    view.property(5);
+    application.property(6);
+    view.property(7);
+    
+    // assert
+    deepEqual(v, [1, 2, 3, 4, 5, 6, 7]);
+    deepEqual(a, [1, 2, 3, 4, 5, 6, 7]);
+});
