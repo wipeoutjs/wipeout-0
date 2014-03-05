@@ -388,10 +388,20 @@ Class("wipeout.base.visual", function () {
         }, this);
         
         if(this.__woBag.rootHtmlElement) {
-            if(document.contains(this.__woBag.rootHtmlElement))
-                ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
-            else
-                console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout)");
+            //IE does not have document.contains
+            var doc = document.contains ? document : document.getElementsByTagName("body")[0];
+            if(doc) {
+                if(doc.contains(this.__woBag.rootHtmlElement))
+                    ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
+                else
+                    console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout)");
+            } else {
+                try {
+                    ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
+                } catch(e) {
+                    console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout)");
+                }
+            }
         }
     };
         
@@ -447,7 +457,7 @@ Class("wipeout.base.visual", function () {
             current = current.previousSibling;
         }
         
-        return node.parentElement;
+        return node.parentNode;
     };
     
     visual.prototype.getParents = function() {
@@ -751,6 +761,7 @@ Class("wipeout.base.view", function () {
             return;
         
         var prop = propertiesXml.getAttribute("woInvisible");
+        if(prop)
             this.woInvisible = parseBool(prop);
                 
         if(!view.elementHasModelBinding(propertiesXml) && wipeout.utils.ko.peek(this.model) == null) {
@@ -1829,11 +1840,11 @@ Class("wipeout.template.engine", function () {
             var nodes = new DOMParser().parseFromString("<root>" + rewriterCallback(tags) + "</root>", "application/xml").documentElement;
             while(nodes.childNodes.length) {
                 var node = nodes.childNodes[0];
-                node.parentElement.removeChild(node);
-                xmlElement.parentElement.insertBefore(node, xmlElement);
+                node.parentNode.removeChild(node);
+                xmlElement.parentNode.insertBefore(node, xmlElement);
             };
             
-            xmlElement.parentElement.removeChild(xmlElement);
+            xmlElement.parentNode.removeChild(xmlElement);
         }
     };    
     
@@ -2089,7 +2100,7 @@ Class("wipeout.utils.html", function () {
         
         var tagName = element.nodeType === 1 ? (specialTags[element.tagName.toLowerCase()] || "div") : "div";
         var div = document.createElement(tagName);
-        div.innerHTML = element.outerHTML;
+        div.appendChild(element.cloneNode(true));
         
         return div.innerHTML;        
     };  
@@ -2128,6 +2139,10 @@ Class("wipeout.utils.html", function () {
         return getTagName(htmlContent.substring(i));
     };
     
+    /*
+<ruby>
+ <rt><rp>*/
+    
     var specialTags = {
         area: "map",
         base: "head",
@@ -2141,6 +2156,11 @@ Class("wipeout.utils.html", function () {
         frameset: "html",
         head: "html",
         li: "ul",
+        optgroup: "select",
+        option: "select",
+        rp: "rt",
+        rt: "ruby",
+        source: "audio",
         tbody: "table",
         td: "tr",
         tfoot: "table",
@@ -2148,18 +2168,71 @@ Class("wipeout.utils.html", function () {
         thead: "table",
         tr: "tbody"
     };
-        
+    
+    var cannotCreateTags = {
+        html:true,
+        basefont: true,
+        base: true,
+        body: true,
+        frame: true,
+        frameset: true,
+        head: true
+    };
+    
+    function firstChildOfType(parentElement, childType) {
+        for(var i = 0, ii = parentElement.childNodes.length; i < ii; i++) {
+            var child = parentElement.childNodes[i];
+            if (child.nodeType === 1 && wipeout.utils.obj.trimToLower(child.tagName) === wipeout.utils.obj.trimToLower(childType)) {
+                return child;
+            }
+        }
+    }
+    
+    var ieReadonlyElements = {
+        audio: true,
+        col: true, 
+        colgroup: true,
+        frameset: true,
+        head: true,
+        rp: true,
+        rt: true,
+        ruby: true,
+        select: true,
+        style: true,
+        table: true,
+        tbody: true,
+        tfooy: true,
+        thead: true,
+        title: true,
+        tr: true
+    };
+    
     var createElement = function(htmlString) {
         ///<summary>Create a html element from a string</summary>
         ///<param name="htmlString" type="String">A string of html<param>
         ///<returns type="HTMLElement">The first element in the string as a HTMLElement</returns>
         
-        if(!htmlString) return null;
-        var parent = document.createElement(specialTags[getTagName(htmlString)] || "div");
+        var tagName = wipeout.utils.obj.trimToLower(getTagName(htmlString));
+        if(cannotCreateTags[tagName]) throw "Cannot create an instance of the \"" + tagName + "\" tag.";
+        
+        var parentTagName = specialTags[tagName] || "div";
+        
+        // the innerHTML for some tags is readonly in IE
+        if(ko.utils.ieVersion && ieReadonlyElements[parentTagName])
+            return firstChildOfType(createElement("<" + parentTagName + ">" + htmlString + "</" + parentTagName + ">"), tagName);
+            
+        var parent = document.createElement(parentTagName);
         parent.innerHTML = htmlString;
-        var element = parent.firstChild;
-        parent.removeChild(element);
-        return element;        
+        for(var i  = 0, ii = parent.childNodes.length; i < ii; i++) {
+            // IE might create some other elements along with the one specified
+            if(parent.childNodes[i].nodeType === 1 && parent.childNodes[i].tagName.toLowerCase() === tagName) {
+                var element = parent.childNodes[i];
+                parent.removeChild(element);
+                return element;
+            }
+        }
+        
+        return null;
     }; 
        
     var createElements = function(htmlString) {
@@ -2252,6 +2325,7 @@ Class("wipeout.utils.html", function () {
     };
     
     return {
+        cannotCreateTags: cannotCreateTags,
         specialTags: specialTags,
         getFirstTagName: getFirstTagName,
         getTagName: getTagName,
