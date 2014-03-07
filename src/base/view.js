@@ -202,7 +202,10 @@ Class("wipeout.base.view", function () {
                 var innerHTML = [];
                 var ser = ser || new XMLSerializer();
                 for (var j = 0, jj = child.childNodes.length; j < jj; j++) {
-                    innerHTML.push(ser.serializeToString(child.childNodes[j]));
+                    if(child.childNodes[j].nodeType == 3)
+                        innerHTML.push(child.childNodes[j].nodeValue);
+                    else
+                        innerHTML.push(ser.serializeToString(child.childNodes[j]));
                 }
             
                 var val = view.objectParser[trimToLower(type)](innerHTML.join(""));
