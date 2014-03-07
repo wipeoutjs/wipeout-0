@@ -415,18 +415,23 @@ test("binding subscriptions two way", function() {
     var id = "KJKHFGGGH";
     views.view = wo.view.extend(function() {
         this._super();
-        
-        this.property = ko.observable();
     });
+    
+    var m = [];
+    views.view.prototype.onModelChanged = function(oldVal, newVal) {
+        this._super(oldVal, newVal);
+        
+        m.push(newVal);
+    };
     
     application.property = ko.observable();
         
-    application.template("<views.view property-tw='$parent.property' id='" + id + "'></views.view>");
+    application.template("<views.view model-tw='$parent.property' id='" + id + "'></views.view>");
     
     var view = application.templateItems[id];
     
     var v = [];
-    view.property.subscribe(function() {
+    view.model.subscribe(function() {
         v.push(arguments[0]);
     });
     
@@ -435,17 +440,18 @@ test("binding subscriptions two way", function() {
         a.push(arguments[0]);
     });
     
-    
     // act
-    view.property(1);
+    m.length = 0;
+    view.model(1);
     application.property(2);
-    view.property(3);
+    view.model(3);
     application.property(4);
-    view.property(5);
+    view.model(5);
     application.property(6);
-    view.property(7);
+    view.model(7);
     
     // assert
+    deepEqual(m, [1, 2, 3, 4, 5, 6, 7]);
     deepEqual(v, [1, 2, 3, 4, 5, 6, 7]);
     deepEqual(a, [1, 2, 3, 4, 5, 6, 7]);
 });
