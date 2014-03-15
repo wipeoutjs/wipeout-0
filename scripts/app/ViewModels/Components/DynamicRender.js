@@ -27,6 +27,8 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.DynamicRender", "wo.c
                 newVm = new Wipeout.Docs.ViewModels.Pages.PropertyPage();
             } else if(newVal instanceof Wipeout.Docs.Models.Descriptions.Function) {
                 newVm = new Wipeout.Docs.ViewModels.Pages.FunctionPage();
+            } else if(newVal instanceof Wipeout.Docs.Models.Components.StaticPageTreeViewBranchTemplate) {
+                newVm = new wo.view(newVal.templateId);
             } else {
                 throw "Unknown model type";
             }

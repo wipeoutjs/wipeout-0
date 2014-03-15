@@ -369,8 +369,15 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             ]);
         })();
         
+        var intro = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Introduction", "IntroductionPage");
+        var hello = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Hello Wipeout", "HelloWipeoutPage");
+        var cmplx = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("A more complex example", "AMoreComplexExamplePage");
+        cmplx.payload().intro = intro.payload();
+        cmplx.payload().hello = hello.payload();
+        
         this.menu =
             new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout", [
+                new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", [intro, hello, cmplx]),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("API", [
                     _wo,
                     _bindings,
@@ -510,6 +517,20 @@ compiler.registerClass("Wipeout.Docs.Models.Components.PropertyTreeViewBranch", 
     };
     
     return propertyTreeViewBranch;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Components.StaticPageTreeViewBranch", "Wipeout.Docs.Models.Components.PageTreeViewBranch", function() {
+    return function(name, templateId) {
+        this._super(name, new Wipeout.Docs.Models.Components.StaticPageTreeViewBranchTemplate(templateId));
+    };
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Components.StaticPageTreeViewBranchTemplate", "wo.object", function() {
+    return function(templateId) {
+        this._super();
+        
+        this.templateId = templateId;
+    };
 });
 
 compiler.registerClass("Wipeout.Docs.Models.Components.TreeViewBranch", "wo.object", function() {
@@ -1043,6 +1064,8 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.DynamicRender", "wo.c
                 newVm = new Wipeout.Docs.ViewModels.Pages.PropertyPage();
             } else if(newVal instanceof Wipeout.Docs.Models.Descriptions.Function) {
                 newVm = new Wipeout.Docs.ViewModels.Pages.FunctionPage();
+            } else if(newVal instanceof Wipeout.Docs.Models.Components.StaticPageTreeViewBranchTemplate) {
+                newVm = new wo.view(newVal.templateId);
             } else {
                 throw "Unknown model type";
             }
