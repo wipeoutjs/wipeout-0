@@ -215,8 +215,6 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
         this.content.subscribe(function(newVal) {
             if(this.doNotCacheContent) return;
             
-            debugger;
-            
             this.contentCacheIndex++;
             this.contentCache.length = this.contentCacheIndex;
             this.contentCache.push(newVal);
