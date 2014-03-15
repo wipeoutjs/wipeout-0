@@ -6,7 +6,6 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.CodeBlock", "wo.view"
         this.code.subscribe(this.onCodeChanged, this);        
         this.renderCode = ko.computed(function() {
             var code = this.code();
-            if(code && code.indexOf("displayPerson_template") !== -1)debugger;
             return code ? code.replace(/</g, "&lt;") : code;
         }, this);
     };
