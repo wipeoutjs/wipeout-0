@@ -194,7 +194,7 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
         
         this.menu =
             new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout", [
-                new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", [intro, hello, cmplx]),
+                new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", [intro, hello, /*cmplx*/]),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("API", [
                     _wo,
                     _bindings,
