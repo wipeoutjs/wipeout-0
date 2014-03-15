@@ -68,7 +68,13 @@
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassItemRow">
                 <tr>
-                    <td data-bind="text: model().name"></td>
+                    <td>
+                        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger, text: model().name"></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+                    </td>
                     <td data-bind="text: model().summary"></td>
                 </tr>
         </script>

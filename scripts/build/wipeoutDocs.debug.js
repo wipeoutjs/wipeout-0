@@ -183,9 +183,49 @@ var get = function(item, root) {
 
 compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function() {
     
-    return function() {
+    application.prototype.back = function() {
+        if(this.contentCacheIndex < 1)
+            return;
         
-        this.content = ko.observable(new Wipeout.Docs.Models.Pages.LandingPage());
+        try {
+            this.doNotCacheContent = true;
+            this.contentCacheIndex--;
+            this.content(this.contentCache[this.contentCacheIndex]);
+        } finally {
+            this.doNotCacheContent = false;
+        }
+    };
+    
+    application.prototype.forward = function() {
+        if(this.contentCacheIndex >= this.contentCache.length)
+            return;
+        
+        try {
+            this.doNotCacheContent = true;
+            this.contentCacheIndex++;
+            this.content(this.contentCache[this.contentCacheIndex]);
+        } finally {
+            this.doNotCacheContent = false;
+        }
+    };
+    
+    function application() {
+        
+        this.content = ko.observable();
+        this.content.subscribe(function(newVal) {
+            if(this.doNotCacheContent) return;
+            
+            debugger;
+            
+            this.contentCacheIndex++;
+            this.contentCache.length = this.contentCacheIndex;
+            this.contentCache.push(newVal);
+        }, this);
+        
+        this.contentCacheIndex = -1;
+        this.doNotCacheContent = false;
+        this.contentCache = [];
+        this.content(new Wipeout.Docs.Models.Pages.LandingPage());
         
         var currentApi = new Wipeout.Docs.Models.Components.Api();
                 
@@ -340,6 +380,8 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
                 ])
         ]);        
     };
+    
+    return application;
 });
 
 compiler.registerClass("Wipeout.Docs.Models.Components.Api", "wo.object", function() {    
@@ -1028,6 +1070,18 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.JsCodeBlock", "Wipeou
     };
 
     return jsCodeBlock;
+});
+
+compiler.registerClass("Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent", "wo.contentControl", function() {
+    function raiseRoutedEvent() {
+        this._super();
+    }
+    
+    raiseRoutedEvent.prototype.trigger = function() {
+        this.triggerRoutedEvent(this.routedEvent, this.model());
+    };
+    
+    return raiseRoutedEvent;
 });
 
 compiler.registerClass("Wipeout.Docs.ViewModels.Components.TemplateCodeBlock", "Wipeout.Docs.ViewModels.Components.CodeBlock", function() {

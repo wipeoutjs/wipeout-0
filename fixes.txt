@@ -1,2 +1,5 @@
 wo.visual.getBlankTemplateId
 wo.visual.registerRoutedEvent
+getParent return val
+getParents return val
+getParentElement return val

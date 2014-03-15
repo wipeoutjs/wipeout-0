@@ -1,8 +1,46 @@
 compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function() {
     
-    return function() {
+    application.prototype.back = function() {
+        if(this.contentCacheIndex < 1)
+            return;
         
-        this.content = ko.observable(new Wipeout.Docs.Models.Pages.LandingPage());
+        try {
+            this.doNotCacheContent = true;
+            this.contentCacheIndex--;
+            this.content(this.contentCache[this.contentCacheIndex]);
+        } finally {
+            this.doNotCacheContent = false;
+        }
+    };
+    
+    application.prototype.forward = function() {
+        if(this.contentCacheIndex >= this.contentCache.length)
+            return;
+        
+        try {
+            this.doNotCacheContent = true;
+            this.contentCacheIndex++;
+            this.content(this.contentCache[this.contentCacheIndex]);
+        } finally {
+            this.doNotCacheContent = false;
+        }
+    };
+    
+    function application() {
+        
+        this.content = ko.observable();
+        this.content.subscribe(function(newVal) {
+            if(this.doNotCacheContent) return;
+            
+            this.contentCacheIndex++;
+            this.contentCache.length = this.contentCacheIndex;
+            this.contentCache.push(newVal);
+        }, this);
+        
+        this.contentCacheIndex = -1;
+        this.doNotCacheContent = false;
+        this.contentCache = [];
+        this.content(new Wipeout.Docs.Models.Pages.LandingPage());
         
         var currentApi = new Wipeout.Docs.Models.Components.Api();
                 
@@ -157,4 +195,6 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
                 ])
         ]);        
     };
+    
+    return application;
 });
