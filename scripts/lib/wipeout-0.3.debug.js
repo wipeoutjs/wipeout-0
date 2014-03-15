@@ -699,14 +699,30 @@ Class("wipeout.base.view", function () {
             write: twoWay ? function() { var va = valueAccessor(); if(va) va(arguments[0]); } : undefined
         });                                 
         
+        var unsubscribe1 = false;
+        var unsubscribe2 = false;
         setObservable(this, property, toBind.peek());
         var subscription1 = toBind.subscribe(function(newVal) {
-            setObservable(this, property, newVal);
+            if(!unsubscribe1) {
+                try {
+                    unsubscribe2 = true;
+                    setObservable(this, property, newVal);
+                } finally {
+                    unsubscribe2 = false;
+                }
+            }
         }, this);
         
         var subscription2 = twoWay ?
             this[property].subscribe(function(newVal) {
-                setObservable({x: toBind}, "x", newVal);
+                if(!unsubscribe2) {
+                    try {
+                        unsubscribe1 = true;
+                        setObservable({x: toBind}, "x", newVal);
+                    } finally {
+                        unsubscribe1 = false;
+                    }
+                }
             }, this) :
             null;
         
@@ -804,7 +820,10 @@ Class("wipeout.base.view", function () {
                 var innerHTML = [];
                 var ser = ser || new XMLSerializer();
                 for (var j = 0, jj = child.childNodes.length; j < jj; j++) {
-                    innerHTML.push(ser.serializeToString(child.childNodes[j]));
+                    if(child.childNodes[j].nodeType == 3)
+                        innerHTML.push(child.childNodes[j].nodeValue);
+                    else
+                        innerHTML.push(ser.serializeToString(child.childNodes[j]));
                 }
             
                 var val = view.objectParser[trimToLower(type)](innerHTML.join(""));
