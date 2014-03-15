@@ -104,9 +104,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
     functionDescription.getReturnSummary = function(theFunction) {  
         var regex = new RegExp("///\\s*<returns\\s*(type=\".*\"){0,1}>.*</returns>\\s*\n");
         var comment = functionDescription.getCommentsAsXml(theFunction, regex);
-        if(comment) {
-            if(comment.getAttribute("type") === "void") return null;
-            
+        if(comment && comment.getAttribute("type") !== "void") {            
             return {
                 summary: comment.innerHTML,
                 type: comment.getAttribute("type")
@@ -115,7 +113,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
         
         return {
             type: "void"
-        };   
+        };
     };  
     
     return functionDescription;
