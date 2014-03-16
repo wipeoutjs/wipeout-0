@@ -4,6 +4,8 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.UsageCodeBlock", "Wip
         this._super("Wipeout.Docs.ViewModels.Components.UsageCodeBlock");
         
         this.usage = ko.observable();
+        
+        this.showDefinitionCode = ko.observable(true);
     };
     
     usageCodeBlock.prototype.onCodeChanged = function(newVal) {  

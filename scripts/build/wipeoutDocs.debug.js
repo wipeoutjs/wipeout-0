@@ -377,7 +377,7 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
         
         this.menu =
             new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout", [
-                new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", [intro, hello, /*cmplx*/]),
+                new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", [intro, hello, cmplx]),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("API", [
                     _wo,
                     _bindings,
@@ -1170,6 +1170,8 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.UsageCodeBlock", "Wip
         this._super("Wipeout.Docs.ViewModels.Components.UsageCodeBlock");
         
         this.usage = ko.observable();
+        
+        this.showDefinitionCode = ko.observable(true);
     };
     
     usageCodeBlock.prototype.onCodeChanged = function(newVal) {  
