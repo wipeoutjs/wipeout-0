@@ -43,16 +43,69 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
         this.content(new Wipeout.Docs.Models.Pages.LandingPage());
         
         var currentApi = new Wipeout.Docs.Models.Components.Api();
-                
+             
+        var bindFunction = null;
+        var objectBranch = null;
+        var extendBranch = null;
+        var _superBranch = null;
+        var useVirtualCacheBranch = null;
+        var clearVirtualCacheBranch = null;
+        var visualBranch = null;
+        var viewBranch = null;
+        var contentControlBranch = null;
+        var ifBranch = null;
+        var itemsControlBranch = null;
+        var routedEventModelBranch = null;
+        var woInvisibleBranch = null;
+        
+        var itemsControlPage = null;
+        var renderPage = null;
+        var wipeout_typePage = null;
+        var _woPage = null;
+        var _wipeoutPage = null;
+        var _icRenderPage = null;
+        
         //wo
         var _wo = (function() {
-            var objectBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("object", currentApi.forClass("wo.object"));
-            var routedEventModelBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("routedEventModel", currentApi.forClass("wo.routedEventModel"));
-            var visualBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("visual", currentApi.forClass("wo.visual"));
-            var viewBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("view", currentApi.forClass("wo.view"));
-            var contentControlBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("contentControl", currentApi.forClass("wo.contentControl"));
-            var ifBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("if", currentApi.forClass("wo.if"));
-            var itemsControlBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("itemsControl", currentApi.forClass("wo.itemsControl"));
+            objectBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("object", currentApi.forClass("wo.object"));
+            for(var i = 0, ii = objectBranch.branches.length; i < ii; i++) {
+                if(objectBranch.branches[i].name === "_super") {
+                    _superBranch = objectBranch.branches[i];
+                    break;
+                }
+            }
+            for(var i = 0, ii = objectBranch.branches.length; i < ii; i++) {
+                if(objectBranch.branches[i].name === "extend") {
+                    extendBranch = objectBranch.branches[i];
+                    break;
+                }
+            }
+            for(var i = 0, ii = objectBranch.branches.length; i < ii; i++) {
+                if(objectBranch.branches[i].name === "useVirtualCache") {
+                    useVirtualCacheBranch = objectBranch.branches[i];
+                    break;
+                }
+            }
+            for(var i = 0, ii = objectBranch.branches.length; i < ii; i++) {
+                if(objectBranch.branches[i].name === "clearVirtualCache") {
+                    clearVirtualCacheBranch = objectBranch.branches[i];
+                    break;
+                }
+            }
+            
+            routedEventModelBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("routedEventModel", currentApi.forClass("wo.routedEventModel"));
+            visualBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("visual", currentApi.forClass("wo.visual"));
+            for(var i = 0, ii = visualBranch.branches.length; i < ii; i++) {
+                if(visualBranch.branches[i].name === "woInvisible") {
+                    woInvisibleBranch = visualBranch.branches[i];
+                    break;
+                }
+            }
+            
+            viewBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("view", currentApi.forClass("wo.view"));
+            contentControlBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("contentControl", currentApi.forClass("wo.contentControl"));
+            ifBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("if", currentApi.forClass("wo.if"));
+            itemsControlBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("itemsControl", currentApi.forClass("wo.itemsControl"));
             var eventBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("event", currentApi.forClass("wo.event"));
             var routedEventBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("routedEvent", currentApi.forClass("wo.routedEvent"));
             var routedEventArgsBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("routedEventArgs", currentApi.forClass("wo.routedEventArgs"));
@@ -63,6 +116,13 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             var koArrayBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("array", currentApi.forClass("wo.ko.array"));
             var koBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("ko", currentApi.forClass("wo.ko"), {staticProperties: {"virtualElements": koVirtualElementsBranch, "array": koArrayBranch}});
             var objBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("obj", currentApi.forClass("wo.obj"));
+            
+            for(var i = 0, ii = viewBranch.branches.length; i < ii; i++) {
+                if(viewBranch.branches[i].name === "bind") {
+                    bindFunction = viewBranch.branches[i];
+                    break;
+                }
+            }
             
             return new Wipeout.Docs.Models.Components.TreeViewBranch("wo", [
                 contentControlBranch,
@@ -133,22 +193,22 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
                 ]);
             })();
             
-            var _bindings = (function() {
+            var _bindingsPage = (function() {
                 
-                var itemsControl = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("itemsControl", currentApi.forClass("wipeout.bindings.itemsControl"));
-                var render = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("render", currentApi.forClass("wipeout.bindings.render"));
-                var wipeout_type = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("wipeout-type", currentApi.forClass("wipeout.bindings.wipeout-type"));
-                var _wo = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("wo", currentApi.forClass("wipeout.bindings.wo"));
-                var _wipeout = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("wipeout", currentApi.forClass("wipeout.bindings.wipeout"));
-                var _icRender = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("ic-render", currentApi.forClass("wipeout.bindings.ic-render"));
+                itemsControlPage = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("itemsControl", currentApi.forClass("wipeout.bindings.itemsControl"));
+                renderPage = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("render", currentApi.forClass("wipeout.bindings.render"));
+                wipeout_typePage = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("wipeout-type", currentApi.forClass("wipeout.bindings.wipeout-type"));
+                _woPage = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("wo", currentApi.forClass("wipeout.bindings.wo"));
+                _wipeoutPage = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("wipeout", currentApi.forClass("wipeout.bindings.wipeout"));
+                _icRenderPage = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("ic-render", currentApi.forClass("wipeout.bindings.ic-render"));
                 
                 return new Wipeout.Docs.Models.Components.TreeViewBranch("bindings", [
-                    _icRender,
-                    itemsControl,
-                    render,
-                    wipeout_type,
-                    _wo,
-                    _wipeout
+                    _icRenderPage,
+                    itemsControlPage,
+                    renderPage,
+                    wipeout_typePage,
+                    _woPage,
+                    _wipeoutPage
                 ]);
             })();
             
@@ -198,10 +258,40 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             return [intro, hello, cmplx, anApp];
         })();
         
-        var _features = (function() {            
-            var binding = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Binding", "BindingPage");
+        var _features = (function() {     
+            var oo = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Wipeout OO framework", "WipeoutObjectOrientedFrameworkPage");
+            oo.payload().object = objectBranch.payload();
+            oo.payload()._super = _superBranch.payload();
+            oo.payload().extend = extendBranch.payload();
+            oo.payload().useVirtualCache = useVirtualCacheBranch.payload();
+            oo.payload().clearVirtualCache = clearVirtualCacheBranch.payload();
             
-            return [binding];
+            var binding = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Binding", "BindingPage");
+            binding.payload().bindFunction = bindFunction.payload();
+            
+            var models = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Models", "ModelsPage");
+            
+            var woClasses = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Wipeout Native Classes", "WipeoutNativeClassesPage");
+            woClasses.payload().object = objectBranch.payload();
+            woClasses.payload().routedEventModel = routedEventModelBranch.payload();
+            woClasses.payload().visual = visualBranch.payload();
+            woClasses.payload().view = viewBranch.payload();
+            woClasses.payload().contentControl = contentControlBranch.payload();
+            woClasses.payload()._if = ifBranch.payload();
+            woClasses.payload().itemsControl = itemsControlBranch.payload();
+            woClasses.payload().woInvisible = woInvisibleBranch.payload();
+            
+            var woBindings = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Wipeout Native Bindings", "WipeoutNativeBindingsPage");
+            woBindings.payload().itemsControl = itemsControlPage.payload();
+            woBindings.payload().itemsControlClass = itemsControlBranch.payload();
+            woBindings.payload().viewClass = viewBranch.payload();
+            woBindings.payload().render = renderPage.payload();
+            woBindings.payload().wipeout_type = wipeout_typePage.payload();
+            woBindings.payload()._wo = _woPage.payload();
+            woBindings.payload()._wipeout = _wipeoutPage.payload();
+            woBindings.payload()._icRender = _icRenderPage.payload();
+            
+            return [oo, woClasses, woBindings, binding, models];
         })();        
         
         this.menu =

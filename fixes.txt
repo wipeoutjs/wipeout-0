@@ -7,17 +7,18 @@ getParentElement return val
 bindings
 
 Articles:
-binding context
+x binding context
 Use of <!-- ko --> tags
-bindings, tw-
+x bindings, tw-
 woInvisible
-oo framework
+x oo framework
 virtual method hooks
 observables, in constructor only
 namespaces/debug
-description of each class in wipeout.base class
+x description of each class in wipeout.base class
 description of each binding
 XML vs html
-javascript and prototyping
+x javascript and prototyping
 setting properties inline/not inline. Observable/not observable
-binding contexts and the model property
+x binding contexts and the model property
+events/routed events

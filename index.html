@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="content/style/style.css">
         <link rel="stylesheet" type="text/css" href="content/style/prettify.css">
     
-        <div data-bind="wipeout: Wipeout.Docs.ViewModels.Application">Compiling API...</div>
+        <div data-bind="wipeout: Wipeout.Docs.ViewModels.Application">Compiling API. Please wait...</div>
         
         <script type="text/javascript" src="scripts/lib/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="scripts/lib/knockout-2.3.0.debug.js"></script>
@@ -613,9 +613,192 @@ childView.prototype.onRendered = function (oldNodes, newNodes) {
         Coming soon
         </script>
         
+        <script type="text/xml" id="ModelsPage">
+        <h1>Models</h1>
+        <p>Models are special properties of a view model which contain business logic and application data. In the MVVM pattern they are the driving force behind your application while never concerning themselves with things such as appearence and the HTML DOM.</p>
+        <p>In wipeout, the root model is specified when <code>ko.applyBindings({ the model })</code> is called. The <code>model</code> property of the root application will be set with this value and it can be used throughout. Every view model is guaranteed to have a model, as, if none is specifed the model of the parent will be used.</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock> 
+            <code>&lt;wo.view model="$parent.model" />
+
+&lt;!-- The model definition is un necessary here as "$parent.model" 
+    is the default value. The code above can be re-written as: -->
+    
+&lt;wo.view /></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock> 
+        </script>
+        
+        <!--
+            woBindings.payload().itemsControl = itemsControlPage.payload();
+            woBindings.payload().render = renderPage.payload();
+            woBindings.payload().wipeout_type = wipeout_typePage.payload();
+            woBindings.payload()._wo = _woPage.payload();
+            woBindings.payload()._wipeout = _wipeoutPage.payload();
+            woBindings.payload()._icRender = _icRenderPage.payload();
+            -->
+        
+        <script type="text/xml" id="WipeoutNativeBindingsPage">
+        <h1>Wipeout Native Bindings</h1>
+        <p>Wipeout has several native bindings, some internal, some extenal, used to render elements</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model()._icRender" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>ic-render</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This internal binding is used by wipeout to find the item to be rendered from a binding context. It should not be used externally.</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().itemsControl" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>itemsControl</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This binding can only be used within the template for an <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().itemsControlClass" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.itemsControl</code></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> and specifies where to render it's items.</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().render" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>render</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This binding will render a view model. It is used extensively within wipeout but can also safely be used within an application to render a property which is a <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().viewClass" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.view</code></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent></p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().wipeout_type" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>wipeout-type</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This binding is used by wipeout in debug mode to label view model markup with the type of the view model. This makes it easier to view the application via DOM inspection.</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model()._wo" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>wo</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This internal binding is used by wipeout to extract view models from a template, pre render and inject the markup into the tempalte at render time.</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model()._wipeout" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>wipeout</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This binding defines a wipeout application.</p>
+        </script>
+        
+        <script type="text/xml" id="WipeoutNativeClassesPage">
+        <h1>Wipeout Native Classes</h1>
+        <p>Wipeout has several native classes which can be inherited from to build an application</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().object" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>wo.object</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This is the base class for all wipeout objects and contains functionality to extend itself and call base methods.</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().routedEventModel" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>wo.routedEventModel</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This class derives from wo.object and has the ability to raise routed events (TODO: link) in any view model which it is the model for.</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().visual" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>wo.visual</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This class derives from wo.object and is a class with a visual element. This should not be inherited from directly, but rather you should inherit from <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().view" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.view</code></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent></p>        
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().view" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>wo.view</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This class derives from wo.visual and is the base class for view models.</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().contentControl" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>wo.contentControl</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This class derives from wo.view and provides functionality to specify the template as a template string rather than as an Id.</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().itemsControl" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>wo.itemsControl</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This class derives from wo.contentControl and provides list building functionality. This is the wipeout equivelant of the "foreach" knockout binding</p>
+        <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model()._if" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><h3>wo.if</h3></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>
+        <p>This class derives from wo.contentControl and provides functionality similar to the "if" knockout binding. By default, wo.if has <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().woInvisible" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><code>woInvisible</code></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> set to true, meaning it will have no binding context.</p>
+            
+        </script>
+        
+        <script type="text/xml" id="WipeoutObjectOrientedFrameworkPage">
+        <h1>The wipeout object oriented framework</h1>
+        <p>Wipeout sits on top of a very simple prototype based <a href="http://en.wikipedia.org/wiki/Object-oriented_programming">object oriented</a> framework. This is framework can be used when developing applications using wipeout, or can be superceeded by any customn OO framework which supports <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof">instanceof</a> checks, for instance <a href="http://www.typescriptlang.org">Typescript</a>.</p>
+        <p>
+        <ul>
+            <li>The class <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().object" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                <template>
+                    <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.object</code></a>
+                </template>                            
+            </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> is the base class for all objects in the framework</li>    
+            <li>The framework leans heavily on the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype"><code>prototype</code></a> object. Instance functions are added to the <code>prototype</code> for speed and to support method overrides. This methodology does not allow for protected or private functions and has little scope for private properties</li>            
+            <li>In order to inherit from an existing class, you use it's static <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().extend" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>extend()</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> method.</li>
+            <li>In order to call the base constructor you use the <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model()._super" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>_super()</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> method.</li>
+            <li>It is very important that the first line of code in the constructor of a child class must be a call to <code>this._super(...)</code>. If not, the results may be unpredictable.</li>
+            <li>In order to call a base method in an overridden virtual method you also use the <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model()._super" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>_super()</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> method.</li>
+            <li><Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().object" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                <template>
+                    <a href="javascript: void(0)" data-bind="click: trigger">An example of using the framework can be found here.</a>
+                </template>                            
+            </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent></li>
+        </ul>
+        </p>
+        <h3>The _super cache</h3>
+        <p>When the <code>_super(...)</code> method is called it has to dynamically look up which method is to be called from the ancestor class. In order to speed up subsequent look ups, the retrieved method is cached for future use. This may cause a problem if new methods are added to object prototypes after the caching process has begun. There are 2 methods to getting around such scenarios:
+<ol>
+    <li>Turn off the virtual cache. You can do this by setting <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().useVirtualCache" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.object.useVirtualCache</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> to false and calling <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().clearVirtualCache" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.object.clearVirtualCache()</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent></li>
+            <li>Calling <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().clearVirtualCache" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.object.clearVirtualCache()</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> after a new method is added to a class prototype.
+            </li>
+        </ol></p>
+        </script>
+        
         <script type="text/xml" id="BindingPage">
         <h1>Bindings</h1>
-        Binding is the process of setting a property of view model inline. A propery of a view model can be bound to a static value, a constant or a property of the view model or any other view model defined earlier in the visual chain. For example
+        Binding is the process of setting a property of a view model inline. A propery of a view model can be bound to a static value, a constant or a property of the view model or any other view model defined earlier in the visual chain. The binding context is the same as a <a href="http://knockoutjs.com/documentation/binding-context.html" target="_blank">knockout binding context</a>. For example
         <Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
             <code>&lt;wo.contentControl model="{ innerModel: { value: 'The inner model' }, value: 'The model' }">
     &lt;template>
@@ -654,7 +837,56 @@ childView.prototype.onRendered = function (oldNodes, newNodes) {
 &lt;/wo.contentControl></code>
         </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
         <h3>Binding to observables</h3>
-        In an MVVM pattern an update of a property should trigger updates to all properties bound to it. This is true in wipeout, as long as knockout observables are being used
+        <p>In an MVVM pattern an update of a property should trigger updates to all properties bound to it. This is true in wipeout, as long as knockout observables are being used.</p>
+         <Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+            <code>&lt;wo.contentControl model="{ value: ko.observable('The model') }">
+    &lt;template>
+        Parent Text: &lt;input type="text" data-bind="value: model().value, valueUpdate: 'keyup'" />
+        &lt;wo.contentControl model="$parent.model().value">
+            &lt;template>                
+                &lt;div>
+                    Child Text: &lt;input type="text" data-bind="value: model, valueUpdate: 'keyup'" />
+                &lt;/div>                
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
+        <p>Note that when the value property of the model is changed by the textbox, it triggers an update to the model property of the inner contentControl, however a change in the innerItemsControl does not signal the property it is bound to.</p>
+        <h3>Two way bindings</h3>
+        <p>By default bindings are one way, from the property referenced to the property set. In the following example</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock> 
+            <code>&lt;wo.view viewProperty="model().modelProperty" /></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock> 
+        <p>A change to the model() or the property model().modelPorperty will trigger a change in the viewProperty. However, a change in the view property will not trigger a change in the model().modelPorperty. In order to force this behaviour, a two way binding can be used. This is basically the same syntax as a one way binding, with the "-tw" specifying the binding is multidirectional</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock> 
+            <code>&lt;wo.view viewProperty-tw="model().modelProperty" /></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock> 
+        <p>For example:</p>
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+            <code>&lt;wo.contentControl model="{ value: ko.observable('The model') }">
+    &lt;template>
+        Parent Text: &lt;input type="text" data-bind="value: model().value, valueUpdate: 'keyup'" />
+        &lt;wo.contentControl model-tw="$parent.model().value">
+            &lt;template>                
+                &lt;div>
+                    Child Text: &lt;input type="text" data-bind="value: model, valueUpdate: 'keyup'" />
+                &lt;/div>                
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
+        <h3>Binding in code</h3>
+        <p>View model properties can also be bound in <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().bindFunction" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger">code</a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>. For example:</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock> 
+            <code>var myVm = new wo.view();
+myVm.bind("model", theValueIWantToBindTo, false);</code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock> 
         </script>
         
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.FunctionPage">
