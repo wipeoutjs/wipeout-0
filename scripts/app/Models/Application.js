@@ -192,9 +192,11 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
         cmplx.payload().intro = intro.payload();
         cmplx.payload().hello = hello.payload();
         
+        var anApp = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Lets build an app", "LetsBuildAnPppPage");
+        
         this.menu =
             new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout", [
-                new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", [intro, hello, cmplx]),
+                new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", [intro, hello, cmplx, anApp]),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("API", [
                     _wo,
                     _bindings,
