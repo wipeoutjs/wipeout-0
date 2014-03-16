@@ -369,17 +369,28 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             ]);
         })();
         
-        var intro = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Introduction", "IntroductionPage");
-        var hello = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Hello Wipeout", "HelloWipeoutPage");
-        var cmplx = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("A more complex example", "AMoreComplexExamplePage");
-        cmplx.payload().intro = intro.payload();
-        cmplx.payload().hello = hello.payload();
+        var _tutorial = (function() {            
+            var intro = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Introduction", "IntroductionPage");
+            var hello = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Hello Wipeout", "HelloWipeoutPage");
+            var cmplx = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("A more complex example", "AMoreComplexExamplePage");
+            cmplx.payload().intro = intro.payload();
+            cmplx.payload().hello = hello.payload();
+
+            var anApp = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Lets build an app", "LetsBuildAnPppPage");
+            
+            return [intro, hello, cmplx, anApp];
+        })();
         
-        var anApp = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Lets build an app", "LetsBuildAnPppPage");
+        var _features = (function() {            
+            var binding = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Binding", "BindingPage");
+            
+            return [binding];
+        })();        
         
         this.menu =
             new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout", [
-                new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", [intro, hello, cmplx, anApp]),
+                new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", _tutorial),
+                new Wipeout.Docs.Models.Components.TreeViewBranch("Features", _features),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("API", [
                     _wo,
                     _bindings,

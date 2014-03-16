@@ -613,6 +613,50 @@ childView.prototype.onRendered = function (oldNodes, newNodes) {
         Coming soon
         </script>
         
+        <script type="text/xml" id="BindingPage">
+        <h1>Bindings</h1>
+        Binding is the process of setting a property of view model inline. A propery of a view model can be bound to a static value, a constant or a property of the view model or any other view model defined earlier in the visual chain. For example
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+            <code>&lt;wo.contentControl model="{ innerModel: { value: 'The inner model' }, value: 'The model' }">
+    &lt;template>
+        &lt;wo.contentControl 
+                model="$parent.model().innerModel" 
+                staticVal="'This is a static value'" 
+                constantVal="wo.DEBUG" 
+                bindToParent="$parent.model().value" 
+                bindToThis="model().value">
+            &lt;template>
+                &lt;ul>
+                    &lt;li>
+                        model().value:
+                        &lt;span data-bind="text: model().value">&lt;/span>
+                    &lt;/li>
+                    &lt;li>
+                        staticVal:
+                        &lt;span data-bind="text: staticVal">&lt;/span>
+                    &lt;/li>
+                    &lt;li>
+                        constantVal:
+                        &lt;span data-bind="text: constantVal">&lt;/span>
+                    &lt;/li>
+                    &lt;li>
+                        bindToParent:
+                        &lt;span data-bind="text: bindToParent">&lt;/span>
+                    &lt;/li>
+                    &lt;li>
+                        bindToThis:
+                        &lt;span data-bind="text: bindToThis">&lt;/span>
+                    &lt;/li>
+                &lt;/ul>                
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+        <h3>Binding to observables</h3>
+        In an MVVM pattern an update of a property should trigger updates to all properties bound to it. This is true in wipeout, as long as knockout observables are being used
+        </script>
+        
         <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.FunctionPage">
             <h2 data-bind="text: model().fullyQualifiedName"></h2>
             <div data-bind="html: model().summary"></div>
