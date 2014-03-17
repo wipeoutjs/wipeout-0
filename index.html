@@ -740,10 +740,198 @@ childView.prototype.onRendered = function (oldNodes, newNodes) {
         </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> set to true, meaning it will have no binding context.</p>
             
         </script>
+                        
+        <script type="text/xml" id="ViewModelLifecyclePage">
+        <h1>View Model Lifecycle</h1>
+        <p>It is important to know the view model lifecycle and where to put code. Below is a simple test to show the lifecycle of events within a view model</p>
+        <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+            <code>window.testNamespace = {};
+// view model to collect data
+testNamespace.testClass = wo.view.extend(function() {
+    // call the parent constructor
+    this._super(wo.visual.getBlankTemplateId());
+    
+    // create a place to store the events which occur
+    this.setupEvents = ko.observableArray([]);
+    this.disposeEvents = ko.observableArray([]);
+    
+    // signal that the constructor was called
+    this.registerEvent({name: "Constructor", description: "The object constructor. At this stage no properties\
+    have been set and the object has not been rendered"});
+}, "testClass");
+
+// override each hook and add it to the events called
+testNamespace.testClass.prototype.dispose = function () {
+    this.registerEvent({name: "dispose", description: "At this point the object is about to be disposed. A\
+    disposed object cannot be used anymore"});
+    
+    this._super();
+};
+
+testNamespace.testClass.prototype.initialize = function(propertiesXml, parentBindingContext) {
+    this.registerEvent({name: "initialize", description: "The object is about to be initialized. After this\
+    method the items properties will be set, but not its templateItems. The item has not been rendered yet."});
+    
+    this._super(propertiesXml, parentBindingContext);
+};
+
+testNamespace.testClass.prototype.onApplicationInitialized = function () {
+    this.registerEvent({name: "onApplicationInitialized", description: "This is called once if the view\
+    model is an application root (used with the wipeout binding). It is called after everything\
+    has been set and rendered"});
+    
+    this._super(propertiesXml, parentBindingContext);
+};
+
+testNamespace.testClass.prototype.onInitialized = function () {    
+    this.registerEvent({name: "onInitialized", description: "This is called after the initialize\
+    function has fired."});
+    
+    this._super();
+};
+
+testNamespace.testClass.prototype.onModelChanged = function (oldVal, newVal) {
+    this.registerEvent({name: "onModelChanged", description: "This method is fired each time\
+    the model changes. It should be used to operate on a model and to dispose of operations on an old model"});
+    
+    this._super(oldVal, newVal);
+};
+
+testNamespace.testClass.prototype.onRendered = function (newValues, oldValues) {
+    this.registerEvent({name: "onRendered", description: "This is called after an item is renered.\
+    It supplies an array of nodes deleted and nodes created during the rendering process"});
+    
+    this._super(newValues, oldValues);
+};
+
+testNamespace.testClass.prototype.onUnrender = function () {
+    this.registerEvent({name: "onUnrender", description: "This is called after the item is unRendered."});
+    
+    this._super();
+};
+
+testNamespace.testClass.prototype.unRender = function () {
+    this.registerEvent({name: "unRender", description: "This is called when the item is unRendered.\
+    Un rendering is the process of removing a template from an item, disposing of template related\
+    items and removing the template-less view model from the view hirearchy."});
+    
+    this._super();    
+};
+
+testNamespace.testClass.prototype.unTemplate = function () {    
+    this.registerEvent({name: "unTemplate", description: "This is called when the item is unTemplated.\
+    Un templating gives the item a blank template and disposes of template related items."});
+    
+    this._super();
+};
+
+testNamespace.testClass.prototype.registerEvent = function(event) {
+    if(this.disposing)
+        this.disposeEvents.push(event);
+    else
+        this.setupEvents.push(event);
+}
+
+// view model to display data
+testNamespace.testClassRunner = wo.view.extend(function() {
+    // call the parent constructor
+    this._super("testNamespace.testClassRunner");
+    
+    // create a place to store the events which occur
+    this.events = ko.observableArray([]);
+}, "testNamespace");
+
+// when all rendering is complete, dispose of the test instance to see the order of disposal events
+testNamespace.testClassRunner.prototype.onRendered = function(oldValues, newValues) {
+    this._super(oldValues, newValues);
+    
+    this.templateItems.testClass_instance.disposing = true;
+    this.templateItems.testClass_instance.dispose();
+};</code>
+        </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+        <p>With template:</p>
+        <Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
+            <code>&lt;script type="text/xml" id="testNamespace.testClassRunner">
+    &lt;h3>Order of events&lt;/h3>
+    &lt;!-- Create the target view model which will be monitored -->
+    &lt;testNamespace.testClass id="testClass_instance" />
+    &lt;!-- Display setup function calls -->
+    &lt;wo.itemsControl itemSource="$parent.templateItems.testClass_instance.setupEvents">
+        &lt;template>
+            &lt;table>             
+                &lt;thead>
+                    &lt;tr>
+                        &lt;th>Order&lt;/th>
+                        &lt;th>Function&lt;/th>
+                        &lt;th>Description&lt;/th>
+                    &lt;/tr>
+                &lt;/thead>
+                &lt;tbody data-bind="itemsControl: null">
+                &lt;/tbody>
+            &lt;/table>
+        &lt;/template>
+        &lt;itemTemplate>
+            &lt;tr>
+                &lt;td data-bind="text: $parent.items.indexOf($data) + 1">&lt;/td>
+                &lt;td data-bind="text: model().name">&lt;/td>
+                &lt;td data-bind="text: model().description">&lt;/td>
+            &lt;/tr>
+        &lt;/itemTemplate>
+    &lt;/wo.itemsControl>
+    
+    &lt;!-- Display dispose function calls -->
+    &lt;h3>Disposing:&lt;/h3>
+    &lt;wo.itemsControl itemSource="$parent.templateItems.testClass_instance.disposeEvents">
+        &lt;template>
+            &lt;table>             
+                &lt;thead>
+                    &lt;tr>
+                        &lt;th>Order&lt;/th>
+                        &lt;th>Function&lt;/th>
+                        &lt;th>Description&lt;/th>
+                    &lt;/tr>
+                &lt;/thead>
+                &lt;tbody data-bind="itemsControl: null">
+                &lt;/tbody>
+            &lt;/table>
+        &lt;/template>
+        &lt;itemTemplate>
+            &lt;tr>
+                &lt;td data-bind="text: $parent.items.indexOf($data) + 1">&lt;/td>
+                &lt;td data-bind="text: model().name">&lt;/td>
+                &lt;td data-bind="text: model().description">&lt;/td>
+            &lt;/tr>
+        &lt;/itemTemplate>
+    &lt;/wo.itemsControl>
+&lt;/script></code>
+        </Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+            <code>&lt;testNamespace.testClassRunner /></code>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
+        </script>
+                
+        <script type="text/xml" id="SkippingABindingContextPage">
+        <h1>Skipping a binding context</h1>
+        <p>It can be useful to skip a binding context if it not needed. For example, when using a <code>wo.if</code> view model, it is generally un necessary to need any of the propertes of this view model or to want to set one of its <code>templateItems</code> (TODO, link). In this case we can ignore the binding context of this element using the <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().woInvisible" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><code>woInvisible</code></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> property. </p>
+        <p>The <code>woInvisible</code> property is a on the <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().visual" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.visual</code></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> class and is <code>false</code> by defualt. It can be set to true in the view model constructor or in the template, but is not an observable and later changes will not reflect in the binding contesxt.</p>
+        <p>The default value for the <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model()._if" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+            <template>
+                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.if</code></a>
+            </template>                            
+        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> class is <code>true</code>.</p>
+        </script>
         
         <script type="text/xml" id="WipeoutObjectOrientedFrameworkPage">
         <h1>The wipeout object oriented framework</h1>
-        <p>Wipeout sits on top of a very simple prototype based <a href="http://en.wikipedia.org/wiki/Object-oriented_programming">object oriented</a> framework. This is framework can be used when developing applications using wipeout, or can be superceeded by any customn OO framework which supports <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof">instanceof</a> checks, for instance <a href="http://www.typescriptlang.org">Typescript</a>.</p>
+        <p>Wipeout sits on top of a very simple prototype based <a target="_blank" href="http://en.wikipedia.org/wiki/Object-oriented_programming">object oriented</a> framework. This is framework can be used when developing applications using wipeout, or can be superceeded by any customn OO framework which supports <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof">instanceof</a> checks, for instance <a target="_blank" href="http://www.typescriptlang.org">Typescript</a>.</p>
         <p>
         <ul>
             <li>The class <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().object" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
@@ -751,7 +939,7 @@ childView.prototype.onRendered = function (oldNodes, newNodes) {
                     <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.object</code></a>
                 </template>                            
             </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> is the base class for all objects in the framework</li>    
-            <li>The framework leans heavily on the <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype"><code>prototype</code></a> object. Instance functions are added to the <code>prototype</code> for speed and to support method overrides. This methodology does not allow for protected or private functions and has little scope for private properties</li>            
+            <li>The framework leans heavily on the <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype"><code>prototype</code></a> object. Instance functions are added to the <code>prototype</code> for speed and to support method overrides. This methodology does not allow for protected or private functions and has little scope for private properties</li>            
             <li>In order to inherit from an existing class, you use it's static <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().extend" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
                             <template>
                                 <a href="javascript: void(0)" data-bind="click: trigger"><code>extend()</code></a>
@@ -796,8 +984,8 @@ childView.prototype.onRendered = function (oldNodes, newNodes) {
         </ol></p>
         </script>
         
-        <script type="text/xml" id="BindingPage">
-        <h1>Bindings</h1>
+        <script type="text/xml" id="BindingPropertiesPage">
+        <h1>Binding Properties</h1>
         Binding is the process of setting a property of a view model inline. A propery of a view model can be bound to a static value, a constant or a property of the view model or any other view model defined earlier in the visual chain. The binding context is the same as a <a href="http://knockoutjs.com/documentation/binding-context.html" target="_blank">knockout binding context</a>. For example
         <Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
             <code>&lt;wo.contentControl model="{ innerModel: { value: 'The inner model' }, value: 'The model' }">

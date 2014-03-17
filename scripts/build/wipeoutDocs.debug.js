@@ -442,6 +442,13 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
         })();
         
         var _features = (function() {     
+            
+            var skippingABindingContextPage = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Skipping a binding context", "SkippingABindingContextPage");
+            skippingABindingContextPage.payload().woInvisible = woInvisibleBranch.payload();
+            skippingABindingContextPage.payload().visual = visualBranch.payload();
+            skippingABindingContextPage.payload()._if = ifBranch.payload();
+            
+            
             var oo = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Wipeout OO framework", "WipeoutObjectOrientedFrameworkPage");
             oo.payload().object = objectBranch.payload();
             oo.payload()._super = _superBranch.payload();
@@ -449,7 +456,7 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             oo.payload().useVirtualCache = useVirtualCacheBranch.payload();
             oo.payload().clearVirtualCache = clearVirtualCacheBranch.payload();
             
-            var binding = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Binding", "BindingPage");
+            var binding = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Binding Properties", "BindingPropertiesPage");
             binding.payload().bindFunction = bindFunction.payload();
             
             var models = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Models", "ModelsPage");
@@ -462,7 +469,7 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             woClasses.payload().contentControl = contentControlBranch.payload();
             woClasses.payload()._if = ifBranch.payload();
             woClasses.payload().itemsControl = itemsControlBranch.payload();
-            woClasses.payload().woInvisible = woInvisibleBranch.payload();
+            woClasses.payload().woInvisible = skippingABindingContextPage.payload();
             
             var woBindings = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("Wipeout Native Bindings", "WipeoutNativeBindingsPage");
             woBindings.payload().itemsControl = itemsControlPage.payload();
@@ -474,7 +481,9 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             woBindings.payload()._wipeout = _wipeoutPage.payload();
             woBindings.payload()._icRender = _icRenderPage.payload();
             
-            return [oo, woClasses, woBindings, binding, models];
+            var viewModelLifeCycle = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("View Model Lifecycle", "ViewModelLifecyclePage");
+            
+            return [oo, woClasses, woBindings, binding, models, skippingABindingContextPage, viewModelLifeCycle];
         })();        
         
         this.menu =
