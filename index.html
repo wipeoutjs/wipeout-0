@@ -845,6 +845,7 @@ testNamespace.testClassRunner = wo.view.extend(function() {
 testNamespace.testClassRunner.prototype.onRendered = function(oldValues, newValues) {
     this._super(oldValues, newValues);
     
+    // tell the child to place events on the dispose queue from now on
     this.templateItems.testClass_instance.disposing = true;
     this.templateItems.testClass_instance.dispose();
 };</code>
@@ -853,8 +854,13 @@ testNamespace.testClassRunner.prototype.onRendered = function(oldValues, newValu
         <Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
             <code>&lt;script type="text/xml" id="testNamespace.testClassRunner">
     &lt;h3>Order of events&lt;/h3>
+    &lt;p>The oder denotes the order functions are called in, not the oder functions are 
+    finished execution in. Placing the &lt;code>_super(...)&lt;/code> call before the 
+    event registation would yield a slightly different order.&lt;/p>
     &lt;!-- Create the target view model which will be monitored -->
     &lt;testNamespace.testClass id="testClass_instance" />
+    
+    &lt;h3>Creating:&lt;/h3>
     &lt;!-- Display setup function calls -->
     &lt;wo.itemsControl itemSource="$parent.templateItems.testClass_instance.setupEvents">
         &lt;template>
