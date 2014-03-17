@@ -15,7 +15,7 @@ x binding contexts and the model property
 x description of each class in wipeout.base class
 x description of each binding
 x woInvisible
-virtual method hooks
+x virtual method hooks
 Use of <!-- ko --> tags
 observables, in constructor only
 namespaces/debug
