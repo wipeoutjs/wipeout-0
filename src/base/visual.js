@@ -161,6 +161,9 @@ Class("wipeout.base.visual", function () {
     
     visual.prototype.getParent = function() {
         ///<summary>Get the parent visual of this visual</summary>
+        if(this.__woBag.rootHtmlElement == null)
+            return null;
+        
         var nextTarget;
         var current = visual.getParentElement(this.__woBag.rootHtmlElement);
         while(current) {
