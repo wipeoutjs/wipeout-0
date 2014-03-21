@@ -17,3 +17,6 @@ changes:    __createdByWipeout -> __woBag.createdByWipeout
             modelChanged -> onModelChanged
             rootHtmlChanged -> onRendered
             wpfko -> wipeout
+            
+            
+document build.debug.js

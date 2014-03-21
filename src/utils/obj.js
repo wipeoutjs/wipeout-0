@@ -129,25 +129,41 @@ var parseBool = function(input) {
 
 Class("wipeout.utils.obj", function () {
         
-    var createObject = function(constructorString, context) {
-        ///<summary>Create an object from string</summary>
+    var getObject = function(constructorString, context) {
+        ///<summary>Get an object from string</summary>
         ///<param name="constructorString" type="String">A pointer to the object to create</param>
         ///<param name="context" type="String">The root context</param>
-        ///<returns type="Any">The created object</returns>
+        ///<returns type="Any">The object</returns>
         if(!context) context = window;
         
         var constructor = constructorString.split(".");
         for(var i = 0, ii = constructor.length; i <ii; i++) {
             context = context[constructor[i]];
-            if(!context) {
-                throw "Cannot create object \"" + constructorString + "\"";
-            }
+            if(context == null)
+                return null;
         }
         
-        if(context instanceof Function)            
-            return new context();
-        else 
-            throw constructorString + " is not a valid function.";
+        return context;
+    };
+        
+    var createObject = function(constructorString, context) {
+        ///<summary>Create an object from string</summary>
+        ///<param name="constructorString" type="String">A pointer to the object to create</param>
+        ///<param name="context" type="String">The root context</param>
+        ///<returns type="Any">The created object</returns>
+        
+        var constructor = getObject(constructorString, context);
+        
+        if(constructor instanceof Function) {
+            
+            var object = new constructor();
+            if(object instanceof wipeout.base.view && DEBUG)
+                object.__woBag.constructedViewType = constructorString;
+            
+            return object;
+        }
+        
+        throw constructorString + " is not a valid function.";
     };
 
     var copyArray = function(input) {
@@ -168,6 +184,7 @@ Class("wipeout.utils.obj", function () {
         trim: trim,
         enumerate: enumerate,
         enumerateDesc: enumerateDesc,
+        getObject: getObject,
         createObject: createObject,
         copyArray: copyArray
     };    
