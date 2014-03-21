@@ -28,6 +28,38 @@ var DEBUG = wo.DEBUG = true;
             
             recursive(document.getElementsByTagName("body")[0]);
             return values;
+        },
+        profiler: {
+            profile: function(rootViewModel) {
+                jQ();
+                var $ = window.jQuery;
+                var profilerKey = "wipeoutprofiler";
+                
+                var id = 0;
+                var vms = [];
+                
+                function recursive(inputElement) {
+                    
+                    var vm = wipeout.utils.html.getViewModel(inputElement);
+                    if(vms.indexOf(vml) === -1) {
+                        vms.push(vm);
+                        $(vm).data("wipeoutprofiler", {id: ++i});
+                    }                    
+                    
+                    enumerate(wipeout.utils.ko.virtualElements.childNodes(applicationRoot.childNodes), function() {
+
+                    });
+                };
+                
+                try {
+                    recursive(rootViewModel.__woBag.rootHtmlElement, null);
+                } finally {                
+                    // cleanup
+                    enumerate(vms, function(vm) {
+                        $.removeData(vm, profilerKey);
+                    });
+                }
+            }
         }
     };
 })();

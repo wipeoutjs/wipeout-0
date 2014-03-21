@@ -74,6 +74,39 @@ Class("wipeout.utils.ko", function () {
             ///<param name="node" type="HTMLNode">The node to test</param>
             ///<returns type="Boolean"></returns>
             return node.nodeType === 8 && trim(node.nodeValue) === "/ko";
+        },
+        childNodes: function(element) {
+            ///<summary>Returns the child nodes of an element or knockout virtual element</summary>
+            ///<param name="element" type="HTMLNode">The parent</param>
+            ///<returns type="Array">The child nodes</returns>
+            
+            if(element.nodeType == 1)
+                return element.childNodes;
+            
+            if(!_ko.virtualElements.isVirtual(element))
+                return [];
+            
+            var output = [];
+            var depth = 0;
+            element = element.nextSibling;
+            while (depth >= 0) {
+                if(!element)
+                    throw "Cannot find closing tag to match tag ko";
+                
+                var closing = false;
+                if(_ko.virtualElements.isVirtual(element))
+                    depth++;
+                else if (closing = _ko.virtualElements.isVirtualClosing(element))
+                    depth--;
+                
+                if (depth === 0 && !closing) {
+                    output.push(element);
+                }
+                
+                element = element.nextSibling;
+            }
+            
+            return output;
         }
     };
     
