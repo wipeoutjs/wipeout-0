@@ -178,6 +178,10 @@ Class("wipeout.utils.obj", function () {
         return output;
     };
     
+    var random = function(max) {
+        return Math.floor(Math.random() * max);
+    };
+    
     return {
         parseBool: parseBool,
         trimToLower: trimToLower,
@@ -186,7 +190,8 @@ Class("wipeout.utils.obj", function () {
         enumerateDesc: enumerateDesc,
         getObject: getObject,
         createObject: createObject,
-        copyArray: copyArray
+        copyArray: copyArray,
+        random: random
     };    
 });
 

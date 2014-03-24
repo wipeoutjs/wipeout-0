@@ -40,6 +40,10 @@
         
         this.justDone(actions[this.current++](this));
     };
+    
+    rootView.prototype.profile = function() {
+        wo.debug.profiler.profile(this);
+    };
         
     model = {
         rootTitle: ko.observable("People"),
