@@ -42,7 +42,7 @@
     };
     
     rootView.prototype.profile = function() {
-        wo.debug.profiler.profile(this);
+        wipeout.profile.profiler.profile(this);
     };
         
     model = {
