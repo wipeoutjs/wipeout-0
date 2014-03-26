@@ -18,9 +18,9 @@ Class("wipeout.profile.profiler", function () {
         $("body").append(profiler.style);   
     };
     
-    profiler.prototype.level1Nodes = function() {
-        // TODO: where nodeType = 1
-        return wipeout.utils.ko.virtualElements.childNodes(this.vm.__woBag.rootHtmlElement);
+    profiler.prototype.allNodes = function() {
+        var $elements = $(wipeout.utils.ko.virtualElements.childNodes(this.vm.__woBag.rootHtmlElement));
+        return $elements.find('*').add($elements);
     };
     
     var eventNamespace = ".wipeoutProfiler";
@@ -29,17 +29,13 @@ Class("wipeout.profile.profiler", function () {
         
         var vm = this.vm;
         
-        enumerate(this.level1Nodes(), function(element) {
-            $el = $(element);
-            
-            $el.addClass(this.cssClass);
-            $el.on("click" + eventNamespace, function (e) {
+        var _this = this;
+        this.allNodes().addClass(_this.cssClass).on("click" + eventNamespace, function (e) {
                 e.preventDefault();
                 e.stopPropagation();
 
                 wipeout.profile.utils.popup(wipeout.profile.utils.generateInfo(vm));
-            });            
-        }, this);
+            });
         
         //profiler.style.innerHTML += "." + this.cssClass + " {background-color:#" + wipeout.profile.utils.generateColour() + " !important;}";
         profiler.style.innerHTML += "." + this.cssClass + " {background-color:#efcdd9 !important;}";
@@ -47,7 +43,7 @@ Class("wipeout.profile.profiler", function () {
     
     profiler.prototype.dispose = function() {
         // TODO: where nodeType = 1
-        $(this.level1Nodes())
+        this.allNodes()
             .off("click" + eventNamespace)
             .removeClass(this.cssClass);
     };
