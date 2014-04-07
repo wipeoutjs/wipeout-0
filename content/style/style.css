@@ -26,6 +26,10 @@ body { padding-top: 70px; }
     padding-left: 10px;
 }
 
+.leftNav li {
+    list-style: none;
+}
+
 p {
     margin-top: 10px;
     margin-bottom: 20px;
