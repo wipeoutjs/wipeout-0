@@ -1,6 +1,8 @@
 compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wipeout.Docs.Models.Components.PageTreeViewBranch", function() {
     var classTreeViewBranch = function(name, classDescription, customBranches) {
         this._super(name, classDescription, classTreeViewBranch.compileBranches(classDescription, customBranches));
+        
+        this.payload().title = classDescription.classFullName;
     };
     
     classTreeViewBranch.compileBranches = function(classDescription, customBranches /*optional*/) {

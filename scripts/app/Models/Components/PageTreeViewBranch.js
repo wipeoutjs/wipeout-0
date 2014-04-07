@@ -3,6 +3,8 @@ compiler.registerClass("Wipeout.Docs.Models.Components.PageTreeViewBranch", "Wip
         this._super(name, branches);
         
         this.page = page;
+        if(this.page)
+            this.page.title = name;
     };
     
     pageTreeViewBranch.prototype.payload = function() {

@@ -12,6 +12,11 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", functio
     application.prototype.onRendered = function() {
         this._super.apply(this, arguments);
         
+        if(this.templateItems.content)
+            this.registerDisposable(this.templateItems.content.model.subscribe(function() {
+                window.scrollTo(0,0);
+            }).dispose);
+        
         //TODO: this
         this.templateItems.treeView.select();
     };

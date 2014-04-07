@@ -537,6 +537,8 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Api", "wo.object", functi
 compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wipeout.Docs.Models.Components.PageTreeViewBranch", function() {
     var classTreeViewBranch = function(name, classDescription, customBranches) {
         this._super(name, classDescription, classTreeViewBranch.compileBranches(classDescription, customBranches));
+        
+        this.payload().title = classDescription.classFullName;
     };
     
     classTreeViewBranch.compileBranches = function(classDescription, customBranches /*optional*/) {
@@ -614,6 +616,8 @@ compiler.registerClass("Wipeout.Docs.Models.Components.PageTreeViewBranch", "Wip
         this._super(name, branches);
         
         this.page = page;
+        if(this.page)
+            this.page.title = name;
     };
     
     pageTreeViewBranch.prototype.payload = function() {
@@ -1116,6 +1120,12 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", functio
     
     application.prototype.onRendered = function() {
         this._super.apply(this, arguments);
+        
+        debugger;
+        if(this.templateItems.content)
+            this.registerDisposable(this.templateItems.content.model.subscribe(function() {
+                window.scrollTo(0,0);
+            }).dispose);
         
         //TODO: this
         this.templateItems.treeView.select();

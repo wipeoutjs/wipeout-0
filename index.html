@@ -7,12 +7,23 @@ title: Wipeout
         <title>{{ site.name }}</title>
     </head>
     <body>
-            
-        <div data-bind="wipeout: Wipeout.Docs.ViewModels.Application" id="PageRoot">Compiling API. Please wait...</div>
+                
+        <div data-bind="wipeout: Wipeout.Docs.ViewModels.Application" id="PageRoot">            
+            <div class="staticHeader-height"></div>
+            <div class="staticHeader staticHeader-height">
+                <div class="navbar navbar-default">
+                    <div class="navbar-collapse collapse navbar-responsive-collapse">
+                        <h1 style="float: left" class="leftNav-width">Wipeout</h1>
+                        <div>Compiling API. Please wait...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         
-        <link rel="stylesheet" type="text/css" href="content/style/style.css">
         <link rel="stylesheet" type="text/css" href="content/style/pretify/prettify.css">
         <link rel="stylesheet" type="text/css" href="content/style/bootstrap/lumen/bootstrap.css">
+        
+        <link rel="stylesheet" type="text/css" href="content/style/style.css">
         
         <script type="text/javascript" src="scripts/lib/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="scripts/lib/knockout-2.3.0.debug.js"></script>

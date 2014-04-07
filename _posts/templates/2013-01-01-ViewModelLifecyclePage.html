@@ -1,5 +1,4 @@
 
-        <h1>View Model Lifecycle</h1>
         <p>It is important to know the view model lifecycle and where to put code. Below is a simple test to show the lifecycle of events within a view model</p>
         <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
             <code>window.testNamespace = {};
@@ -121,7 +120,7 @@ testNamespace.testClassRunner.prototype.onRendered = function(oldValues, newValu
     &lt;!-- Display setup function calls -->
     &lt;wo.itemsControl itemSource="$parent.templateItems.testClass_instance.setupEvents">
         &lt;template>
-            &lt;table>             
+            &lt;table class="table">             
                 &lt;thead>
                     &lt;tr>
                         &lt;th>Order&lt;/th>
@@ -146,7 +145,7 @@ testNamespace.testClassRunner.prototype.onRendered = function(oldValues, newValu
     &lt;h3>Disposing:&lt;/h3>
     &lt;wo.itemsControl itemSource="$parent.templateItems.testClass_instance.disposeEvents">
         &lt;template>
-            &lt;table>             
+            &lt;table class="table">             
                 &lt;thead>
                     &lt;tr>
                         &lt;th>Order&lt;/th>
