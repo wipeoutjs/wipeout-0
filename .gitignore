@@ -32,6 +32,7 @@ local.properties
 ## Jekyll
 #################
 
+#Jekyll build files
 _site/
 
 
