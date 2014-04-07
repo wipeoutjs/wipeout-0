@@ -8,7 +8,8 @@
         <div data-bind="wipeout: Wipeout.Docs.ViewModels.Application" id="PageRoot">Compiling API. Please wait...</div>
         
         <link rel="stylesheet" type="text/css" href="content/style/style.css">
-        <link rel="stylesheet" type="text/css" href="content/style/prettify.css">
+        <link rel="stylesheet" type="text/css" href="content/style/pretify/prettify.css">
+        <link rel="stylesheet" type="text/css" href="content/style/bootstrap/lumen/bootstrap.css">
         
         <script type="text/javascript" src="scripts/lib/jquery-1.10.2.min.js"></script>
         <script type="text/javascript" src="scripts/lib/knockout-2.3.0.debug.js"></script>
@@ -889,7 +890,7 @@ helloWipeout.rootApplication = wo.view.extend(function () {
                     <h3>Arguments</h3>
                     <wo.itemsControl itemSource="model().arguments">
                         <template>
-                            <table class="classTable">
+                            <table class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>Argument</th>
@@ -966,7 +967,7 @@ helloWipeout.rootApplication = wo.view.extend(function () {
                 <script type="text/xml" id="Wipeout.Docs.ViewModels.Pages.ClassItemTable">
                     <div data-bind="visible: itemSource().length">
     <h2 data-bind="html: title"></h2>
-    <table class="classTable">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th data-bind="text: itemType"></th>
