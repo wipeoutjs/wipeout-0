@@ -26,3 +26,5 @@ reserved elements
 vm object lifecycle
 templateItems
 itemsControl
+
+spelling: "Creates a rough has code for the given string"
