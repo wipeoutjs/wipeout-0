@@ -1,22 +1,41 @@
 ---
 title: Wipeout
-layout: default
 ---
-
-  {% for template in site.posts %}
-    {% if template.path contains '_posts/templates/' %}  
-        <script type="text/xml" id="{{ template.path | replace: '_posts/templates/', '' | replace: '/', '.' | replace: '/', '.' | replace: '2013-01-01-', '' | replace: '.html', '' }}">
-            {{ template.content }}
-        </script>
-    {% endif %}  
-  {% endfor %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ site.name }}</title>
+    </head>
+    <body>
             
-<div data-bind="wipeout: Wipeout.Docs.ViewModels.Application" id="PageRoot">Compiling API. Please wait...</div>
-<script type="text/javascript">
-    $(function() {
-        setTimeout(function() {
-            window.model = new Wipeout.Docs.Models.Application();
-            ko.applyBindings(window.model, document.getElementById("PageRoot"));
-        }, 1);
-    });
-</script>
+        <div data-bind="wipeout: Wipeout.Docs.ViewModels.Application" id="PageRoot">Compiling API. Please wait...</div>
+        
+        <link rel="stylesheet" type="text/css" href="content/style/style.css">
+        <link rel="stylesheet" type="text/css" href="content/style/prettify.css">
+        
+        <script type="text/javascript" src="scripts/lib/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="scripts/lib/knockout-2.3.0.debug.js"></script>
+        <script type="text/javascript" src="scripts/lib/wipeout-0.3.debug.js"></script>
+        
+        <script type="text/javascript" src="scripts/lib/prettify.js"></script>
+        
+        <script type="text/javascript" src="scripts/build/wipeoutDocs.debug.js"></script>
+
+        {% for template in site.posts %}
+            {% if template.path contains '_posts/templates/' %}  
+                <script type="text/xml" id="{{ template.path | replace: '_posts/templates/', '' | replace: '/', '.' | replace: '/', '.' | replace: '2013-01-01-', '' | replace: '.html', '' }}">
+                    {{ template.content }}
+                </script>
+            {% endif %}  
+        {% endfor %}
+        
+        <script type="text/javascript">
+            $(function() {
+                setTimeout(function() {
+                    window.model = new Wipeout.Docs.Models.Application();
+                    ko.applyBindings(window.model, document.getElementById("PageRoot"));
+                }, 1);
+            });
+        </script>                 
+    </body>
+</html>
