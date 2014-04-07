@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ site.name }}</title>        
+        <link rel="stylesheet" type="text/css" href="content/style/pretify/prettify.css">
+        <link rel="stylesheet" type="text/css" href="content/style/bootstrap/lumen/bootstrap.css">        
+        <link rel="stylesheet" type="text/css" href="content/style/style.css">
+    </head>
+    <body>
+                
+        <div>            
+            <div class="navbar navbar-default navbar-fixed-top">
+                <div class="navbar-collapse collapse navbar-responsive-collapse">
+                    <a href="/">
+                        <h1 style="float: left; margin-left: 15px;" class="leftNav-width">Wipeout</h1>
+                    </a>
+                    <h1 style="float: left" id="headerText"></h1>                    
+                    <ul class="wo-navbar-right">
+                        <li><a href="/api.html"><button>Documentation</button></a></li>
+                        <li><a href="/download.html"><button>Download</button></a></li>
+                        <li><a target="_blank" href="http://github.com/ShaneGH/wipeout"><button>GitHub</button></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+                
+        <script type="text/javascript" src="scripts/lib/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="scripts/lib/knockout-2.3.0.debug.js"></script>
+        <script type="text/javascript" src="scripts/lib/wipeout-0.3.debug.js"></script>
+        
+        <div>
+            {{ content }}
+        </div>
+        
+    </body>
+</html>

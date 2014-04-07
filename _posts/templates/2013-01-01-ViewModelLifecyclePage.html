@@ -1,5 +1,5 @@
 
-        <p>It is important to know the view model lifecycle and where to put code. Below is a simple test to show the lifecycle of events within a view model</p>
+        <p>It is important to know the view model lifecycle and where to put code. Below is a simple test to show the lifecycle of events within a view model. For a quick overview of results click <a href="#orderOfEvents">here</a></p>
         <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
             <code>window.testNamespace = {};
 // view model to collect data
@@ -109,6 +109,7 @@ testNamespace.testClassRunner.prototype.onRendered = function(oldValues, newValu
         <p>With template:</p>
         <Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
             <code>&lt;script type="text/xml" id="testNamespace.testClassRunner">
+    &lt;div id="orderOfEvents">&lt;/div>
     &lt;h3>Order of events&lt;/h3>
     &lt;p>The order denotes the order functions are called in, not the order functions are 
     finished execution in. Placing the &lt;code>_super(...)&lt;/code> call before the 

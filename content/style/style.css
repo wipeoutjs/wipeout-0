@@ -1,3 +1,4 @@
+body { padding-top: 70px; }
 
 .staticHeader-height {
     height: 80px;
@@ -28,4 +29,39 @@
 p {
     margin-top: 10px;
     margin-bottom: 20px;
+}
+
+ul.wo-navbar-right {
+    position: absolute;
+    bottom: 0px;
+    right: 15px;
+    margin-bottom: 0px;
+}
+
+ul.wo-navbar-right li {
+    float: left;
+    padding: 5px;
+    list-style: none;
+}
+
+.index-page {
+    width: 100%;
+    padding: 30px;
+}
+
+.columns * {
+    float: left;
+}
+
+.columns .column-4 {
+    width: 25%;
+}
+
+.columns .column-3 {
+    width: 33.33%;
+}
+
+.main-image {
+    height: 125px;
+    width: 125px;
 }
