@@ -1,0 +1,13 @@
+<wo.itemsControl itemSource="model().branches" select="$parent.select">
+    <template>
+        <div>
+            <a href="javascript:void(0)" data-bind="click: select, text: model().name"></a>
+            <ul data-bind="itemsControl: null" style="display: none" id="content"></ul>
+        </div>
+    </template>
+    <itemTemplate>
+        <li>
+            <Wipeout.Docs.ViewModels.Components.TreeViewBranch />
+        </li>
+    </itemTemplate>
+</wo.itemsControl>        

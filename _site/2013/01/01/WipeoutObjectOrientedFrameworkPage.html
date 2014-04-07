@@ -1,0 +1,53 @@
+
+        <h1>The wipeout object oriented framework</h1>
+        <p>Wipeout sits on top of a very simple prototype based <a target="_blank" href="http://en.wikipedia.org/wiki/Object-oriented_programming">object oriented</a> framework. This is framework can be used when developing applications using wipeout, or can be superceeded by any customn OO framework which supports <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof">instanceof</a> checks, for instance <a target="_blank" href="http://www.typescriptlang.org">Typescript</a>.</p>
+        <p>
+        <ul>
+            <li>The class <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().object" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                <template>
+                    <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.object</code></a>
+                </template>                            
+            </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> is the base class for all objects in the framework</li>    
+            <li>The framework leans heavily on the <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/prototype"><code>prototype</code></a> object. Instance functions are added to the <code>prototype</code> for speed and to support method overrides. This methodology does not allow for protected or private functions and has little scope for private properties</li>            
+            <li>In order to inherit from an existing class, you use it's static <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().extend" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>extend()</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> method.</li>
+            <li>In order to call the base constructor you use the <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model()._super" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>_super()</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> method.</li>
+            <li>It is very important that the first line of code in the constructor of a child class must be a call to <code>this._super(...)</code>. If not, the results may be unpredictable.</li>
+            <li>In order to call a base method in an overridden virtual method you also use the <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model()._super" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>_super()</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> method.</li>
+            <li><Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().object" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                <template>
+                    <a href="javascript: void(0)" data-bind="click: trigger">An example of using the framework can be found here.</a>
+                </template>                            
+            </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent></li>
+        </ul>
+        </p>
+        <h3>The _super cache</h3>
+        <p>When the <code>_super(...)</code> method is called it has to dynamically look up which method is to be called from the ancestor class. In order to speed up subsequent look ups, the retrieved method is cached for future use. This may cause a problem if new methods are added to object prototypes after the caching process has begun. There are 2 methods to getting around such scenarios:
+<ol>
+    <li>Turn off the virtual cache. You can do this by setting <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().useVirtualCache" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.object.useVirtualCache</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> to false and calling <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().clearVirtualCache" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.object.clearVirtualCache()</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent></li>
+            <li>Calling <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().clearVirtualCache" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger"><code>wo.object.clearVirtualCache()</code></a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent> after a new method is added to a class prototype.
+            </li>
+        </ol></p>

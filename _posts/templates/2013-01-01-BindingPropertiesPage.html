@@ -1,0 +1,91 @@
+
+        <h1>Binding Properties</h1>
+        Binding is the process of setting a property of a view model inline. A propery of a view model can be bound to a static value, a constant or a property of the view model or any other view model defined earlier in the visual chain. The binding context is the same as a <a href="http://knockoutjs.com/documentation/binding-context.html" target="_blank">knockout binding context</a>. For example
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+            <code>&lt;wo.contentControl model="{ innerModel: { value: 'The inner model' }, value: 'The model' }">
+    &lt;template>
+        &lt;wo.contentControl 
+                model="$parent.model().innerModel" 
+                staticVal="'This is a static value'" 
+                constantVal="wo.DEBUG" 
+                bindToParent="$parent.model().value" 
+                bindToThis="model().value">
+            &lt;template>
+                &lt;ul>
+                    &lt;li>
+                        model().value:
+                        &lt;span data-bind="text: model().value">&lt;/span>
+                    &lt;/li>
+                    &lt;li>
+                        staticVal:
+                        &lt;span data-bind="text: staticVal">&lt;/span>
+                    &lt;/li>
+                    &lt;li>
+                        constantVal:
+                        &lt;span data-bind="text: constantVal">&lt;/span>
+                    &lt;/li>
+                    &lt;li>
+                        bindToParent:
+                        &lt;span data-bind="text: bindToParent">&lt;/span>
+                    &lt;/li>
+                    &lt;li>
+                        bindToThis:
+                        &lt;span data-bind="text: bindToThis">&lt;/span>
+                    &lt;/li>
+                &lt;/ul>                
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+        <h3>Binding to observables</h3>
+        <p>In an MVVM pattern an update of a property should trigger updates to all properties bound to it. This is true in wipeout, as long as knockout observables are being used.</p>
+         <Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+            <code>&lt;wo.contentControl model="{ value: ko.observable('The model') }">
+    &lt;template>
+        Parent Text: &lt;input type="text" data-bind="value: model().value, valueUpdate: 'keyup'" />
+        &lt;wo.contentControl model="$parent.model().value">
+            &lt;template>                
+                &lt;div>
+                    Child Text: &lt;input type="text" data-bind="value: model, valueUpdate: 'keyup'" />
+                &lt;/div>                
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
+        <p>Note that when the value property of the model is changed by the textbox, it triggers an update to the model property of the inner contentControl, however a change in the innerItemsControl does not signal the property it is bound to.</p>
+        <h3>Two way bindings</h3>
+        <p>By default bindings are one way, from the property referenced to the property set. In the following example</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock> 
+            <code>&lt;wo.view viewProperty="model().modelProperty" /></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock> 
+        <p>A change to the model() or the property model().modelProperty will trigger a change in the viewProperty. However, a change in the view property will not trigger a change in the model().modelProperty. In order to force this behaviour, a two way binding can be used. This is basically the same syntax as a one way binding, with the "-tw" specifying the binding is multidirectional</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock> 
+            <code>&lt;wo.view viewProperty-tw="model().modelProperty" /></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock> 
+        <p>For example:</p>
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+            <code>&lt;wo.contentControl model="{ value: ko.observable('The model') }">
+    &lt;template>
+        Parent Text: &lt;input type="text" data-bind="value: model().value, valueUpdate: 'keyup'" />
+        &lt;wo.contentControl model-tw="$parent.model().value">
+            &lt;template>                
+                &lt;div>
+                    Child Text: &lt;input type="text" data-bind="value: model, valueUpdate: 'keyup'" />
+                &lt;/div>                
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
+        <h3>Binding in code</h3>
+        <p>View model properties can also be bound in <Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent model="$parent.model().bindFunction" routedEvent="Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage">
+                            <template>
+                                <a href="javascript: void(0)" data-bind="click: trigger">code</a>
+                            </template>                            
+                        </Wipeout.Docs.ViewModels.Components.RaiseRoutedEvent>. For example:</p>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock> 
+            <code>var myVm = new wo.view();
+myVm.bind("model", theValueIWantToBindTo, false);</code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>

@@ -1,0 +1,59 @@
+
+        <p>wo.view is the base class for all wipeout view models. The view can be used in 2 ways.</p>        
+        <ol>
+            <li>To be inherited from in order to provide visual, model and binding functionalty to view models</li>
+            <li>As a dummy view model which a template can be attached to</li>
+        </ol>
+        <h3>Inheriting from a view</h3>
+        <p>The following creates a simple view model with collapsable content.</p> 
+        <p>Javascript:</p> 
+        <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+            <code>// create a custom view model
+window.collapsable = wo.view.extend(function() {
+    // call wo.view constructor and give the template id for this view model
+    this._super("collapsable_template");
+                
+    this.open = true;
+});
+                
+// a function which will show or hide the collapsable content
+window.collapsable.prototype.toggle = function() {
+    // "colapsableContent" is the id of the div to show/hide in the template for this view model
+    if(this.open)
+        this.templateItems.colapsableContent.style.display = "none";
+    else
+        this.templateItems.colapsableContent.style.display = null;
+                
+    this.open = !this.open;
+};</code>
+        </Wipeout.Docs.ViewModels.Components.JsCodeBlock>     
+        <p>Html template:</p> 
+        <Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
+            <code>&lt;script type="text/xml" id="collapsable_template">
+    &lt;!-- a link bound to the toggle function of the view model -->
+    &lt;a href="javascript: void(0)" data-bind="click: toggle">Toggle&lt;/a>
+    &lt;!-- a div whos content is bound to the model of the view model. 
+                Its id is used to find this element within the view model -->
+    &lt;div data-bind="html: model" id="colapsableContent">&lt;/div>
+&lt;/script></code>
+        </Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>          
+        <p>Usage:</p> 
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
+            <code>&lt;collapsable model="'This is the content to be shown/hidden'">&lt;/collapsable></code>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>        
+        <h3>Using a view as a dummy view model to render a template</h3>
+        <p>Sometimes you may wish for a model to have an appearance without the need for dynamic view model code. In this case a wo.view can be used directly:</p> 
+          
+        <p>Html template:</p> 
+        <Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
+            <code>&lt;script type="text/xml" id="displayPerson_template">
+    &lt;label>First name:&lt;/label>
+    &lt;span data-bind="html: model().firstName">&lt;/span>
+    &lt;label>Last name:&lt;/label>
+    &lt;span data-bind="html: model().lastName">&lt;/span>
+&lt;/script></code>
+        </Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>          
+        <p>Usage:</p> 
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock>
+            <code>&lt;wo.view model="{firstName: 'John', lastName: 'Smith'}" templateId="'displayPerson_template'">&lt;/wo.view></code>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>

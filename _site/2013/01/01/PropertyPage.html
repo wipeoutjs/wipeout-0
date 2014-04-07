@@ -1,0 +1,10 @@
+
+            <h2 data-bind="text: model().fullyQualifiedName"></h2>
+            <div data-bind="html: model().summary"></div>
+            <div data-bind="visible: usagesTemplateId() !== wo.contentControl.getBlankTemplateId()">
+                <h2>
+                    <span>Using</span>
+                    <span data-bind="html: model().propertyName"></span>
+                </h2>
+                <wo.view templateId="$parent.usagesTemplateId" model="$parent.model().classConstructor" />
+            </div>
