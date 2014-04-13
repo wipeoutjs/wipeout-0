@@ -2,11 +2,7 @@ var wipeout = {};
     
 var enumerate = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object</summary>
-    ///<param name="enumerate">
-    /// <type>Array</type>
-    /// <type>Object</type>
-    /// <description>An item to enumerate over</description>
-    ///</param>
+    ///<param name="enumerate" type="Any">An item to enumerate over</param>
     ///<param name="action" type="Function">The callback to apply to each item</param>
     ///<param name="context" type="Any" optional="true">The context to apply to the callback</param>
     
@@ -27,11 +23,7 @@ var enumerate = function(enumerate, action, context) {
 
 var enumerateDesc = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object in a decending order</summary>
-    ///<param name="enumerate">
-    /// <type>Array</type>
-    /// <type>Object</type>
-    /// <description>An item to enumerate over</description>
-    ///</param>
+    ///<param name="enumerate" type="Any">An item to enumerate over</param>
     ///<param name="action" type="Function">The callback to apply to each item</param>
     ///<param name="context" type="Any" optional="true">The context to apply to the callback</param>
     context = context || window;

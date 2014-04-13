@@ -151,7 +151,7 @@ Class("wipeout.base.visual", function () {
     
     visual.prototype.getParents = function() {
         ///<summary>Gets an array of the entire tree of ancestor visual objects</summary>
-        ///<returns type="Array" arrayType="wo.view">A tree of ancestor view models</returns>
+        ///<returns type="Array" generic0="wo.view" arrayType="wo.view">A tree of ancestor view models</returns>
         var current = this;
         var parents = [];
         while(current) {
