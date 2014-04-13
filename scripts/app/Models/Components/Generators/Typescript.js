@@ -8,12 +8,16 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "
     
     typescript.convertType = function(type, generics) {
         type = (type === "Any" ? "any" :
-            (type === "HTMLNode" ? "HTMLElement" :
+            (type === "HTMLNode" ? "Node" :
             (type === "Array" && (!generics || !generics.length) ? "Array<any>" :
             (type))));
         
         if(generics && generics.length) {
-            type += "<" + generics.join(", ") + ">";
+            var gen = [];
+            for(var i = 0, ii = generics.length; i <ii; i++)
+                gen.push(typescript.convertType(generics[i]));
+            
+            type += "<" + gen.join(", ") + ">";
         }
         
         return type;
@@ -71,6 +75,11 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "
             (_static ? "static " : "")  +
             name + ": " +
             typescript.convertType(type) + ";");
+    };
+    
+    typescript.prototype.addHeader = function() {
+        this.writeLine("// wipeout.d.ts");
+        this.writeLine("");
     };
     
     return typescript;

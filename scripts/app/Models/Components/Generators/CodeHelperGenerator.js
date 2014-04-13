@@ -77,6 +77,10 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
         throw "Abstract functions must be implemented";
     };
     
+    codeHelperGenerator.prototype.addHeader = function() {
+        throw "Abstract functions must be implemented";
+    };
+    
     codeHelperGenerator.prototype.convertNamespace = function(name, namespaceObject) {
         
         var result= [];
@@ -168,15 +172,20 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
     };
     
     codeHelperGenerator.prototype.convertProperty = function(propertyDescription, _static) {
-        var _private = propertyDescription.name && propertyDescription.name.indexOf("__") === 0;
-        var _protected = !_private && propertyDescription.name && propertyDescription.name.indexOf("_") === 0;
+        if(propertyDescription.overrides) return;
         
-        return this.addProperty(propertyDescription.name, "Any", _protected, _private, _static);
+        var _private = propertyDescription.name && propertyDescription.name.indexOf("__") === 0;
+        var _protected = !_private && propertyDescription.name && propertyDescription.name.indexOf("_") === 0;        
+        
+        this.addProperty(propertyDescription.name, "Any", _protected, _private, _static);
     };
     
     codeHelperGenerator.prototype.generate = function(api) {
         api = api.namespaced();
         var result = [];
+        
+        this.addHeader();
+        
         for(var namespace in api) {
             // until it is fixed
             if (namespace !== "wo") continue;

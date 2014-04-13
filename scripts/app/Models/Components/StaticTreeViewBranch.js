@@ -11,3 +11,9 @@ compiler.registerClass("Wipeout.Docs.Models.Components.StaticPageTreeViewBranchT
         this.templateId = templateId;
     };
 });
+
+compiler.registerClass("Wipeout.Docs.Models.Components.TextContentTreeViewBranch", "Wipeout.Docs.Models.Components.StaticPageTreeViewBranch", function() {
+    return function(name, content) {
+        this._super(name, wo.contentControl.createAnonymousTemplate("<pre>" + content.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</pre>"));
+    };
+});

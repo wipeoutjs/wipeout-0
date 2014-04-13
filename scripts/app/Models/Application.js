@@ -311,20 +311,26 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             var viewModelLifeCycle = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("View Model Lifecycle", "ViewModelLifecyclePage");
             
             return [oo, woClasses, woBindings, binding, models, skippingABindingContextPage, viewModelLifeCycle];
-        })();        
+        })();    
         
-        console.log(new Wipeout.Docs.Models.Components.Generators.Typescript().generate(currentApi));
+        
+        var _helpers = (function() {
+            var typecript = new Wipeout.Docs.Models.Components.TextContentTreeViewBranch("Typescript", new Wipeout.Docs.Models.Components.Generators.Typescript().generate(currentApi));
+            
+            return [typecript];
+        })();    
         
         this.menu =
-            new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout"/*, [
+            new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout", [
                 new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", _tutorial),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("Features", _features),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("API", [
                     _wo,
                     _bindings,
                     _wipeout
-                ])
-        ]*/);        
+                ]),
+                new Wipeout.Docs.Models.Components.TreeViewBranch("Helpers", _helpers)
+        ]);        
     };
     
     return application;

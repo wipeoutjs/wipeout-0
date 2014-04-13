@@ -494,20 +494,26 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             var viewModelLifeCycle = new Wipeout.Docs.Models.Components.StaticPageTreeViewBranch("View Model Lifecycle", "ViewModelLifecyclePage");
             
             return [oo, woClasses, woBindings, binding, models, skippingABindingContextPage, viewModelLifeCycle];
-        })();        
+        })();    
         
-        console.log(new Wipeout.Docs.Models.Components.Generators.Typescript().generate(currentApi));
+        
+        var _helpers = (function() {
+            var typecript = new Wipeout.Docs.Models.Components.TextContentTreeViewBranch("Typescript", new Wipeout.Docs.Models.Components.Generators.Typescript().generate(currentApi));
+            
+            return [typecript];
+        })();    
         
         this.menu =
-            new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout"/*, [
+            new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout", [
                 new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", _tutorial),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("Features", _features),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("API", [
                     _wo,
                     _bindings,
                     _wipeout
-                ])
-        ]*/);        
+                ]),
+                new Wipeout.Docs.Models.Components.TreeViewBranch("Helpers", _helpers)
+        ]);        
     };
     
     return application;
@@ -694,6 +700,12 @@ compiler.registerClass("Wipeout.Docs.Models.Components.StaticPageTreeViewBranchT
     };
 });
 
+compiler.registerClass("Wipeout.Docs.Models.Components.TextContentTreeViewBranch", "Wipeout.Docs.Models.Components.StaticPageTreeViewBranch", function() {
+    return function(name, content) {
+        this._super(name, wo.contentControl.createAnonymousTemplate("<pre>" + content.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</pre>"));
+    };
+});
+
 compiler.registerClass("Wipeout.Docs.Models.Components.TreeViewBranch", "wo.object", function() {
     var treeViewBranch = function(name, branches) {
         this._super();
@@ -788,6 +800,10 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
         throw "Abstract functions must be implemented";
     };
     
+    codeHelperGenerator.prototype.addHeader = function() {
+        throw "Abstract functions must be implemented";
+    };
+    
     codeHelperGenerator.prototype.convertNamespace = function(name, namespaceObject) {
         
         var result= [];
@@ -879,15 +895,20 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
     };
     
     codeHelperGenerator.prototype.convertProperty = function(propertyDescription, _static) {
-        var _private = propertyDescription.name && propertyDescription.name.indexOf("__") === 0;
-        var _protected = !_private && propertyDescription.name && propertyDescription.name.indexOf("_") === 0;
+        if(propertyDescription.overrides) return;
         
-        return this.addProperty(propertyDescription.name, "Any", _protected, _private, _static);
+        var _private = propertyDescription.name && propertyDescription.name.indexOf("__") === 0;
+        var _protected = !_private && propertyDescription.name && propertyDescription.name.indexOf("_") === 0;        
+        
+        this.addProperty(propertyDescription.name, "Any", _protected, _private, _static);
     };
     
     codeHelperGenerator.prototype.generate = function(api) {
         api = api.namespaced();
         var result = [];
+        
+        this.addHeader();
+        
         for(var namespace in api) {
             // until it is fixed
             if (namespace !== "wo") continue;
@@ -910,12 +931,16 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "
     
     typescript.convertType = function(type, generics) {
         type = (type === "Any" ? "any" :
-            (type === "HTMLNode" ? "HTMLElement" :
+            (type === "HTMLNode" ? "Node" :
             (type === "Array" && (!generics || !generics.length) ? "Array<any>" :
             (type))));
         
         if(generics && generics.length) {
-            type += "<" + generics.join(", ") + ">";
+            var gen = [];
+            for(var i = 0, ii = generics.length; i <ii; i++)
+                gen.push(typescript.convertType(generics[i]));
+            
+            type += "<" + gen.join(", ") + ">";
         }
         
         return type;
@@ -973,6 +998,11 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "
             (_static ? "static " : "")  +
             name + ": " +
             typescript.convertType(type) + ";");
+    };
+    
+    typescript.prototype.addHeader = function() {
+        this.writeLine("// wipeout.d.ts");
+        this.writeLine("");
     };
     
     return typescript;

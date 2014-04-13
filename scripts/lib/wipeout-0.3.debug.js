@@ -602,8 +602,8 @@ Class("wipeout.base.visual", function () {
     // virtual
     visual.prototype.onRendered = function (oldValues, newValues) {
         ///<summary>Triggered each time after a template is rendered</summary>   
-        ///<param name="oldValues" type="Array" optional="false">A list of HTMLNodes removed</param>
-        ///<param name="newValues" type="Array" optional="false">A list of HTMLNodes rendered</param>
+        ///<param name="oldValues" type="Array" generic0="HTMLNode" optional="false">A list of HTMLNodes removed</param>
+        ///<param name="newValues" type="Array" generic0="HTMLNode" optional="false">A list of HTMLNodes rendered</param>
     };
         
     // virtual
@@ -646,7 +646,7 @@ Class("wipeout.base.visual", function () {
         ///<summary>Compiles a tree of all visual elements in a block of html, starting at the rootElement</summary>    
         ///<param name="rootElement" type="HTMLNode" optional="false">The root node of the visual tree</param>
         ///<param name="displayFunction" type="Function" optional="true">A function to convert view models found into a custom type</param>
-        ///<returns type="Array">The visual graph</returns>
+        ///<returns type="Array" generic0="Object">The visual graph</returns>
         
         if (!rootElement)
             return [];
@@ -1402,7 +1402,7 @@ Class("wipeout.base.itemsControl", function () {
 
     itemsControl.prototype._itemsChanged = function (changes) { 
         ///<summary>Runs onItemDeleted and onItemRendered on deleted and created items respectively</summary>
-        ///<param name="changes" type="Array" optional="false">A knockout diff of changes to the items</param>
+        ///<param name="changes" type="Array" generic0="wo.view" optional="false">A knockout diff of changes to the items</param>
         
         enumerate(changes, function(change) {
             if(change.status === wipeout.utils.ko.array.diff.deleted && change.moved == null)
@@ -2525,7 +2525,7 @@ Class("wipeout.utils.html", function () {
     var getAllChildren = function (element) {
         ///<summary>Get all of the children of a html element or knockout virtual element</summary>
         ///<param name="element" type="HTMLNode">An element or knockout virtual element</param>
-        ///<returns type="Array">All of the nodes in the element</returns>
+        ///<returns type="Array" generic0="HTMLNode">All of the nodes in the element</returns>
         
         var children = [];
         if (wipeout.utils.ko.virtualElements.isVirtual(element)) {
@@ -2613,7 +2613,7 @@ Class("wipeout.utils.ko", function () {
     
     _ko.version = function() {
         ///<summary>Get the current knockout version as an array of numbers</summary>
-        ///<returns type="Array">The knockout version</returns>
+        ///<returns type="Array" generic0="Number">The knockout version</returns>
         
         if(!ko || !ko.version)
             return null;
