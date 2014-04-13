@@ -911,8 +911,8 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "
     typescript.convertType = function(type, generics) {
         type = (type === "Any" ? "any" :
             (type === "HTMLNode" ? "HTMLElement" :
-            //(type === "Array" && (!generics || !generics.length) ? "Array<any>" :
-            (type)));
+            (type === "Array" && (!generics || !generics.length) ? "Array<any>" :
+            (type))));
         
         if(generics && generics.length) {
             type += "<" + generics.join(", ") + ">";
