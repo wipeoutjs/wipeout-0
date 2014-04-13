@@ -499,7 +499,7 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
         console.log(new Wipeout.Docs.Models.Components.Generators.Typescript().generate(currentApi));
         
         this.menu =
-            new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout", [
+            new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout"/*, [
                 new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", _tutorial),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("Features", _features),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("API", [
@@ -507,7 +507,7 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
                     _bindings,
                     _wipeout
                 ])
-        ]);        
+        ]*/);        
     };
     
     return application;
@@ -776,11 +776,11 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
         throw "Abstract functions must be implemented";
     };
     
-    codeHelperGenerator.prototype.addFunctionBeginning = function(name, returnType, _protected, _private, _static) {
+    codeHelperGenerator.prototype.addFunctionBeginning = function(name, returnType, returnTypeGenerics, _protected, _private, _static) {
         throw "Abstract functions must be implemented";
     };
     
-    codeHelperGenerator.prototype.addFunctionEnd = function(name, returnType, _protected, _private, _static) {
+    codeHelperGenerator.prototype.addFunctionEnd = function(name, returnType, returnTypeGenerics, _protected, _private, _static) {
         throw "Abstract functions must be implemented";
     };
     
@@ -864,27 +864,11 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
         var _private = functionDescription.name && functionDescription.name.indexOf("__") === 0;
         var _protected = !_private && functionDescription.name && functionDescription.name.indexOf("_") === 0;
         
-        /*var args = [];
-        
-        wo.object.enumerate(functionDescription.arguments, function(argument, i) {
-            args.push(arg.split());
-        });
-        
-        while(true) {
-            for (var i = 0, ii = args.length; i < ii; i++) {
-                for(var j = 0, jj = args[i].length; j < jj; j++) {
-                    
-                }
-            }
-        }*/
-        
-        
-        
-        this.addFunctionBeginning(functionDescription.name, functionDescription.returns.type, _protected, _private, _static);
+        this.addFunctionBeginning(functionDescription.name, functionDescription.returns.type, functionDescription.returns.genericTypes, _protected, _private, _static);
         this.indentation++;
         this.convertArguments(functionDescription.arguments);
         this.indentation--;
-        this.addFunctionEnd(functionDescription.name, functionDescription.returns.type, _protected, _private, _static);
+        this.addFunctionEnd(functionDescription.name, functionDescription.returns.type, functionDescription.returns.genericTypes, _protected, _private, _static);
     };
     
     codeHelperGenerator.prototype.convertArguments = function(args) {
@@ -924,11 +908,17 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "
         this._super();
     }    
     
-    typescript.convertType = function(type) {
-        return (type === "Any" ? "any" :
-            (type === "Array" ? "Array<any>" :
+    typescript.convertType = function(type, generics) {
+        type = (type === "Any" ? "any" :
             (type === "HTMLNode" ? "HTMLElement" :
-            (type))));
+            //(type === "Array" && (!generics || !generics.length) ? "Array<any>" :
+            (type)));
+        
+        if(generics && generics.length) {
+            type += "<" + generics.join(", ") + ">";
+        }
+        
+        return type;
     };
     
     typescript.prototype.addNamespaceBeginning = function(name) {
@@ -966,15 +956,15 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "
         this.write(", ");
     };
     
-    typescript.prototype.addFunctionBeginning = function(name, returnType, _protected, _private, _static) {
+    typescript.prototype.addFunctionBeginning = function(name, returnType, returnTypeGenerics, _protected, _private, _static) {
         this.writeLine(
             (_private ? "private " : (_protected ? "" : "")) + 
             (_static ? "static " : "")  +
             name + "(");
     };
     
-    typescript.prototype.addFunctionEnd = function(name, returnType, _protected, _private, _static) {
-        this.write("): " + typescript.convertType(returnType) + ";");
+    typescript.prototype.addFunctionEnd = function(name, returnType, returnTypeGenerics, _protected, _private, _static) {
+        this.write("): " + typescript.convertType(returnType, returnTypeGenerics) + ";");
     };
     
     typescript.prototype.addProperty = function(name, type, _protected, _private, _static) {
@@ -996,21 +986,9 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Argument", "wo.object",
         this.type = itemDetails.type;
         this.optional = !!itemDetails.optional;
         this.description = itemDetails.description;
-    }
-    
-    argument.prototype.split = function() {
-        var output = [];        
-        wo.obj.enumerate(this.type.split(","), function(type) {
-            output.push(new Wipeout.Docs.Models.Descriptions.Argument({
-                name: this.name,
-                type: type,
-                optional: this.optional,
-                description: this.description
-            }));
-        });
         
-        return output;        
-    };
+        this.generics = itemDetails.description || [];
+    }
     
     return argument;
 });
@@ -1280,11 +1258,21 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
         }
         
         if(comment) {  
+            var generics = [];
+            
+            var tmp;
+            var g = "generic";
+            var i = 0;
+            for(var i = 0; tmp = comment.getAttribute(g + i); i++) {
+                generics.push(tmp);
+            }
+            
             return {
                 name: argument,
                 type: comment.getAttribute("type"),
                 optional: wo.view.objectParser.bool(comment.getAttribute("optional")),
-                description: comment.innerHTML
+                description: comment.innerHTML,
+                genericTypes: generics
             };  
         }
         
@@ -1314,9 +1302,18 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
     functionDescription.getReturnSummary = function(xmlSummary) { 
         for(var i = 0, ii = xmlSummary.childNodes.length; i < ii; i++) {
             if(xmlSummary.childNodes[i].nodeName === "returns") {
+                var generics = [];
+
+                var tmp;
+                var g = "generic";
+                for(var j = 0; tmp = xmlSummary.childNodes[i].getAttribute(g + j); j++) {
+                    generics.push(tmp);
+                }
+                
                 return {
                     summary: xmlSummary.childNodes[i].innerHTML,
-                    type: xmlSummary.childNodes[i].getAttribute("type")
+                    type: xmlSummary.childNodes[i].getAttribute("type"),
+                    genericTypes: generics
                 };
             }
         }

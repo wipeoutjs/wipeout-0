@@ -88,11 +88,21 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
         }
         
         if(comment) {  
+            var generics = [];
+            
+            var tmp;
+            var g = "generic";
+            var i = 0;
+            for(var i = 0; tmp = comment.getAttribute(g + i); i++) {
+                generics.push(tmp);
+            }
+            
             return {
                 name: argument,
                 type: comment.getAttribute("type"),
                 optional: wo.view.objectParser.bool(comment.getAttribute("optional")),
-                description: comment.innerHTML
+                description: comment.innerHTML,
+                genericTypes: generics
             };  
         }
         
@@ -122,9 +132,18 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
     functionDescription.getReturnSummary = function(xmlSummary) { 
         for(var i = 0, ii = xmlSummary.childNodes.length; i < ii; i++) {
             if(xmlSummary.childNodes[i].nodeName === "returns") {
+                var generics = [];
+
+                var tmp;
+                var g = "generic";
+                for(var j = 0; tmp = xmlSummary.childNodes[i].getAttribute(g + j); j++) {
+                    generics.push(tmp);
+                }
+                
                 return {
                     summary: xmlSummary.childNodes[i].innerHTML,
-                    type: xmlSummary.childNodes[i].getAttribute("type")
+                    type: xmlSummary.childNodes[i].getAttribute("type"),
+                    genericTypes: generics
                 };
             }
         }

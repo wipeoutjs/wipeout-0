@@ -65,11 +65,11 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
         throw "Abstract functions must be implemented";
     };
     
-    codeHelperGenerator.prototype.addFunctionBeginning = function(name, returnType, _protected, _private, _static) {
+    codeHelperGenerator.prototype.addFunctionBeginning = function(name, returnType, returnTypeGenerics, _protected, _private, _static) {
         throw "Abstract functions must be implemented";
     };
     
-    codeHelperGenerator.prototype.addFunctionEnd = function(name, returnType, _protected, _private, _static) {
+    codeHelperGenerator.prototype.addFunctionEnd = function(name, returnType, returnTypeGenerics, _protected, _private, _static) {
         throw "Abstract functions must be implemented";
     };
     
@@ -153,27 +153,11 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
         var _private = functionDescription.name && functionDescription.name.indexOf("__") === 0;
         var _protected = !_private && functionDescription.name && functionDescription.name.indexOf("_") === 0;
         
-        /*var args = [];
-        
-        wo.object.enumerate(functionDescription.arguments, function(argument, i) {
-            args.push(arg.split());
-        });
-        
-        while(true) {
-            for (var i = 0, ii = args.length; i < ii; i++) {
-                for(var j = 0, jj = args[i].length; j < jj; j++) {
-                    
-                }
-            }
-        }*/
-        
-        
-        
-        this.addFunctionBeginning(functionDescription.name, functionDescription.returns.type, _protected, _private, _static);
+        this.addFunctionBeginning(functionDescription.name, functionDescription.returns.type, functionDescription.returns.genericTypes, _protected, _private, _static);
         this.indentation++;
         this.convertArguments(functionDescription.arguments);
         this.indentation--;
-        this.addFunctionEnd(functionDescription.name, functionDescription.returns.type, _protected, _private, _static);
+        this.addFunctionEnd(functionDescription.name, functionDescription.returns.type, functionDescription.returns.genericTypes, _protected, _private, _static);
     };
     
     codeHelperGenerator.prototype.convertArguments = function(args) {

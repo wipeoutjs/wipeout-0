@@ -6,11 +6,17 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "
         this._super();
     }    
     
-    typescript.convertType = function(type) {
-        return (type === "Any" ? "any" :
-            (type === "Array" ? "Array<any>" :
+    typescript.convertType = function(type, generics) {
+        type = (type === "Any" ? "any" :
             (type === "HTMLNode" ? "HTMLElement" :
+            (type === "Array" && (!generics || !generics.length) ? "Array<any>" :
             (type))));
+        
+        if(generics && generics.length) {
+            type += "<" + generics.join(", ") + ">";
+        }
+        
+        return type;
     };
     
     typescript.prototype.addNamespaceBeginning = function(name) {
@@ -48,15 +54,15 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "
         this.write(", ");
     };
     
-    typescript.prototype.addFunctionBeginning = function(name, returnType, _protected, _private, _static) {
+    typescript.prototype.addFunctionBeginning = function(name, returnType, returnTypeGenerics, _protected, _private, _static) {
         this.writeLine(
             (_private ? "private " : (_protected ? "" : "")) + 
             (_static ? "static " : "")  +
             name + "(");
     };
     
-    typescript.prototype.addFunctionEnd = function(name, returnType, _protected, _private, _static) {
-        this.write("): " + typescript.convertType(returnType) + ";");
+    typescript.prototype.addFunctionEnd = function(name, returnType, returnTypeGenerics, _protected, _private, _static) {
+        this.write("): " + typescript.convertType(returnType, returnTypeGenerics) + ";");
     };
     
     typescript.prototype.addProperty = function(name, type, _protected, _private, _static) {
