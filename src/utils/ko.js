@@ -6,7 +6,7 @@ Class("wipeout.utils.ko", function () {
     
     _ko.version = function() {
         ///<summary>Get the current knockout version as an array of numbers</summary>
-        ///<returns type="Array">The knockout version</returns>
+        ///<returns type="Array" generic0="Number">The knockout version</returns>
         
         if(!ko || !ko.version)
             return null;

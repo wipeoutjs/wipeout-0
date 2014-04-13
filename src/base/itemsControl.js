@@ -133,7 +133,7 @@ Class("wipeout.base.itemsControl", function () {
 
     itemsControl.prototype._itemsChanged = function (changes) { 
         ///<summary>Runs onItemDeleted and onItemRendered on deleted and created items respectively</summary>
-        ///<param name="changes" type="Array" optional="false">A knockout diff of changes to the items</param>
+        ///<param name="changes" type="Array" generic0="wo.view" optional="false">A knockout diff of changes to the items</param>
         
         enumerate(changes, function(change) {
             if(change.status === wipeout.utils.ko.array.diff.deleted && change.moved == null)

@@ -245,8 +245,8 @@ Class("wipeout.base.visual", function () {
     // virtual
     visual.prototype.onRendered = function (oldValues, newValues) {
         ///<summary>Triggered each time after a template is rendered</summary>   
-        ///<param name="oldValues" type="Array" optional="false">A list of HTMLNodes removed</param>
-        ///<param name="newValues" type="Array" optional="false">A list of HTMLNodes rendered</param>
+        ///<param name="oldValues" type="Array" generic0="HTMLNode" optional="false">A list of HTMLNodes removed</param>
+        ///<param name="newValues" type="Array" generic0="HTMLNode" optional="false">A list of HTMLNodes rendered</param>
     };
         
     // virtual
@@ -289,7 +289,7 @@ Class("wipeout.base.visual", function () {
         ///<summary>Compiles a tree of all visual elements in a block of html, starting at the rootElement</summary>    
         ///<param name="rootElement" type="HTMLNode" optional="false">The root node of the visual tree</param>
         ///<param name="displayFunction" type="Function" optional="true">A function to convert view models found into a custom type</param>
-        ///<returns type="Array">The visual graph</returns>
+        ///<returns type="Array" generic0="Object">The visual graph</returns>
         
         if (!rootElement)
             return [];

@@ -176,7 +176,7 @@ Class("wipeout.utils.html", function () {
     var getAllChildren = function (element) {
         ///<summary>Get all of the children of a html element or knockout virtual element</summary>
         ///<param name="element" type="HTMLNode">An element or knockout virtual element</param>
-        ///<returns type="Array">All of the nodes in the element</returns>
+        ///<returns type="Array" generic0="HTMLNode">All of the nodes in the element</returns>
         
         var children = [];
         if (wipeout.utils.ko.virtualElements.isVirtual(element)) {
