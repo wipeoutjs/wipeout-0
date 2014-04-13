@@ -523,15 +523,48 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Api", "wo.object", functi
             return result;
         
         var desc = new Wipeout.Docs.Models.Descriptions.Class(className, this);
-        this.classes.push({
-            classDescription: desc,
-            classConstructor: classConstructor
-        });
+        this.classes.push(new Wipeout.Docs.Models.Components.ApiClass(desc, classConstructor));
         
         return desc;
     };
     
+    function ns(namespace, root) {
+        namespace = namespace.split(".");
+        root = root || window;
+        
+        // skip last part
+        for(var i = 0, ii = namespace.length - 1; i < ii; i++) {
+            root = root[namespace[i]] = (root[namespace[i]] || {});
+        }
+        
+        return root;
+    }
+    
+    api.prototype.codeHelper = function(codeHelperGenerator) {
+        if(!(codeHelperGenerator instanceof Wipeout.Docs.Models.Components.Generators.CodeHelperGenerator))
+            throw "Invalid input";
+        
+        return codeHelperGenerator.generate(this);
+    };
+    
+    api.prototype.namespaced = function() {
+        var output = {};
+        
+        for(var i = 0, ii = this.classes.length; i < ii; i++) {
+            ns(this.classes[i].classDescription.classFullName, output)[this.classes[i].classDescription.className] = this.classes[i];
+        }        
+        
+        return output;
+    };
+    
     return api;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Components.ApiClass", "wo.object", function() {    
+    return function(classDescription, classConstructor) {
+        this.classDescription= classDescription;
+        this.classConstructor = classConstructor;
+    }
 });
 
 compiler.registerClass("Wipeout.Docs.Models.Components.ClassTreeViewBranch", "Wipeout.Docs.Models.Components.PageTreeViewBranch", function() {
@@ -664,6 +697,268 @@ compiler.registerClass("Wipeout.Docs.Models.Components.TreeViewBranch", "wo.obje
     return treeViewBranch;
 });
 
+compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGenerator", "wo.object", function() {
+    
+    function select(input, converter, context) {
+        var output = [];
+        context = context || window;
+        for(var i = 0, ii = input.length; i < ii; i++)
+            output.push(converter.call(context, input[i]));
+        
+        return output;
+    }
+    
+    function codeHelperGenerator() {
+        this.truncateNamespaces = true;
+        
+        this.resultStream = [];
+        this.indentation = 0;
+        this.indentationType = "\t";
+    }
+    
+    codeHelperGenerator.prototype.write = function(input) {
+        if(this.resultStream.length === 0)
+            this.resultStream.push(input);
+        else
+            this.resultStream[this.resultStream.length -1] += input;
+            
+    };
+    
+    codeHelperGenerator.prototype.writeLine = function(input) {
+        var tab = [];
+        for(var i = 0; i < this.indentation; i++)
+            tab.push(this.indentationType);
+        
+        this.resultStream.push(tab.join("") + input);            
+    };
+    
+    codeHelperGenerator.prototype.addNamespaceBeginning = function(name) {
+        throw "Abstract functions must be implemented";
+    };
+    
+    codeHelperGenerator.prototype.addNamespaceEnd = function(name) {
+        throw "Abstract functions must be implemented";
+    };
+    
+    codeHelperGenerator.prototype.addClassBeginning = function(className) {
+        throw "Abstract functions must be implemented";
+    };
+    
+    codeHelperGenerator.prototype.addClassEnd = function(className) {
+        throw "Abstract functions must be implemented";
+    };
+    
+    codeHelperGenerator.prototype.addConstructorBeginning = function(className) {
+        throw "Abstract functions must be implemented";
+    };
+    
+    codeHelperGenerator.prototype.addConstructorEnd = function(className) {
+        throw "Abstract functions must be implemented";
+    };    
+    
+    codeHelperGenerator.prototype.addArgument = function(name, type, totalArguments) {
+        throw "Abstract functions must be implemented";
+    };   
+    
+    codeHelperGenerator.prototype.addArgumentSeparator = function(totalArguments) {
+        throw "Abstract functions must be implemented";
+    };
+    
+    codeHelperGenerator.prototype.addFunctionBeginning = function(name, returnType, _protected, _private, _static) {
+        throw "Abstract functions must be implemented";
+    };
+    
+    codeHelperGenerator.prototype.addFunctionEnd = function(name, returnType, _protected, _private, _static) {
+        throw "Abstract functions must be implemented";
+    };
+    
+    codeHelperGenerator.prototype.addProperty = function(name, type, _protected, _private, _static) {
+        throw "Abstract functions must be implemented";
+    };
+    
+    codeHelperGenerator.prototype.convertNamespace = function(name, namespaceObject) {
+        var result= [];
+        
+        this.addNamespaceBeginning(name);
+        
+        this.indentation++;
+        
+        for(var item in namespaceObject) {
+            if(namespaceObject[item] instanceof Wipeout.Docs.Models.Components.ApiClass) {
+                this.convertClass(namespaceObject[item].classDescription);
+            } else {
+                this.convertNamespace(item, namespaceObject[item]);
+            }            
+        }
+        
+        this.indentation--;
+        
+        this.addNamespaceEnd(name);
+    };
+    
+    codeHelperGenerator.prototype.convertClass = function(classDescription) {
+        //TODO
+        if(classDescription.className === "if") return;
+        debugger;
+        var parentClass = classDescription.parentClass ? classDescription.parentClass.classFullName : "";
+        
+        this.addClassBeginning(classDescription.className, parentClass);                
+        this.indentation++;
+        
+        this.convertConstructor(classDescription.className, classDescription.classConstructor);
+        select(classDescription.events, function() { 
+            if(arguments[0].classFullName === classDescription.classFullName)
+                this.convertProperty(arguments[0], false);
+        }, this);
+        select(classDescription.properties, function() { 
+            if(arguments[0].classFullName === classDescription.classFullName)
+                this.convertProperty(arguments[0], false); 
+        }, this);
+        select(classDescription.functions, function() { 
+            if(arguments[0].classFullName === classDescription.classFullName)
+                this.convertFunction(arguments[0], false); 
+        }, this);
+        select(classDescription.staticEvents, function() { 
+            if(arguments[0].classFullName === classDescription.classFullName)
+                this.convertProperty(arguments[0], true); 
+        }, this);
+        select(classDescription.staticProperties, function() { 
+            if(arguments[0].classFullName === classDescription.classFullName)
+                this.convertProperty(arguments[0], true); 
+        }, this);
+        select(classDescription.staticFunctions, function() { 
+            if(arguments[0].classFullName === classDescription.classFullName)
+                this.convertFunction(arguments[0], true); 
+        }, this);
+        
+        this.indentation--;        
+        this.addClassEnd(classDescription.className, parentClass);        
+    };
+    
+    codeHelperGenerator.prototype.convertConstructor = function(className, functionDescription) {        
+        this.addConstructorBeginning(className);
+        this.indentation++;
+        this.convertArguments(functionDescription.arguments);
+        this.indentation--;
+        this.addConstructorEnd(className);
+    };  
+    
+    codeHelperGenerator.prototype.convertArgument = function(argument, totalArguments) {
+        this.addArgument(argument.name, argument.type, totalArguments);
+    }; 
+    
+    codeHelperGenerator.prototype.convertFunction = function(functionDescription, _static) {
+        var _private = functionDescription.name && functionDescription.name.indexOf("__") === 0;
+        var _protected = !_private && functionDescription.name && functionDescription.name.indexOf("_") === 0;
+        
+        this.addFunctionBeginning(functionDescription.name, functionDescription.returns.type, _protected, _private, _static);
+        this.indentation++;
+        this.convertArguments(functionDescription.arguments);
+        this.indentation--;
+        this.addFunctionEnd(functionDescription.name, functionDescription.returns.type, _protected, _private, _static);
+    };
+    
+    codeHelperGenerator.prototype.convertArguments = function(args) {
+        for (var i = 0, ii = args.length; i < ii; i++) {
+            if(i !== 0) this.addArgumentSeparator(ii);
+            this.convertArgument(args[i], ii);
+        }
+    };
+    
+    codeHelperGenerator.prototype.convertProperty = function(propertyDescription, _static) {
+        var _private = propertyDescription.name && propertyDescription.name.indexOf("__") === 0;
+        var _protected = !_private && propertyDescription.name && propertyDescription.name.indexOf("_") === 0;
+        
+        return this.addProperty(propertyDescription.name, "Any", _protected, _private, _static);
+    };
+    
+    codeHelperGenerator.prototype.generate = function(api) {
+        api = api.namespaced();
+        var result = [];
+        for(var namespace in api) {
+            // until it is fixed
+            if (namespace !== "wo") continue;
+            this.convertNamespace(namespace, api[namespace], 0);
+        }
+        
+        return this.resultStream.join("\n");
+    };
+    
+    return codeHelperGenerator;
+});
+
+compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "Wipeout.Docs.Models.Components.Generators.CodeHelperGenerator", function() {
+    
+    var defaultIndentation = "\t";
+    
+    function typescript() {
+        this._super();
+    }    
+    
+    typescript.convertType = function(type) {
+        return (type === "Any" ? "any" :
+            (type === "Array" ? "Array<any>" :
+            (type === "HTMLNode" ? "HTMLElement" :
+            (type))));
+    };
+    
+    typescript.prototype.addNamespaceBeginning = function(name) {
+        if(this.indentation === 0)
+            this.writeLine("declare module " + name + " {");
+        else
+            this.writeLine("export module " + name + " {");
+    };
+    
+    typescript.prototype.addNamespaceEnd = function(name) {
+        this.writeLine("}");
+    };
+    
+    typescript.prototype.addClassBeginning = function(name, parentClass) {
+        this.writeLine((this.indentation === 0 ? "declare" : "export") + " class " + name + (parentClass ? " extends " + parentClass : "") + " {");
+    };
+    
+    typescript.prototype.addClassEnd = function(className, parentClass) {
+        this.writeLine("}");
+    };
+    
+    typescript.prototype.addConstructorBeginning = function(className) {
+        this.writeLine("constructor(");
+    };
+    
+    typescript.prototype.addConstructorEnd = function(className) {
+        this.write(");");
+    };    
+    
+    typescript.prototype.addArgument = function(name, type, totalArguments) {
+        this.write(name + ": " + typescript.convertType(type));
+    };
+    
+    typescript.prototype.addArgumentSeparator = function(totalArguments) {
+        this.write(", ");
+    };
+    
+    typescript.prototype.addFunctionBeginning = function(name, returnType, _protected, _private, _static) {
+        this.writeLine(
+            (_private ? "private " : (_protected ? "" : "")) + 
+            (_static ? "static " : "")  +
+            name + "(");
+    };
+    
+    typescript.prototype.addFunctionEnd = function(name, returnType, _protected, _private, _static) {
+        this.write("): " + typescript.convertType(returnType) + ";");
+    };
+    
+    typescript.prototype.addProperty = function(name, type, _protected, _private, _static) {
+        this.writeLine(
+            (_private ? "private " : (_protected ? "" : "")) + 
+            (_static ? "static " : "")  +
+            name + ": " +
+            typescript.convertType(type) + ";");
+    };
+    
+    return typescript;
+});
+
 compiler.registerClass("Wipeout.Docs.Models.Descriptions.Argument", "wo.object", function() {
     return function(itemDetails) {
         this._super();
@@ -683,6 +978,8 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
         this.constructorFunction = get(classFullName);
         this.classFullName = classFullName;
         this.api = api;
+        
+        this.parentClass = null;
         
         this.classConstructor = null;
         this.events = [];
@@ -708,6 +1005,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
         this.staticProperties.length = 0;
         this.functions.length = 0;
         this.staticFunctions.length = 0;
+        this.parentClass = null;
                 
         for(var i in this.constructorFunction) {
             if(this.constructorFunction.hasOwnProperty(i)) {
@@ -812,6 +1110,9 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
             this.classConstructor = new Wipeout.Docs.Models.Descriptions.Function(this.constructorFunction, this.className, this.classFullName);
         
         var sort = function() { return arguments[0].name.localeCompare(arguments[1].name); };
+        
+        if(this.constructorFunction.prototype)
+            this.parentClass = this.api.getClassDescription(Object.getPrototypeOf(this.constructorFunction.prototype).constructor);
         
         this.events.sort(sort);
         this.staticEvents.sort(sort);

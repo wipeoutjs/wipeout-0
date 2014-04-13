@@ -7,6 +7,8 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
         this.classFullName = classFullName;
         this.api = api;
         
+        this.parentClass = null;
+        
         this.classConstructor = null;
         this.events = [];
         this.staticEvents = [];
@@ -31,6 +33,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
         this.staticProperties.length = 0;
         this.functions.length = 0;
         this.staticFunctions.length = 0;
+        this.parentClass = null;
                 
         for(var i in this.constructorFunction) {
             if(this.constructorFunction.hasOwnProperty(i)) {
@@ -135,6 +138,9 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
             this.classConstructor = new Wipeout.Docs.Models.Descriptions.Function(this.constructorFunction, this.className, this.classFullName);
         
         var sort = function() { return arguments[0].name.localeCompare(arguments[1].name); };
+        
+        if(this.constructorFunction.prototype)
+            this.parentClass = this.api.getClassDescription(Object.getPrototypeOf(this.constructorFunction.prototype).constructor);
         
         this.events.sort(sort);
         this.staticEvents.sort(sort);
