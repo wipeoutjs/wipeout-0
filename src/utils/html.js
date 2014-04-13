@@ -4,7 +4,7 @@ Class("wipeout.utils.html", function () {
         
     var outerHTML = function(element) {
         ///<summary>Browser agnostic outerHTML function</summary>
-        ///<param name="elemet" type="HTMLElement">The elemet to get the outer html<param>
+        ///<param name="elemet" type="HTMLElement">The elemet to get the outer html</param>
         ///<returns type="String">The outer html of the input</returns>
         
         if(!element) return null;
@@ -21,7 +21,7 @@ Class("wipeout.utils.html", function () {
     var validHtmlCharacter = /[a-zA-Z0-9]/;
     var getTagName = function(openingTag) {
         ///<summary>Get the tag name of the first element in the string</summary>
-        ///<param name="openingTag" type="String">A string of html<param>
+        ///<param name="openingTag" type="String">A string of html</param>
         ///<returns type="String">The name of the first tag</returns>
         
         openingTag = openingTag.replace(/^\s+|\s+$/g, "");
@@ -41,7 +41,7 @@ Class("wipeout.utils.html", function () {
     var stripHtmlComments = /<\!--[^>]*-->/g;
     var getFirstTagName = function(htmlContent) {
         ///<summary>Get the tag name of the first element in the string</summary>
-        ///<param name="htmlContent" type="String">A string of html<param>
+        ///<param name="htmlContent" type="String">A string of html</param>
         ///<returns type="String">The name of the first tag</returns>
         
         htmlContent = htmlContent.replace(stripHtmlComments, "").replace(/^\s+|\s+$/g, "");
@@ -118,7 +118,7 @@ Class("wipeout.utils.html", function () {
     
     var createElement = function(htmlString) {
         ///<summary>Create a html element from a string</summary>
-        ///<param name="htmlString" type="String">A string of html<param>
+        ///<param name="htmlString" type="String">A string of html</param>
         ///<returns type="HTMLElement">The first element in the string as a HTMLElement</returns>
         
         var tagName = wipeout.utils.obj.trimToLower(getTagName(htmlString));
@@ -146,7 +146,7 @@ Class("wipeout.utils.html", function () {
        
     var createElements = function(htmlString) {
         ///<summary>Create an array of html elements from a string</summary>
-        ///<param name="htmlString" type="String">A string of html<param>
+        ///<param name="htmlString" type="String">A string of html</param>
         ///<returns type="HTMLElement">The string as an array of HTMLElements</returns>
         
         if(htmlString == null) return [];
@@ -175,7 +175,7 @@ Class("wipeout.utils.html", function () {
  
     var getAllChildren = function (element) {
         ///<summary>Get all of the children of a html element or knockout virtual element</summary>
-        ///<param name="element" type="HTMLNode">An element or knockout virtual element<param>
+        ///<param name="element" type="HTMLNode">An element or knockout virtual element</param>
         ///<returns type="Array">All of the nodes in the element</returns>
         
         var children = [];
@@ -228,7 +228,7 @@ Class("wipeout.utils.html", function () {
     
     var getViewModel = function(forHtmlNode) {
         ///<summary>Get the view model associated with a html node</summary>
-        ///<param name="forHtmlNode" type="HTMLNode">The element which is the root node of a wo.view<param>
+        ///<param name="forHtmlNode" type="HTMLNode">The element which is the root node of a wo.view</param>
         ///<returns type="wo.view">The view model associated with this node, or null</returns>
         var vm = ko.utils.domData.get(forHtmlNode, wipeout.bindings.wipeout.utils.wipeoutKey);
         if(vm)
@@ -241,20 +241,17 @@ Class("wipeout.utils.html", function () {
         return null;
     };
     
-    return {
-        cannotCreateTags: cannotCreateTags,
-        specialTags: specialTags,
-        getFirstTagName: getFirstTagName,
-        getTagName: getTagName,
-        getAllChildren: getAllChildren,
-        outerHTML: outerHTML,
-        createElement: createElement,
-        createElements: createElements,
-        getViewModel: getViewModel
-    };    
-});
-
-//legacy
-Class("wipeout.util.html", function () { 
-    return wipeout.utils.html;
+    var html = function() { };
+    
+    html.cannotCreateTags = cannotCreateTags;
+    html.specialTags = specialTags;
+    html.getFirstTagName = getFirstTagName;
+    html.getTagName = getTagName;
+    html.getAllChildren = getAllChildren;
+    html.outerHTML = outerHTML;
+    html.createElement = createElement;
+    html.createElements = createElements;
+    html.getViewModel = getViewModel
+    
+    return html;    
 });

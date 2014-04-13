@@ -42,7 +42,6 @@ Class("wipeout.base.view", function () {
         
         if(this.__woBag.bindings[propertyName]) {
             this.__woBag.bindings[propertyName].dispose();
-            delete this.__woBag.bindings[propertyName];
         }
     };
     
@@ -70,6 +69,7 @@ Class("wipeout.base.view", function () {
         ///<param name="property" type="String" optional="false">The name of the property to bind</param>
         ///<param name="valueAccessor" type="Function" optional="false">A function which returns an observable or object to bind to</param>
         ///<param name="twoWay" type="Boolean" optional="true">Specifies whether to bind the destination to the source as well</param>
+        ///<returns type="wo.disposable">A item to dispose of the binding</returns>
         
         if(twoWay && (!ko.isObservable(this[property]) || !ko.isObservable(valueAccessor())))
            throw 'Two way bindings must be between 2 observables';
@@ -108,29 +108,31 @@ Class("wipeout.base.view", function () {
             }, this) :
             null;
         
-        this.__woBag.bindings[property] = {
-            dispose: function() {
-                if(subscription1) {
-                    subscription1.dispose();
-                    subscription1 = null;
-                }
-                
-                if(subscription2) {
-                    subscription2.dispose();
-                    subscription2 = null;
-                }
-                
-                if(toBind) {
-                    toBind.dispose();
-                    toBind = null;
-                }
+        var _this = this;
+        return this.__woBag.bindings[property] = new wipeout.base.disposable(function() {
+            if(subscription1) {
+                subscription1.dispose();
+                subscription1 = null;
             }
-        };
+
+            if(subscription2) {
+                subscription2.dispose();
+                subscription2 = null;
+            }
+
+            if(toBind) {
+                toBind.dispose();
+                toBind = null;
+            }
+            
+            delete _this.__woBag.bindings[property];
+        });
     };    
     
     view.elementHasModelBinding = function(element) {
         ///<summary>returns whether the view defined in the element was explicitly given a model property</summary>
         ///<param name="element" type="Element" optional="false">The element to check for a model setter property</param>
+        ///<returns type="Boolean"></returns>
         
         for(var i = 0, ii = element.attributes.length; i < ii; i++) {
             if(element.attributes[i].nodeName === "model" || element.attributes[i].nodeName === "model-tw")

@@ -47,6 +47,7 @@ Class("wipeout.base.visual", function () {
         return function(disposeFunction) {
             ///<summary>Register a dispose function which will be called when this object is disposed of.</summary>
             ///<param name="disposeFunction" type="Function" optional="false">The function to call when on dispose</param>
+            ///<returns type="String">A key to dispose off this object manually</returns>
             
             if(!disposeFunction || disposeFunction.constructor !== Function) throw "The dispose function must be a Function";
             
@@ -126,6 +127,7 @@ Class("wipeout.base.visual", function () {
     visual.getParentElement = function(node) {
         ///<summary>Gets the parent or virtual parent of the element</summary>
         ///<param name="node" type="HTMLNode" optional="false">The node to find the parent of</param>
+        ///<returns type="HTMLNode">The parent element</returns>    
         
         var depth = 0;
         var current = node.previousSibling;
@@ -149,6 +151,7 @@ Class("wipeout.base.visual", function () {
     
     visual.prototype.getParents = function() {
         ///<summary>Gets an array of the entire tree of ancestor visual objects</summary>
+        ///<returns type="Array" arrayType="wo.view">A tree of ancestor view models</returns>
         var current = this;
         var parents = [];
         while(current) {
@@ -161,6 +164,7 @@ Class("wipeout.base.visual", function () {
     
     visual.prototype.getParent = function() {
         ///<summary>Get the parent visual of this visual</summary>
+        ///<returns type="wo.view">The parent view model</returns>
         if(this.__woBag.rootHtmlElement == null)
             return null;
         
@@ -172,7 +176,7 @@ Class("wipeout.base.visual", function () {
             }
             
             current = visual.getParentElement(current);
-        }        
+        }
     };
     
     visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {  
@@ -180,13 +184,16 @@ Class("wipeout.base.visual", function () {
         ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event to un register from</param>
         ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
+        ///<returns type="Boolean">Whether the event registration was found or not</returns>         
         
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
             if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
                 this.__woBag.routedEventSubscriptions[i].event.unRegister(callback, context);
-                return;
+                return true;
             }
         }  
+        
+        return false;
     };
     
     visual.prototype.registerRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {
@@ -194,7 +201,7 @@ Class("wipeout.base.visual", function () {
         ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
         ///<param name="context" type="Any" optional="true">The context "this" to use within the callback</param>
-         
+        ///<returns type="wo.eventRegistration">A dispose function</returns>         
         
         var rev;
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
@@ -209,7 +216,7 @@ Class("wipeout.base.visual", function () {
             this.__woBag.routedEventSubscriptions.push(rev);
         }
         
-        rev.event.register(callback, callbackContext);
+        return rev.event.register(callback, callbackContext);
     };
     
     visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
@@ -255,7 +262,8 @@ Class("wipeout.base.visual", function () {
     visual.getDefaultTemplateId = (function () {
         var templateId = null;
         return function () {
-            ///<summary>Returns the Id for the default template</summary>    
+            ///<summary>Returns the Id for the default template</summary>   
+            ///<returns type="String">The Id for an default template</returns>     
             if (!templateId) {
                 templateId = wipeout.base.contentControl.createAnonymousTemplate("<span>No template has been specified</span>");
             }
@@ -268,6 +276,7 @@ Class("wipeout.base.visual", function () {
         var templateId = null;
         return function () {
             ///<summary>Returns the Id for an empty template</summary>    
+            ///<returns type="String">The Id for an empty template</returns>    
             if (!templateId) {
                 templateId = wipeout.base.contentControl.createAnonymousTemplate("");
             }

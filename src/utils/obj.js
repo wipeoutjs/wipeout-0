@@ -2,7 +2,7 @@ var wipeout = {};
     
 var enumerate = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object</summary>
-    ///<param name="enumerate" type="Array or Object">An item to enumerate over</param>
+    ///<param name="enumerate" type="Array,Object">An item to enumerate over</param>
     ///<param name="action" type="Function">The callback to apply to each item</param>
     ///<param name="context" type="Any" optional="true">The context to apply to the callback</param>
     
@@ -23,7 +23,7 @@ var enumerate = function(enumerate, action, context) {
 
 var enumerateDesc = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object in a decending order</summary>
-    ///<param name="enumerate" type="Array or Object">An item to enumerate over</param>
+    ///<param name="enumerate" type="Array,Object">An item to enumerate over</param>
     ///<param name="action" type="Function">The callback to apply to each item</param>
     ///<param name="context" type="Any" optional="true">The context to apply to the callback</param>
     context = context || window;
@@ -182,20 +182,15 @@ Class("wipeout.utils.obj", function () {
         return Math.floor(Math.random() * max);
     };
     
-    return {
-        parseBool: parseBool,
-        trimToLower: trimToLower,
-        trim: trim,
-        enumerate: enumerate,
-        enumerateDesc: enumerateDesc,
-        getObject: getObject,
-        createObject: createObject,
-        copyArray: copyArray,
-        random: random
-    };    
-});
-
-//legacy
-Class("wipeout.util.obj", function () { 
-    return wipeout.utils.obj;
+    var obj = function() { };
+    obj.parseBool = parseBool;
+    obj.trimToLower = trimToLower;
+    obj.trim = trim;
+    obj.enumerate = enumerate;
+    obj.enumerateDesc = enumerateDesc;
+    obj.getObject = getObject;
+    obj.createObject = createObject;
+    obj.copyArray = copyArray;
+    obj.random = random;
+    return obj;
 });

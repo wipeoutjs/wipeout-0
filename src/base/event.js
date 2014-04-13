@@ -2,6 +2,20 @@
 var wipeout = wipeout || {};
 wipeout.base = wipeout.base || {};
 
+Class("wipeout.base.eventRegistration", function () {
+    
+    return wipeout.base.disposable.extend(function(callback, context, dispose) {
+        ///<summary>On object containing event registration details</summary>
+        ///<param name="callback" type="Any" optional="false">The event logic</param>
+        ///<param name="context" type="Any" optional="true">The context of the event logic</param>
+        ///<param name="dispose" type="Function" optional="false">A dispose function</param>
+        this._super(dispose);    
+                                                          
+        this.callback = callback;
+        this.context = context;
+    });;
+});
+
 Class("wipeout.base.event", function () {
     
     var event = function() {
@@ -45,7 +59,7 @@ Class("wipeout.base.event", function () {
         ///<summary>Subscribe to an event</summary>
         ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
         ///<param name="context" type="Any" optional="true">The context "this" to use within the calback</param>
-        ///<returns type="Object">An object with the details of the registration, including a dispose() function</returns>
+        ///<returns type="wo.eventRegistration">An object with the details of the registration, including a dispose() function</returns>
         
         if(!(callback instanceof Function))
             throw "Invalid event callback";
@@ -63,11 +77,7 @@ Class("wipeout.base.event", function () {
         
         this._registrations.push(evnt);
         
-        return {
-            callback: evnt.callback, 
-            context: evnt.context,
-            dispose: evnt.dispose
-        };
+        return new wipeout.base.eventRegistration(evnt.callback, evnt.context, evnt.dispose);
     };
     
     return event;

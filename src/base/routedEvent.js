@@ -18,7 +18,8 @@ Class("wipeout.base.routedEvent", function () {
         ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
         ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual passed into the register function</param>
         ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
-        triggerOnVisual.unRegisterRoutedEvent(this, callback, context);
+        ///<returns type="Boolean">Whether the event registration was found or not</returns>         
+        return triggerOnVisual.unRegisterRoutedEvent(this, callback, context);
     }
     
     //TODO: return dispose function
@@ -27,8 +28,9 @@ Class("wipeout.base.routedEvent", function () {
         ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
         ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual registered to the routed event</param>
         ///<param name="context" type="Any" optional="true">The context "this" to use within the callback</param>
+        ///<returns type="wo.eventRegistration">A dispose function</returns>         
         
-        triggerOnVisual.registerRoutedEvent(this, callback, context);
+        return triggerOnVisual.registerRoutedEvent(this, callback, context);
     };
     
     return routedEvent;

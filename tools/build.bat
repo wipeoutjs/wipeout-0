@@ -1,2 +1,2 @@
-Yui\YuiBuildProcess "../src/utils/obj.js" "../src/base/object.js" "../src/base/visual.js" "../src/base/view.js" "../src" "build.js" "build.release.js" -out "../build/wipeout-0.3.js" -wrap true -compress true
-Yui\YuiBuildProcess "../src/utils/obj.js" "../src/base/object.js" "../src/base/visual.js" "../src/base/view.js" "../src" "build.js" "build.debug.js" -out "../build/wipeout-0.3.debug.js" -wrap true -compress false
+Yui\YuiBuildProcess "../src/utils/obj.js" "../src/base/object.js" "../src/base/disposable.js" "../src/base/visual.js" "../src/base/view.js" "../src" "build.js" "build.release.js" -out "../build/wipeout-0.3.js" -wrap true -compress true
+Yui\YuiBuildProcess "../src/utils/obj.js" "../src/base/object.js" "../src/base/disposable.js" "../src/base/visual.js" "../src/base/view.js" "../src" "build.js" "build.debug.js" -out "../build/wipeout-0.3.debug.js" -wrap true -compress false

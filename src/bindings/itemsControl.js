@@ -9,7 +9,7 @@ Binding("itemsControl", true, function () {
         if(itemsTemplate) return;
         var tmp = "<!-- ko ic-render: $data";
         if(DEBUG) 
-            tmp += ", wipeout-type: 'items[' + wipeout.util.ko.peek($index) + ']'";
+            tmp += ", wipeout-type: 'items[' + wipeout.utils.ko.peek($index) + ']'";
 
         tmp += " --><!-- /ko -->";
         
