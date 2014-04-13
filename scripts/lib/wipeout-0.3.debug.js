@@ -179,6 +179,9 @@ Class("wipeout.utils.obj", function () {
     };
     
     var random = function(max) {
+        ///<summary>Random int generator</summary>
+        ///<param name="max" type="Number">The maximum value</param>
+        ///<returns type="Number">A random number</returns>
         return Math.floor(Math.random() * max);
     };
     
@@ -333,7 +336,7 @@ Class("wipeout.base.disposable", function () {
     
     var disposable = wipeout.base.object.extend(function (disposeFunction) {
         ///<summary>An object which will dispose of something</summary>   
-        ///<param name="dispose" type="Function" optional="false">A dispose function</param>
+        ///<param name="disposeFunction" type="Function" optional="false">A dispose function</param>
         this._super();
         
         this.disposeFunction = disposeFunction;
@@ -537,7 +540,7 @@ Class("wipeout.base.visual", function () {
         ///<summary>Unregister from a routed event. The callback and callback context must be the same as those passed in during registration</summary>  
         ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event to un register from</param>
-        ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
+        ///<param name="callbackContext" type="Any" optional="true">The original context passed into the register function</param>
         ///<returns type="Boolean">Whether the event registration was found or not</returns>         
         
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
@@ -554,7 +557,7 @@ Class("wipeout.base.visual", function () {
         ///<summary>Register for a routed event</summary>   
         ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
-        ///<param name="context" type="Any" optional="true">The context "this" to use within the callback</param>
+        ///<param name="callbackContext" type="Any" optional="true">The context "this" to use within the callback</param>
         ///<returns type="wo.eventRegistration">A dispose function</returns>         
         
         var rev;
@@ -642,7 +645,7 @@ Class("wipeout.base.visual", function () {
     visual.visualGraph = function (rootElement, displayFunction) {
         ///<summary>Compiles a tree of all visual elements in a block of html, starting at the rootElement</summary>    
         ///<param name="rootElement" type="HTMLNode" optional="false">The root node of the visual tree</param>
-        ///<param name="displayFunction" type="" optional="true">A function to convert view models found into a custom type</param>
+        ///<param name="displayFunction" type="Function" optional="true">A function to convert view models found into a custom type</param>
         ///<returns type="Array">The visual graph</returns>
         
         if (!rootElement)
@@ -2350,7 +2353,7 @@ Class("wipeout.utils.html", function () {
         
     var outerHTML = function(element) {
         ///<summary>Browser agnostic outerHTML function</summary>
-        ///<param name="elemet" type="HTMLElement">The elemet to get the outer html</param>
+        ///<param name="element" type="HTMLElement">The elemet to get the outer html</param>
         ///<returns type="String">The outer html of the input</returns>
         
         if(!element) return null;
