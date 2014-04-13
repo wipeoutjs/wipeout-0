@@ -78,6 +78,8 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
     };
     
     codeHelperGenerator.prototype.convertNamespace = function(name, namespaceObject) {
+        
+        debugger;
         var result= [];
         
         this.addNamespaceBeginning(name);
@@ -100,7 +102,7 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
     codeHelperGenerator.prototype.convertClass = function(classDescription) {
         //TODO
         if(classDescription.className === "if") return;
-        debugger;
+        
         var parentClass = classDescription.parentClass ? classDescription.parentClass.classFullName : "";
         
         this.addClassBeginning(classDescription.className, parentClass);                

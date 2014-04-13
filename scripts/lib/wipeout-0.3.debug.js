@@ -2,7 +2,7 @@
     
 var enumerate = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object</summary>
-    ///<param name="enumerate" type="Array or Object">An item to enumerate over</param>
+    ///<param name="enumerate" type="Array,Object">An item to enumerate over</param>
     ///<param name="action" type="Function">The callback to apply to each item</param>
     ///<param name="context" type="Any" optional="true">The context to apply to the callback</param>
     
@@ -23,7 +23,7 @@ var enumerate = function(enumerate, action, context) {
 
 var enumerateDesc = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object in a decending order</summary>
-    ///<param name="enumerate" type="Array or Object">An item to enumerate over</param>
+    ///<param name="enumerate" type="Array,Object">An item to enumerate over</param>
     ///<param name="action" type="Function">The callback to apply to each item</param>
     ///<param name="context" type="Any" optional="true">The context to apply to the callback</param>
     context = context || window;
@@ -129,25 +129,41 @@ var parseBool = function(input) {
 
 Class("wipeout.utils.obj", function () {
         
-    var createObject = function(constructorString, context) {
-        ///<summary>Create an object from string</summary>
+    var getObject = function(constructorString, context) {
+        ///<summary>Get an object from string</summary>
         ///<param name="constructorString" type="String">A pointer to the object to create</param>
         ///<param name="context" type="String">The root context</param>
-        ///<returns type="Any">The created object</returns>
+        ///<returns type="Any">The object</returns>
         if(!context) context = window;
         
         var constructor = constructorString.split(".");
         for(var i = 0, ii = constructor.length; i <ii; i++) {
             context = context[constructor[i]];
-            if(!context) {
-                throw "Cannot create object \"" + constructorString + "\"";
-            }
+            if(context == null)
+                return null;
         }
         
-        if(context instanceof Function)            
-            return new context();
-        else 
-            throw constructorString + " is not a valid function.";
+        return context;
+    };
+        
+    var createObject = function(constructorString, context) {
+        ///<summary>Create an object from string</summary>
+        ///<param name="constructorString" type="String">A pointer to the object to create</param>
+        ///<param name="context" type="String">The root context</param>
+        ///<returns type="Any">The created object</returns>
+        
+        var constructor = getObject(constructorString, context);
+        
+        if(constructor instanceof Function) {
+            
+            var object = new constructor();
+            if(object instanceof wipeout.base.view && DEBUG)
+                object.__woBag.constructedViewType = constructorString;
+            
+            return object;
+        }
+        
+        throw constructorString + " is not a valid function.";
     };
 
     var copyArray = function(input) {
@@ -162,20 +178,21 @@ Class("wipeout.utils.obj", function () {
         return output;
     };
     
-    return {
-        parseBool: parseBool,
-        trimToLower: trimToLower,
-        trim: trim,
-        enumerate: enumerate,
-        enumerateDesc: enumerateDesc,
-        createObject: createObject,
-        copyArray: copyArray
-    };    
-});
-
-//legacy
-Class("wipeout.util.obj", function () { 
-    return wipeout.utils.obj;
+    var random = function(max) {
+        return Math.floor(Math.random() * max);
+    };
+    
+    var obj = function() { };
+    obj.parseBool = parseBool;
+    obj.trimToLower = trimToLower;
+    obj.trim = trim;
+    obj.enumerate = enumerate;
+    obj.enumerateDesc = enumerateDesc;
+    obj.getObject = getObject;
+    obj.createObject = createObject;
+    obj.copyArray = copyArray;
+    obj.random = random;
+    return obj;
 });
 
 
@@ -312,6 +329,30 @@ Class("wipeout.base.object", function () {
 });
 
 
+Class("wipeout.base.disposable", function () {
+    
+    var disposable = wipeout.base.object.extend(function (disposeFunction) {
+        ///<summary>An object which will dispose of something</summary>   
+        ///<param name="dispose" type="Function" optional="false">A dispose function</param>
+        this._super();
+        
+        this.disposeFunction = disposeFunction;
+    });
+    
+    disposable.prototype.dispose = function() {
+        ///<summary>Dispose</summary>   
+        
+        
+        if(this.disposeFunction)
+            this.disposeFunction();
+        
+        delete this.disposeFunction;
+    };
+                                      
+    return disposable;
+});
+
+
 Class("wipeout.base.visual", function () {
     
     var visual = wipeout.base.object.extend(function (templateId) {
@@ -360,6 +401,7 @@ Class("wipeout.base.visual", function () {
         return function(disposeFunction) {
             ///<summary>Register a dispose function which will be called when this object is disposed of.</summary>
             ///<param name="disposeFunction" type="Function" optional="false">The function to call when on dispose</param>
+            ///<returns type="String">A key to dispose off this object manually</returns>
             
             if(!disposeFunction || disposeFunction.constructor !== Function) throw "The dispose function must be a Function";
             
@@ -439,6 +481,7 @@ Class("wipeout.base.visual", function () {
     visual.getParentElement = function(node) {
         ///<summary>Gets the parent or virtual parent of the element</summary>
         ///<param name="node" type="HTMLNode" optional="false">The node to find the parent of</param>
+        ///<returns type="HTMLNode">The parent element</returns>    
         
         var depth = 0;
         var current = node.previousSibling;
@@ -462,6 +505,7 @@ Class("wipeout.base.visual", function () {
     
     visual.prototype.getParents = function() {
         ///<summary>Gets an array of the entire tree of ancestor visual objects</summary>
+        ///<returns type="Array" arrayType="wo.view">A tree of ancestor view models</returns>
         var current = this;
         var parents = [];
         while(current) {
@@ -474,6 +518,10 @@ Class("wipeout.base.visual", function () {
     
     visual.prototype.getParent = function() {
         ///<summary>Get the parent visual of this visual</summary>
+        ///<returns type="wo.view">The parent view model</returns>
+        if(this.__woBag.rootHtmlElement == null)
+            return null;
+        
         var nextTarget;
         var current = visual.getParentElement(this.__woBag.rootHtmlElement);
         while(current) {
@@ -482,7 +530,7 @@ Class("wipeout.base.visual", function () {
             }
             
             current = visual.getParentElement(current);
-        }        
+        }
     };
     
     visual.prototype.unRegisterRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {  
@@ -490,13 +538,16 @@ Class("wipeout.base.visual", function () {
         ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event to un register from</param>
         ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
+        ///<returns type="Boolean">Whether the event registration was found or not</returns>         
         
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
             if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
                 this.__woBag.routedEventSubscriptions[i].event.unRegister(callback, context);
-                return;
+                return true;
             }
         }  
+        
+        return false;
     };
     
     visual.prototype.registerRoutedEvent = function(routedEvent, callback, callbackContext /* optional */) {
@@ -504,7 +555,7 @@ Class("wipeout.base.visual", function () {
         ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
         ///<param name="context" type="Any" optional="true">The context "this" to use within the callback</param>
-         
+        ///<returns type="wo.eventRegistration">A dispose function</returns>         
         
         var rev;
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
@@ -519,7 +570,7 @@ Class("wipeout.base.visual", function () {
             this.__woBag.routedEventSubscriptions.push(rev);
         }
         
-        rev.event.register(callback, callbackContext);
+        return rev.event.register(callback, callbackContext);
     };
     
     visual.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
@@ -565,7 +616,8 @@ Class("wipeout.base.visual", function () {
     visual.getDefaultTemplateId = (function () {
         var templateId = null;
         return function () {
-            ///<summary>Returns the Id for the default template</summary>    
+            ///<summary>Returns the Id for the default template</summary>   
+            ///<returns type="String">The Id for an default template</returns>     
             if (!templateId) {
                 templateId = wipeout.base.contentControl.createAnonymousTemplate("<span>No template has been specified</span>");
             }
@@ -578,6 +630,7 @@ Class("wipeout.base.visual", function () {
         var templateId = null;
         return function () {
             ///<summary>Returns the Id for an empty template</summary>    
+            ///<returns type="String">The Id for an empty template</returns>    
             if (!templateId) {
                 templateId = wipeout.base.contentControl.createAnonymousTemplate("");
             }
@@ -660,7 +713,6 @@ Class("wipeout.base.view", function () {
         
         if(this.__woBag.bindings[propertyName]) {
             this.__woBag.bindings[propertyName].dispose();
-            delete this.__woBag.bindings[propertyName];
         }
     };
     
@@ -688,6 +740,7 @@ Class("wipeout.base.view", function () {
         ///<param name="property" type="String" optional="false">The name of the property to bind</param>
         ///<param name="valueAccessor" type="Function" optional="false">A function which returns an observable or object to bind to</param>
         ///<param name="twoWay" type="Boolean" optional="true">Specifies whether to bind the destination to the source as well</param>
+        ///<returns type="wo.disposable">A item to dispose of the binding</returns>
         
         if(twoWay && (!ko.isObservable(this[property]) || !ko.isObservable(valueAccessor())))
            throw 'Two way bindings must be between 2 observables';
@@ -726,29 +779,31 @@ Class("wipeout.base.view", function () {
             }, this) :
             null;
         
-        this.__woBag.bindings[property] = {
-            dispose: function() {
-                if(subscription1) {
-                    subscription1.dispose();
-                    subscription1 = null;
-                }
-                
-                if(subscription2) {
-                    subscription2.dispose();
-                    subscription2 = null;
-                }
-                
-                if(toBind) {
-                    toBind.dispose();
-                    toBind = null;
-                }
+        var _this = this;
+        return this.__woBag.bindings[property] = new wipeout.base.disposable(function() {
+            if(subscription1) {
+                subscription1.dispose();
+                subscription1 = null;
             }
-        };
+
+            if(subscription2) {
+                subscription2.dispose();
+                subscription2 = null;
+            }
+
+            if(toBind) {
+                toBind.dispose();
+                toBind = null;
+            }
+            
+            delete _this.__woBag.bindings[property];
+        });
     };    
     
     view.elementHasModelBinding = function(element) {
         ///<summary>returns whether the view defined in the element was explicitly given a model property</summary>
         ///<param name="element" type="Element" optional="false">The element to check for a model setter property</param>
+        ///<returns type="Boolean"></returns>
         
         for(var i = 0, ii = element.attributes.length; i < ii; i++) {
             if(element.attributes[i].nodeName === "model" || element.attributes[i].nodeName === "model-tw")
@@ -900,6 +955,38 @@ Class("wipeout.base.view", function () {
 
 
 
+Class("wipeout.debug", function () { 
+    var jQ = function() {
+        if(!window.jQuery)
+            throw "This debug tool requires jQuery";
+    };
+    
+    return {
+        renderedItems: function(rootNode /*optional*/, renderedItemType /*optional*/) {
+            
+            var values = [], vm;
+            var recursive = function(node) {
+                if(node) {
+                    switch(node.nodeType) {
+                        case 1:
+                            enumerate(node.childNodes, recursive);
+                        case 8:
+                            if((vm = wipeout.utils.html.getViewModel(node)) &&
+                               values.indexOf(vm) === -1 &&
+                              (!renderedItemType || vm.constructor === renderedItemType)) {
+                                values.push(vm);
+                            }
+                    }
+                }
+            };
+            
+            recursive(rootNode || document.getElementsByTagName("body")[0]);
+            return values;
+        }
+    }
+});
+
+
 Class("wipeout.base.contentControl", function () {    
 
     var contentControl = wipeout.base.view.extend(function (templateId, model) {
@@ -1020,6 +1107,20 @@ Class("wipeout.base.contentControl", function () {
 var wipeout = wipeout || {};
 wipeout.base = wipeout.base || {};
 
+Class("wipeout.base.eventRegistration", function () {
+    
+    return wipeout.base.disposable.extend(function(callback, context, dispose) {
+        ///<summary>On object containing event registration details</summary>
+        ///<param name="callback" type="Any" optional="false">The event logic</param>
+        ///<param name="context" type="Any" optional="true">The context of the event logic</param>
+        ///<param name="dispose" type="Function" optional="false">A dispose function</param>
+        this._super(dispose);    
+                                                          
+        this.callback = callback;
+        this.context = context;
+    });;
+});
+
 Class("wipeout.base.event", function () {
     
     var event = function() {
@@ -1063,7 +1164,7 @@ Class("wipeout.base.event", function () {
         ///<summary>Subscribe to an event</summary>
         ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
         ///<param name="context" type="Any" optional="true">The context "this" to use within the calback</param>
-        ///<returns type="Object">An object with the details of the registration, including a dispose() function</returns>
+        ///<returns type="wo.eventRegistration">An object with the details of the registration, including a dispose() function</returns>
         
         if(!(callback instanceof Function))
             throw "Invalid event callback";
@@ -1081,11 +1182,7 @@ Class("wipeout.base.event", function () {
         
         this._registrations.push(evnt);
         
-        return {
-            callback: evnt.callback, 
-            context: evnt.context,
-            dispose: evnt.dispose
-        };
+        return new wipeout.base.eventRegistration(evnt.callback, evnt.context, evnt.dispose);
     };
     
     return event;
@@ -1285,6 +1382,7 @@ Class("wipeout.base.itemsControl", function () {
     //TODO: private
     itemsControl.prototype.modelsAndViewModelsAreSynched = function() {
         ///<summary>Returns whether all models have a corresponding view model at the correct index</summary>
+        ///<returns type="Boolean"></summary>
         var model = this.itemSource() || [];
         var viewModel = this.items() || [];
         
@@ -1422,7 +1520,8 @@ Class("wipeout.base.routedEvent", function () {
         ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
         ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual passed into the register function</param>
         ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
-        triggerOnVisual.unRegisterRoutedEvent(this, callback, context);
+        ///<returns type="Boolean">Whether the event registration was found or not</returns>         
+        return triggerOnVisual.unRegisterRoutedEvent(this, callback, context);
     }
     
     //TODO: return dispose function
@@ -1431,8 +1530,9 @@ Class("wipeout.base.routedEvent", function () {
         ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
         ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual registered to the routed event</param>
         ///<param name="context" type="Any" optional="true">The context "this" to use within the callback</param>
+        ///<returns type="wo.eventRegistration">A dispose function</returns>         
         
-        triggerOnVisual.registerRoutedEvent(this, callback, context);
+        return triggerOnVisual.registerRoutedEvent(this, callback, context);
     };
     
     return routedEvent;
@@ -1513,7 +1613,7 @@ Binding("itemsControl", true, function () {
         if(itemsTemplate) return;
         var tmp = "<!-- ko ic-render: $data";
         if(DEBUG) 
-            tmp += ", wipeout-type: 'items[' + wipeout.util.ko.peek($index) + ']'";
+            tmp += ", wipeout-type: 'items[' + wipeout.utils.ko.peek($index) + ']'";
 
         tmp += " --><!-- /ko -->";
         
@@ -1768,6 +1868,146 @@ Binding("wo", true, function () {
     
     return {
         init: init
+    };
+});
+
+Class("wipeout.profile.profiler", function () { 
+    var jQ = function() {
+        if(!window.jQuery)
+            throw "This debug tool requires jQuery";
+    };
+    
+    var profiler = wipeout.base.object.extend(function(vm) {
+        jQ();
+        this.vm = vm;
+        this.cssClass = "wipeout-profiler-" + profiler.newId();
+    });
+    
+    profiler.createStyle = function() {
+        if(profiler.style)
+            return;
+        
+        profiler.style = document.createElement("style");     
+        $("body").append(profiler.style);   
+    };
+    
+    profiler.prototype.allNodes = function() {
+        var $elements = $(wipeout.utils.ko.virtualElements.childNodes(this.vm.__woBag.rootHtmlElement));
+        return $elements.find('*').add($elements);
+    };
+    
+    var eventNamespace = ".wipeoutProfiler";
+    profiler.prototype.profile = function() {
+        profiler.createStyle();
+        
+        var vm = this.vm;
+        
+        var _this = this;
+        this.allNodes().addClass(_this.cssClass).on("click" + eventNamespace, function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                wipeout.profile.utils.popup(wipeout.profile.utils.generateInfo(vm));
+            });
+        
+        //profiler.style.innerHTML += "." + this.cssClass + " {background-color:#" + wipeout.profile.utils.generateColour() + " !important;}";
+        profiler.style.innerHTML += "." + this.cssClass + " {background-color:#efcdd9 !important;}";
+    };
+    
+    profiler.prototype.dispose = function() {
+        // TODO: where nodeType = 1
+        this.allNodes()
+            .off("click" + eventNamespace)
+            .removeClass(this.cssClass);
+    };
+        
+    profiler.newId = (function () {
+        var i = 0;
+        return function() {
+            return ++i;
+        };
+    })();
+    
+    function queue() {
+        this.items = [];
+    };
+    
+    queue.prototype.push = function(callback) {
+        var _this = this;
+        var cb = function() {
+            
+            _this.items.splice(_this.items.indexOf(cb), 1);
+            
+            callback();
+                        
+            if (_this.items.length)
+                _this.items.splice(0, 1)[0](_this);
+        };
+        
+        this.items.push(cb);
+        
+        if(this.items[0] === cb)
+            cb();
+    };
+    
+    profiler.profile = function() {
+        var timeout;
+        var q = new queue();
+        var currentElement = null;
+        var currentProfiler = {dispose: function(){}};
+        $("body").on("mouseover", function(e) {
+            if(!e.fromElement || currentElement === e.fromElement) return;
+            
+            currentElement = e.fromElement;
+            var vm = wipeout.utils.html.getViewModel(currentElement);
+            if(!vm || vm === currentProfiler.vm) return;
+                        
+            if(timeout) clearTimeout(timeout);
+            
+            // makes it less jumpy
+            timeout = setTimeout(function() {
+                // like thread.lock
+                q.push(function() {
+                    currentProfiler.dispose();
+                    currentProfiler = new profiler(vm);
+                    currentProfiler.profile();
+                });
+            }, 100);
+        });
+    };
+    
+    return profiler;
+});
+
+Class("wipeout.profile.utils", function () { 
+    var jQ = function() {
+        if(!window.jQuery)
+            throw "This debug tool requires jQuery";
+    };
+    
+    return {
+        generateColour: function() {
+            var red = Math.floor((wipeout.utils.obj.random(255) + 255) / 2);
+            var green = Math.floor((wipeout.utils.obj.random(255) + 255) / 2);
+            var blue = Math.floor((wipeout.utils.obj.random(255) + 255) / 2);
+
+            return red.toString(16) + green.toString(16) + blue.toString(16);
+        },
+        generateInfo: function(vm) {
+            return vm.__woBag.rootHtmlElement.textContent;
+        },
+        popup: function(htmlString) {
+            var $content = $('<div style="z-index: 100000; position: fixed; top: 10%; left: 10%; background-color: white; height: 80%; width: 80%">\
+                <div>' + htmlString + '</div>\
+                <button id="wipeoutProfileCloseButton">Close</button>\
+            </div>');
+
+            $content.find("#wipeoutProfileCloseButton").on("click", function() {
+                $(this).parent().remove();
+            });
+
+            $("body").append($content[0]);
+        }
     };
 });
 
@@ -2110,7 +2350,7 @@ Class("wipeout.utils.html", function () {
         
     var outerHTML = function(element) {
         ///<summary>Browser agnostic outerHTML function</summary>
-        ///<param name="elemet" type="HTMLElement">The elemet to get the outer html<param>
+        ///<param name="elemet" type="HTMLElement">The elemet to get the outer html</param>
         ///<returns type="String">The outer html of the input</returns>
         
         if(!element) return null;
@@ -2127,7 +2367,7 @@ Class("wipeout.utils.html", function () {
     var validHtmlCharacter = /[a-zA-Z0-9]/;
     var getTagName = function(openingTag) {
         ///<summary>Get the tag name of the first element in the string</summary>
-        ///<param name="openingTag" type="String">A string of html<param>
+        ///<param name="openingTag" type="String">A string of html</param>
         ///<returns type="String">The name of the first tag</returns>
         
         openingTag = openingTag.replace(/^\s+|\s+$/g, "");
@@ -2147,7 +2387,7 @@ Class("wipeout.utils.html", function () {
     var stripHtmlComments = /<\!--[^>]*-->/g;
     var getFirstTagName = function(htmlContent) {
         ///<summary>Get the tag name of the first element in the string</summary>
-        ///<param name="htmlContent" type="String">A string of html<param>
+        ///<param name="htmlContent" type="String">A string of html</param>
         ///<returns type="String">The name of the first tag</returns>
         
         htmlContent = htmlContent.replace(stripHtmlComments, "").replace(/^\s+|\s+$/g, "");
@@ -2157,11 +2397,7 @@ Class("wipeout.utils.html", function () {
         
         return getTagName(htmlContent.substring(i));
     };
-    
-    /*
-<ruby>
- <rt><rp>*/
-    
+        
     var specialTags = {
         area: "map",
         base: "head",
@@ -2228,7 +2464,7 @@ Class("wipeout.utils.html", function () {
     
     var createElement = function(htmlString) {
         ///<summary>Create a html element from a string</summary>
-        ///<param name="htmlString" type="String">A string of html<param>
+        ///<param name="htmlString" type="String">A string of html</param>
         ///<returns type="HTMLElement">The first element in the string as a HTMLElement</returns>
         
         var tagName = wipeout.utils.obj.trimToLower(getTagName(htmlString));
@@ -2256,7 +2492,7 @@ Class("wipeout.utils.html", function () {
        
     var createElements = function(htmlString) {
         ///<summary>Create an array of html elements from a string</summary>
-        ///<param name="htmlString" type="String">A string of html<param>
+        ///<param name="htmlString" type="String">A string of html</param>
         ///<returns type="HTMLElement">The string as an array of HTMLElements</returns>
         
         if(htmlString == null) return [];
@@ -2285,7 +2521,7 @@ Class("wipeout.utils.html", function () {
  
     var getAllChildren = function (element) {
         ///<summary>Get all of the children of a html element or knockout virtual element</summary>
-        ///<param name="element" type="HTMLNode">An element or knockout virtual element<param>
+        ///<param name="element" type="HTMLNode">An element or knockout virtual element</param>
         ///<returns type="Array">All of the nodes in the element</returns>
         
         var children = [];
@@ -2338,34 +2574,39 @@ Class("wipeout.utils.html", function () {
     
     var getViewModel = function(forHtmlNode) {
         ///<summary>Get the view model associated with a html node</summary>
-        ///<param name="forHtmlNode" type="HTMLNode">The element which is the root node of a wo.view<param>
+        ///<param name="forHtmlNode" type="HTMLNode">The element which is the root node of a wo.view</param>
         ///<returns type="wo.view">The view model associated with this node, or null</returns>
-        return ko.utils.domData.get(forHtmlNode, wipeout.bindings.wipeout.utils.wipeoutKey);        
+        var vm = ko.utils.domData.get(forHtmlNode, wipeout.bindings.wipeout.utils.wipeoutKey);
+        if(vm)
+            return vm;
+        
+        var parent = wipeout.utils.ko.virtualElements.parentElement(forHtmlNode);
+        if(parent)
+            return getViewModel(parent);
+        
+        return null;
     };
     
-    return {
-        cannotCreateTags: cannotCreateTags,
-        specialTags: specialTags,
-        getFirstTagName: getFirstTagName,
-        getTagName: getTagName,
-        getAllChildren: getAllChildren,
-        outerHTML: outerHTML,
-        createElement: createElement,
-        createElements: createElements,
-        getViewModel: getViewModel
-    };    
-});
-
-//legacy
-Class("wipeout.util.html", function () { 
-    return wipeout.utils.html;
+    var html = function() { };
+    
+    html.cannotCreateTags = cannotCreateTags;
+    html.specialTags = specialTags;
+    html.getFirstTagName = getFirstTagName;
+    html.getTagName = getTagName;
+    html.getAllChildren = getAllChildren;
+    html.outerHTML = outerHTML;
+    html.createElement = createElement;
+    html.createElements = createElements;
+    html.getViewModel = getViewModel
+    
+    return html;    
 });
 
 
 
 Class("wipeout.utils.ko", function () {
     
-    var _ko = {};
+    var _ko = function() { };
     
     _ko.version = function() {
         ///<summary>Get the current knockout version as an array of numbers</summary>
@@ -2437,15 +2678,43 @@ Class("wipeout.utils.ko", function () {
             ///<param name="node" type="HTMLNode">The node to test</param>
             ///<returns type="Boolean"></returns>
             return node.nodeType === 8 && trim(node.nodeValue) === "/ko";
+        },
+        childNodes: function(element) {
+            ///<summary>Returns the child nodes of an element or knockout virtual element</summary>
+            ///<param name="element" type="HTMLNode">The parent</param>
+            ///<returns type="Array">The child nodes</returns>
+            
+            if(element.nodeType == 1)
+                return element.childNodes;
+            
+            if(!_ko.virtualElements.isVirtual(element))
+                return [];
+            
+            var output = [];
+            var depth = 0;
+            element = element.nextSibling;
+            while (depth >= 0) {
+                if(!element)
+                    throw "Cannot find closing tag to match tag ko";
+                
+                var closing = false;
+                if(_ko.virtualElements.isVirtual(element))
+                    depth++;
+                else if (closing = _ko.virtualElements.isVirtualClosing(element))
+                    depth--;
+                
+                if (depth === 0 && !closing) {
+                    output.push(element);
+                }
+                
+                element = element.nextSibling;
+            }
+            
+            return output;
         }
     };
     
     return _ko;
-});
-
-//legacy
-Class("wipeout.util.ko", function () { 
-    return wipeout.utils.ko;
 });
 
 window.wo = {};
@@ -2460,35 +2729,5 @@ enumerate(wipeout.utils, function(item, i) {
 
 window.wipeout = wipeout;
 var DEBUG = wo.DEBUG = true;
-
-(function() {
-    var jQ = function() {
-        if(!window.jQuery)
-            throw "This debug tool requires jQuery";
-    };
-    
-    wo.debug = {
-        renderedItems: function(renderedItemType /*optional*/) {
-            
-            var values = [], vm;
-            var recursive = function(node) {
-                if(node) {
-                    switch(node.nodeType) {
-                        case 1:
-                            enumerate(node.childNodes, recursive);
-                        case 8:
-                            if((vm = wipeout.utils.html.getViewModel(node)) &&
-                              (!renderedItemType || vm.constructor === renderedItemType)) {
-                                values.push(vm);
-                            }
-                    }
-                }
-            };
-            
-            recursive(document.getElementsByTagName("body")[0]);
-            return values;
-        }
-    };
-})();
 
 })();
