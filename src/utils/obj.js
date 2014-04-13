@@ -179,6 +179,9 @@ Class("wipeout.utils.obj", function () {
     };
     
     var random = function(max) {
+        ///<summary>Random int generator</summary>
+        ///<param name="max" type="Number">The maximum value</param>
+        ///<returns type="Number">A random number</returns>
         return Math.floor(Math.random() * max);
     };
     

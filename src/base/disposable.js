@@ -3,7 +3,7 @@ Class("wipeout.base.disposable", function () {
     
     var disposable = wipeout.base.object.extend(function (disposeFunction) {
         ///<summary>An object which will dispose of something</summary>   
-        ///<param name="dispose" type="Function" optional="false">A dispose function</param>
+        ///<param name="disposeFunction" type="Function" optional="false">A dispose function</param>
         this._super();
         
         this.disposeFunction = disposeFunction;

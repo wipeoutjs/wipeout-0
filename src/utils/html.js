@@ -4,7 +4,7 @@ Class("wipeout.utils.html", function () {
         
     var outerHTML = function(element) {
         ///<summary>Browser agnostic outerHTML function</summary>
-        ///<param name="elemet" type="HTMLElement">The elemet to get the outer html</param>
+        ///<param name="element" type="HTMLElement">The elemet to get the outer html</param>
         ///<returns type="String">The outer html of the input</returns>
         
         if(!element) return null;
