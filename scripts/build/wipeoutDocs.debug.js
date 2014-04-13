@@ -499,7 +499,7 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
         console.log(new Wipeout.Docs.Models.Components.Generators.Typescript().generate(currentApi));
         
         this.menu =
-            new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout"/*, [
+            new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout", [
                 new Wipeout.Docs.Models.Components.TreeViewBranch("Tutorial", _tutorial),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("Features", _features),
                 new Wipeout.Docs.Models.Components.TreeViewBranch("API", [
@@ -507,7 +507,7 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
                     _bindings,
                     _wipeout
                 ])
-        ]*/);        
+        ]);        
     };
     
     return application;
@@ -864,6 +864,22 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
         var _private = functionDescription.name && functionDescription.name.indexOf("__") === 0;
         var _protected = !_private && functionDescription.name && functionDescription.name.indexOf("_") === 0;
         
+        /*var args = [];
+        
+        wo.object.enumerate(functionDescription.arguments, function(argument, i) {
+            args.push(arg.split());
+        });
+        
+        while(true) {
+            for (var i = 0, ii = args.length; i < ii; i++) {
+                for(var j = 0, jj = args[i].length; j < jj; j++) {
+                    
+                }
+            }
+        }*/
+        
+        
+        
         this.addFunctionBeginning(functionDescription.name, functionDescription.returns.type, _protected, _private, _static);
         this.indentation++;
         this.convertArguments(functionDescription.arguments);
@@ -973,7 +989,7 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.Typescript", "
 });
 
 compiler.registerClass("Wipeout.Docs.Models.Descriptions.Argument", "wo.object", function() {
-    return function(itemDetails) {
+    function argument(itemDetails) {
         this._super();
         
         this.name = itemDetails.name;
@@ -981,6 +997,22 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Argument", "wo.object",
         this.optional = !!itemDetails.optional;
         this.description = itemDetails.description;
     }
+    
+    argument.prototype.split = function() {
+        var output = [];        
+        wo.obj.enumerate(this.type.split(","), function(type) {
+            output.push(new Wipeout.Docs.Models.Descriptions.Argument({
+                name: this.name,
+                type: type,
+                optional: this.optional,
+                description: this.description
+            }));
+        });
+        
+        return output;        
+    };
+    
+    return argument;
 });
 
 compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", function() {
@@ -1167,9 +1199,11 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
         this.functionName = functionName;
         this.classFullName = classFullName;
         
-        this.arguments = functionDescription.getArguments(theFunction);
+        var xmlSummary = this.getXmlSummary();
         
-        this.returns = functionDescription.getReturnSummary(theFunction);
+        this.arguments = this.getArguments(xmlSummary);
+        
+        this.returns = functionDescription.getReturnSummary(xmlSummary);
         
         this.overrides = null;
         
@@ -1180,17 +1214,17 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
             
     var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
     var COMMA = /([^\s,]+)/g;
-    functionDescription.getArguments = function(theFunction) {
-        if(!theFunction || !(theFunction instanceof Function)) return [];
+    functionDescription.prototype.getArguments = function(xmlSummary) {
+        if(!this["function"] || !(this["function"] instanceof Function)) return [];
         
-        var fnStr = theFunction.toString().replace(STRIP_COMMENTS, '')
+        var fnStr = this["function"].toString().replace(STRIP_COMMENTS, '')
         var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(COMMA);
         
         if(!result)
             return [];
         
         for(var i = 0, ii = result.length; i < ii; i++) {
-            result[i] = new Wipeout.Docs.Models.Descriptions.Argument(functionDescription.getArgumentSummary(result[i], theFunction));
+            result[i] = new Wipeout.Docs.Models.Descriptions.Argument(functionDescription.getArgumentSummary(result[i], xmlSummary));
         }
         
         return result;
@@ -1219,23 +1253,31 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
         return functionString;
     };
     
-    functionDescription.getCommentsAsXml = function(theFunction, commentRegex) {
-        var functionString = functionDescription.removeFunctionDefinition(theFunction.toString());
-        
-        var i;
-        if ((i = functionString.search(commentRegex)) !== -1) {
-            // get rid of "///"
-            var current = functionString.substr(i + 3);            
-            return new DOMParser().parseFromString(current.substr(0, current.indexOf("\n")), "application/xml").documentElement;
+    var functionMeta = /^\s*\/\/\//g;
+    functionDescription.getXmlSummary = function(theFunction) {
+        var functionString = functionDescription.removeFunctionDefinition(theFunction.toString()).split("\n");
+        for(var i = 0, ii = functionString.length; i < ii; i++) {
+            if(functionString[i].search(functionMeta) !== 0)
+                break;
+            
+            functionString[i] = functionString[i].replace(functionMeta, "");
         }
-        
-        return null;
-    }
-        
-    functionDescription.getArgumentSummary = function(argument, theFunction) {
-        
-        var regex = new RegExp("///\\s*<param\\s*name=\"" + argument + "\"\\s*(\\s+type=\".*\"){0,1}>.*</param>\\s*\n");
-        var comment = functionDescription.getCommentsAsXml(theFunction, regex);
+                
+        return new DOMParser().parseFromString("<meta>" + functionString.splice(0, i).join("") + "</meta>", "application/xml").documentElement;
+    };
+    
+    functionDescription.prototype.getXmlSummary = function() {
+        return functionDescription.getXmlSummary(this["function"]);
+    };
+            
+    functionDescription.getArgumentSummary = function(argument, xmlSummary) {
+        var comment = null;
+        for(var i = 0, ii = xmlSummary.childNodes.length; i < ii; i++) {
+            if(xmlSummary.childNodes[i].nodeName === "param" && xmlSummary.childNodes[i].getAttribute("name") === argument) {
+                comment = xmlSummary.childNodes[i];
+                break;
+            }
+        }
         
         if(comment) {  
             return {
@@ -1251,9 +1293,17 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
         };   
     };   
             
-    functionDescription.getFunctionSummary = function(theFunction) {        
-        var regex = new RegExp("///\\s*<summary>.*</summary>\\s*\n");
-        var comment = functionDescription.getCommentsAsXml(theFunction, regex);
+    functionDescription.getFunctionSummary = function(theFunction) {
+        var xmlSummary = functionDescription.getXmlSummary(theFunction);
+        
+        var comment = null;
+        for(var i = 0, ii = xmlSummary.childNodes.length; i < ii; i++) {
+            if(xmlSummary.childNodes[i].nodeName === "summary") {
+                comment = xmlSummary.childNodes[i];
+                break;
+            }
+        }
+        
         if(comment) {  
             return comment.innerHTML;
         }
@@ -1261,14 +1311,14 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
         return "";   
     };   
             
-    functionDescription.getReturnSummary = function(theFunction) {  
-        var regex = new RegExp("///\\s*<returns\\s*(type=\".*\"){0,1}>.*</returns>\\s*\n");
-        var comment = functionDescription.getCommentsAsXml(theFunction, regex);
-        if(comment && comment.getAttribute("type") !== "void") {            
-            return {
-                summary: comment.innerHTML,
-                type: comment.getAttribute("type")
-            };
+    functionDescription.getReturnSummary = function(xmlSummary) { 
+        for(var i = 0, ii = xmlSummary.childNodes.length; i < ii; i++) {
+            if(xmlSummary.childNodes[i].nodeName === "returns") {
+                return {
+                    summary: xmlSummary.childNodes[i].innerHTML,
+                    type: xmlSummary.childNodes[i].getAttribute("type")
+                };
+            }
         }
         
         return {
