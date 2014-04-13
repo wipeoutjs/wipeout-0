@@ -79,7 +79,6 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
     
     codeHelperGenerator.prototype.convertNamespace = function(name, namespaceObject) {
         
-        debugger;
         var result= [];
         
         this.addNamespaceBeginning(name);
@@ -153,6 +152,22 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
     codeHelperGenerator.prototype.convertFunction = function(functionDescription, _static) {
         var _private = functionDescription.name && functionDescription.name.indexOf("__") === 0;
         var _protected = !_private && functionDescription.name && functionDescription.name.indexOf("_") === 0;
+        
+        /*var args = [];
+        
+        wo.object.enumerate(functionDescription.arguments, function(argument, i) {
+            args.push(arg.split());
+        });
+        
+        while(true) {
+            for (var i = 0, ii = args.length; i < ii; i++) {
+                for(var j = 0, jj = args[i].length; j < jj; j++) {
+                    
+                }
+            }
+        }*/
+        
+        
         
         this.addFunctionBeginning(functionDescription.name, functionDescription.returns.type, _protected, _private, _static);
         this.indentation++;

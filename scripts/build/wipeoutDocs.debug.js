@@ -790,7 +790,6 @@ compiler.registerClass("Wipeout.Docs.Models.Components.Generators.CodeHelperGene
     
     codeHelperGenerator.prototype.convertNamespace = function(name, namespaceObject) {
         
-        debugger;
         var result= [];
         
         this.addNamespaceBeginning(name);
