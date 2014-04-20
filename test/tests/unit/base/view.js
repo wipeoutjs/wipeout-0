@@ -1,4 +1,4 @@
-module("wipeout.tests.unit.base.view", {
+module("wipeout.base.view", {
     setup: function() {
     },
     teardown: function() {

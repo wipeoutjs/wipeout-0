@@ -1,4 +1,4 @@
-module("wipeout.tests.unit.utils.html", {
+module("wipeout.utils.html", {
     setup: function() {
     },
     teardown: function() {

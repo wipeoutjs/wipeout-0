@@ -1,4 +1,4 @@
-
+window.testUtils = window.testUtils || {};
 $.extend(testUtils, (function() {
     
     var cached = [];
@@ -9,9 +9,9 @@ $.extend(testUtils, (function() {
         }
     };
  
-    classMock.prototype.mock = function(className, newConstructor /*optional*/, expected /*optional*/) {
+    classMock.prototype.mock = function(className, newValue /*optional*/, expected /*optional*/) {
  
-        newConstructor = newConstructor || function(){};
+        newValue = newValue || function(){};
  
         className = className.split(".");
         var current = window;
@@ -21,12 +21,15 @@ $.extend(testUtils, (function() {
  
         var mock = {ns: current, name: className[i], oldVal: current[className[i]], expected: expected, actual: 0};
         this.mocks.push(mock);
-        current[className[i]] = function() {
-            mock.actual++;
- 
-            // return so that both methods and constructors can be mocked
-            return newConstructor.apply(this, arguments);
-        };
+        if(newValue == null || newValue.constructor === Function)        
+            current[className[i]] = function() {
+                mock.actual++;
+
+                // return so that both methods and constructors can be mocked
+                return newValue.apply(this, arguments);
+            };
+        else
+            current[className[i]] = newValue;
  
         return current[className[i]];
     };
@@ -80,19 +83,37 @@ $.extend(testUtils, (function() {
         }
     };
  
-    var testWithUtils = function(name, testLogic) {
+    var testWithUtils = function(method, description, isStatic, testLogic) {
         
         var methods = new methodMock();
         var classes = new classMock();
-        test(name, function() {
+        test(method + ", " + description, function() {
             try {
-                testLogic(methods, classes);    
+                var subject = {};
+                function invoker() {
+                    var testSubject = testUtils.currentModule;
+                    if(method.toLowerCase() !== "consrtuctor") {
+                        if(!isStatic) {
+                            testSubject += ".prototype";
+                        }
+                        
+                        testSubject += "." + method;
+                    }
+                    
+                    return wipeout.utils.obj.getObject(testSubject).apply(subject, arguments);                   
+                };
+                
+                testLogic(methods, classes, subject, invoker);    
                 methods.verifyAllExpectations();
             } finally {
                 classes.reset();
             }
         });
     };
+    
+    QUnit.moduleStart(function( details ) {
+      testUtils.currentModule = details.name;
+    });
     
     return {
         testWithUtils: testWithUtils,
