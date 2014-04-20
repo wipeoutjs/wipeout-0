@@ -79,7 +79,7 @@ $.extend(testUtils, (function() {
  
     methodMock.prototype.verifyAllExpectations = function () {
         for (var i = 0, ii = this.calls.length; i < ii; i++) {
-            ok(this.calls[i].method.__called, "Method \"" + this.calls[i].name + "\" as not called.");
+            ok(this.calls[i].method.__called, "Method \"" + this.calls[i].name + "\" was not called.");
         }
     };
  
@@ -89,18 +89,19 @@ $.extend(testUtils, (function() {
         var classes = new classMock();
         test(method + ", " + description, function() {
             try {
-                var subject = {};
-                function invoker() {
-                    var testSubject = testUtils.currentModule;
-                    if(method.toLowerCase() !== "consrtuctor") {
-                        if(!isStatic) {
-                            testSubject += ".prototype";
-                        }
-                        
-                        testSubject += "." + method;
+                var subject = {};                
+                var testSubject = testUtils.currentModule;
+                if(method.toLowerCase() !== "consrtuctor") {
+                    if(!isStatic) {
+                        testSubject += ".prototype";
                     }
-                    
-                    return wipeout.utils.obj.getObject(testSubject).apply(subject, arguments);                   
+
+                    testSubject += "." + method;
+                }
+                
+                testSubject = wipeout.utils.obj.getObject(testSubject);
+                function invoker() {                    
+                    return testSubject.apply(subject, arguments);                   
                 };
                 
                 testLogic(methods, classes, subject, invoker);    
