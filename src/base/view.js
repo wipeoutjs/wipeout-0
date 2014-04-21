@@ -10,10 +10,12 @@ Class("wipeout.base.view", function () {
 
         this._super(templateId);
         
-        //The model of view. If not set, it will default to the model of its parent view
-        this.model = ko.observable(model || null);
+        if(model === undefined)
+            model = null;
         
-        var model = null;
+        //The model of view. If not set, it will default to the model of its parent view
+        this.model = ko.observable(model);
+        
         this.registerDisposable(this.model.subscribe(function(newVal) {
             try {
                 this.onModelChanged(model, newVal);
@@ -21,14 +23,12 @@ Class("wipeout.base.view", function () {
                 model = newVal;
             }                                          
         }, this).dispose);
-        
-        var _this = this;
                                 
         //Placeholder to store binding disposeal objects
         this.__woBag.bindings = {};
     }, "view"); 
     
-    var setObservable = function(obj, property, value) {
+    view.setObservable = function(obj, property, value) {
         if(ko.isObservable(obj[property])) {
             obj[property](ko.utils.unwrapObservable(value));
         } else {
@@ -83,12 +83,12 @@ Class("wipeout.base.view", function () {
         
         var unsubscribe1 = false;
         var unsubscribe2 = false;
-        setObservable(this, property, toBind.peek());
+        view.setObservable(this, property, toBind.peek());
         var subscription1 = toBind.subscribe(function(newVal) {
             if(!unsubscribe1) {
                 try {
                     unsubscribe2 = true;
-                    setObservable(this, property, newVal);
+                    view.setObservable(this, property, newVal);
                 } finally {
                     unsubscribe2 = false;
                 }
@@ -100,7 +100,7 @@ Class("wipeout.base.view", function () {
                 if(!unsubscribe2) {
                     try {
                         unsubscribe1 = true;
-                        setObservable({x: toBind}, "x", newVal);
+                        view.setObservable({x: toBind}, "x", newVal);
                     } finally {
                         unsubscribe1 = false;
                     }
@@ -176,12 +176,26 @@ Class("wipeout.base.view", function () {
             var name = attr.nodeName, setter = "";
             if(name.indexOf("-tw") === attr.nodeName.length - 3) {
                 name = name.substr(0, name.length - 3);
-                setter = ",\n\t\t\tfunction(val) {\n\t\t\t\tif(!ko.isObservable(" + attr.value + "))\n\t\t\t\t\tthrow 'Two way bindings must be between 2 observables';\n\t\t\t\t" + attr.value + "(val);\n\t\t\t}";
+                setter = 
+",\
+            function(val) {\
+                if(!ko.isObservable(" + attr.value + "))\
+                    throw 'Two way bindings must be between 2 observables';\
+                " + attr.value + "(val);\
+            }";
             }
             
             try {
                 bindingContext.__$woCurrent = this;
-                wipeout.template.engine.createJavaScriptEvaluatorFunction("(function() {\n\t\t\t__$woCurrent.bind('" + name + "', function() {\n\t\t\t\treturn " + attr.value + ";\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()")(bindingContext);
+                wipeout.template.engine.createJavaScriptEvaluatorFunction(
+        "(function() {\
+            __$woCurrent.bind('" + name + "', function() {\
+                return " + attr.value + ";\
+            }" + setter + ");\
+\
+            return '';\
+        })()"
+                )(bindingContext);
             } finally {
                 delete bindingContext.__$woCurrent;
             }
@@ -211,11 +225,7 @@ Class("wipeout.base.view", function () {
                 }
             
                 var val = view.objectParser[trimToLower(type)](innerHTML.join(""));
-                if(ko.isObservable(this[child.nodeName])) {
-                    this[child.nodeName](val);       
-                } else {
-                    this[child.nodeName] = val;       
-                }
+                view.setObservable(this, child.nodeName, val);
             } else {
                 var val = wipeout.utils.obj.createObject(type);
                 if(val instanceof wipeout.base.view) {
@@ -223,11 +233,7 @@ Class("wipeout.base.view", function () {
                     val.initialize(child, bindingContext);
                 }
                 
-                if(ko.isObservable(this[child.nodeName])) {
-                    this[child.nodeName](val);       
-                } else {
-                    this[child.nodeName] = val;       
-                }     
+                view.setObservable(this, child.nodeName, val);
             }
         }, this);
     };
@@ -263,10 +269,11 @@ Class("wipeout.base.view", function () {
         ///<param name="oldValue" type="Any" optional="false">The old model</param>
         ///<param name="newValue" type="Any" optional="false">The new mode</param>
         
-        this.disposeOf(this.__woBag[modelRoutedEventKey]);
-        
-        if(newValue instanceof wipeout.base.routedEventModel) {
-            this.__woBag[modelRoutedEventKey] = this.registerDisposable(newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this).dispose);
+        if(oldValue !== newValue) {
+            this.disposeOf(this.__woBag[modelRoutedEventKey]);        
+            if(newValue instanceof wipeout.base.routedEventModel) {
+                this.__woBag[modelRoutedEventKey] = this.registerDisposable(newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this).dispose);
+            }
         }
     };
     
