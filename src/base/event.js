@@ -42,7 +42,7 @@ Class("wipeout.base.event", function () {
         ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
         
         context = context == null ? window : context;
-        for(var i = 0, ii = this._registrations.length; i < ii; i++) {
+        for(var i = 0; i < this._registrations.length; i++) {
             if(this._registrations[i].callback === callback && this._registrations[i].context === context) {
                 this._registrations.splice(i, 1);
                 i--;

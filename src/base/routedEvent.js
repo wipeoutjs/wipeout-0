@@ -20,9 +20,8 @@ Class("wipeout.base.routedEvent", function () {
         ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
         ///<returns type="Boolean">Whether the event registration was found or not</returns>         
         return triggerOnVisual.unRegisterRoutedEvent(this, callback, context);
-    }
+    };
     
-    //TODO: return dispose function
     routedEvent.prototype.register = function(callback, triggerOnVisual, context /* optional */) {
         ///<summary>Register a routed event on a visual</summary>
         ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>

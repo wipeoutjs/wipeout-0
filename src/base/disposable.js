@@ -10,8 +10,7 @@ Class("wipeout.base.disposable", function () {
     });
     
     disposable.prototype.dispose = function() {
-        ///<summary>Dispose</summary>   
-        
+        ///<summary>Dispose</summary>           
         
         if(this.disposeFunction)
             this.disposeFunction();
