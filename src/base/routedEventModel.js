@@ -15,7 +15,7 @@ Class("wipeout.base.routedEventModel", function () {
         
         // Used by wo.model to acertain when a routed event should be fired
         this.__triggerRoutedEventOnVM.trigger({routedEvent: routedEvent, eventArgs: eventArgs});
-    };;
+    };
     
     return routedEventModel;
 });
