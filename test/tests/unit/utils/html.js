@@ -26,8 +26,11 @@ test("createElement", function() {
             throws(function() { wo.html.createElement("<" + createElement + "></" + createElement + ">"); }, tag);
         else {
             var element = wo.html.createElement("<" + tag + "></" + tag + ">");
-            ok(element instanceof HTMLElement);
-            strictEqual(element.tagName.toLowerCase(), tag, tag);
+            ok(element instanceof HTMLElement, tag + " instance");
+            
+            // firefox creates select elements instead of keygens
+            if(tag !==  "keygen")
+                strictEqual(element.tagName.toLowerCase(), tag, tag + " created");
         }
     });    
 });

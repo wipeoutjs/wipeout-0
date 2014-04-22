@@ -13,7 +13,8 @@ var enumerate = function(enumerate, action, context) {
     if(enumerate instanceof Array || 
        enumerate instanceof HTMLCollection || 
        enumerate instanceof NodeList || 
-       enumerate instanceof NamedNodeMap)
+       (window.NamedNodeMap && enumerate instanceof NamedNodeMap) || 
+       (window.MozNamedAttrMap && enumerate instanceof MozNamedAttrMap))
         for(var i = 0, ii = enumerate.length; i < ii; i++)
             action.call(context, enumerate[i], i);
     else
@@ -32,7 +33,8 @@ var enumerateDesc = function(enumerate, action, context) {
     if(enumerate instanceof Array || 
        enumerate instanceof HTMLCollection || 
        enumerate instanceof NodeList || 
-       enumerate instanceof NamedNodeMap)
+       (window.NamedNodeMap && enumerate instanceof NamedNodeMap) || 
+       (window.MozNamedAttrMap && enumerate instanceof MozNamedAttrMap))
         for(var i = enumerate.length - 1; i >= 0; i--)
             action.call(context, enumerate[i], i);
     else {

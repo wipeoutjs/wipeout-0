@@ -130,13 +130,19 @@ testUtils.testWithUtils("rewriteTemplate", "is HTMLElement, script has been reWr
 testUtils.testWithUtils("wipeoutRewrite", "html only", true, function(methods, classes, subject, invoker) {
     // arrange
     var data = "<div><span data-bind=\"html: xxx\"/></div>";
-    var element = new DOMParser().parseFromString(data, "application/xml").documentElement
+    var element = new DOMParser().parseFromString(data, "application/xml").documentElement;
     
     // act    
     invoker(element);
     
     //assert
-    strictEqual(new XMLSerializer().serializeToString(element), data);
+    strictEqual(element.nodeName, "div");
+    strictEqual(element.attributes.length, 0);
+    strictEqual(element.childNodes.length, 1);
+    strictEqual(element.firstChild.nodeName, "span");
+    strictEqual(element.firstChild.attributes.length, 1);
+    strictEqual(element.firstChild.childNodes.length, 0);
+    strictEqual(element.firstChild.getAttribute("data-bind"), "html: xxx");
 });
 
 testUtils.testWithUtils("wipeoutRewrite", "custom tag", true, function(methods, classes, subject, invoker) {
@@ -234,7 +240,10 @@ testUtils.testWithUtils("wipeoutRewrite", "element and comment", false, function
     var input = {textContent:html};
     var rewriter = {};
     classes.mock("wipeout.template.engine.wipeoutRewrite", function() {
-        methods.method(["<div/>", rewriter])(arguments[0].outerHTML, arguments[1]);                               
+        strictEqual(arguments[0].nodeName, "div");
+        strictEqual(arguments[0].attributes.length, 0);
+        strictEqual(arguments[0].childNodes.length, 0);
+        strictEqual(arguments[1], rewriter);
         return arguments[0];
     });
     
@@ -242,7 +251,7 @@ testUtils.testWithUtils("wipeoutRewrite", "element and comment", false, function
     invoker(input, rewriter);
     
     //assert
-    strictEqual(input.textContent, html);
+    ok(/^<div\s*\/><!-- hello -->$/.test(input.textContent));
 });
 
 testUtils.testWithUtils("renderTemplateSource", "not wo.view", false, function(methods, classes, subject, invoker) {

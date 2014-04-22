@@ -64,6 +64,7 @@ Class("wipeout.utils.html", function () {
         frame: "frameset",
         frameset: "html",
         head: "html",
+        keygen: "form",
         li: "ul",
         optgroup: "select",
         option: "select",
@@ -116,6 +117,10 @@ Class("wipeout.utils.html", function () {
         tr: true
     };
     
+    var replaceTags = {
+        keygen: "select"
+    };
+    
     var createElement = function(htmlString) {
         ///<summary>Create a html element from a string</summary>
         ///<param name="htmlString" type="String">A string of html</param>
@@ -132,16 +137,23 @@ Class("wipeout.utils.html", function () {
             
         var parent = document.createElement(parentTagName);
         parent.innerHTML = htmlString;
-        for(var i  = 0, ii = parent.childNodes.length; i < ii; i++) {
-            // IE might create some other elements along with the one specified
-            if(parent.childNodes[i].nodeType === 1 && parent.childNodes[i].tagName.toLowerCase() === tagName) {
-                var element = parent.childNodes[i];
-                parent.removeChild(element);
-                return element;
+        
+        function getElement(tagName) {
+            if(!tagName) return null;
+            
+            for(var i  = 0, ii = parent.childNodes.length; i < ii; i++) {
+                // IE might create some other elements along with the one specified
+                if(parent.childNodes[i].nodeType === 1 && parent.childNodes[i].tagName.toLowerCase() === tagName) {
+                    var element = parent.childNodes[i];
+                    parent.removeChild(element);
+                    return element;
+                }
             }
+            
+            return null;
         }
         
-        return null;
+        return getElement(tagName) || getElement(replaceTags[tagName]);
     }; 
        
     var createElements = function(htmlString) {
