@@ -60,7 +60,7 @@ Class("wipeout.template.engine", function () {
         ///<summary>Recursively go through an xml element and replace all view models with render comments</summary>
         ///<param name="xmlElement" type="Element">The template</param>
         ///<param name="rewriterCallback" type="Function">A function which will do the re-writing (provided by knockout)</param>
-        if(wipeout.base.visual.reservedTags.indexOf(xmlElement.nodeName) !== -1) {
+        if(wipeout.base.visual.reservedTags[xmlElement.nodeName]) {
             for(var i = 0; i < xmlElement.childNodes.length; i++)
                 if(xmlElement.childNodes[i].nodeType === 1)
                     engine.wipeoutRewrite(xmlElement.childNodes[i], rewriterCallback);
