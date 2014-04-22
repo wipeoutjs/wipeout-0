@@ -188,7 +188,7 @@ Class("wipeout.base.visual", function () {
         
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
             if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
-                this.__woBag.routedEventSubscriptions[i].event.unRegister(callback, context);
+                this.__woBag.routedEventSubscriptions[i].event.unRegister(callback, callbackContext);
                 return true;
             }
         }  
