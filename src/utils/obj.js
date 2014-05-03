@@ -128,7 +128,7 @@ var parseBool = function(input) {
         
     input = trimToLower(input);
     
-    return input && input !== "false" && input !== "0";
+    return !!(input && input !== "false" && input !== "0");
 };
 
 Class("wipeout.utils.obj", function () {
