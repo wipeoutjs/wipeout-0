@@ -177,6 +177,8 @@ testUtils.testWithUtils("wipeoutRewrite", "render script logic, invalid vm type"
     throws(function() {
         engine.scriptCache[data](bindingContext);
     });
+    
+    delete window.my;
 });
 
 testUtils.testWithUtils("wipeoutRewrite", "render script logic", true, function(methods, classes, subject, invoker) {
@@ -209,6 +211,8 @@ testUtils.testWithUtils("wipeoutRewrite", "render script logic", true, function(
     // assert
     strictEqual(actual.vm, vm);
     strictEqual(actual.id, id);
+    
+    delete window.my;
 });  
      
 

@@ -113,7 +113,7 @@ Class("wipeout.template.engine", function () {
         ///<param name="rewriterCallback" type="Function">A function which will do the re-writing (provided by knockout)</param>
         
         var ser = new XMLSerializer();
-        xmlTemplate = new DOMParser().parseFromString("<root>" + script.textContent + "</root>", "application/xml").documentElement;        
+        var xmlTemplate = new DOMParser().parseFromString("<root>" + script.textContent + "</root>", "application/xml").documentElement;        
         if(xmlTemplate.firstChild && xmlTemplate.firstChild.nodeName === "parsererror") {
             //TODO: copy pasted
 			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);

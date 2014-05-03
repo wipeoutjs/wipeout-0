@@ -1,3 +1,7 @@
+var $fixture;
+var $application;
+var application;
+
 module("wipeout.tests.integration", {
     setup: function() {
         $fixture = $("#qunit-fixture");
