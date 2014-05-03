@@ -19,7 +19,7 @@ Class("wipeout.profile.profiler", function () {
     };
     
     profiler.prototype.allNodes = function() {
-        var $elements = $(wipeout.utils.ko.virtualElements.childNodes(this.vm.__woBag.rootHtmlElement));
+        var $elements = $(wipeout.utils.html.getAllChildren(this.vm.__woBag.rootHtmlElement));
         return $elements.find('*').add($elements);
     };
     
