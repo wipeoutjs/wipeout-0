@@ -35,10 +35,12 @@ Class("wipeout.base.object", function () {
         ///<summary>Call the current method or constructor of the parent class with arguments</summary>
         ///<returns type="Any">Whatever the overridden method returns</returns>
         
+        var currentFunction = arguments.callee.caller;
+        
         // try to find a cached version to skip lookup of parent class method
         var cached = null;
         if(object.useVirtualCache) {
-            var superIndex = cachedSuperMethods.children.indexOf(arguments.callee.caller);
+            var superIndex = cachedSuperMethods.children.indexOf(currentFunction);
             if(superIndex !== -1)
                 cached = cachedSuperMethods.parents[superIndex];
         }
@@ -59,13 +61,13 @@ Class("wipeout.base.object", function () {
             // find the first instance of the current method in inheritance tree
             for(var i = 0, ii = inheritanceTree.length; i < ii; i++) {
                 // if it is a constructor
-                if(inheritanceTree[i] === arguments.callee.caller.prototype) {
+                if(inheritanceTree[i] === currentFunction.prototype) {
                     cached = inheritanceTree[i - 1].constructor;							
                 } else {
                     for(var method in inheritanceTree[i]) {
-                        if(inheritanceTree[i][method] === arguments.callee.caller) {
+                        if(inheritanceTree[i][method] === currentFunction) {
                             for(var j = i - 1; j >= 0; j--) {
-                                if(inheritanceTree[j][method] !== arguments.callee.caller) {
+                                if(inheritanceTree[j][method] !== currentFunction) {
                                     cached = inheritanceTree[j][method];
                                     break;
                                 }
@@ -80,7 +82,7 @@ Class("wipeout.base.object", function () {
                 if (cached) {
                     if(object.useVirtualCache) {
                         // map the current method to the method it overrides
-                        cachedSuperMethods.children.push(arguments.callee.caller);
+                        cachedSuperMethods.children.push(currentFunction);
                         cachedSuperMethods.parents.push(cached);
                     }
 
