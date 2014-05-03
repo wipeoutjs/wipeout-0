@@ -37,7 +37,7 @@ Class("wipeout.base.itemsControl", function () {
         
         this.registerDisposable(this.items.subscribe(this.syncModelsAndViewModels, this).dispose);
 
-        var itemTemplateId = this.itemTemplateId.peek();
+        itemTemplateId = this.itemTemplateId.peek();
         this.registerDisposable(this.itemTemplateId.subscribe(function (newValue) {
             if (itemTemplateId !== newValue) {
                 try {

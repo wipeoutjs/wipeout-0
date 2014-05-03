@@ -65,9 +65,10 @@ $.extend(testUtils, (function() {
  
         return this.customMethod(function () {
             var expected = expectedArguments();
-            for (var i = 0, ii = arguments.length; i < ii; i++) {
-                strictEqual(expected[i], arguments[i], "Argument " + i + " of method \"" + name + "\" was invalid.");
-            }
+            if(expected)
+                for (var i = 0, ii = arguments.length; i < ii; i++) {
+                    strictEqual(expected[i], arguments[i], "Argument " + i + " of method \"" + name + "\" was invalid.");
+                }
  
             return returnValue ? returnValue() : returnValue;        
         }, name);
