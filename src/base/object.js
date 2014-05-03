@@ -120,7 +120,7 @@ Class("wipeout.base.object", function () {
             " + className + ".prototype = parentClass.prototype;\
             childClass.prototype = new " + className + "();")(childClass, this);
         } else {        
-            function prototypeTracker() { this.constructor = childClass; }     
+            var prototypeTracker = function() { this.constructor = childClass; }     
             prototypeTracker.prototype = this.prototype;
             childClass.prototype = new prototypeTracker();
         }

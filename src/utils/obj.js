@@ -1,3 +1,4 @@
+"use strict";
 var wipeout = {};
     
 var enumerate = function(enumerate, action, context) {
