@@ -5,12 +5,13 @@ Class("wipeout.base.contentControl", function () {
         ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
         ///<param name="templateId" type="string" optional="true">The template id. If not set, defaults to a blank template</param>
         ///<param name="model" type="Any" optional="true">The initial model to use</param>
-        this._super(templateId || wipeout.base.visual.getBlankTemplateId());
+        this._super(templateId || wipeout.base.visual.getBlankTemplateId(), model);
 
         //The template which corresponds to the templateId for this item
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
     }, "contentControl");
     
+//TODO: comments, observable<String>
     contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
         ///<summary>Creates a computed for a template property which is bound to the templateIdObservable property</summary>
         ///<param name="templateIdObservable" type="String" optional="false">The observable containing the templateId to create a template property for</param>
