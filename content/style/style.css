@@ -16,7 +16,7 @@ body { padding-top: 70px; }
     width: 300px;
 }
 
-.leftNav {
+.leftNav {    
     overflow:auto;
     position: fixed;
     height: 100%;
@@ -42,6 +42,7 @@ ul.wo-navbar-right {
     margin-bottom: 0px;
 }
 
+
 ul.wo-navbar-right li {
     float: left;
     padding: 5px;
@@ -49,6 +50,9 @@ ul.wo-navbar-right li {
 }
 
 .index-page {
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto;
     width: 100%;
     padding: 30px;
 }
