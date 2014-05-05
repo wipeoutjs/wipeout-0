@@ -8,25 +8,28 @@ layout: default
         <p>MVVM on steroids for knockout.</p>
         <br/>
         <br/>
-        <div class="columns" style="height: 120px;">
+        <div class="columns" style="height: 170px;">
             <div class="column-3">
-                <div style="text-align: center">
-                    <img class="main-image" src="content/images/boxingGlove.png">
+                <div class="center-container">
+                    <img class="main-image-dimentions center" src="content/images/boxingGlove.png"></img>
+                    <div class="main-image-dimentions"></div>
                     <br/>
                     <h4>The power of knockout</h4>
                 </div>
             </div>
             <div class="column-3">
-                <div>
-                    <img class="main-image" src="content/images/xaml.svg">
+                <div class="center-container">
+                    <img class="main-image-dimentions center" src="content/images/xaml.svg"></img>
+                    <div class="main-image-dimentions"></div>
                     <br/>
-                    <h4>The declaritive nature of XAML</h4>
+                    <h4>The declaritive nature of XAML</h4> 
                 </div>
             </div>
             <div class="column-3">
-                <div>
-                    <img class="main-image" src="content/images/oo.svg">
-                    <br/>
+                <div class="center-container">
+                    <img class="main-image-dimentions center" src="content/images/oo.svg"></img>
+                    <div class="main-image-dimentions"></div>
+                    <br/> 
                     <h4>The extensability of an OO framework</h4>
                 </div>
             </div>
@@ -35,5 +38,183 @@ layout: default
     <div>
         <h1>Why wipeout?</h1>
         <p>Wipeout is a template engine for knockout. It leverages the superb client binding and templating capabilities of knockout, but goes one step further, introducing the basic functionalities and development patterns of XAML in a HTML/javascript environment.</p>
+        <h1>What does it look like?</h1>
+        <p>Wipeout is built to look as much like WPF and Silverlight as possible. You define components in javascript, give them html templates and nest them like with XAML. Have a look:</p>
+        <div id="example">
+            <h4>A collapsable component</h4>
+            <div class="columns">
+                <div class="column-2 main-example-code">
+                    View model class
+                    <pre class="prettyprint" data-script-type="text/javascript">// create a namespace for our application
+window.app = {};
+
+// create a custom view model which inherits from wo.view
+app.collapsable = wo.view.extend(function() {
+    this._super("app.collapsable");
+});
+                
+// a function which will show or hide the collapsable content
+app.collapsable.prototype.toggleContent = function() {
+    // "colapsableContent" is the id of the div to show/hide
+    // in the template for this view model    
+    var collapsableHtml = this.templateItems.colapsableContent;
+    $(collapsableHtml).slideToggle();
+};</pre>
+                </div>
+                <div class="column-2 main-example-code">
+                    Template
+                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.collapsable">&lt;!-- script id="app.collapsable" -->
+                    
+&lt;div data-bind="click: toggleContent"
+    class="panel-heading"
+    style="cursor: pointer">
+    &lt;h3 class="panel-title"
+        data-bind="text: model().header">&lt;/h3>
+&lt;/div>
+&lt;div class="panel-body">
+    &lt;div data-bind="html: model().content" id="colapsableContent">
+    &lt;/div>
+&lt;/div></pre>
+                </div>
+            </div>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <h4>Root application component</h4>
+            <div class="columns">
+                <div class="column-2 main-example-code">
+                    View model class
+                    <pre class="prettyprint" data-script-type="text/javascript">
+// inherit from the wo.view class
+app.rootApplication = wo.view.extend(function () {
+    // call the base constructor.
+    // the constructor for wo.view takes in a template id.
+    this._super("app.rootApplication");
+});</pre>
+                </div>
+                <div class="column-2 main-example-code">
+                    Template
+                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.rootApplication">&lt;!-- script id="app.rootApplication" -->
+
+&lt;div style="width: 300px; margin: 50px"
+     class="panel panel-primary">
+    &lt;h4 data-bind="text: model().applicationName">&lt;/h4>
+    &lt;app.collapsable model="$parent.model().collapsableContent">
+    &lt;/app.collapsable>
+&lt;/div></pre>
+                </div>
+            </div>
+            <h4>Application definition</h4>
+            <div class="columns">
+                <div class="column-2 main-example-code">
+                    Model and setup
+                    <pre class="prettyprint" data-script-type="text/javascript">var rootApp = document.getElementById("wipeoutApp");  
+var model = {
+    applicationName: "Wipeout demo",
+    collapsableContent: {
+        header: "Open/close",
+        content: "This is content for the component"
+    }
+};
+ko.applyBindings(model, rootApp);</pre>
+                </div>
+                <div class="column-2 main-example-code">
+                    Inline html definiton
+                    <pre class="prettyprint" data-html="true">&lt;!-- html definition -->
+                    
+&lt;div data-bind="wipeout: app.rootApplication" id="wipeoutApp">
+&lt;/div></pre>
+                    <div style="float: right">
+                        <button id="execute">Execute</button>
+                        <br />
+                        (popups must be enabled)
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+<script type="text/javascript">
+    $(function() {
+        var scriptsAndCss = [{
+            tag: "link",
+            type: "text/css", 
+            rel: "stylesheet", 
+            href: "http://" + document.location.host + "/content/style/bootstrap/lumen/bootstrap.css"
+        }, {
+            tag: "script",
+            type: "text/javascript", 
+            src: "http://" + document.location.host + "/scripts/lib/jquery-1.10.2.min.js"
+        }, {
+            tag: "script",
+            type: "text/javascript", 
+            src: "http://" + document.location.host + "/scripts/lib/knockout-2.3.0.debug.js"
+        }, { 
+            tag: "script",
+            type: "text/javascript", 
+            src: "http://" + document.location.host + "/scripts/lib/wipeout-0.3.debug.js"
+        }];       
+        
+        $("[data-script-type]").each(function() {
+            scriptsAndCss.push({
+                tag: "script",
+                type: $(this).attr("data-script-type"),
+                id: $(this).attr("data-script-id"),
+                content: $(this).html().replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+            });
+        });
+        
+        var html = $("[data-html]").html().replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+                
+        $("#example .prettyprint").each(function() { $(this).html(prettyPrintOne($(this).html())); });
+        $("[data-script-type='text/xml'] span[class=tag]:contains('app.collapsable')").css("font-weight", "bold").css("background", "yellow");
+        
+        $("#execute").on("click", function() {
+            var external = window.open();
+            
+            var content = "";
+            for(var i = 0, ii = scriptsAndCss.length; i < ii; i++) {
+                content += '<' + scriptsAndCss[i].tag + 
+                    (scriptsAndCss[i].type ? ' type="' + scriptsAndCss[i].type + '"' : '') +
+                    (scriptsAndCss[i].id ? ' id="' + scriptsAndCss[i].id + '"' : '') +
+                    (scriptsAndCss[i].src ? ' src="' + scriptsAndCss[i].src + '"' : '') +
+                    (scriptsAndCss[i].href ? ' href="' + scriptsAndCss[i].href + '"' : '') +
+                    (scriptsAndCss[i].rel ? ' rel="' + scriptsAndCss[i].rel + '"' : '') +
+                    '>'
+                + (scriptsAndCss[i].content ? scriptsAndCss[i].content : '') +
+                '<' + '/' + scriptsAndCss[i].tag + '>';
+            }
+            
+            external.window.document.write("<html>\
+    <head>\
+        <title>Wipeout</title>\
+        </head>\
+    <body>" +
+        html + 
+        content +
+    "</body>\
+</html>")
+        });
+    });
+</script>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>

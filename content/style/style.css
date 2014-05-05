@@ -42,6 +42,17 @@ ul.wo-navbar-right {
     margin-bottom: 0px;
 }
 
+.center-container {
+    position: relative;
+}
+
+.center {
+    position: absolute;
+    margin-right: -62.5px;
+    margin-left: -62.5px;
+    left: 50%;
+    right: 50%;
+}
 
 ul.wo-navbar-right li {
     float: left;
@@ -57,7 +68,7 @@ ul.wo-navbar-right li {
     padding: 30px;
 }
 
-.columns * {
+.columns>* {
     float: left;
 }
 
@@ -69,7 +80,20 @@ ul.wo-navbar-right li {
     width: 33.33%;
 }
 
-.main-image {
+.columns .column-2 {
+    width: 50%;
+}
+
+.main-image-dimentions {
     height: 125px;
     width: 125px;
+}
+
+.main-example-code>pre {
+    width : 100%;
+}
+
+.main-example-code {
+    padding-left: 5px;
+    padding-right: 5px;
 }
