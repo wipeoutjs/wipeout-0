@@ -191,9 +191,9 @@ ko.applyBindings(model, rootApp);</pre>
                 <h3>Strict seperation of concerns</h3>
                 <p>Wipeout is rigidly seperated into 3 areas:
                     <ol>
-                        <li><b>View models</b>. View models are javascript objects for containing view logic and view data. View models inherit from "wo.view" and are mostly declared and created inline in html</li>
-                        <li><b>Models</b>. Models are javascript objects for containing business logic and business data. Each view model has a model property</li>
-                        <li><b>Templates</b>. Templates are html. Each view model has a "templateId" property to give it appearence. Templates bind to model and view model properties</li>
+                        <li><b>View models</b>. View models are javascript objects which contain view logic and view data. View models inherit from "wo.view" and are mostly declared and created inline in html.</li>
+                        <li><b>Models</b>. Models are javascript objects which contain business logic and business data. Each view model has a model property.</li>
+                        <li><b>Templates</b>. Templates are html. Each view model has a "templateId" property to give it appearence. Templates can bind to model and view model properties.</li>
                     </ol>
                     <br/>
                     Do you want to hack some code to gether to something quick and dirty? First you have to decide where to put the hack, 
