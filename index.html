@@ -35,9 +35,11 @@ layout: default
             </div>
         </div>
     </div>
-    <div>
-        <h1>Why wipeout?</h1>
+    <div class="main-page-section">
+        <h1>What is Wipeout?</h1>
         <p>Wipeout is a template engine for knockout. It leverages the superb client binding and templating capabilities of knockout, but goes one step further, introducing the basic functionalities and development patterns of XAML in a HTML/javascript environment.</p>
+    </div>
+    <div class="main-page-section">
         <h1>What does it look like?</h1>
         <p>Wipeout is built to look as much like WPF and Silverlight as possible. You define components in javascript, give them html templates and nest them like with XAML. Have a look:</p>
         <div id="example">
@@ -50,22 +52,23 @@ window.app = {};
 
 // inherit from the wo.view class
 app.collapsable = wo.view.extend(function() {
+    // call the base constructor with the default template id.
     this._super("app.collapsable");
     
+    // create a property to set the html template
+    // of the collapsable content
     this.contentTemplate = ko.observable("");
 });
                 
 // a function which will show or hide the collapsable content
 app.collapsable.prototype.toggleContent = function() {
-    // "colapsableContent" is the id of the div to show/hide
-    // in the template for this view model    
-    var collapsableHtml = this.templateItems.colapsableContent;
+    var collapsableHtml = this.templateItems.colapsableContentId;
     $(collapsableHtml).slideToggle("fast");
 };</pre>
                 </div>
                 <div class="column-2 main-example-code">
                     View model Template
-                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.collapsable">&lt;!-- script id="app.collapsable" -->
+                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.collapsable">&lt;!-- script type="text/xml" id="app.collapsable" -->
                     
 &lt;div data-bind="click: toggleContent"
     class="panel-heading"
@@ -74,7 +77,7 @@ app.collapsable.prototype.toggleContent = function() {
         data-bind="text: model().header">&lt;/h3>
 &lt;/div>
 &lt;div class="panel-body">
-    &lt;div id="colapsableContent">
+    &lt;div id="colapsableContentId">
         &lt;!-- Inbuilt wipeout component to display html -->    
         &lt;wo.contentControl template="contentTemplate"
             woInvisible="true">
@@ -100,6 +103,7 @@ app.collapsable.prototype.toggleContent = function() {
             <br />
             <br />
             <br />
+            <br />
             <h4>Root application component</h4>
             <div class="columns">
                 <div class="column-2 main-example-code">
@@ -107,14 +111,13 @@ app.collapsable.prototype.toggleContent = function() {
                     <pre class="prettyprint" data-script-type="text/javascript">
 // inherit from the wo.view class
 app.rootApplication = wo.view.extend(function () {
-    // call the base constructor.
-    // the constructor for wo.view takes in a template id.
+    // call the base constructor with the default template id.
     this._super("app.rootApplication");
 });</pre>
                 </div>
                 <div class="column-2 main-example-code">
                     View model Template
-                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.rootApplication">&lt;!-- script id="app.rootApplication" -->
+                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.rootApplication">&lt;!-- script type="text/xml" id="app.rootApplication" -->
 
 &lt;div style="width: 300px; margin: 50px"
      class="panel panel-primary">
@@ -154,6 +157,57 @@ ko.applyBindings(model, rootApp);</pre>
                 </div>
             </div>
         </div>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+    </div>
+    <div class="main-page-section">
+        <h1>So Why?</h1>
+        <ul>
+            <li>
+                <h3>Custom Html elements</h3>
+                <p>Wipeout view models are used in the same way as standard html. So you can have standard <span class="tag">&lt;div>&lt;/div></span> and custom <span class="tag">&lt;shoppingCart /></span> tags side by side.</p>
+            </li>
+            <li>
+                <h3>More componentization than you can handle!</h3>
+                <p>In wipeout, everything is a component. From your root application to a visual component (like a collapsable) 
+                    to a business component (like a shopping cart). This makes large complicated pieces of code quite pluggable.</p>
+            </li>
+            <li>
+                <h3>Leverage the knockout you know and love</h3>
+                <p>Wipeout is a template engine for knockout and so adds to it. Excluding 1 or 2 control flow bindings, all of knockout is available if using wipeout. 
+                    The missing content is either un necessary in the wipeout paradigm or replaced</p>
+            </li>
+            <li>
+                <h3>Strict seperation of concerns</h3>
+                <p>Wipeout is rigidly seperated into 3 areas:
+                    <ol>
+                        <li><b>View models</b>. View models are javascript objects for containing view logic and view data. View models inherit from "wo.view" and are mostly declared and created inline in html</li>
+                        <li><b>Models</b>. Models are javascript objects for containing business logic and business data. Each view model has a model property</li>
+                        <li><b>Templates</b>. Templates are html. Each view model has a "templateId" property to give it appearence. Templates bind to model and view model properties</li>
+                    </ol>
+                    <br/>
+                    Do you want to hack some code to gether to something quick and dirty? First you have to decide where to put the hack, 
+                        then you need to decide which event it should fire off, and before you know it your hack isn't a hack anymore!
+                </p>
+            </li>
+            <li>
+                <h3>The framework that does not control</h3>
+                <p>Wipeout applications are self contained within a single html element. This is great for those who do not want to relinquish 
+                    all control to a framework or those with a fear of the SPA.
+                    <br />Plain old vanilla knockout and wipeout can also be used side by side.</p>
+            </li>
+            <li>
+                <h3>Your friend jQuery is welcome</h3>
+                <p>Although, you will find that jQuery is not as relevant in the MVVM universe as it used to be.</p>
+            </li>
+        </ul>
     </div>
 </div>
 <script type="text/javascript">
@@ -221,12 +275,3 @@ ko.applyBindings(model, rootApp);</pre>
         });
     });
 </script>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>

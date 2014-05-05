@@ -1,4 +1,4 @@
 name: Wipeout
-url: "http://localhost:4000"
+url: "http://localhost:4000/wipeout"
 markdown: redcarpet
 pygments: false
