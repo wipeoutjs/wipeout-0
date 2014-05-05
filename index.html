@@ -164,19 +164,19 @@ ko.applyBindings(model, rootApp);</pre>
             tag: "link",
             type: "text/css", 
             rel: "stylesheet", 
-            href: "http://" + document.location.href + "content/style/bootstrap/lumen/bootstrap.css"
+            href: document.location.href + "content/style/bootstrap/lumen/bootstrap.css"
         }, {
             tag: "script",
             type: "text/javascript", 
-            src: "http://" + document.location.href + "scripts/lib/jquery-1.10.2.min.js"
+            src: document.location.href + "scripts/lib/jquery-1.10.2.min.js"
         }, {
             tag: "script",
             type: "text/javascript", 
-            src: "http://" + document.location.href + "scripts/lib/knockout-2.3.0.debug.js"
+            src: document.location.href + "scripts/lib/knockout-2.3.0.debug.js"
         }, { 
             tag: "script",
             type: "text/javascript", 
-            src: "http://" + document.location.href + "scripts/lib/wipeout-0.3.debug.js"
+            src: document.location.href + "scripts/lib/wipeout-0.3.debug.js"
         }];       
         
         $("[data-script-type]").each(function() {
