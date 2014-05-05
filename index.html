@@ -122,6 +122,8 @@ app.rootApplication = wo.view.extend(function () {
      class="panel panel-primary">
     &lt;h4 data-bind="text: model().applicationName">&lt;/h4>
     &lt;app.collapsible model="$parent.model().collapsibleContent">
+        &lt;!-- remember this is the property defined in the 
+            app.collapsible constructor. We are setting it here-->
         &lt;contentTemplate>
             &lt;div data-bind="text: model().content">
             &lt;/div>
