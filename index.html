@@ -48,7 +48,7 @@ layout: default
                     <pre class="prettyprint" data-script-type="text/javascript">// create a namespace for our application
 window.app = {};
 
-// create a custom view model which inherits from wo.view
+// inherit from the wo.view class
 app.collapsable = wo.view.extend(function() {
     this._super("app.collapsable");
     
@@ -60,11 +60,11 @@ app.collapsable.prototype.toggleContent = function() {
     // "colapsableContent" is the id of the div to show/hide
     // in the template for this view model    
     var collapsableHtml = this.templateItems.colapsableContent;
-    $(collapsableHtml).slideToggle();
+    $(collapsableHtml).slideToggle("fast");
 };</pre>
                 </div>
                 <div class="column-2 main-example-code">
-                    Template
+                    View model Template
                     <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.collapsable">&lt;!-- script id="app.collapsable" -->
                     
 &lt;div data-bind="click: toggleContent"
@@ -74,18 +74,15 @@ app.collapsable.prototype.toggleContent = function() {
         data-bind="text: model().header">&lt;/h3>
 &lt;/div>
 &lt;div class="panel-body">
-    &lt;!-- Inbuilt wipeout component to display html -->
-    &lt;wo.contentControl template="'contentTemplate'">
-    &lt;/wo.contentControl>
+    &lt;div id="colapsableContent">
+        &lt;!-- Inbuilt wipeout component to display html -->    
+        &lt;wo.contentControl template="contentTemplate"
+            woInvisible="true">
+        &lt;/wo.contentControl>
+    &lt;/div>
 &lt;/div></pre>
                 </div>
             </div>
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
             <br />
             <br />
             <br />
@@ -116,7 +113,7 @@ app.rootApplication = wo.view.extend(function () {
 });</pre>
                 </div>
                 <div class="column-2 main-example-code">
-                    Template
+                    View model Template
                     <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.rootApplication">&lt;!-- script id="app.rootApplication" -->
 
 &lt;div style="width: 300px; margin: 50px"
