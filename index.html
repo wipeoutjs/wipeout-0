@@ -51,6 +51,8 @@ window.app = {};
 // create a custom view model which inherits from wo.view
 app.collapsable = wo.view.extend(function() {
     this._super("app.collapsable");
+    
+    this.contentTemplate = ko.observable("");
 });
                 
 // a function which will show or hide the collapsable content
@@ -72,11 +74,20 @@ app.collapsable.prototype.toggleContent = function() {
         data-bind="text: model().header">&lt;/h3>
 &lt;/div>
 &lt;div class="panel-body">
-    &lt;div data-bind="html: model().content" id="colapsableContent">
-    &lt;/div>
+    &lt;!-- Inbuilt wipeout component to display html -->
+    &lt;wo.contentControl template="'contentTemplate'">
+    &lt;/wo.contentControl>
 &lt;/div></pre>
                 </div>
             </div>
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
             <br />
             <br />
             <br />
@@ -112,6 +123,10 @@ app.rootApplication = wo.view.extend(function () {
      class="panel panel-primary">
     &lt;h4 data-bind="text: model().applicationName">&lt;/h4>
     &lt;app.collapsable model="$parent.model().collapsableContent">
+        &lt;contentTemplate>
+            &lt;div data-bind="text: model().content">
+            &lt;/div>
+        &lt;/contentTemplate>
     &lt;/app.collapsable>
 &lt;/div></pre>
                 </div>
@@ -179,7 +194,9 @@ ko.applyBindings(model, rootApp);</pre>
         var html = $("[data-html]").html().replace(/&lt;/g, "<").replace(/&gt;/g, ">");
                 
         $("#example .prettyprint").each(function() { $(this).html(prettyPrintOne($(this).html())); });
-        $("[data-script-type='text/xml'] span[class=tag]:contains('app.collapsable')").css("font-weight", "bold").css("background", "yellow");
+        $("[data-script-type='text/xml'] span[class=tag]:contains('app.collapsable')")
+            .add($("[data-script-type='text/xml'] span[class=tag]:contains('wo.contentControl')"))
+            .css("font-weight", "bold").css("background", "yellow");
         
         $("#execute").on("click", function() {
             var external = window.open();
