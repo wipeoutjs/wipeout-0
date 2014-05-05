@@ -43,41 +43,40 @@ layout: default
         <h1>What does it look like?</h1>
         <p>Wipeout is built to look as much like WPF and Silverlight as possible. You define components in javascript, give them html templates and nest them like with XAML. Have a look:</p>
         <div id="example">
-            <h4>A collapsable component</h4>
+            <h4>A collapsible component</h4>
             <div class="columns">
                 <div class="column-2 main-example-code">
-                    View model class
+                    View model class<br/><br/>
                     <pre class="prettyprint" data-script-type="text/javascript">// create a namespace for our application
 window.app = {};
 
 // inherit from the wo.view class
-app.collapsable = wo.view.extend(function() {
+app.collapsible = wo.view.extend(function() {
     // call the base constructor with the default template id.
-    this._super("app.collapsable");
+    this._super("app.collapsible");
     
     // create a property to set the html template
-    // of the collapsable content
+    // of the collapsible content
     this.contentTemplate = ko.observable("");
 });
                 
-// a function which will show or hide the collapsable content
-app.collapsable.prototype.toggleContent = function() {
-    var collapsableHtml = this.templateItems.colapsableContentId;
-    $(collapsableHtml).slideToggle("fast");
+// a function which will show or hide the collapsible content
+app.collapsible.prototype.toggleContent = function() {
+    var element = this.templateItems.collapsibleElement;
+    $(element).slideToggle("fast");
 };</pre>
                 </div>
                 <div class="column-2 main-example-code">
-                    View model Template
-                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.collapsable">&lt;!-- script type="text/xml" id="app.collapsable" -->
-                    
-&lt;div data-bind="click: toggleContent"
+                    View model Template<br/>
+                    (<span class="tag">&lt;script type="text/xml" id="app.collapsible">...&lt;/script></span>)
+                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.collapsible">&lt;div data-bind="click: toggleContent"
     class="panel-heading"
     style="cursor: pointer">
     &lt;h3 class="panel-title"
         data-bind="text: model().header">&lt;/h3>
 &lt;/div>
 &lt;div class="panel-body">
-    &lt;div id="colapsableContentId">
+    &lt;div id="collapsibleElement">
         &lt;!-- Inbuilt wipeout component to display html -->    
         &lt;wo.contentControl template="contentTemplate"
             woInvisible="true">
@@ -104,10 +103,11 @@ app.collapsable.prototype.toggleContent = function() {
             <br />
             <br />
             <br />
+            <br />
             <h4>Root application component</h4>
             <div class="columns">
                 <div class="column-2 main-example-code">
-                    View model class
+                    View model class<br /><br />
                     <pre class="prettyprint" data-script-type="text/javascript">
 // inherit from the wo.view class
 app.rootApplication = wo.view.extend(function () {
@@ -116,18 +116,19 @@ app.rootApplication = wo.view.extend(function () {
 });</pre>
                 </div>
                 <div class="column-2 main-example-code">
-                    View model Template
+                    View model Template<br />
+                    (<span class="tag">&lt;script type="text/xml" id="app.rootApplication">...&lt;/script></span>)
                     <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.rootApplication">&lt;!-- script type="text/xml" id="app.rootApplication" -->
 
 &lt;div style="width: 300px; margin: 50px"
      class="panel panel-primary">
     &lt;h4 data-bind="text: model().applicationName">&lt;/h4>
-    &lt;app.collapsable model="$parent.model().collapsableContent">
+    &lt;app.collapsible model="$parent.model().collapsibleContent">
         &lt;contentTemplate>
             &lt;div data-bind="text: model().content">
             &lt;/div>
         &lt;/contentTemplate>
-    &lt;/app.collapsable>
+    &lt;/app.collapsible>
 &lt;/div></pre>
                 </div>
             </div>
@@ -138,7 +139,7 @@ app.rootApplication = wo.view.extend(function () {
                     <pre class="prettyprint" data-script-type="text/javascript">var rootApp = document.getElementById("wipeoutApp");  
 var model = {
     applicationName: "Wipeout demo",
-    collapsableContent: {
+    collapsibleContent: {
         header: "Open/close",
         content: "This is content for the component"
     }
@@ -176,7 +177,7 @@ ko.applyBindings(model, rootApp);</pre>
             </li>
             <li>
                 <h3>More componentization than you can handle!</h3>
-                <p>In wipeout, everything is a component. From your root application to a visual component (like a collapsable) 
+                <p>In wipeout, everything is a component. From your root application to a visual component (like a collapsible) 
                     to a business component (like a shopping cart). This makes large complicated pieces of code quite pluggable.</p>
             </li>
             <li>
@@ -204,7 +205,7 @@ ko.applyBindings(model, rootApp);</pre>
                     <br />Plain old vanilla knockout and wipeout can also be used side by side.</p>
             </li>
             <li>
-                <h3>Your friend jQuery is welcome</h3>
+                <h3>Your old friend jQuery is welcome</h3>
                 <p>Although, you will find that jQuery is not as relevant in the MVVM universe as it used to be.</p>
             </li>
         </ul>
@@ -243,7 +244,7 @@ ko.applyBindings(model, rootApp);</pre>
         var html = $("[data-html]").html().replace(/&lt;/g, "<").replace(/&gt;/g, ">");
                 
         $("#example .prettyprint").each(function() { $(this).html(prettyPrintOne($(this).html())); });
-        $("[data-script-type='text/xml'] span[class=tag]:contains('app.collapsable')")
+        $("[data-script-type='text/xml'] span[class=tag]:contains('app.collapsible')")
             .add($("[data-script-type='text/xml'] span[class=tag]:contains('wo.contentControl')"))
             .css("font-weight", "bold").css("background", "yellow");
         
