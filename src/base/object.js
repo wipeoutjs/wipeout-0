@@ -97,18 +97,43 @@ Class("wipeout.base.object", function () {
         // execute parent class method
         return cached.apply(this, arguments);
     };
+    
+    object._extendFromObject = function (childClass, className/* optional */) {
+        if(!childClass.constructor || childClass.constructor.constructor !== Function)
+            throw "the property \"constructor\" must be a function";
+        
+        var newClass = object.extend(childClass.constructor);
+    };
 
     var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_0-9]*$/;
     object.extend = function (childClass, className/* optional */) {
+        debugger;
         ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
         ///<param name="childClass" type="Function" optional="false">The constructor of a class to create</param>
         ///<param name="className" type="String" optional="true">The name of the class for debugger console purposes</param>
         ///<returns type="Function">The newly created class</returns>
         
+        // if the input is a lonely constructor, convert it into the object format
+        if(childClass.constructor === Function) {
+            var cc = childClass;
+            childClass = {
+                constructor: cc,
+                statics: {}
+            };
+            
+            for(var item in childClass.constructor)
+                childClass.statics[i] = childClass.constructor[i];
+            
+            for(var item in childClass.constructor.prototype)
+                childClass[i] = childClass.constructor.prototype[i];
+            
+        } else if(!childClass.constructor || childClass.constructor.constructor !== Function)
+            throw "the property \"constructor\" must be a function";
+        
         // static functions
         for (var p in this)
-            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache)
-                childClass[p] = this[p];
+            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache && childClass.constructor[p] === undefined)
+                childClass.constructor[p] = this[p];
  
         // use eval so that browser debugger will get class name
         if(className && DEBUG) {
@@ -120,14 +145,27 @@ Class("wipeout.base.object", function () {
             new Function("childClass", "parentClass", "\
             function " + className + "() { this.constructor = childClass; }\
             " + className + ".prototype = parentClass.prototype;\
-            childClass.prototype = new " + className + "();")(childClass, this);
+            childClass.prototype = new " + className + "();")(childClass.constructor, this);
         } else {        
-            var prototypeTracker = function() { this.constructor = childClass; }     
+            var prototypeTracker = function() { this.constructor = childClass.constructor; }     
             prototypeTracker.prototype = this.prototype;
-            childClass.prototype = new prototypeTracker();
+            childClass.constructor.prototype = new prototypeTracker();
         }
         
-        return childClass;
+        for(var i in childClass) {
+            if(i === "constructor") continue;
+            if(i === "statics") {
+                for(var j in childClass[i])
+                    childClass.constructor[j] = childClass[i][j];
+                
+                continue;
+            }
+            
+            childClass.constructor.prototype[i] = childClass[i];
+        }
+        
+        
+        return childClass.constructor;
     };
 
     return object;
