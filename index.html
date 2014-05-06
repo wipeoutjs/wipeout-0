@@ -51,20 +51,21 @@ layout: default
 window.app = {};
 
 // inherit from the wo.view class
-app.collapsible = wo.view.extend(function() {
-    // call the base constructor with the default template id.
-    this._super("app.collapsible");
-    
-    // create a property to set the html template
-    // of the collapsible content
-    this.contentTemplate = ko.observable("");
-});
-                
-// a function which will show or hide the collapsible content
-app.collapsible.prototype.toggleContent = function() {
-    var element = this.templateItems.collapsibleElement;
-    $(element).slideToggle("fast");
-};</pre>
+app.collapsible = wo.view.extend({
+    constructor: function() {
+        // call the base constructor with the default template id.
+        this._super("app.collapsible");
+
+        // create a property to set the html template
+        // of the collapsible content
+        this.contentTemplate = ko.observable("");
+    },                    
+    // a function which will show or hide the collapsible content
+    toggleContent: function() {
+        var element = this.templateItems.collapsibleElement;
+        $(element).slideToggle("fast");
+    }
+});</pre>
                 </div>
                 <div class="column-2 main-example-code">
                     View model Template<br/>
@@ -104,15 +105,18 @@ app.collapsible.prototype.toggleContent = function() {
             <br />
             <br />
             <br />
+            <br />
             <h4>Root application component</h4>
             <div class="columns">
                 <div class="column-2 main-example-code">
                     View model class<br /><br />
                     <pre class="prettyprint" data-script-type="text/javascript">
 // inherit from the wo.view class
-app.rootApplication = wo.view.extend(function () {
-    // call the base constructor with the default template id.
-    this._super("app.rootApplication");
+app.rootApplication = wo.view.extend({
+    constructor: function () {
+        // call the base constructor with the default template id.
+        this._super("app.rootApplication");
+    }
 });</pre>
                 </div>
                 <div class="column-2 main-example-code">
@@ -233,7 +237,7 @@ ko.applyBindings(model, rootApp);</pre>
         }, { 
             tag: "script",
             type: "text/javascript", 
-            src: document.location.protocol + "//" + document.location.host + "/wipeout/scripts/lib/wipeout-0.3.debug.js"
+            src: document.location.protocol + "//" + document.location.host + "/wipeout/scripts/lib/wipeout-0.3.1.debug.js"
         }];       
         
         $("[data-script-type]").each(function() {
