@@ -74,7 +74,7 @@ Class("wipeout.base.contentControl", function () {
                 }
 
                 var id = "AnonymousTemplate" + (++i);
-                templateArea.innerHTML += '<script type="text/xml" id="' + id + '" ' + dataTemplateHash + '="' + hash + '">' + templateString + '</script>';
+                contentControl.createTemplate(id, templateString, true);
                 return id;
             },
             del: function(templateId) {
@@ -97,6 +97,32 @@ Class("wipeout.base.contentControl", function () {
     
     contentControl.createAnonymousTemplate = tmp.create;
     contentControl.deleteAnonymousTemplate = tmp.del;
+    contentControl.createTemplate = function(templateId, template, exceptionIfExists) {
+        if(document.getElementById(templateId)) {
+            if(failIfExists)
+                throw "Template: \"" + templateId + "\" already exists";
+            else
+                return;
+        }
+        
+        lazyCreateTemplateArea();
+        
+        var script = document.createElement("script");
+        
+        var att1 = document.createAttribute("type");
+        att1.value = "text/xml";
+        script.setAttributeNode(att1);
+        
+        var att2 = document.createAttribute("id");
+        att2.value = id;
+        script.setAttributeNode(att2);
+        
+        var att3 = document.createAttribute(dataTemplateHash);
+        att3.value = contentControl.hashCode(template).toString();
+        script.setAttributeNode(att3);
+        
+        templateArea.appendChild(script);
+    };
 
     //http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
     contentControl.hashCode = function (str) {        

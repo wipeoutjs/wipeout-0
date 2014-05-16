@@ -19,7 +19,7 @@ var ajax = function (options) {
 
     xmlhttp.open(options.type ?? "GET", options.url ?? document.location.href, options.async !== undefined ? options.async : true);
     xmlhttp.send();
-}
+};
     
 var enumerate = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object</summary>
