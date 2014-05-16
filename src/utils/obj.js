@@ -9,7 +9,8 @@ var ajax = function (options) {
 
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-            if (xmlhttp.status == 200 && options.success) {
+            // 0 for non web srever response (e.g. file system)
+            if ((xmlhttp.status == 200 || xmlhttp.status == 0) && options.success) {
                 options.success(xmlhttp);
             } else if (options.error) {
                 options.error(xmlhttp);
@@ -201,6 +202,10 @@ Class("wipeout.utils.obj", function () {
         return output;
     };
     
+    var endsWith = function(string, endsWith) {
+        return string.indexOf(endsWith, string.length - endsWith.length) !== -1;
+    };
+    
     var random = function(max) {
         ///<summary>Random int generator</summary>
         ///<param name="max" type="Number">The maximum value</param>
@@ -219,5 +224,6 @@ Class("wipeout.utils.obj", function () {
     obj.createObject = createObject;
     obj.copyArray = copyArray;
     obj.random = random;
+    obj.endsWith = endsWith;
     return obj;
 });

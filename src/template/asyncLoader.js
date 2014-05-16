@@ -19,6 +19,7 @@ Class("wipeout.template.asyncLoader", function () {
     var loader = function(templateName) {
         this._callbacks = [];        
         this._success = null;
+        this.templateName = templateName;
         
         var _this = this;
         ajax({
@@ -43,12 +44,12 @@ Class("wipeout.template.asyncLoader", function () {
     }
     
     loader.prototype.add = function(success) {
-        if(this.callbacks)
-            this.callbacks.push(success);
+        if(this._callbacks)
+            this._callbacks.push(success);
         else if(this.success)
             success();
         else // success is null or false
-            throw "Could not locate template \"" + templateName + "\"";
+            throw "Could not locate template \"" + this.templateName + "\"";
     }
     
     asyncLoader.instance = new asyncLoader();

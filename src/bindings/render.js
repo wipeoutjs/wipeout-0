@@ -20,17 +20,26 @@ Binding("render", true, function () {
             throw "This visual has already been rendered. Call its unRender() function before rendering again.";
         
         var _this = this;
-        var templateChanged = function() {
+        var templateChanged = function(newVal) {
             if(child)
                 child.unTemplate();
                 
-            ko.bindingHandlers.template.update.call(_this, element, wipeout.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
+            function reRender() {
+                ko.bindingHandlers.template.update.call(_this, element, wipeout.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
+
+                var bindings = allBindingsAccessor();
+                if(bindings["wipeout-type"])
+                    wipeout.bindings["wipeout-type"].utils.comment(element, bindings["wipeout-type"]);
+            }
             
-            var bindings = allBindingsAccessor();
-            if(bindings["wipeout-type"])
-                wipeout.bindings["wipeout-type"].utils.comment(element, bindings["wipeout-type"]);
+            if(wipeout.base.contentControl.templateExists(newVal))
+                reRender();
+            else if(newVal)
+                wipeout.template.asyncLoader.instance.load(newVal, reRender);
+            
         };
         
+        // if the root html element is already bound to another view model, kill it
         var previous = ko.utils.domData.get(element, wipeout.bindings.wipeout.utils.wipeoutKey); 
         if(previous instanceof wipeout.base.visual) {
             if(previous.__woBag.createdByWipeout)    
@@ -39,6 +48,7 @@ Binding("render", true, function () {
                 previous.unRender();
         }
         
+        var templateId = null;
         if (child) {            
             ko.utils.domData.set(element, wipeout.bindings.wipeout.utils.wipeoutKey, child);
             child.__woBag.rootHtmlElement = element;
@@ -46,9 +56,10 @@ Binding("render", true, function () {
                 viewModel.__woBag.renderedChildren.push(child);
             
             child.templateId.subscribe(templateChanged);
+            templateId = child.templateId.peek();
         }
         
-        templateChanged();
+        templateChanged(templateId);
     };
     
     var createValueAccessor = function(oldValueAccessor) {

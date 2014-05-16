@@ -133,6 +133,9 @@ Class("wipeout.base.contentControl", function () {
     contentControl.createAnonymousTemplate = tmp.create;
     contentControl.deleteAnonymousTemplate = tmp.del;
     contentControl.createTemplate = tmp.createTemplate;
+    contentControl.templateExists = function(templateId) {
+        return !!document.getElementById(templateId);
+    };
 
     //http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
     contentControl.hashCode = function (str) {        
