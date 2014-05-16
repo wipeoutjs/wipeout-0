@@ -1,0 +1,58 @@
+<div style="height: 500px">
+    <h1>Test control</h1>
+    <br />
+    <div>
+        <div>
+            <div id="NestedDiv">
+            </div>
+            <div id="routedEvent"></div>
+        </div>
+    </div>
+    <initializeView item1="'ok1'">
+        <item2>ok2</item2>
+    </initializeView>
+    <wo.contentControl id="listTest">
+        <template>
+            <div data-bind="html: model().rootTitle"></div>
+            <div style="float: left">
+                <wo.itemsControl id="theInnerItemsControl1" itemSource-tw="model().items" itemTemplateId="'itemsControlTemplate.html'" xxx="1" />
+            </div>
+            <div style="float: left; margin-left: 20px;">
+                <wo.itemsControl id="theInnerItemsControl2" itemSource-tw="model().items" itemTemplateId="'itemsControlTemplate.html'" xxx="2" />
+            </div>
+            <div style="clear: both"></div>
+            <!-- ko render: totals --><!-- /ko -->
+        </template>
+        <totals constructor="wo.contentControl">
+            <template>
+                <div data-bind="html: model().totalOfIds"></div>
+            </template>
+        </totals>
+    </wo.contentControl>
+    <br/>
+    <wo.contentControl model="$parent.model().deepItem" id="multiLevelTest">
+        <template>
+            <wo.contentControl model="$parent.model().item">
+                <template>
+                    <wo.contentControl model="$parent.model().value">
+                        <supplimentaryProp constructor="childView" model-tw="$parent.model" value-tw="model">
+                            <template>
+                                <input type="text" data-bind="value: value"></input>
+                            </template>
+                        </supplimentaryProp>
+                        <template>
+                            <div data-bind="html: model"></div>
+                            <div data-bind="render: supplimentaryProp"></div>
+                        </template>
+                    </wo.contentControl>
+                </template>
+            </wo.contentControl>                
+        </template>
+    </wo.contentControl>        
+    <br/>
+    <br/>
+</div>
+<button data-bind="click: next">next</button>
+<h3>action:</h3>
+<div data-bind="html: justDone"></div>
+<button data-bind="click: profile">profile</button>   

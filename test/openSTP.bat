@@ -1,0 +1,1 @@
+"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" C:\Dev\Apps\wipeout\test\ShaneTestPage.html --disable-web-security

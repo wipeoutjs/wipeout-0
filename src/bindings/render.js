@@ -21,9 +21,6 @@ Binding("render", true, function () {
         
         var _this = this;
         var templateChanged = function(newVal) {
-            if(child)
-                child.unTemplate();
-                
             function reRender() {
                 ko.bindingHandlers.template.update.call(_this, element, wipeout.bindings.render.utils.createValueAccessor(valueAccessor), allBindingsAccessor, child, bindingContext);
 
@@ -32,11 +29,16 @@ Binding("render", true, function () {
                     wipeout.bindings["wipeout-type"].utils.comment(element, bindings["wipeout-type"]);
             }
             
-            if(wipeout.base.contentControl.templateExists(newVal))
-                reRender();
-            else if(newVal)
-                wipeout.template.asyncLoader.instance.load(newVal, reRender);
+            if(child)
+                child.unTemplate();                
             
+            if(wipeout.base.contentControl.templateExists(newVal) || !newVal) {
+                reRender();
+            } else {
+                // 
+                ko.virtualElements.prepend(element, wipeout.utils.html.createElement("<div>" + wipeout.template.engine.templateLoadingPlaceholder + "</div>"))
+                wipeout.template.asyncLoader.instance.load(newVal, reRender);
+            }            
         };
         
         // if the root html element is already bound to another view model, kill it
