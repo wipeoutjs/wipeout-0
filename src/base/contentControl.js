@@ -37,15 +37,14 @@ Class("wipeout.base.contentControl", function () {
     var dataTemplateHash = "data-templatehash";  
     var tmp = (function () {
         var templateArea = null;
-        var i = Math.floor(Math.random() * 1000000000);
-        
+        var i = Math.floor(Math.random() * 1000000000);        
         var lazyCreateTemplateArea = function() {
             if (!templateArea) {
                 templateArea = wipeout.utils.html.createElement("<div style='display: none'></div>");
                 document.body.appendChild(templateArea);
             }
-        };
-
+        };        
+        
         return { 
             create: function (templateString, forceCreate) {
                 ///<summary>Creates an anonymous template within the DOM and returns its id</summary>
@@ -74,7 +73,7 @@ Class("wipeout.base.contentControl", function () {
                 }
 
                 var id = "AnonymousTemplate" + (++i);
-                contentControl.createTemplate(id, templateString, true);
+                contentControl.createTemplate(id, templateString, hash);
                 return id;
             },
             del: function(templateId) {
@@ -91,38 +90,42 @@ Class("wipeout.base.contentControl", function () {
                         j--;
                     }
                 }
+            },
+            createTemplate:function(templateId, template, templateHash) {
+                ///<summary>Create a template and add it to the DOM</summary>
+                ///<param name="templateId" type="String" optional="false">The id for the new template</param>
+                ///<param name="template" type="String" optional="false">The template itself</param>
+                ///<param name="templateHash" type="String" optional="true">A hash for the template</param>                
+                ///<returns type="String">A template property bound to the template id</returns>
+                if(document.getElementById(templateId))
+                    throw "Template: \"" + templateId + "\" already exists";
+
+                lazyCreateTemplateArea();
+
+                var script = document.createElement("script");
+                
+                var att1 = document.createAttribute("type");
+                att1.value = "text/xml";
+                script.setAttributeNode(att1);
+
+                var att2 = document.createAttribute("id");
+                att2.value = templateId;
+                script.setAttributeNode(att2);
+
+                if (templateHash) {
+                    var att3 = document.createAttribute(dataTemplateHash);
+                    att3.value = templateHash;
+                    script.setAttributeNode(att3);
+                }
+
+                templateArea.appendChild(script);
             }
         };
     })();  
     
     contentControl.createAnonymousTemplate = tmp.create;
     contentControl.deleteAnonymousTemplate = tmp.del;
-    contentControl.createTemplate = function(templateId, template, exceptionIfExists) {
-        if(document.getElementById(templateId)) {
-            if(failIfExists)
-                throw "Template: \"" + templateId + "\" already exists";
-            else
-                return;
-        }
-        
-        lazyCreateTemplateArea();
-        
-        var script = document.createElement("script");
-        
-        var att1 = document.createAttribute("type");
-        att1.value = "text/xml";
-        script.setAttributeNode(att1);
-        
-        var att2 = document.createAttribute("id");
-        att2.value = id;
-        script.setAttributeNode(att2);
-        
-        var att3 = document.createAttribute(dataTemplateHash);
-        att3.value = contentControl.hashCode(template).toString();
-        script.setAttributeNode(att3);
-        
-        templateArea.appendChild(script);
-    };
+    contentControl.createTemplate = tmp.createTemplate;
 
     //http://erlycoder.com/49/javascript-hash-functions-to-convert-string-into-integer-hash-
     contentControl.hashCode = function (str) {        
