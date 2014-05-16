@@ -9,15 +9,15 @@ var ajax = function (options) {
 
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-            if(xmlhttp.status == 200 && options.success) {
+            if (xmlhttp.status == 200 && options.success) {
                 options.success(xmlhttp);
-            } else if(options.failure) {
-                options.failure(xmlhttp);
+            } else if (options.error) {
+                options.error(xmlhttp);
             }
         }
     };
 
-    xmlhttp.open(options.type ?? "GET", options.url ?? document.location.href, true);
+    xmlhttp.open(options.type ?? "GET", options.url ?? document.location.href, options.async !== undefined ? options.async : true);
     xmlhttp.send();
 }
     
