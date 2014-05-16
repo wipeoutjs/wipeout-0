@@ -117,7 +117,8 @@ Class("wipeout.base.contentControl", function () {
                     att3.value = templateHash;
                     script.setAttributeNode(att3);
                 }
-
+                
+                script.textContent = template;
                 templateArea.appendChild(script);
             }
         };
