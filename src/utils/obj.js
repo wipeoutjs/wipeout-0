@@ -1,6 +1,25 @@
 
 //"use strict"; - cannot use strict right now. any functions defined in strict mode are not accesable via arguments.callee.caller, which is used by _super
 var wipeout = {};
+
+var ajax = function (options) {
+    var xmlhttp = window.XMLHttpRequest ?
+        new XMLHttpRequest() :
+        new ActiveXObject("Microsoft.XMLHTTP");
+
+    xmlhttp.onreadystatechange = function() {
+        if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+            if(xmlhttp.status == 200 && options.success) {
+                options.success(xmlhttp);
+            } else if(options.failure) {
+                options.failure(xmlhttp);
+            }
+        }
+    };
+
+    xmlhttp.open(options.type ?? "GET", options.url ?? document.location.href, true);
+    xmlhttp.send();
+}
     
 var enumerate = function(enumerate, action, context) {
     ///<summary>Enumerate through an array or object</summary>
@@ -190,6 +209,7 @@ Class("wipeout.utils.obj", function () {
     };
     
     var obj = function() { };
+    obj.ajax = ajax;
     obj.parseBool = parseBool;
     obj.trimToLower = trimToLower;
     obj.trim = trim;
