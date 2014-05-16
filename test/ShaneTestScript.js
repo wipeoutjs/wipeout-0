@@ -20,7 +20,7 @@
     });
     
     rootView = wipeout.base.contentControl.extend(function() {
-        this._super("rootView.html");
+        this._super("STPTemplates/rootView.html");
         
         this.justDone = ko.observable("");
         
