@@ -36,14 +36,20 @@ Class("wipeout.base.contentControl", function () {
     
     var dataTemplateHash = "data-templatehash";  
     var tmp = (function () {
-        var templateArea = null;
-        var i = Math.floor(Math.random() * 1000000000);        
-        var lazyCreateTemplateArea = function() {
-            if (!templateArea) {
-                templateArea = wipeout.utils.html.createElement("<div style='display: none'></div>");
-                document.body.appendChild(templateArea);
-            }
-        };        
+        
+        var getTemplateArea = (function() {
+            var templateArea = null;
+            return function() {
+                if(!templateArea) {
+                    templateArea = wipeout.utils.html.createElement("<div style='display: none'></div>");
+                    document.body.appendChild(templateArea);
+                }
+                
+                return templateArea;
+            };
+        })();
+        
+        var i = Math.floor(Math.random() * 1000000000); 
         
         return { 
             create: function (templateString, forceCreate) {
@@ -52,7 +58,7 @@ Class("wipeout.base.contentControl", function () {
                 ///<param name="forceCreate" type="Boolean" optional="true">Force the creation of a new template, regardless of whether there is an existing clone</param>
                 ///<returns type="String">The template id</returns>
                 
-                lazyCreateTemplateArea();
+                var templateArea = getTemplateArea();
 
                 templateString = trim(templateString);
                 var hash = contentControl.hashCode(templateString).toString();
@@ -80,7 +86,7 @@ Class("wipeout.base.contentControl", function () {
                 ///<summary>Deletes an anonymous template with the given id</summary>
                 ///<param name="templateId" type="String" optional="false">The id of the template to delete</param>
                 ///<returns type="void"></returns>
-                lazyCreateTemplateArea();
+                var templateArea = getTemplateArea();
             
                 for (var j = 0; j < templateArea.childNodes.length; j++) {
                     if (templateArea.childNodes[j].nodeType === 1 &&
@@ -100,7 +106,7 @@ Class("wipeout.base.contentControl", function () {
                 if(document.getElementById(templateId))
                     throw "Template: \"" + templateId + "\" already exists";
 
-                lazyCreateTemplateArea();
+                var templateArea = getTemplateArea();
 
                 var script = document.createElement("script");
                 
