@@ -99,3 +99,38 @@ testUtils.testWithUtils("hashCode", "", true, function(methods, classes, subject
     strictEqual(result1, result2);
     notEqual(result1, result3);
 });
+
+testUtils.testWithUtils("templateExists", "", true, function(methods, classes, subject, invoker) {
+    // arrange
+    var id = "pajslkdjalkjhd";
+    $("#qunit-fixture").html("<siv id=\"" + id + "\"></div>");
+    
+    // act    
+    // assert
+    ok(invoker(id));
+});
+
+testUtils.testWithUtils("createTemplate", "template exists", true, function(methods, classes, subject, invoker) {
+    // arrange
+    var id = "pajasdasdslkdjalkjhd";
+    $("#qunit-fixture").html("<div id=\"" + id + "\"></div>");
+        
+    // act
+    // assert
+    throws(function() {
+        invoker(id, "asdsad", "sadasd");
+    });    
+});
+
+testUtils.testWithUtils("createTemplate", "created", true, function(methods, classes, subject, invoker) {
+    // arrange
+    var id = "pajslkdjalkjhd";
+    var content = "LKJBLKUGHLUBK>JHG";
+    var hash = "98asd98sdf";
+    
+    // act
+    invoker(id, content, hash);
+    
+    // assert
+    strictEqual($("#" + id + "[data-templatehash=" + hash + "]", "div[style=\"display: none\"]").html(), content);
+});

@@ -7,7 +7,7 @@ Binding("wipeout", true, function () {
         //TODO: knockout standard way of controling element        
         //TODO: add optional inline properties to binding   
         
-        if(ko.utils.domData.get(element, wipeout.bindings.wipeout.utils.wipeoutKey))
+        if(wipeout.utils.html.getViewModel(element))
             throw "This element is already bound to another model";
         
         var type = valueAccessor();

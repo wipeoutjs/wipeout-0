@@ -22,13 +22,13 @@ Class("wipeout.template.asyncLoader", function () {
         this.templateName = templateName;
         
         var _this = this;
-        ajax({
+        wipeout.utils.obj.ajax({
             type: "GET",
             url: templateName,
             success: function(result) {                
                 wipeout.base.contentControl.createTemplate(templateName, result.responseText);                
                 
-                _this.success = true;
+                _this._success = true;
                 var callbacks = _this._callbacks;
                 delete _this._callbacks;
                 for(var i = 0, ii = callbacks.length; i < ii; i++) {
@@ -37,16 +37,16 @@ Class("wipeout.template.asyncLoader", function () {
             },
             error: function() {
                 delete _this._callbacks;
-                _this.success = false;
+                _this._success = false;
                 throw "Could not locate template \"" + templateName + "\"";
             }
-        })
+        });
     }
     
     loader.prototype.add = function(success) {
         if(this._callbacks)
             this._callbacks.push(success);
-        else if(this.success)
+        else if(this._success)
             success();
         else // success is null or false
             throw "Could not locate template \"" + this.templateName + "\"";

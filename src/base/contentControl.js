@@ -97,13 +97,13 @@ Class("wipeout.base.contentControl", function () {
                     }
                 }
             },
-            createTemplate:function(templateId, template, templateHash) {
+            createTemplate: function(templateId, template, templateHash) {
                 ///<summary>Create a template and add it to the DOM</summary>
                 ///<param name="templateId" type="String" optional="false">The id for the new template</param>
                 ///<param name="template" type="String" optional="false">The template itself</param>
                 ///<param name="templateHash" type="String" optional="true">A hash for the template</param>                
                 ///<returns type="String">A template property bound to the template id</returns>
-                if(document.getElementById(templateId))
+                if(contentControl.templateExists(templateId))
                     throw "Template: \"" + templateId + "\" already exists";
 
                 var templateArea = getTemplateArea();

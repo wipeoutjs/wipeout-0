@@ -156,3 +156,13 @@ testUtils.testWithUtils("copyArray", "", true, function(methods, classes, subjec
     for(var i = 0, ii = actual.length; i < ii; i++)
         strictEqual(actual[i], expected[i]);        
 });
+
+testUtils.testWithUtils("endsWith", "", true, function(methods, classes, subject, invoker) {
+    // arrange
+    var end = "LKJBKJB";
+    
+    // act    
+    // assert    
+    ok(invoker("lsdikgflkjsdbfkjlsdbfkjsdbf" + end, end));
+    ok(!invoker("lsdikgflkjsdbfkjlsdbfkjsdbf" + end + " ", end));
+});
