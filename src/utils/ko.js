@@ -37,14 +37,6 @@ Class("wipeout.utils.ko", function () {
         }
     };
     
-    //TODO: this
-    _ko.isObservableArray = function(test) {
-        ///<summary>Like ko.isObservable, but for observableArrays</summary>
-        ///<param name="test" type="Any">An object to test</param>
-        ///<returns type="Boolean"></returns>
-        return ko.isObservable(test) && test.push && test.push.constructor === Function;
-    };
-    
     _ko.virtualElements = {
         parentElement: function(node) {
             ///<summary>Returns the parent element or parent knockout virtual element of a node</summary>
@@ -68,7 +60,6 @@ Class("wipeout.utils.ko", function () {
             ///<returns type="Boolean"></returns>
             return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0;
         },
-        //TODO: this
         isVirtualClosing: function(node) {
             ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
             ///<param name="node" type="HTMLNode">The node to test</param>

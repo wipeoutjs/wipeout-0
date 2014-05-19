@@ -9,12 +9,11 @@ Class("wipeout.base.contentControl", function () {
 
         //The template which corresponds to the templateId for this item
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
-    }, "contentControl");
+    }, "contentControl");    
     
-//TODO: comments, observable<String>
     contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
         ///<summary>Creates a computed for a template property which is bound to the templateIdObservable property</summary>
-        ///<param name="templateIdObservable" type="String" optional="false">The observable containing the templateId to create a template property for</param>
+        ///<param name="templateIdObservable" type="ko.observable" generic0="String" optional="false">The observable containing the templateId to create a template property for</param>
         ///<param name="owner" type="Object" optional="false">The new owner of the created template property</param>
         ///<returns type="String">A template property bound to the template id</returns>
         var output = ko.dependentObservable({

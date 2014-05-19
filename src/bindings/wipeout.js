@@ -39,6 +39,7 @@ Binding("wipeout", true, function () {
         init: init,
         utils: {
             createValueAccessor: createValueAccessor,
+            //TODO: is this used
             wipeoutKey: "__wipeout"
         }
     };

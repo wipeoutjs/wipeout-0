@@ -52,7 +52,8 @@ Binding("render", true, function () {
             if (viewModel)
                 viewModel.__woBag.renderedChildren.push(child);
             
-            child.templateId.subscribe(templateChanged);
+            //TODO: will need to use this disposableId the next time update is invoked
+            var disposableId = child.registerDisposable(child.templateId.subscribe(templateChanged).dispose);
             templateId = child.templateId.peek();
         }
         
