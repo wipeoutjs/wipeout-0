@@ -3,9 +3,11 @@ Binding("render", true, function () {
     
     return wipeout.base.disposable.extend({
         constructor: function(element, value, allBindingsAccessor, bindingContext) {
+            ko.bindingHandlers.template.init(element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);
+            
             this.element = element;
             this.allBindingsAccessor = allBindingsAccessor;
-            this.bindingContext = bindingContext;
+            this.bindingContext = bindingContext;            
             
             if(ko.isObservable(value)) {
                 var val = value.peek();
@@ -96,9 +98,8 @@ Binding("render", true, function () {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
                 ///<summary>Initialize the render binding</summary>
                 
-                var binding = new wipeout.bindings.render(element, valueAccessor(), allBindingsAccessor, bindingContext);
-                ko.bindingHandlers.template.init.call(this, element, wipeout.bindings.render.createValueAccessor(valueAccessor()), allBindingsAccessor, viewModel, bindingContext);
-                binding.render(wipeout.utils.ko.peek(valueAccessor()));
+                // TODO: put somewhere where it will be disposed of correctly
+                new wipeout.bindings.render(element, valueAccessor(), allBindingsAccessor, bindingContext).render(wipeout.utils.ko.peek(valueAccessor()));
             },
             createValueAccessor: function(value) {
                 ///<summary>Create a value accessor for the knockout template binding.</summary>
