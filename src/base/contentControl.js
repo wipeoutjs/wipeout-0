@@ -118,7 +118,7 @@ Class("wipeout.base.contentControl", function () {
                 att2.value = templateId;
                 script.setAttributeNode(att2);
                 
-                templateHash = templateHash || contentControl.hashCode(trim(template)).toString();                
+                templateHash = templateHash || contentControl.hashCode(trim(template) || "").toString();                
                 var att3 = document.createAttribute(dataTemplateHash);
                 att3.value = templateHash;
                 script.setAttributeNode(att3);

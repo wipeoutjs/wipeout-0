@@ -11,7 +11,6 @@ Class("wipeout.template.asyncLoader", function () {
         ///<summary>Load a template</summary>
         ///<param name="templateId" type="string" optional="false">The url for the template to load. This will also be the id when the template is loaded</param>
         ///<param name="success" type="Function" optional="true">Run when the template exists in the DOM</param>
-        
         if (!this.pending[templateId])
             this.pending[templateId] = new loader(templateId);
             
