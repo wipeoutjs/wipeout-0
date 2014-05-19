@@ -3,6 +3,7 @@ Class("wipeout.template.asyncLoader", function () {
     var asyncLoader = function() {
         ///<summary>Loads remote templates and runs callbacks when the template is added to the DOM</summary>
         
+        // individual template loaders
         this.pending = {};
     };
     
@@ -21,13 +22,16 @@ Class("wipeout.template.asyncLoader", function () {
         ///<summary>Private class for loading templates asynchronously</summary>
         ///<param name="templateName" type="string" optional="false">The name and url of this template</param>
         
-        var exists = wipeout.base.contentControl.templateExists(templateName);
+        // signifies whether the template has been sucessfully loaded or not
+        this._success = wipeout.base.contentControl.templateExists(templateName);
         
-        this._callbacks = exists ? null : [];        
-        this._success = exists ? true : null;
+        // specifies success callbacks for when template is loaded. If this property in null, the loading process has completed
+        this._callbacks = this._success ? null : [];
+        
+        // the name and url of the template to load
         this.templateName = templateName;
         
-        if(!exists) {
+        if(!this._success) {
             var _this = this;
             wipeout.utils.obj.ajax({
                 type: "GET",
@@ -59,8 +63,8 @@ Class("wipeout.template.asyncLoader", function () {
             this._callbacks.push(success);
         else if(this._success)
             success();
-        else // success is null or false
-            throw "Could not locate template \"" + this.templateName + "\"";
+        else
+            throw "Could not load template \"" + this.templateName + "\"";
     }
     
     asyncLoader.instance = new asyncLoader();

@@ -1,5 +1,7 @@
 (function () {
     
+    wo.html.asynchronousTemplates = true;
+    
     aRoutedEvent = new wo.routedEvent();
     
     initializeView = wipeout.base.contentControl.extend(function() {
