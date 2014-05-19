@@ -23,7 +23,9 @@ Class("wipeout.base.if", function () {
         
         // the template to render if the condition is false. Defaults to a blank template
         this.elseTemplateId = ko.observable(_if.blankTemplateId);
-        this.registerDisposable(this.elseTemplateId.subscribe(this.elseTemplateChanged, this).dispose);
+        
+        var d1 = this.elseTemplateId.subscribe(this.elseTemplateChanged, this);
+        this.registerDisposable(function() { d1.dispose(); });
         
         // anonymous version of elseTemplateId
         this.elseTemplate = wipeout.base.contentControl.createTemplatePropertyFor(this.elseTemplateId, this);
@@ -31,8 +33,11 @@ Class("wipeout.base.if", function () {
         // stores the template id if the condition is false
         this.__cachedTemplateId = this.templateId();
         
-        this.registerDisposable(this.condition.subscribe(this.onConditionChanged, this).dispose);
-        this.registerDisposable(this.templateId.subscribe(this.copyTemplateId, this).dispose);
+        var d2 = this.condition.subscribe(this.onConditionChanged, this);
+        this.registerDisposable(function() { d2.dispose(); });
+        
+        var d3 = this.templateId.subscribe(this.copyTemplateId, this);
+        this.registerDisposable(function() { d3.dispose(); });
         
         this.copyTemplateId(this.templateId());
     }, "_if");

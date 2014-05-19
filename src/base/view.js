@@ -16,13 +16,14 @@ Class("wipeout.base.view", function () {
         //The model of view. If not set, it will default to the model of its parent view
         this.model = ko.observable(model);
         
-        this.registerDisposable(this.model.subscribe(function(newVal) {
+        var d1 = this.model.subscribe(function(newVal) {
             try {
                 this.onModelChanged(model, newVal);
             } finally {
                 model = newVal;
             }                                          
-        }, this).dispose);
+        }, this);
+        this.registerDisposable(function() { d1.dispose() });
                                 
         //Placeholder to store binding disposeal objects
         this.__woBag.bindings = {};
@@ -272,7 +273,8 @@ Class("wipeout.base.view", function () {
         if(oldValue !== newValue) {
             this.disposeOf(this.__woBag[modelRoutedEventKey]);        
             if(newValue instanceof wipeout.base.routedEventModel) {
-                this.__woBag[modelRoutedEventKey] = this.registerDisposable(newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this).dispose);
+                var d1 = newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this);
+                this.__woBag[modelRoutedEventKey] = this.registerDisposable(function() { d1.dispose(); });
             }
         }
     };

@@ -35,10 +35,11 @@ Class("wipeout.base.itemsControl", function () {
             itemsControl.subscribeV3.call(this);
         }
         
-        this.registerDisposable(this.items.subscribe(this.syncModelsAndViewModels, this).dispose);
+        var d1 = this.items.subscribe(this.syncModelsAndViewModels, this);
+        this.registerDisposable(function() { d1.dispose(); });
 
         itemTemplateId = this.itemTemplateId.peek();
-        this.registerDisposable(this.itemTemplateId.subscribe(function (newValue) {
+        var d2 = this.itemTemplateId.subscribe(function (newValue) {
             if (itemTemplateId !== newValue) {
                 try {
                     this.reDrawItems();
@@ -46,14 +47,16 @@ Class("wipeout.base.itemsControl", function () {
                     itemTemplateId = newValue;
                 }
             }
-        }, this).dispose);
+        }, this);
+        this.registerDisposable(function() { d2.dispose(); });
     }, "itemsControl");
     
     //TODO: private
     itemsControl.subscribeV2 = function() {
         ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl</summary>
         var initialItemSource = this.itemSource.peek();
-        this.registerDisposable(this.itemSource.subscribe(function() {
+        
+        var d1 = this.itemSource.subscribe(function() {
             try {
                 if(this.modelsAndViewModelsAreSynched())
                     return;
@@ -61,23 +64,28 @@ Class("wipeout.base.itemsControl", function () {
             } finally {
                 initialItemSource = wipeout.utils.obj.copyArray(arguments[0] || []);
             }
-        }, this).dispose);
+        }, this);
+        this.registerDisposable(function() { d1.dispose(); });
         
         var initialItems = this.items.peek();
-        this.registerDisposable(this.items.subscribe(function() {
+        var d2 = this.items.subscribe(function() {
             try {
                 this._itemsChanged(ko.utils.compareArrays(initialItems, arguments[0] || []));
             } finally {
                 initialItems = wipeout.utils.obj.copyArray(arguments[0] || []);
             }
-        }, this).dispose);        
+        }, this);
+        this.registerDisposable(function() { d2.dispose() });
     };
     
     //TODO: private
     itemsControl.subscribeV3 = function() {
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
-        this.registerDisposable(this.itemSource.subscribe(this._itemSourceChanged, this, "arrayChange").dispose);
-        this.registerDisposable(this.items.subscribe(this._itemsChanged, this, "arrayChange").dispose);
+        var d1 = this.itemSource.subscribe(this._itemSourceChanged, this, "arrayChange");
+        this.registerDisposable(function() { d1.dispose(); });
+        
+        var d2 = this.items.subscribe(this._itemsChanged, this, "arrayChange");
+        this.registerDisposable(function() { d2.dispose(); });
         
     };
     
