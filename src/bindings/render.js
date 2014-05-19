@@ -10,11 +10,8 @@ Binding("render", true, function () {
         ///<summary>Update the render binding</summary>
         
         var child = wipeout.utils.ko.peek(wipeout.utils.ko.peek(valueAccessor()));
-        if ((viewModel && !(viewModel instanceof wipeout.base.visual)) || (child && !(child instanceof wipeout.base.visual)))
+        if (child && !(child instanceof wipeout.base.visual))
             throw "This binding can only be used to render a wo.visual within the context of a wo.visual";
-        
-        if(child && viewModel && child === viewModel)
-            throw "A wo.visual cannot be a child of itself.";
         
         if (child && child.__woBag.rootHtmlElement)
             throw "This visual has already been rendered. Call its unRender() function before rendering again.";
@@ -49,10 +46,12 @@ Binding("render", true, function () {
         if (child) {            
             ko.utils.domData.set(element, wipeout.bindings.wipeout.utils.wipeoutKey, child);
             child.__woBag.rootHtmlElement = element;
-            if (viewModel)
-                viewModel.__woBag.renderedChildren.push(child);
+            var parent = child.getParent();
+            if(parent)
+                parent.__woBag.renderedChildren.push(child);
             
-            //TODO: will need to use this disposableId the next time update is invoked
+            // TODO: will need to use this disposableId the next time update is invoked.
+            // Will also need to remove child from the renderedChildren collection
             var disposableId = child.registerDisposable(child.templateId.subscribe(templateChanged).dispose);
             templateId = child.templateId.peek();
         }

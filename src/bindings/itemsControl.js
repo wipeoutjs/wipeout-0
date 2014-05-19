@@ -59,13 +59,13 @@ Binding("ic-render", true, function () {
     var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         ///<summary>Initialize the ic-render binding</summary>
         
-        return wipeout.bindings.render.init.call(this, element, valueAccessor, allBindingsAccessor, bindingContext.$parent, bindingContext.$parentContext);
+        return wipeout.bindings.render.init.call(this, element, valueAccessor, allBindingsAccessor, null, bindingContext.$parentContext);
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         ///<summary>Update the ic-render binding</summary>
         
-        return wipeout.bindings.render.update.call(this, element, valueAccessor, allBindingsAccessor, bindingContext.$parent, bindingContext.$parentContext);
+        return wipeout.bindings.render.update.call(this, element, valueAccessor, allBindingsAccessor, null, bindingContext.$parentContext);
     };
     
     return {
