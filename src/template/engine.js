@@ -184,8 +184,6 @@ Class("wipeout.template.engine", function () {
         };
     })();
     
-    //TODO: not accessable in release mode
-    engine.templateLoadingPlaceholder = "Loading template";
     engine.scriptCache = {};
     engine.openCodeTag = "<!-- wipeout_code: {"
     engine.closeCodeTag = "} -->";

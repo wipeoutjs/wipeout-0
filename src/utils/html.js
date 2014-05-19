@@ -253,9 +253,27 @@ Class("wipeout.utils.html", function () {
         return null;
     };
     
+    var createTemplatePlaceholder = function(forViewModel) {
+        ///<summary>Create a html node so serve as a temporary template while the template loads asynchronously</summary>
+        ///<param name="forViewModel" type="wo.view">The view to which this temp template will be applied. May be null</param>
+        ///<returns type="HTMLElement">A new html element to use as a placeholder template</returns>
+        
+        return createElement("<span>Loading template</span>");
+    };
+    
+    var loadTemplate = function(templateId) {
+        ///<summary>Asynchronously load a template</summary>
+        ///<param name="templateId" type="String">The url and subsequent template id of the template</param>
+        
+        wipeout.template.asyncLoader.instance.load(templateId);
+    };
+    
     var html = function() { };
     
+    html.asynchronousTemplates = false;
+    
     html.cannotCreateTags = cannotCreateTags;
+    html.createTemplatePlaceholder = createTemplatePlaceholder;
     html.specialTags = specialTags;
     html.getFirstTagName = getFirstTagName;
     html.getTagName = getTagName;

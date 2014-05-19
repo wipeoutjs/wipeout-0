@@ -30,25 +30,20 @@ Binding("render", true, function () {
             }
             
             if(child)
-                child.unTemplate();                
+                child.unTemplate();
             
-            if(wipeout.base.contentControl.templateExists(newVal) || !newVal) {
-                reRender();
-            } else {
-                // 
-                ko.virtualElements.prepend(element, wipeout.utils.html.createElement("<div>" + wipeout.template.engine.templateLoadingPlaceholder + "</div>"))
+            if(newVal && wipeout.utils.html.asynchronousTemplates) {
+                ko.virtualElements.prepend(element, wipeout.utils.html.createTemplatePlaceholder(child))
                 wipeout.template.asyncLoader.instance.load(newVal, reRender);
-            }            
+            } else {
+                reRender();
+            }
         };
         
         // if the root html element is already bound to another view model, kill it
         var previous = ko.utils.domData.get(element, wipeout.bindings.wipeout.utils.wipeoutKey); 
-        if(previous instanceof wipeout.base.visual) {
-            if(previous.__woBag.createdByWipeout)    
-                previous.dispose();
-            else    
-                previous.unRender();
-        }
+        if(previous instanceof wipeout.base.visual)
+            previous.unRenderOrDispose();
         
         var templateId = null;
         if (child) {            

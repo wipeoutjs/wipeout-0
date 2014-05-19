@@ -132,12 +132,8 @@ Class("wipeout.base.visual", function () {
 
             // dispose of all rendered children
             enumerate(this.__woBag.renderedChildren.splice(0, this.__woBag.renderedChildren.length), function(child) {
-                if(child instanceof visual) { 
-                    if(child.__woBag.createdByWipeout)
-                        child.dispose();
-                    else
-                        child.unRender();
-                }
+                if(child instanceof visual)
+                    child.unRenderOrDispose();
             });
 
             // delete all template items
@@ -161,6 +157,11 @@ Class("wipeout.base.visual", function () {
                     }
                 }
             }
+        },
+        unRenderOrDispose: function() {
+            ///<summary>Internal: do not use. un renders or disposes an object based on whether it was created by wipeopt or not</summary>
+             
+            this.__woBag.createdByWipeout ? this.dispose() : this.unRender();            
         },
         unRender: function() {
             ///<summary>Prepares a visual to be re-rendered</summary>

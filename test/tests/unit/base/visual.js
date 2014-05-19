@@ -118,6 +118,33 @@ testUtils.testWithUtils("unTemplate", null, false, function(methods, classes, su
     ok(!subject.__woBag.rootHtmlElement.innerHTML);
 });
 
+testUtils.testWithUtils("unRenderOrDispose", "will un render", false, function(methods, classes, subject, invoker) {
+    // arrange
+    subject.unRender = methods.method();
+    
+    subject.__woBag = {
+        createdByWipeout: false
+    };
+    
+    // act
+    // assert
+    invoker();
+});
+
+
+testUtils.testWithUtils("unRenderOrDispose", "will dispose", false, function(methods, classes, subject, invoker) {
+    // arrange
+    subject.dispose = methods.method();
+    
+    subject.__woBag = {
+        createdByWipeout: true
+    };
+    
+    // act
+    // assert
+    invoker();
+});
+
 testUtils.testWithUtils("unRender", null, false, function(methods, classes, subject, invoker) {
     // arrange
     $("#qunit-fixture").html("<div id=\"theElement\">some text</div>");
