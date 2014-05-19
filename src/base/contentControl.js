@@ -117,12 +117,11 @@ Class("wipeout.base.contentControl", function () {
                 var att2 = document.createAttribute("id");
                 att2.value = templateId;
                 script.setAttributeNode(att2);
-
-                if (templateHash) {
-                    var att3 = document.createAttribute(dataTemplateHash);
-                    att3.value = templateHash;
-                    script.setAttributeNode(att3);
-                }
+                
+                templateHash = templateHash || contentControl.hashCode(trim(template)).toString();                
+                var att3 = document.createAttribute(dataTemplateHash);
+                att3.value = templateHash;
+                script.setAttributeNode(att3);
                 
                 script.textContent = template;
                 templateArea.appendChild(script);
