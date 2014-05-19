@@ -21,7 +21,6 @@ Binding("wipeout", true, function () {
         view.model(viewModel);   
         
         var output = ko.bindingHandlers.render.init.call(this, element, createValueAccessor(view), allBindingsAccessor, null, bindingContext);
-        ko.bindingHandlers.render.update.call(this, element, createValueAccessor(view), allBindingsAccessor, null, bindingContext);
         
         view.onApplicationInitialized();
         

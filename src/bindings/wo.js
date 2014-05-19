@@ -13,9 +13,7 @@ Binding("wo", true, function () {
             current.$data.templateItems[vals.id] = vals.vm;
         }
         
-        var init = wipeout.bindings.render.init.call(this, element, function() { return vals.vm; }, allBindingsAccessor, null, bindingContext);
-        wipeout.bindings.render.update.call(this, element, function() { return vals.vm; }, allBindingsAccessor, null, bindingContext);
-        return init;
+        return wipeout.bindings.render.init.call(this, element, function() { return vals.vm; }, allBindingsAccessor, null, bindingContext);
     };
     
     return {

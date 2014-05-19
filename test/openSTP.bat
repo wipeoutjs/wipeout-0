@@ -1,2 +1,2 @@
-rem "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" C:\Dev\Apps\wipeout\test\ShaneTestPage.html --disable-web-security
+"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" C:\Dev\Apps\wipeout\test\ShaneTestPage.html --disable-web-security
 rem "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" C:\Users\sconnon\desktop\github\wipeout\test\ShaneTestPage.html --disable-web-security
