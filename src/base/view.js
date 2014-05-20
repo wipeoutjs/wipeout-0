@@ -51,7 +51,7 @@ Class("wipeout.base.view", function () {
         this._super();
         
         if(this.__woBag[modelRoutedEventKey]) {
-            this.__woBag[modelRoutedEventKey].dispose();
+            this.disposeOf(this.__woBag[modelRoutedEventKey]);
             delete this.__woBag[modelRoutedEventKey];
         }
         
@@ -271,7 +271,9 @@ Class("wipeout.base.view", function () {
         ///<param name="newValue" type="Any" optional="false">The new mode</param>
         
         if(oldValue !== newValue) {
-            this.disposeOf(this.__woBag[modelRoutedEventKey]);        
+            this.disposeOf(this.__woBag[modelRoutedEventKey]);
+            delete this.__woBag[modelRoutedEventKey];
+            
             if(newValue instanceof wipeout.base.routedEventModel) {
                 var d1 = newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this);
                 this.__woBag[modelRoutedEventKey] = this.registerDisposable(function() { d1.dispose(); });

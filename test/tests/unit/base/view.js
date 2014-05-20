@@ -148,13 +148,12 @@ testUtils.testWithUtils("dispose", "", false, function(methods, classes, subject
     // arrange
     subject._super = methods.method();
     subject.__woBag = {
-        "wo.view.modelRoutedEvents": {
-            dispose: methods.method()
-        },
+        "wo.view.modelRoutedEvents": {},
         bindings: {
             blabla: {}
         }
     };
+    subject.disposeOf = methods.method([subject.__woBag["wo.view.modelRoutedEvents"]]);
     subject.disposeOfBinding = methods.method(["blabla"]);
     
     // act

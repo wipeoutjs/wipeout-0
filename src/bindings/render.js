@@ -96,10 +96,13 @@ Binding("render", true, function () {
         },
         statics: {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-                ///<summary>Initialize the render binding</summary>
+                ///<summary>Initialize the render binding</summary>                
+                var binding = new wipeout.bindings.render(element, valueAccessor(), allBindingsAccessor, bindingContext);
+                ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+                    binding.dispose();
+                });
                 
-                // TODO: put somewhere where it will be disposed of correctly
-                new wipeout.bindings.render(element, valueAccessor(), allBindingsAccessor, bindingContext).render(wipeout.utils.ko.peek(valueAccessor()));
+                binding.render(wipeout.utils.ko.peek(valueAccessor()));
             },
             createValueAccessor: function(value) {
                 ///<summary>Create a value accessor for the knockout template binding.</summary>
@@ -120,8 +123,7 @@ Binding("render", true, function () {
                         } : undefined
                     };
 
-                    //TODO ????
-                    if(child && !child.woInvisible)
+                    if(_child && !_child.woInvisible)
                         output.data = child || {};
 
                     return output;
