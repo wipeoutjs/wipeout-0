@@ -1,9 +1,11 @@
 
 Binding("render", true, function () {
     
-    return wipeout.base.disposable.extend({
+    return wipeout.bindings.bindingBase.extend({
         constructor: function(element, value, allBindingsAccessor, bindingContext) {
-            ko.bindingHandlers.template.init(element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);
+            this._super(element);
+            
+            ko.bindingHandlers.template.init(element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);        
             
             this.element = element;
             this.allBindingsAccessor = allBindingsAccessor;
@@ -97,11 +99,7 @@ Binding("render", true, function () {
         statics: {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
                 ///<summary>Initialize the render binding</summary>                
-                var binding = new wipeout.bindings.render(element, valueAccessor(), allBindingsAccessor, bindingContext);
-                ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                    binding.dispose();
-                });
-                
+                var binding = new wipeout.bindings.render(element, valueAccessor(), allBindingsAccessor, bindingContext);                
                 binding.render(wipeout.utils.ko.peek(valueAccessor()));
             },
             createValueAccessor: function(value) {
