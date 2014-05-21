@@ -21,8 +21,7 @@ Class("wipeout.base.visual", function () {
                 disposables: {},
                 createdByWipeout: false,
                 rootHtmlElement: null,
-                routedEventSubscriptions: [],
-                renderedChildren: []
+                routedEventSubscriptions: []
             };
         },
         statics: {
@@ -130,12 +129,6 @@ Class("wipeout.base.visual", function () {
         unTemplate: function() {
             ///<summary>Removes and disposes (if necessary) all of the children of the visual</summary>
 
-            // dispose of all rendered children
-            enumerate(this.__woBag.renderedChildren.splice(0, this.__woBag.renderedChildren.length), function(child) {
-                if(child instanceof visual)
-                    child.unRenderOrDispose();
-            });
-
             // delete all template items
             enumerate(this.templateItems, function(item, i) {            
                 delete this.templateItems[i];
@@ -148,12 +141,12 @@ Class("wipeout.base.visual", function () {
                     if(doc.contains(this.__woBag.rootHtmlElement))
                         ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
                     else
-                        console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout)");
+                        console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout). This may cause memory leaks and unwanted event subscriptions");
                 } else {
                     try {
                         ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
                     } catch(e) {
-                        console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout)");
+                        console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout). This may cause memory leaks and unwanted event subscriptions");
                     }
                 }
             }

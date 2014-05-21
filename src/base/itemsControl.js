@@ -200,10 +200,7 @@ Class("wipeout.base.itemsControl", function () {
     //virtual
     itemsControl.prototype.onItemDeleted = function (item) {
         ///<summary>Disposes of deleted items</summary> 
-        ///<param name="item" type="wo.view" optional="false">The item deleted</param>       
-        var renderedChild = this.__woBag.renderedChildren.indexOf(item);
-        if(renderedChild !== -1)
-            this.__woBag.renderedChildren.splice(renderedChild, 1);
+        ///<param name="item" type="wo.view" optional="false">The item deleted</param>  
         
         item.dispose();
     };

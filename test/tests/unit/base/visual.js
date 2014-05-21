@@ -23,7 +23,6 @@ testUtils.testWithUtils("constructor", null, false, function(methods, classes, s
     strictEqual(subject.__woBag.createdByWipeout, false);
     strictEqual(subject.__woBag.rootHtmlElement, null);
     strictEqual(subject.__woBag.routedEventSubscriptions.constructor, Array);
-    strictEqual(subject.__woBag.renderedChildren.constructor, Array);
 });
 
 
@@ -94,26 +93,18 @@ testUtils.testWithUtils("registerDisposable", "ids and dispose functions", false
 });
 
 testUtils.testWithUtils("unTemplate", null, false, function(methods, classes, subject, invoker) {
-    // arrange
-    subject.__woBag = {
-        renderedChildren: [new wo.visual(), new wo.visual(), {}]
-    };
-    
-    subject.__woBag.renderedChildren[0].__woBag.createdByWipeout = true;
-    subject.__woBag.renderedChildren[0].dispose = methods.method();
-    subject.__woBag.renderedChildren[1].__woBag.createdByWipeout = false;
-    subject.__woBag.renderedChildren[1].unRender = methods.method();
-    
+    // arrange    
     subject.templateItems = {hello: true};
     
     $("#qunit-fixture").html("<div id=\"theElement\">some text</div>");
-    subject.__woBag.rootHtmlElement = $("#theElement")[0];
+    subject.__woBag = {
+        rootHtmlElement: $("#theElement")[0]
+    };
     
     // act
     invoker();
     
     // assert
-    ok(!subject.__woBag.renderedChildren.length);
     strictEqual(subject.templateItems.hello, undefined);
     ok(!subject.__woBag.rootHtmlElement.innerHTML);
 });

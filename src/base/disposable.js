@@ -7,7 +7,7 @@ Class("wipeout.base.disposable", function () {
         this._super();
         
         this.disposeFunction = disposeFunction || function() {};
-    });
+    }, "disposable");
     
     disposable.prototype.dispose = function() {
         ///<summary>Dispose</summary>           

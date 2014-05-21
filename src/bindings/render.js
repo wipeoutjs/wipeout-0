@@ -36,12 +36,8 @@ Binding("render", true, function () {
         unRender: function() {
             
             if (this.value) {
-                var i, parent;
-                if((parent = this.value.getParent()) instanceof wipeout.base.visual && 
-                   parent.__woBag.renderedChildren.indexOf(this.value) !== -1)
-                    parent.__woBag.renderedChildren.splice(i, 1);
-
                 if(this.value instanceof wipeout.base.visual)
+                    //TODO: change to unRender. wo binding should handle dispose
                     this.value.unRenderOrDispose();
 
                 if(this.templateChangedSubscription)
@@ -67,10 +63,6 @@ Binding("render", true, function () {
 
             ko.utils.domData.set(this.element, wipeout.bindings.wipeout.utils.wipeoutKey, this.value);
             this.value.__woBag.rootHtmlElement = this.element;
-            
-            var parent = this.value.getParent();
-            if(parent)
-                parent.__woBag.renderedChildren.push(this.value);
             
             var subscription = this.value.templateId.subscribe(this.onTemplateChanged, this);
             this.templateChangedSubscription = this.value.registerDisposable(function() { subscription.dispose(); });

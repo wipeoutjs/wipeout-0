@@ -135,7 +135,7 @@ Class("wipeout.base.object", function () {
                 childClass.constructor[p] = this[p];
  
         // use eval so that browser debugger will get class name
-        if(className && DEBUG) {
+        if(className) {
             if(!validFunctionCharacters.test(className)) {
                 throw "Invalid class name. The class name is for debug purposes and can contain alphanumeric characters only";
             }
@@ -145,7 +145,7 @@ Class("wipeout.base.object", function () {
             function " + className + "() { this.constructor = childClass; }\
             " + className + ".prototype = parentClass.prototype;\
             childClass.prototype = new " + className + "();")(childClass.constructor, this);
-        } else {        
+        } else {
             var prototypeTracker = function() { this.constructor = childClass.constructor; }     
             prototypeTracker.prototype = this.prototype;
             childClass.constructor.prototype = new prototypeTracker();

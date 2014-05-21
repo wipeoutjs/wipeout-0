@@ -161,15 +161,10 @@ testUtils.testWithUtils("onItemDeleted", "", false, function(methods, classes, s
     var item = {
         dispose: methods.method()
     };
-    subject.__woBag = {
-        renderedChildren: [{}, {}, item, {}]
-    };
     
     // act
-    invoker(item);
-    
     // assert
-    strictEqual(subject.__woBag.renderedChildren.indexOf(item), -1);
+    invoker(item);
 });
 
 testUtils.testWithUtils("_createItem", "", false, function(methods, classes, subject, invoker) {

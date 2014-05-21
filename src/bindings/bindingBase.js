@@ -12,5 +12,5 @@ Class("wipeout.bindings.bindingBase", function () {
                 _this.dispose();
             });
         }
-    });
+    }, "bindingBase");
 });

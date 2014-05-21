@@ -13,7 +13,7 @@ Class("wipeout.base.eventRegistration", function () {
                                                           
         this.callback = callback;
         this.context = context;
-    });;
+    }, "eventRegistration");
 });
 
 Class("wipeout.base.event", function () {
