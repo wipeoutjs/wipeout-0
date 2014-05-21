@@ -187,10 +187,9 @@ testUtils.testWithUtils("wipeoutRewrite", "render script logic", true, function(
         tag: wo.view.extend(function() { 
             this._super();
             this.initialize = methods.method([configTag, bindingContext]);
-            vm = this;
         })
     };
-    var vm;
+    
     var id = {};
     var bindingContext = {};
     var element = new DOMParser().parseFromString("<div><my.tag/></div>", "application/xml").documentElement;
@@ -206,10 +205,10 @@ testUtils.testWithUtils("wipeoutRewrite", "render script logic", true, function(
     ok(engine.scriptCache[data]);
     
     // act    
-    var actual = engine.scriptCache[data](bindingContext);
+    var actual = engine.scriptCache[data]();
     
     // assert
-    strictEqual(actual.vm, vm);
+    strictEqual(actual.vmConstructor, window.my.tag);
     strictEqual(actual.id, id);
     
     delete window.my;

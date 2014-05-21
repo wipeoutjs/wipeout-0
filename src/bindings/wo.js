@@ -5,17 +5,20 @@ Binding("wo", true, function () {
         constructor: function(element, value, allBindingsAccessor, bindingContext) {
             this._super(element);
             
-            var vals = wipeout.template.engine.scriptCache[value](bindingContext);
+            var vals = wipeout.template.engine.scriptCache[value]();
+            this.renderedView = new vals.vmConstructor();
+            this.renderedView.__woBag.createdByWipeout = true;
+            vals.initialize(this.renderedView, bindingContext);
+            
             if(vals.id) {
                 var current = bindingContext;
                 while(current.$data.woInvisible)
                     current = current.$parentContext;
 
-                current.$data.templateItems[vals.id] = vals.vm;
+                current.$data.templateItems[vals.id] = this.renderedView;
             }
             
-            this.renderedView = vals.vm;
-            this.render = new wipeout.bindings.render(element, vals.vm, allBindingsAccessor, bindingContext);
+            this.render = new wipeout.bindings.render(element, this.renderedView, allBindingsAccessor, bindingContext);
             this.render.render(this.renderedView);            
         },
         dispose: function() {

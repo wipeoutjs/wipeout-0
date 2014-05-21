@@ -66,14 +66,14 @@ Class("wipeout.template.engine", function () {
                     engine.wipeoutRewrite(xmlElement.childNodes[i], rewriterCallback);
         } else {
             var newScriptId = engine.newScriptId();
-            engine.scriptCache[newScriptId] = function(parentBindingContext) {
-                var vm = wipeout.utils.obj.createObject(xmlElement.nodeName);    
-                if(!(vm instanceof wipeout.base.view)) throw "Only wo.view elements can be created in this way";
-                vm.__woBag.createdByWipeout = true;
-                vm.initialize(xmlElement, parentBindingContext);                
+            engine.scriptCache[newScriptId] = function() {
                 return {
-                    vm: vm,
-                    id: engine.getId(xmlElement)
+                    vmConstructor: wipeout.utils.obj.getObject(xmlElement.nodeName),
+                    id: engine.getId(xmlElement),
+                    initialize: function(viewModel, bindingContext) {
+                        if(!(viewModel instanceof wipeout.base.view)) throw "Only wo.view elements can be created in this way";
+                        viewModel.initialize(xmlElement, bindingContext);
+                    }
                 };
             };
             
@@ -92,7 +92,7 @@ Class("wipeout.template.engine", function () {
             
             xmlElement.parentNode.removeChild(xmlElement);
         }
-    };    
+    };
     
     engine.getId = function(xmlElement) {
         ///<summary>Get the id property of the xmlElement if any</summary>

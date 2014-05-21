@@ -37,8 +37,7 @@ Binding("render", true, function () {
             
             if (this.value) {
                 if(this.value instanceof wipeout.base.visual)
-                    //TODO: change to unRender. wo binding should handle dispose
-                    this.value.unRenderOrDispose();
+                    this.value.unRender();
 
                 if(this.templateChangedSubscription)
                     this.value.disposeOf(this.templateChangedSubscription);
