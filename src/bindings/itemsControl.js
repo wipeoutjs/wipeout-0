@@ -16,20 +16,23 @@ Binding("itemsControl", true, function () {
         itemsTemplate = wipeout.base.contentControl.createAnonymousTemplate(tmp);
     };
     
-    var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        ///<summary>Initialize the itemsControl binding</summary>
+    var test = function(viewModel) {
         var ic = wipeout.utils.ko.peek(viewModel);
         if(ic && !(ic instanceof wipeout.base.itemsControl)) throw "This binding can only be used on an itemsControl";
+    }
+    
+    var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        ///<summary>Initialize the itemsControl binding</summary>
         
+        test(viewModel);        
         staticConstructor();
         return ko.bindingHandlers.template.init.call(this, element, utils.createAccessor(viewModel), allBindingsAccessor, viewModel, bindingContext);
     };
     
     var update = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         ///<summary>Update the itemsControl binding</summary>
-        var ic = wipeout.utils.ko.peek(viewModel);
-        if(ic && !(ic instanceof wipeout.base.itemsControl)) throw "This binding can only be used on an itemsControl";
         
+        test(viewModel);
         return ko.bindingHandlers.template.update.call(this, element, utils.createAccessor(viewModel), allBindingsAccessor, viewModel, bindingContext);
     };
     
