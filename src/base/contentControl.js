@@ -59,7 +59,7 @@ Class("wipeout.base.contentControl", function () {
                 
                 var templateArea = getTemplateArea();
 
-                templateString = trim(templateString);
+                templateString = trim(templateString || "");
                 var hash = contentControl.hashCode(templateString).toString();
 
                 if(!forceCreate) {
