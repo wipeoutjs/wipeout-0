@@ -161,15 +161,15 @@ Class("wipeout.base.view", function () {
         if(!propertiesXml)
             return;
         
-        var prop = propertiesXml.getAttribute("woInvisible");
+        var prop = propertiesXml.getAttribute("shareParentScope");
         if(prop)
-            this.woInvisible = parseBool(prop);
+            this.shareParentScope = parseBool(prop);
                 
         if(!view.elementHasModelBinding(propertiesXml) && wipeout.utils.ko.peek(this.model) == null) {
             this.bind('model', parentBindingContext.$data.model);
         }
         
-        var bindingContext = this.woInvisible ? parentBindingContext : parentBindingContext.createChildContext(this);        
+        var bindingContext = this.shareParentScope ? parentBindingContext : parentBindingContext.createChildContext(this);        
         enumerate(propertiesXml.attributes, function(attr) {
             // reserved
             if(view.reservedPropertyNames.indexOf(attr.nodeName) !== -1) return;

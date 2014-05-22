@@ -115,7 +115,7 @@ Binding("render", true, function () {
                         } : undefined
                     };
 
-                    if(_child && !_child.woInvisible)
+                    if(_child && !_child.shareParentScope)
                         output.data = child || {};
 
                     return output;

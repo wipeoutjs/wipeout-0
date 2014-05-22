@@ -43,7 +43,7 @@ Class("wipeout.base.if", function () {
     }, "_if");
     
     // picked up by wipeout.base.visual constructor
-    _if.woInvisibleDefault = true;
+    _if.shareParentScopeDefault = true;
     
     _if.prototype.elseTemplateChanged = function (newVal) {
         ///<summary>Resets the template id to the else template if condition is not met</summary>  

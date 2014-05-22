@@ -23,7 +23,7 @@ module("wipeout.tests.integration", {
     }
 });
 
-test("woInvisible", function() {
+test("shareParentScope", function() {
     
     // arrange
     var container = "LKHLHKLH", val = "LKJGB*(PYGUBOPY", child = "LKGKJHFF";
@@ -31,7 +31,7 @@ test("woInvisible", function() {
     // act
     application.template('<wo.contentControl id="' + container + '" anItem="\'' + val + '\'" depth="1">\
     <template>\
-        <wo.contentControl woInvisible="true" depth="2">\
+        <wo.contentControl shareParentScope="true" depth="2">\
             <template>\
                 <wo.view id="' + child + '" anItem="$parent.anItem" depth="3"></wo.view>\
             </template>\
@@ -50,7 +50,7 @@ test("woInvisible", function() {
 test("wipeout.base.if", function() {
     // arrange
     application.hello = ko.observable({hello: "xxx"});
-    application.template('<wo.if woInvisible="false" condition="$parent.hello">\
+    application.template('<wo.if shareParentScope="false" condition="$parent.hello">\
     <template>\
         <div id="myDiv" data-bind="html: $parent.hello().hello"></div>\
     </template>\
@@ -65,7 +65,7 @@ test("wipeout.base.if", function() {
     ok(!document.getElementById("myDiv"));
 });
 
-test("wipeout.base.if, woInvisible", function() {
+test("wipeout.base.if, shareParentScope", function() {
     // arrange
     application.hello = ko.observable({hello: "xxx"});
     application.template('<wo.if condition="hello">\

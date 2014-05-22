@@ -208,7 +208,7 @@ testUtils.testWithUtils("initialize", "more of an integration test than a unit t
     subject.twProp = ko.observable();
     
     var element = new DOMParser().parseFromString(
-'<root woInvisible="false" twProp-tw="$parent.twProperty" owProp="$parent.owProperty">\
+'<root shareParentScope="false" twProp-tw="$parent.twProperty" owProp="$parent.owProperty">\
     <inlinePropString>Hello</inlinePropString>\
     <inlinePropParser constructor="int">22</inlinePropParser>\
     <inlinePropConstructor constructor="Array"></inlinePropConstructor>\
@@ -218,7 +218,7 @@ testUtils.testWithUtils("initialize", "more of an integration test than a unit t
     subject.initialize(element, bindingContext);
     
     // assert
-    strictEqual(subject.woInvisible, false);
+    strictEqual(subject.shareParentScope, false);
     strictEqual(subject.model(), bindingContext.$data.model());
     strictEqual(subject.twProp(), bindingContext.$data.twProperty());
     strictEqual(subject.owProp, bindingContext.$data.owProperty);

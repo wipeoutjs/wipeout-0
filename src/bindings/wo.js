@@ -12,7 +12,7 @@ Binding("wo", true, function () {
             
             if(vals.id) {
                 var current = bindingContext;
-                while(current.$data.woInvisible)
+                while(current.$data.shareParentScope)
                     current = current.$parentContext;
 
                 current.$data.templateItems[vals.id] = this.renderedView;
