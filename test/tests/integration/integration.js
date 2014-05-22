@@ -301,7 +301,6 @@ test("basic items control. initial, add, remove, re-arrange", function() {
     assert(item4, item3, item1);*/
 });
 
-
 test("advanced items control, creating/destroying", function() {
     // arrange
     var templateId = wo.contentControl.createAnonymousTemplate('<!-- ko itemsControl: null --><!-- /ko -->');
@@ -331,6 +330,27 @@ test("advanced items control, creating/destroying", function() {
     strictEqual($("#d").length, 1);
     strictEqual($("#e").length, 1);
     strictEqual($("#f").length, 1);
+});
+
+test("items control, $index", function() {
+    // arrange
+    var templateId = wo.contentControl.createAnonymousTemplate('<!-- ko itemsControl: null --><!-- /ko -->');
+    var itemTemplateId = wo.contentControl.createAnonymousTemplate('<div data-bind="attr: { id: model, \'data-index\': $index }"></div>');
+    
+    var itemsControl1 = new wo.itemsControl();
+    itemsControl1.templateId(templateId);
+    itemsControl1.itemTemplateId(itemTemplateId);
+    itemsControl1.itemSource(["a", "b", "c"]);
+    
+    application.content = ko.observable();
+    application.template('<!-- ko render: content --><!-- /ko -->');
+    
+    // act
+    // assert
+    application.content(itemsControl1);
+    strictEqual($("#a").attr("data-index"), "0");
+    strictEqual($("#b").attr("data-index"), "1");
+    strictEqual($("#c").attr("data-index"), "2");
 });
 
 test("multi-dimentional binding", function() {

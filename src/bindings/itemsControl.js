@@ -7,12 +7,13 @@ Binding("itemsControl", true, function () {
     var staticConstructor = function() {
               
         if(itemsTemplate) return;
-        var tmp = "<!-- ko ic-render: $data";
+        var tmp = "<!-- ko ic-render: null";
         if(DEBUG) 
             tmp += ", wipeout-type: 'items[' + wipeout.utils.ko.peek($index) + ']'";
 
         tmp += " --><!-- /ko -->";
         
+        if(itemsTemplate) return;
         itemsTemplate = wipeout.base.contentControl.createAnonymousTemplate(tmp);
     };
     
@@ -59,13 +60,12 @@ Binding("itemsControl", true, function () {
 
 Binding("ic-render", true, function () {
     
-    var init = function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        ///<summary>Initialize the ic-render binding</summary>
-        
-        return wipeout.bindings.render.init.call(this, element, valueAccessor, allBindingsAccessor, null, bindingContext.$parentContext);
-    };
-    
     return {
-        init: init
+        init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            ///<summary>Initialize the ic-render binding</summary>
+            
+            var binding = new wipeout.bindings.render(element, bindingContext.$data, allBindingsAccessor, bindingContext);                
+            binding.render(wipeout.utils.ko.peek(bindingContext.$data));
+        }
     };
 });
