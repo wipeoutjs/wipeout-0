@@ -2,21 +2,9 @@
 
 If html element is deleted outside of wo, dispose of its associated view
 
-Big cleanup, unit testing
 Debug code
-
-getRootHtmlElement
 
 If, poke template
 
-changes:    __createdByWipeout -> __woBag.createdByWipeout
-            _rootHtmlElement -> __woBag.rootHtmlElement
-            applicationInitialized -> onApplicationInitialized
-            itemDeleted -> onItemDeleted
-            itemRendered -> onItemRendered
-            modelChanged -> onModelChanged
-            rootHtmlChanged -> onRendered
-            wpfko -> wipeout
-            
-            
-document build.debug.js
+changes:    woInvisible -> shareParentScope
+            renderedChildren -> null

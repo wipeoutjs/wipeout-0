@@ -8,8 +8,8 @@ Class("wipeout.bindings.bindingBase", function () {
             this._super();
             
             var _this = this;
-            ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                _this.dispose();
+            element.addEventListener("DOMNodeRemovedFromDocument", function() { 
+                _this.dispose(); 
             });
         }
     }, "bindingBase");

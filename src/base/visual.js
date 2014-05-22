@@ -126,8 +126,13 @@ Class("wipeout.base.visual", function () {
                 return id;
             };
         })(),
+        getRootHtmlElement: function() {
+            ///<summary>Get the root of this view model. It will most likely be a knockout virtual element</summary>
+            ///<returns type="Node">The root element</returns>
+            return this.__woBag.rootHtmlElement;
+        },
         unTemplate: function() {
-            ///<summary>Removes and disposes (if necessary) all of the children of the visual</summary>
+            ///<summary>Removes and disposes (if necessary) of all of the children of the visual</summary>
 
             // delete all template items
             enumerate(this.templateItems, function(item, i) {            
