@@ -10,7 +10,6 @@ Binding("render", true, function () {
             this.element = element;
             this.allBindingsAccessor = allBindingsAccessor;
             this.bindingContext = bindingContext;
-            this.__reRender = null;
             
             if(ko.isObservable(value)) {
                 var val = value.peek();
@@ -72,7 +71,7 @@ Binding("render", true, function () {
             var _this = this;
             function reRender() {
                 // a more recent request has been sent. Cancel this one
-                if(!_this.__reRender !== reRender) return;
+                if(_this.value && _this.value.templateId.peek() !== newVal) return;
                 
                 ko.bindingHandlers.template.update(_this.element, wipeout.bindings.render.createValueAccessor(_this.value), _this.allBindingsAccessor, null, _this.bindingContext);
 
@@ -80,8 +79,6 @@ Binding("render", true, function () {
                 if(bindings["wipeout-type"])
                     wipeout.bindings["wipeout-type"].utils.comment(_this.element, bindings["wipeout-type"]);
             }
-            
-            this.__reRender = reRender;
 
             if(this.value)
                 this.value.unTemplate();
