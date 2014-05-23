@@ -12,6 +12,7 @@ module("wipeout.tests.integration.problemsFoundInDev", {
 test("cannot render binding twice", function() {
     
     // arrange
+    debugger;
     window.views = {
         myView: wo.contentControl.extend({
             constructor: function() {
@@ -23,10 +24,10 @@ test("cannot render binding twice", function() {
     </template>\
 </wo.contentControl>');
             }
-        })
+        }, "myView")
     };
 
-    $fixture = $("#qunit-fixture");
+    var $fixture = $("#qunit-fixture");
     $fixture.html("<div data-bind='wipeout: views.myView'></div>");
     $application = $($fixture.children()[0]);
     
@@ -41,7 +42,5 @@ test("cannot render binding twice", function() {
     $fixture.html("");
     $fixture = null;
     $application = null;
-    application = null;    
-    
-    ok(true);
+    application = null;
 });
