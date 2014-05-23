@@ -2,7 +2,7 @@ var $fixture;
 var $application;
 var application;
 
-module("wipeout.tests.integration", {
+module("wipeout.tests.integration.integration", {
     setup: function() {
         $fixture = $("#qunit-fixture");
         $fixture.html("<div data-bind='wipeout: wo.contentControl'></div>");
