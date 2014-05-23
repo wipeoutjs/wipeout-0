@@ -16,8 +16,8 @@ Binding("wipeout", true, function () {
                 throw "Invalid view type";  
             
             this.renderedView.model(viewModel);            
-            this.render = new wipeout.bindings.render(element, this.renderedView, allBindingsAccessor, bindingContext);
-            this.render.render(this.renderedView);        
+            this.render = new wipeout.bindings.render(element, this.renderedView, allBindingsAccessor, bindingContext);            
+            this.render.render(this.renderedView);
             this.renderedView.onApplicationInitialized();
         },
         dispose: function() {
@@ -29,6 +29,7 @@ Binding("wipeout", true, function () {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
                 ///<summary>Initialize the render binding</summary>                
                 new wipeout.bindings.wipeout(element, valueAccessor(), allBindingsAccessor, viewModel, bindingContext);
+                return { controlsDescendantBindings: true };
             },
             utils: {
                 wipeoutKey: "__wipeout"

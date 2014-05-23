@@ -12,7 +12,6 @@ module("wipeout.tests.integration.problemsFoundInDev", {
 test("cannot render binding twice", function() {
     
     // arrange
-    debugger;
     window.views = {
         myView: wo.contentControl.extend({
             constructor: function() {
@@ -32,15 +31,19 @@ test("cannot render binding twice", function() {
     $application = $($fixture.children()[0]);
     
     // act
+    stop();
     ko.applyBindings({}, $application[0]);
+    //setTimeout(function() {
     
-    // assert    
-    ok(document.getElementById("theView"));    
-    
-    delete window.views;
-    ko.cleanNode($application[0]);
-    $fixture.html("");
-    $fixture = null;
-    $application = null;
-    application = null;
+        // assert
+        ok(document.getElementById("theView"));    
+
+        delete window.views;
+        ko.cleanNode($application[0]);
+        $fixture.html("");
+        $fixture = null;
+        $application = null;
+        application = null;
+        start();
+    //}, 10);
 });

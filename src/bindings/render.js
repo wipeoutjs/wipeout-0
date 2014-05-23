@@ -102,21 +102,20 @@ Binding("render", true, function () {
                 // ensure template id does not trigger another update
                 // this will be handled within the binding
                 return function () {
-                    var child = value;
-                    var _child = wipeout.utils.ko.peek(child);
+                    var child = wipeout.utils.ko.peek(value);
 
                     var output = {
                         templateEngine: wipeout.template.engine.instance,
-                        name: _child ? _child.templateId.peek() : "",                
-                        afterRender: _child ? function(nodes, context) {
-                            var old = _child.nodes || [];
-                            _child.nodes = nodes;
-                            _child.onRendered(old, nodes);
+                        name: child ? child.templateId.peek() : "",                
+                        afterRender: child ? function(nodes, context) {
+                            var old = child.nodes || [];
+                            child.nodes = nodes;
+                            child.onRendered(old, nodes);
                         } : undefined
                     };
 
-                    if(_child && !_child.shareParentScope)
-                        output.data = child || {};
+                    if(child && !child.shareParentScope)
+                        output.data = value || {};
 
                     return output;
                 };
