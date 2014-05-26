@@ -1,8 +1,15 @@
 
 Binding("render", true, function () {
     
+    function renderedItem(item, parent) {
+        this.item = item;
+        this.parent = parent;
+        
+        wipeout.utils.obj.tryFreeze(this);
+    }
+    
     return wipeout.bindings.bindingBase.extend({
-        constructor: function(element, value, allBindingsAccessor, bindingContext) {
+        constructor: function(element, value, allBindingsAccessor, bindingContext) {  
             this._super(element);
             
             ko.bindingHandlers.template.init(element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);        
@@ -41,6 +48,8 @@ Binding("render", true, function () {
 
                 if(this.templateChangedSubscription)
                     this.value.disposeOf(this.templateChangedSubscription);
+                
+                delete wipeout.bindings.render.renderedItems[this.value.__woBag.uniqueId];
             }
             
             delete this.value;
@@ -59,7 +68,9 @@ Binding("render", true, function () {
 
             if (this.value.__woBag.rootHtmlElement)
                 throw "This visual has already been rendered. Call its unRender() function before rendering again.";
-
+            
+            //TODO: parent is second arg here
+            wipeout.bindings.render.renderedItems[this.value.__woBag.uniqueId] = new renderedItem(newVal, this.bindingContext.$data);
             ko.utils.domData.set(this.element, wipeout.bindings.wipeout.utils.wipeoutKey, this.value);
             this.value.__woBag.rootHtmlElement = this.element;
             
@@ -91,8 +102,10 @@ Binding("render", true, function () {
             }
         },
         statics: {
+            renderedItems: {},
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-                ///<summary>Initialize the render binding</summary>                
+                ///<summary>Initialize the render binding</summary>       
+                
                 var binding = new wipeout.bindings.render(element, valueAccessor(), allBindingsAccessor, bindingContext);                
                 binding.render(wipeout.utils.ko.peek(valueAccessor()));
             },

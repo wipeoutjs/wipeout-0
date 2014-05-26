@@ -23,6 +23,63 @@ module("wipeout.tests.integration.integration", {
     }
 });
 
+test("parent child views", function() {
+    
+    // arrange
+    var parent1 = "p1", child1 = "c1", child2 = "c2";
+    var parent2 = "p2", child3 = "c3", child4 = "c4";
+    var parent3 = "p3", child5 = "c5", child6 = "c6";
+    
+    
+    // act
+    application.template('<wo.contentControl shareParentScope="true" id="' + parent1 + '">\
+        <template>\
+            <wo.view shareParentScope="true" id="' + child1 + '" />\
+            <wo.view id="' + child2 + '" />\
+        </template>\
+    </wo.contentControl>\
+    <wo.contentControl id="' + parent2 + '">\
+        <template>\
+            <wo.view shareParentScope="true" id="' + child3 + '" />\
+            <wo.view id="' + child4 + '" />\
+        </template>\
+    </wo.contentControl>\
+    <wo.itemsControl itemSource="[{},{}]" id="' + parent3 + '">\
+    </wo.itemsControl>');
+    
+    ok(parent1 = application.templateItems[parent1]);
+    ok(parent2 = application.templateItems[parent2]);
+    ok(child1 = application.templateItems[child1]);
+    ok(child2 = application.templateItems[child2]);
+    ok(child3 = parent2.templateItems[child3]);
+    ok(child4 = parent2.templateItems[child4]);
+    
+    ok(parent3 = application.templateItems[parent3]);
+    ok(child5 = parent3.items[0]);
+    ok(child6 = parent3.items[1]);
+    
+    // assert
+    strictEqual(wipeout.bindings.render.renderedItems[child1.__woBag.uniqueId].item, child1);
+    strictEqual(wipeout.bindings.render.renderedItems[child1.__woBag.uniqueId].parent, parent1);
+    
+    strictEqual(wipeout.bindings.render.renderedItems[child2.__woBag.uniqueId].item, child2);
+    strictEqual(wipeout.bindings.render.renderedItems[child2.__woBag.uniqueId].parent, parent1);
+    
+    strictEqual(wipeout.bindings.render.renderedItems[child3.__woBag.uniqueId].item, child3);
+    strictEqual(wipeout.bindings.render.renderedItems[child3.__woBag.uniqueId].parent, parent2);
+    
+    strictEqual(wipeout.bindings.render.renderedItems[child4.__woBag.uniqueId].item, child4);
+    strictEqual(wipeout.bindings.render.renderedItems[child4.__woBag.uniqueId].parent, parent2);
+    
+    
+    strictEqual(wipeout.bindings.render.renderedItems[child5.__woBag.uniqueId].item, child5);
+    strictEqual(wipeout.bindings.render.renderedItems[child5.__woBag.uniqueId].parent, parent3);
+    
+    strictEqual(wipeout.bindings.render.renderedItems[child6.__woBag.uniqueId].item, child6);
+    strictEqual(wipeout.bindings.render.renderedItems[child6.__woBag.uniqueId].parent, parent3);
+    
+});
+
 test("shareParentScope", function() {
     
     // arrange
