@@ -110,15 +110,22 @@ Class("wipeout.base.visual", function () {
                 return output;
             }
         },
-        //move: function(moveLogic) {
-            ///<summary>Safely move a wo.visual. Without using this function a moved visual will be disposed of</summary>
-            ///<param name="moveLogic" type="Function" optional="false">The actual logic used to move the visual</param>
-            
-          //  try {
-      //          var nodes = 
-    //        } finally {
-      //      }
-    //    },
+// WORK IN PROGRESS
+//        move: function(moveLogic) {
+//            ///<summary>Safely move a wo.visual. Without using this function a moved visual will be disposed of</summary>
+//            ///<param name="moveLogic" type="Function" optional="false">The actual logic used to move the visual</param>
+//            
+//            try {
+//                var nodes =  wipeout.utils.obj.copyArray(this.__woBag.nodes);
+//                nodes.splice(0, 0, this.__woBag.rootHtmlElement);
+//                nodes.push(wipeout.utils.ko.virtualElements.closingTag(this.__woBag.rootHtmlElement));
+//                
+//                this.__woBag.freeze = true;
+//                moveLogic(nodes);
+//            } finally {
+//                this.__woBag.freeze = false;
+//            }
+//        },
         disposeOf: function(key) {
             ///<summary>Dispose of an item registered as a disposable</summary>
             ///<param name="key" type="String" optional="false">The key of the item to dispose</param>
@@ -153,7 +160,7 @@ Class("wipeout.base.visual", function () {
         },
         unTemplate: function() {
             ///<summary>Removes and disposes (if necessary) of all of the children of the visual</summary>
-
+                        
             // delete all template items
             enumerate(this.templateItems, function(item, i) {            
                 delete this.templateItems[i];
@@ -176,14 +183,9 @@ Class("wipeout.base.visual", function () {
                 }
             }
         },
-        unRenderOrDispose: function() {
-            ///<summary>Internal: do not use. un renders or disposes an object based on whether it was created by wipeopt or not</summary>
-             
-            this.__woBag.createdByWipeout ? this.dispose() : this.unRender();            
-        },
         unRender: function() {
             ///<summary>Prepares a visual to be re-rendered</summary>
-
+            
             this.onUnrender();
 
             this.unTemplate();
@@ -196,7 +198,7 @@ Class("wipeout.base.visual", function () {
         },
         dispose: function() {
             ///<summary>Dispose of this visual</summary>
-
+            
             this.unRender();
 
             // dispose of any computeds

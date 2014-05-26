@@ -36,7 +36,7 @@ Binding("render", true, function () {
                 }, this);
             }
         },
-        dispose: function() {
+        dispose: function() {            
             this._super();
             this.unRender();
         },
