@@ -21,7 +21,8 @@ Class("wipeout.base.visual", function () {
                 disposables: {},
                 createdByWipeout: false,
                 rootHtmlElement: null,
-                routedEventSubscriptions: []
+                routedEventSubscriptions: [],
+                uniqueId: wipeout.base.visual.uniqueId()
             };
         },
         statics: {
@@ -73,6 +74,15 @@ Class("wipeout.base.visual", function () {
                     }
 
                     return templateId;
+                };
+            })(),
+            uniqueId: (function () {
+                var i = Math.floor(Math.random() * 1000000000); 
+                return function () {
+                    ///<summary>Returns a unique Id for a view</summary>    
+                    ///<returns type="String"></returns>    
+                    
+                    return "View-" + (++i);
                 };
             })(),
             visualGraph: function (rootElement, displayFunction) {
