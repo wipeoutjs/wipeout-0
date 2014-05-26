@@ -155,8 +155,8 @@ Class("wipeout.base.view", function () {
         ///<summary>Takes an xml fragment and binding context and sets its properties accordingly</summary>
         ///<param name="propertiesXml" type="Element" optional="false">An XML element containing property setters for the view</param>
         ///<param name="parentBindingContext" type="ko.bindingContext" optional="false">The binding context of the wipeout node just above this one</param>
-        if(this._initialized) throw "Cannot call initialize item twice";
-        this._initialized = true;
+        if(this.__woBag.initialized) throw "Cannot call initialize item twice";
+        this.__woBag.initialized = true;
         
         if(!propertiesXml)
             return;

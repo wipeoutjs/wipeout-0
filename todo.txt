@@ -1,6 +1,4 @@
 
-move _initialized onto __woBag
-
 If html element is deleted outside of wo, dispose of its associated view
 
 Debug code
