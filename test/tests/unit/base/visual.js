@@ -207,18 +207,18 @@ testUtils.testWithUtils("getParentElement", "non virtual", true, function(method
 testUtils.testWithUtils("getParent", null, false, function(methods, classes, subject, invoker) {
     // arrange
     var expected = {};
-    $("#qunit-fixture").html("<div id='el1'><div><div><div id='el2'></div></div></div></div>");
     subject.__woBag = {
-        rootHtmlElement: $("#el2", "#qunit-fixture")[0]
+        uniqueId: "sadasdasdasdsad"
     };
     
-    ko.utils.domData.set($("#el1")[0], wipeout.bindings.wipeout.utils.wipeoutKey, expected);
+    wipeout.bindings.render.renderedItems[subject.__woBag.uniqueId] = {parent:expected};
     
     // act
     var actual = invoker();
     
     // assert
     strictEqual(actual, expected);
+    delete wipeout.bindings.render.renderedItems[subject.__woBag.uniqueId];
 });
 
 testUtils.testWithUtils("unRegisterRoutedEvent", "no event", false, function(methods, classes, subject, invoker) {

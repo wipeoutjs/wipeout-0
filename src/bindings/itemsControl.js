@@ -64,7 +64,7 @@ Binding("ic-render", true, function () {
         init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
             ///<summary>Initialize the ic-render binding</summary>
             
-            var binding = new wipeout.bindings.render(element, bindingContext.$data, allBindingsAccessor, bindingContext);                
+            var binding = new wipeout.bindings.render(element, bindingContext.$data, allBindingsAccessor, bindingContext.$parentContext.extend({$index:bindingContext.$index}));                
             binding.render(wipeout.utils.ko.peek(bindingContext.$data));
         }
     };

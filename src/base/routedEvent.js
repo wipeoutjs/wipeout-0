@@ -67,6 +67,8 @@ Class("wipeout.base.routedEventRegistration", function () {
         
         //An inner event to handler triggering callbacks
         this.event = new wipeout.base.event();
+        
+        wipeout.utils.obj.tryFreeze(this);
     };
     
     routedEventRegistration.prototype.dispose = function() {

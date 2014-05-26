@@ -13,6 +13,8 @@ Class("wipeout.base.eventRegistration", function () {
                                                           
         this.callback = callback;
         this.context = context;
+                
+        wipeout.utils.obj.tryFreeze(this);
     }, "eventRegistration");
 });
 
@@ -20,6 +22,10 @@ Class("wipeout.base.event", function () {
     
     var event = function() {
         ///<summary>Defines a new event with register and trigger functinality</summary>
+        
+        // allow for non use of the new key word
+        if(!(this instanceof event))
+           return new event();
         
         //Array of callbacks to fire when event is triggered
         this._registrations = [];

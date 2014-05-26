@@ -60,10 +60,10 @@ test("parent child views", function() {
     
     // assert
     strictEqual(wipeout.bindings.render.renderedItems[child1.__woBag.uniqueId].item, child1);
-    strictEqual(wipeout.bindings.render.renderedItems[child1.__woBag.uniqueId].parent, parent1);
+    strictEqual(wipeout.bindings.render.renderedItems[child1.__woBag.uniqueId].parent, application);
     
     strictEqual(wipeout.bindings.render.renderedItems[child2.__woBag.uniqueId].item, child2);
-    strictEqual(wipeout.bindings.render.renderedItems[child2.__woBag.uniqueId].parent, parent1);
+    strictEqual(wipeout.bindings.render.renderedItems[child2.__woBag.uniqueId].parent, application);
     
     strictEqual(wipeout.bindings.render.renderedItems[child3.__woBag.uniqueId].item, child3);
     strictEqual(wipeout.bindings.render.renderedItems[child3.__woBag.uniqueId].parent, parent2);
@@ -348,14 +348,14 @@ test("basic items control. initial, add, remove, re-arrange", function() {
     ok(true, "removed item");
     assert(item1, item3, item4);
         
-    /*
+    
     // re-act
     application.model().items().reverse();
     application.model().items.valueHasMutated();
     
     // re-assert
     ok(true, "reversed items");
-    assert(item4, item3, item1);*/
+    assert(item4, item3, item1);
 });
 
 test("advanced items control, creating/destroying", function() {
@@ -398,6 +398,32 @@ test("items control, $index", function() {
     itemsControl1.templateId(templateId);
     itemsControl1.itemTemplateId(itemTemplateId);
     itemsControl1.itemSource(["a", "b", "c"]);
+    
+    application.content = ko.observable();
+    application.template('<!-- ko render: content --><!-- /ko -->');
+    
+    // act
+    // assert
+    application.content(itemsControl1);
+    strictEqual($("#a").attr("data-index"), "0");
+    strictEqual($("#b").attr("data-index"), "1");
+    strictEqual($("#c").attr("data-index"), "2");
+});
+
+test("items control, $index, shareParentScope", function() {
+    // arrange
+    var templateId = wo.contentControl.createAnonymousTemplate('<!-- ko itemsControl: null --><!-- /ko -->');
+    var itemTemplateId = wo.contentControl.createAnonymousTemplate('<div data-bind="attr: { id: model, \'data-index\': $index }"></div>');
+    
+    var itemsControl1 = new wo.itemsControl();
+    itemsControl1.templateId(templateId);
+    itemsControl1.itemTemplateId(itemTemplateId);
+    itemsControl1.itemSource(["a", "b", "c"]);
+    itemsControl1.createItem = function (model) {
+        var view = new wipeout.base.view(this.itemTemplateId(), model);
+        view.shareParentScope = true;
+        return view;
+    };
     
     application.content = ko.observable();
     application.template('<!-- ko render: content --><!-- /ko -->');

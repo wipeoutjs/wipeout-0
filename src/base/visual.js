@@ -214,18 +214,10 @@ Class("wipeout.base.visual", function () {
         getParent: function() {
             ///<summary>Get the parent visual of this visual</summary>
             ///<returns type="wo.view">The parent view model</returns>
-            if(this.__woBag.rootHtmlElement == null)
-                return null;
-
-            var nextTarget;
-            var current = visual.getParentElement(this.__woBag.rootHtmlElement);
-            while(current) {
-                if(nextTarget = ko.utils.domData.get(current, wipeout.bindings.wipeout.utils.wipeoutKey)) {
-                    return nextTarget;
-                }
-
-                current = visual.getParentElement(current);
-            }
+            
+            return wipeout.bindings.render.renderedItems[this.__woBag.uniqueId] ?
+                wipeout.bindings.render.renderedItems[this.__woBag.uniqueId].parent :
+                null;
         },
         unRegisterRoutedEvent: function(routedEvent, callback, callbackContext /* optional */) {  
             ///<summary>Unregister from a routed event. The callback and callback context must be the same as those passed in during registration</summary>  
