@@ -206,6 +206,11 @@ Class("wipeout.utils.obj", function () {
         return string.indexOf(endsWith, string.length - endsWith.length) !== -1;
     };
     
+    var tryFreeze = function(obj) {
+        if(Object.freeze && Object.freeze instanceof Function)
+            Object.freeze(obj);
+    };
+    
     var random = function(max) {
         ///<summary>Random int generator</summary>
         ///<param name="max" type="Number">The maximum value</param>
@@ -214,6 +219,7 @@ Class("wipeout.utils.obj", function () {
     };
     
     var obj = function() { };
+    obj.tryFreeze = tryFreeze;
     obj.ajax = ajax;
     obj.parseBool = parseBool;
     obj.trimToLower = trimToLower;
