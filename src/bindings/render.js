@@ -125,8 +125,8 @@ Binding("render", true, function () {
                         templateEngine: wipeout.template.engine.instance,
                         name: child ? child.templateId.peek() : "",                
                         afterRender: child ? function(nodes, context) {
-                            var old = child.nodes || [];
-                            child.nodes = nodes;
+                            var old = child.__woBag.nodes || [];
+                            child.__woBag.nodes = nodes;
                             child.onRendered(old, nodes);
                         } : undefined
                     };

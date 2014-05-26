@@ -1,9 +1,9 @@
 
-If html element is deleted outside of wo, dispose of its associated view
-
 Debug code
 
 If, poke template
 
 changes:    woInvisible -> shareParentScope
             renderedChildren -> null
+            _initialized -> __woBag.initialized
+            nodes -> .__woBag.nodes

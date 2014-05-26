@@ -22,7 +22,8 @@ Class("wipeout.base.visual", function () {
                 createdByWipeout: false,
                 rootHtmlElement: null,
                 routedEventSubscriptions: [],
-                uniqueId: wipeout.base.visual.uniqueId()
+                uniqueId: wipeout.base.visual.uniqueId(),
+                nodes: []
             };
         },
         statics: {
@@ -109,6 +110,15 @@ Class("wipeout.base.visual", function () {
                 return output;
             }
         },
+        //move: function(moveLogic) {
+            ///<summary>Safely move a wo.visual. Without using this function a moved visual will be disposed of</summary>
+            ///<param name="moveLogic" type="Function" optional="false">The actual logic used to move the visual</param>
+            
+          //  try {
+      //          var nodes = 
+    //        } finally {
+      //      }
+    //    },
         disposeOf: function(key) {
             ///<summary>Dispose of an item registered as a disposable</summary>
             ///<param name="key" type="String" optional="false">The key of the item to dispose</param>
