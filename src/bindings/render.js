@@ -3,6 +3,9 @@ Binding("render", true, function () {
     
     function renderedItem(item, parent) {
         ///<summary>A parent/child render relationship</summary>
+        if(item && item === parent)
+            throw "An item cannot render itself";
+        
         this.item = item;
         this.parent = parent instanceof wipeout.base.visual ? parent : null;
         
@@ -69,8 +72,6 @@ Binding("render", true, function () {
 
             if (this.value.__woBag.rootHtmlElement)
                 throw "This visual has already been rendered. Call its unRender() function before rendering again.";
-            
-            if(this.bindingContext.$data === this.bindingContext.$parent) throw "KJBKJBKJBJK";
             
             //TODO: parent is second arg here
             wipeout.bindings.render.renderedItems[this.value.__woBag.uniqueId] = new renderedItem(newVal, this.bindingContext.$data);
