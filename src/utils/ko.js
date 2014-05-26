@@ -38,6 +38,19 @@ Class("wipeout.utils.ko", function () {
     };
     
     _ko.virtualElements = {
+        closingTag: function(openingTag) {
+            var depth = 1;
+            
+            while (depth > 0 && openingTag) {
+                openingTag = openingTag.nextSibling;
+                if(_ko.virtualElements.isVirtual(openingTag))
+                    depth++;
+                else if(_ko.virtualElements.isVirtualClosing(openingTag))
+                    depth--;
+            }
+            
+            return openingTag;
+        },
         parentElement: function(node) {
             ///<summary>Returns the parent element or parent knockout virtual element of a node</summary>
             ///<param name="node" type="HTMLNode">The child element</param>
