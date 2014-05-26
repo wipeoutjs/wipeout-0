@@ -55,8 +55,8 @@ test("parent child views", function() {
     ok(child4 = parent2.templateItems[child4]);
     
     ok(parent3 = application.templateItems[parent3]);
-    ok(child5 = parent3.items[0]);
-    ok(child6 = parent3.items[1]);
+    ok(child5 = parent3.items()[0]);
+    ok(child6 = parent3.items()[1]);
     
     // assert
     strictEqual(wipeout.bindings.render.renderedItems[child1.__woBag.uniqueId].item, child1);
