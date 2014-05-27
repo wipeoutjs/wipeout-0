@@ -161,7 +161,13 @@ Class("wipeout.base.view", function () {
         if(!propertiesXml)
             return;
         
-        var prop = propertiesXml.getAttribute("shareParentScope");
+        this.__woBag.type = propertiesXml.nodeName;
+        
+        var prop = propertiesXml.getAttribute("id");
+        if(prop)
+            this.id = prop;
+        
+        prop = propertiesXml.getAttribute("shareParentScope");
         if(prop)
             this.shareParentScope = parseBool(prop);
                 
@@ -175,7 +181,7 @@ Class("wipeout.base.view", function () {
             if(view.reservedPropertyNames.indexOf(attr.nodeName) !== -1) return;
             
             var name = attr.nodeName, setter = "";
-            if(name.indexOf("-tw") === attr.nodeName.length - 3) {
+            if(attr.nodeName.length > 3 && name.indexOf("-tw") === attr.nodeName.length - 3) {
                 name = name.substr(0, name.length - 3);
                 setter = 
 ",\

@@ -10,7 +10,13 @@ Class("wipeout.template.engine", function () {
         ///<summary>Modify a block of script so that it's running context is bindingContext.$data first and biningContext second</summary>
         ///<param name="script" type="String">The script to modify</param>
         ///<returns type="Function">The compiled script</returns>
-        return new Function("bindingContext", "with(bindingContext) {\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
+        return new Function("bindingContext", "with(bindingContext) {\
+    with(wo.ko.buildBindingContextAlias(bindingContext)) {\
+        with($data) {\
+            return " + script + ";\
+        }\
+    }\
+}");
     }
     
     engine.createJavaScriptEvaluatorBlock = function(script) {

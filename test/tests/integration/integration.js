@@ -439,6 +439,27 @@ test("items control, $index, shareParentScope", function() {
     strictEqual($("#c").attr("data-index"), "2");
 });
 
+test("aliases", function() {
+    // arrange    
+    // act
+    application.template('<wo.contentControl id="v1">\
+    <template>\
+        <wo.contentControl id="v2">\
+            <template>\
+                <wo.contentControl id="v3" v1="v1" v2="v2" cc="$type[\'wo.contentControl\']">\
+                </wo.contentControl>\
+            </template>\
+        </wo.contentControl>\
+    </template>\
+</wo.contentControl>');
+    var last = application.templateItems.v1.templateItems.v2.templateItems.v3;
+    
+    // assert    
+    strictEqual(last.v1, application.templateItems.v1);
+    strictEqual(last.v2, application.templateItems.v1.templateItems.v2);
+    strictEqual(last.cc, application.templateItems.v1.templateItems.v2);
+});
+
 test("multi-dimentional binding", function() {
     // arrange
     var val = "KJBIUPJKKJGVLHJVMGJ";

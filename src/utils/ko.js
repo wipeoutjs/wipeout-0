@@ -7,7 +7,9 @@ Class("wipeout.utils.ko", function () {
     _ko.buildBindingContextAlias = function(bindingContext) {
         var aliases = {$type: {}};
         
-        while(bindingContext != null) {
+        while(bindingContext.$parentContext != null) {
+            bindingContext = bindingContext.$parentContext;
+            
             if(bindingContext.$data.id && !aliases[bindingContext.$data.id])
                 aliases[bindingContext.$data.id] = bindingContext.$data;
             
@@ -15,8 +17,6 @@ Class("wipeout.utils.ko", function () {
                bindingContext.$data.__woBag.type && 
                !aliases.$type[bindingContext.$data.__woBag.type])
                 aliases.$type[bindingContext.$data.__woBag.type] = bindingContext.$data;
-            
-            bindingContext = bindingContext.$parentContext;
         }
         
         return aliases;
