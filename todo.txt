@@ -1,6 +1,7 @@
 
 Debug code
 document aliases
+document async templates
 
 If, poke template
 
