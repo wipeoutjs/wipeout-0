@@ -41,7 +41,9 @@ Class("wipeout.utils.find", function () {
             
             for (var index = filters.$index; index >= 0; index--) {
                 // continue to loop until we find a binding context which matches the search term and filters
-                while(current && current = wipeout.utils.find._find(current, searchTerm) && !wipeout.utils.find.is(current.$data, filters));
+                while(
+                    current = wipeout.utils.find._find(current.$parentContext, searchTerm) && 
+                    !wipeout.utils.find.is(current.$data, filters));
             }
             
             return current ? current.$data : null;
@@ -60,12 +62,11 @@ Class("wipeout.utils.find", function () {
                 ancestors: /^(great)*(grand){0,1}parent$/g,
                 great: /great/g,
                 grand: /grand/g,
-                parent: /parent/g,
                 
                 instanceOf: /^instanceof\:/g
             },
             _find: function(currentBindingContext, searchTerm) {
-                if(!searchTerm) {
+                if(!searchTerm || !currentBindingContext) {
                     return currentBindingContext;
                 }
                 
@@ -78,15 +79,14 @@ Class("wipeout.utils.find", function () {
                 }
             },
             ancestors: function(currentBindingContext, searchTerm) {
-                // invalid search term
+                // invalid search term which passes regex
                 if(searchTerm.indexOf("greatparent") !== -1) return null;
 
                 var goBack = 
                     searchTerm.match(wipeout.utils.find.regex.great) +
-                    searchTerm.match(wipeout.utils.find.regex.grand) +
-                    searchTerm.match(wipeout.utils.find.regex.parent);
-
-                for (; currentBindingContext && goBack > 0; goBack--)
+                    searchTerm.match(wipeout.utils.find.regex.grand);
+                
+                for(var i = 0; i < goBack && currentBindingContext; i++)
                     currentBindingContext = currentBindingContext.$parentContext;
 
                 return currentBindingContext;
@@ -99,9 +99,10 @@ Class("wipeout.utils.find", function () {
                     return null;
                 
                 while (currentBindingContext) {
-                    currentBindingContext = currentBindingContext.$parentContext;
-                    if(currentBindingContext && currentBindingContext.$data instanceof constructor)
+                    if(currentBindingContext.$data instanceof constructor)
                         break;
+                    
+                    currentBindingContext = currentBindingContext.$parentContext;
                 }
                 
                 return currentBindingContext;
