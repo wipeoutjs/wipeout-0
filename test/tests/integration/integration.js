@@ -392,7 +392,7 @@ test("advanced items control, creating/destroying", function() {
 test("items control, $index", function() {
     // arrange
     var templateId = wo.contentControl.createAnonymousTemplate('<!-- ko itemsControl: null --><!-- /ko -->');
-    var itemTemplateId = wo.contentControl.createAnonymousTemplate('<div data-bind="attr: { id: model, \'data-index\': $index }"></div>');
+    var itemTemplateId = wo.contentControl.createAnonymousTemplate('<div data-bind="attr: { id: model, \'data-index\': $index }"></div><wo.view id="item" index="$parentContext.$index" />');
     
     var itemsControl1 = new wo.itemsControl();
     itemsControl1.templateId(templateId);
@@ -406,8 +406,11 @@ test("items control, $index", function() {
     // assert
     application.content(itemsControl1);
     strictEqual($("#a").attr("data-index"), "0");
+    strictEqual(itemsControl1.items()[0].templateItems.item.index, 0);
     strictEqual($("#b").attr("data-index"), "1");
+    strictEqual(itemsControl1.items()[1].templateItems.item.index, 1);
     strictEqual($("#c").attr("data-index"), "2");
+    strictEqual(itemsControl1.items()[2].templateItems.item.index, 2);
 });
 
 test("items control, $index, shareParentScope", function() {
