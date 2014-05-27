@@ -32,3 +32,48 @@ test("virtualElements.closingTag", function() {
     //assert
     strictEqual(actual, item2);
 });
+
+test("buildBindingContextAlias", function() {
+    // arrange  
+    var bindingContext = {
+        $data: new wo.view(),
+        $parentContext: {
+            $data: new wo.view(),
+            $parentContext: {
+                $data: new wo.view(),
+                $parentContext: {
+                    $data: new wo.view()
+                }            
+            }            
+        }
+    };
+    
+    bindingContext.$data.alias = "a1";
+    bindingContext.$data.__woBag.type = "t1";
+    bindingContext.$parentContext.$data.alias = "a2";
+    bindingContext.$parentContext.$data.__woBag.type = "t2";
+    bindingContext.$parentContext.$parentContext.$data.alias = "a3";
+    bindingContext.$parentContext.$parentContext.$data.__woBag.type = "t3";
+    bindingContext.$parentContext.$parentContext.$parentContext.$data.alias = "a1";
+    bindingContext.$parentContext.$parentContext.$parentContext.$data.__woBag.type = "t1";
+    
+    
+    // act
+    var actual = wipeout.utils.ko.buildBindingContextAlias(bindingContext);
+    
+    //assert
+    strictEqual(actual.a1, bindingContext.$data);
+    strictEqual(actual.$type.t1, bindingContext.$data);
+    strictEqual(actual.a2, bindingContext.$parentContext.$data);
+    strictEqual(actual.$type.t2, bindingContext.$parentContext.$data);
+    strictEqual(actual.a3, bindingContext.$parentContext.$parentContext.$data);
+    strictEqual(actual.$type.t3, bindingContext.$parentContext.$parentContext.$data);
+});
+
+
+
+
+
+
+
+

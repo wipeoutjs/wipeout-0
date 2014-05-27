@@ -4,6 +4,24 @@ Class("wipeout.utils.ko", function () {
     
     var _ko = function() { };
     
+    _ko.buildBindingContextAlias = function(bindingContext) {
+        var aliases = {$type: {}};
+        
+        while(bindingContext != null) {
+            if(bindingContext.$data.alias && !aliases[bindingContext.$data.alias])
+                aliases[bindingContext.$data.alias] = bindingContext.$data;
+            
+            if(bindingContext.$data instanceof wo.visual && 
+               bindingContext.$data.__woBag.type && 
+               !aliases.$type[bindingContext.$data.__woBag.type])
+                aliases.$type[bindingContext.$data.__woBag.type] = bindingContext.$data;
+            
+            bindingContext = bindingContext.$parentContext;
+        }
+        
+        return aliases;
+    }
+    
     _ko.version = function() {
         ///<summary>Get the current knockout version as an array of numbers</summary>
         ///<returns type="Array" generic0="Number">The knockout version</returns>

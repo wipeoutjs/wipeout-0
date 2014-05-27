@@ -1,5 +1,6 @@
 
 Debug code
+document aliases
 
 If, poke template
 
@@ -7,3 +8,4 @@ changes:    woInvisible -> shareParentScope
             renderedChildren -> null
             _initialized -> __woBag.initialized
             nodes -> .__woBag.nodes
+            id -> alias
