@@ -8,8 +8,8 @@ Class("wipeout.utils.ko", function () {
         var aliases = {$type: {}};
         
         while(bindingContext != null) {
-            if(bindingContext.$data.alias && !aliases[bindingContext.$data.alias])
-                aliases[bindingContext.$data.alias] = bindingContext.$data;
+            if(bindingContext.$data.id && !aliases[bindingContext.$data.id])
+                aliases[bindingContext.$data.id] = bindingContext.$data;
             
             if(bindingContext.$data instanceof wo.visual && 
                bindingContext.$data.__woBag.type && 

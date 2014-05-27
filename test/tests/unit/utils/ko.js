@@ -48,13 +48,13 @@ test("buildBindingContextAlias", function() {
         }
     };
     
-    bindingContext.$data.alias = "a1";
+    bindingContext.$data.id = "a1";
     bindingContext.$data.__woBag.type = "t1";
-    bindingContext.$parentContext.$data.alias = "a2";
+    bindingContext.$parentContext.$data.id = "a2";
     bindingContext.$parentContext.$data.__woBag.type = "t2";
-    bindingContext.$parentContext.$parentContext.$data.alias = "a3";
+    bindingContext.$parentContext.$parentContext.$data.id = "a3";
     bindingContext.$parentContext.$parentContext.$data.__woBag.type = "t3";
-    bindingContext.$parentContext.$parentContext.$parentContext.$data.alias = "a1";
+    bindingContext.$parentContext.$parentContext.$parentContext.$data.id = "a1";
     bindingContext.$parentContext.$parentContext.$parentContext.$data.__woBag.type = "t1";
     
     
