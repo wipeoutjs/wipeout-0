@@ -1,10 +1,42 @@
-Class("wipeout.utils.find", function () {
-    return wipeout.base.object.extend({
+module("wipeout.utils.find", {
+    setup: function() {
+    },
+    teardown: function() {
+    }
+});
+
+var find = wipeout.utils.find;
+
+/*testUtils.testWithUtils("constructor", "", false, function(methods, classes, subject, invoker) {
+    // arrange
+    
+    
+    // act
+    
+    
+    // assert
+    
+    strictEqual();
+});
+
+{
         constructor: function(bindingContext) {
             this._super();
             
             this.bindingContext = bindingContext;
         },
+
+/*testUtils.testWithUtils("find", "", false, function(methods, classes, subject, invoker) {
+    // arrange
+    
+    
+    // act
+    
+    
+    // assert
+    
+    strictEqual();
+});
         find: function(searchTerm, filters) {
             if(filters != null) {
                 // shortcut for having $index as filters
@@ -35,6 +67,18 @@ Class("wipeout.utils.find", function () {
             
             return this._find(searchTerm, filters);
         },
+
+/*testUtils.testWithUtils("_find", "", false, function(methods, classes, subject, invoker) {
+    // arrange
+    
+    
+    // act
+    
+    
+    // assert
+    
+    strictEqual();
+});
         _find: function(searchTerm, filters) {            
             
             var current = this.bindingContext;
@@ -48,7 +92,18 @@ Class("wipeout.utils.find", function () {
             
             return current ? current.$data : null;
         },
-        statics: {
+
+/*testUtils.testWithUtils("create", "", true, function(methods, classes, subject, invoker) {
+    // arrange
+    
+    
+    // act
+    
+    
+    // assert
+    
+    strictEqual();
+});
             create: function(bindingContext) {
                 var f = new wipeout.utils.find(bindingContext);
                 
@@ -58,6 +113,18 @@ Class("wipeout.utils.find", function () {
                     }
                 }
             },
+
+/*testUtils.testWithUtils("regex", "", true, function(methods, classes, subject, invoker) {
+    // arrange
+    
+    
+    // act
+    
+    
+    // assert
+    
+    strictEqual();
+});
             regex: {
                 ancestors: /^(great)*(grand){0,1}parent$/g,
                 great: /great/g,
@@ -65,6 +132,9 @@ Class("wipeout.utils.find", function () {
                 
                 instanceOf: /^instanceof\:/g
             },
+
+/*testUtils.testWithUtils("_find", "", true, function(methods, classes, subject, invoker) {
+});
             _find: function(currentBindingContext, searchTerm) {
                 if(!searchTerm || !currentBindingContext) {
                     return currentBindingContext;
@@ -78,6 +148,18 @@ Class("wipeout.utils.find", function () {
                     return null;
                 }
             },
+
+/*testUtils.testWithUtils("ancestors", "", true, function(methods, classes, subject, invoker) {
+    // arrange
+    
+    
+    // act
+    
+    
+    // assert
+    
+    strictEqual();
+});
             ancestors: function(currentBindingContext, searchTerm) {
                 // invalid search term which passes regex
                 if(searchTerm.indexOf("greatparent") !== -1) return null;
@@ -91,6 +173,18 @@ Class("wipeout.utils.find", function () {
 
                 return currentBindingContext;
             },
+
+/*testUtils.testWithUtils("instanceOf", "", true, function(methods, classes, subject, invoker) {
+    // arrange
+    
+    
+    // act
+    
+    
+    // assert
+    
+    strictEqual();
+});
             instanceOf: function(currentBindingContext, searchTerm) {
                                 
                 // 11 is "instanceof:".length
@@ -107,6 +201,18 @@ Class("wipeout.utils.find", function () {
                 
                 return currentBindingContext;
             },
+
+/*testUtils.testWithUtils("is", "", true, function(methods, classes, subject, invoker) {
+    // arrange
+    
+    
+    // act
+    
+    
+    // assert
+    
+    strictEqual();
+});
             is: function(item, filters) {
                 for(var i in filters) {
                     if (i === "$index") continue;
@@ -118,5 +224,4 @@ Class("wipeout.utils.find", function () {
                 return true;
             }
         }
-    }, "find");
-});
+    }*/

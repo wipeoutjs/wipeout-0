@@ -4,33 +4,6 @@ Class("wipeout.utils.ko", function () {
     
     var _ko = function() { };
     
-    _ko.buildBindingContextAlias = function(bindingContext) {
-        
-        while(bindingContext.$parentContext != null) {
-            bindingContext = bindingContext.$parentContext;
-            
-            if(bindingContext.$data.id && !aliases[bindingContext.$data.id])
-                aliases[bindingContext.$data.id] = bindingContext.$data;
-            
-            if(bindingContext.$data instanceof wo.visual && 
-               bindingContext.$data.__woBag.type && 
-               !aliases.$type[bindingContext.$data.__woBag.type])
-                aliases.$type[bindingContext.$data.__woBag.type] = bindingContext.$data;
-        }
-        
-        var aliases = {};
-        var types = {};
-        
-        return {
-            $alias: function(aliasName) {
-                if(aliases[aliasName])
-                    return aliases[aliasName];
-            },
-            $type: function(typeName) {
-            }
-        };
-    }
-    
     _ko.version = function() {
         ///<summary>Get the current knockout version as an array of numbers</summary>
         ///<returns type="Array" generic0="Number">The knockout version</returns>

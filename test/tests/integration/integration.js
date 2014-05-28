@@ -439,14 +439,14 @@ test("items control, $index, shareParentScope", function() {
     strictEqual($("#c").attr("data-index"), "2");
 });
 
-test("aliases", function() {
+/*test("aliases", function() {
     // arrange    
     // act
     application.template('<wo.contentControl id="v1">\
     <template>\
         <wo.contentControl id="v2">\
             <template>\
-                <wo.contentControl id="v3" v1="v1" v2="v2" cc="$type[\'wo.contentControl\']">\
+                <wo.contentControl id="v3" v1="$find({id:\'v1\'})" v2="$find({id:\'v2\'})" cc="$find(wo.contentControl)">\
                 </wo.contentControl>\
             </template>\
         </wo.contentControl>\
@@ -458,7 +458,7 @@ test("aliases", function() {
     strictEqual(last.v1, application.templateItems.v1);
     strictEqual(last.v2, application.templateItems.v1.templateItems.v2);
     strictEqual(last.cc, application.templateItems.v1.templateItems.v2);
-});
+});*/
 
 test("multi-dimentional binding", function() {
     // arrange

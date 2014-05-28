@@ -11,11 +11,11 @@ Class("wipeout.template.engine", function () {
         ///<param name="script" type="String">The script to modify</param>
         ///<returns type="Function">The compiled script</returns>
         return new Function("bindingContext", "with(bindingContext) {\
-    with(wo.ko.buildBindingContextAlias(bindingContext)) {\
+    /*with(wo.ko.buildBindingContextAlias(bindingContext)) {*/\
         with($data) {\
             return " + script + ";\
         }\
-    }\
+    /*}*/\
 }");
     }
     
