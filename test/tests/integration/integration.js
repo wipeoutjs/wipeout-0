@@ -122,6 +122,39 @@ test("wipeout.base.if", function() {
     ok(!document.getElementById("myDiv"));
 });
 
+test("wipeout.utils.find", function() {
+    // arrange
+    application.template('<wo.contentControl id="me1">\
+    <template>\
+        <wo.contentControl id="me2">\
+            <template>\
+                <wo.contentControl id="me3"\
+                    parent="$find(\'parent\')" grandParent="$find(\'grandParent\')" greatGrandParent="$find(\'greatGrandParent\')"\
+                    cc0="$find(wo.contentControl)" cc1="$find(wo.contentControl, {$i: 1})"\
+                    v0="$find(\'instanceOf:    wo.view\')" v1="$find(\'instanceof:wo.view\', {$i: 1})"\
+                         >\
+                </wo.contentControl>\
+            </template>\
+        </wo.contentControl>\
+    </template>\
+</wo.contentControl>');
+    
+    var me = application.templateItems.me1.templateItems.me2.templateItems.me3;
+    ok(me);
+    
+    // act    
+    // assert
+    strictEqual(me.parent, application.templateItems.me1.templateItems.me2);
+    strictEqual(me.grandParent, application.templateItems.me1);
+    strictEqual(me.greatGrandParent, application);
+    
+    strictEqual(me.cc0, application.templateItems.me1.templateItems.me2);
+    strictEqual(me.cc1, application.templateItems.me1);
+    
+    strictEqual(me.v0, application.templateItems.me1.templateItems.me2);
+    strictEqual(me.v1, application.templateItems.me1);
+});
+
 test("wipeout.base.if, shareParentScope", function() {
     // arrange
     application.hello = ko.observable({hello: "xxx"});
