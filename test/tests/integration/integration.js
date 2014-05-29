@@ -132,6 +132,7 @@ test("wipeout.utils.find", function() {
                     parent="$find(\'parent\')" grandParent="$find(\'grandParent\')" greatGrandParent="$find(\'greatGrandParent\')"\
                     cc0="$find(wo.contentControl)" cc1="$find(wo.contentControl, {$i: 1})"\
                     v0="$find(\'instanceOf:    wo.view\')" v1="$find(\'instanceof:wo.view\', {$i: 1})"\
+                    f0="$find({id: \'me1\'})" fY="$find({id: \'me1\'}, {$i:1})" fX="$find({id: \'me3\'})"\
                          >\
                 </wo.contentControl>\
             </template>\
@@ -153,6 +154,10 @@ test("wipeout.utils.find", function() {
     
     strictEqual(me.v0, application.templateItems.me1.templateItems.me2);
     strictEqual(me.v1, application.templateItems.me1);
+    
+    strictEqual(me.f0, application.templateItems.me1);
+    strictEqual(me.fX, null);
+    strictEqual(me.fY, null);
 });
 
 test("wipeout.base.if, shareParentScope", function() {
