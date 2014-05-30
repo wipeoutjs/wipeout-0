@@ -2,6 +2,8 @@
 Debug code
 document aliases
 document async templates
+event priority
+trim template ids
 
 If, poke template
 
@@ -9,4 +11,3 @@ changes:    woInvisible -> shareParentScope
             renderedChildren -> null
             _initialized -> __woBag.initialized
             nodes -> .__woBag.nodes
-            id -> alias
