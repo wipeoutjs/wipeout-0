@@ -4,6 +4,11 @@ document aliases
 document async templates
 event priority
 trim template ids
+document move
+document allowDistributedViewModels
+test dom node removed cross browser
+"The DOMSubtreeModified event is not fired in Internet Explorer 9 when a node is inserted for the first time"
+MutationObserver
 
 If, poke template
 

@@ -294,7 +294,9 @@ Class("wipeout.base.view", function () {
         if(!(eventArgs.routedEvent instanceof wipeout.base.routedEvent)) throw "Invaid routed event";
         
         this.triggerRoutedEvent(eventArgs.routedEvent, eventArgs.eventArgs);
-    }
+    };
+    
+    view.allowDistributedViewModels = false;
 
     return view;
 });

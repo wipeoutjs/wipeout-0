@@ -36,9 +36,12 @@ Binding("render", true, function () {
                 }, this);
             }
         },
+        hasMovedInDom: function() {
+            
+        },
         dispose: function() { 
-            if(wipeout.bindings.render.freezeDispose && this.value) {
-                wipeout.bindings.render.freezeDispose[this.value.__woBag.uniqueId] = this;
+            if(wipeout.bindings.render.freezeDispose) {
+                wipeout.bindings.render.freezeDispose.push(this);
             } else {                
                 this._super();
                 this.unRender();
@@ -145,11 +148,15 @@ Binding("render", true, function () {
                 if(wipeout.bindings.render.freezeDispose)
                     throw "You can only have one move function running at one time";
                 
-                wipeout.bindings.render.freezeDispose = {};
+                wipeout.bindings.render.freezeDispose = [];
                 
                 try {
                     moveCallback();
                 } finally {
+                    enumerate(wipeout.bindings.render.freezeDispose, function(item) {
+                        item.hasMovedInDom();
+                    });
+                    
                     delete wipeout.bindings.render.freezeDispose;
                 }
             }
