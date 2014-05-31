@@ -27,8 +27,8 @@ testUtils.testWithUtils("find", "index only", false, function(methods, classes, 
     
     // act        
     // assert
-    strictEqual(subject.find(null, {$i: 1}), bc.$parentContext.$parentContext.$data);
-    strictEqual(subject.find(null, {$i: 2}), bc.$parentContext.$parentContext.$parentContext.$data);
+    strictEqual(subject.find(null, {$index: 1}), bc.$parentContext.$parentContext.$data);
+    strictEqual(subject.find(null, {$index: 2}), bc.$parentContext.$parentContext.$parentContext.$data);
 });
 
 testUtils.testWithUtils("find", "index and ancestor", false, function(methods, classes, subject, invoker) {
@@ -47,7 +47,7 @@ testUtils.testWithUtils("find", "index and ancestor", false, function(methods, c
     subject = new find(bc);
     
     // act
-    var output = subject.find("parent", {$i: 1});
+    var output = subject.find("parent", {$index: 1});
         
     // assert
     strictEqual(output, bc.$parentContext.$parentContext.$data);
@@ -108,8 +108,8 @@ testUtils.testWithUtils("find", "constructor and index", false, function(methods
     // act        
     // assert
     strictEqual(subject.find(x), bc.$parentContext.$parentContext.$data);
-    strictEqual(subject.find(x, {$i: 1}), bc.$parentContext.$parentContext.$parentContext.$parentContext.$data);
-    strictEqual(subject.find(x, {$i: 2}), null);
+    strictEqual(subject.find(x, {$index: 1}), bc.$parentContext.$parentContext.$parentContext.$parentContext.$data);
+    strictEqual(subject.find(x, {$index: 2}), null);
 });
 
 
@@ -137,9 +137,9 @@ testUtils.testWithUtils("find", "instanceof and index", false, function(methods,
     
     // act        
     // assert
-    strictEqual(subject.find("instanceOf: tests.a.s.d.f.g"), bc.$parentContext.$parentContext.$data);
-    strictEqual(subject.find("instanceof: tests.a.s.d.f.g", {$i: 1}), bc.$parentContext.$parentContext.$parentContext.$parentContext.$data);
-    strictEqual(subject.find("instanceOf: tests.a.s.d.f.g", {$i: 2}), null);
+    strictEqual(subject.find({$instanceOf:tests.a.s.d.f.g}), bc.$parentContext.$parentContext.$data);
+    strictEqual(subject.find({$i: tests.a.s.d.f.g, $index: 1}), bc.$parentContext.$parentContext.$parentContext.$parentContext.$data);
+    strictEqual(subject.find({$i: tests.a.s.d.f.g, $index: 2}), null);
     delete window.tests;
 });
 

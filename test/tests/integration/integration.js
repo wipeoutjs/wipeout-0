@@ -15,6 +15,7 @@ module("wipeout.tests.integration.integration", {
     },
     teardown: function() {
         delete window.views;
+        application.dispose();
         ko.cleanNode($application[0]);
         $fixture.html("");
         $fixture = null;
@@ -48,9 +49,10 @@ test("parent child views", function() {
     </wo.itemsControl>');
     
     ok(parent1 = application.templateItems[parent1]);
-    ok(parent2 = application.templateItems[parent2]);
     ok(child1 = application.templateItems[child1]);
     ok(child2 = application.templateItems[child2]);
+    
+    ok(parent2 = application.templateItems[parent2]);
     ok(child3 = parent2.templateItems[child3]);
     ok(child4 = parent2.templateItems[child4]);
     
@@ -59,25 +61,14 @@ test("parent child views", function() {
     ok(child6 = parent3.items()[1]);
     
     // assert
-    strictEqual(wipeout.bindings.render.renderedItems[child1.__woBag.uniqueId].item, child1);
-    strictEqual(wipeout.bindings.render.renderedItems[child1.__woBag.uniqueId].parent, application);
-    
-    strictEqual(wipeout.bindings.render.renderedItems[child2.__woBag.uniqueId].item, child2);
-    strictEqual(wipeout.bindings.render.renderedItems[child2.__woBag.uniqueId].parent, application);
-    
-    strictEqual(wipeout.bindings.render.renderedItems[child3.__woBag.uniqueId].item, child3);
-    strictEqual(wipeout.bindings.render.renderedItems[child3.__woBag.uniqueId].parent, parent2);
-    
-    strictEqual(wipeout.bindings.render.renderedItems[child4.__woBag.uniqueId].item, child4);
-    strictEqual(wipeout.bindings.render.renderedItems[child4.__woBag.uniqueId].parent, parent2);
-    
-    
-    strictEqual(wipeout.bindings.render.renderedItems[child5.__woBag.uniqueId].item, child5);
-    strictEqual(wipeout.bindings.render.renderedItems[child5.__woBag.uniqueId].parent, parent3);
-    
-    strictEqual(wipeout.bindings.render.renderedItems[child6.__woBag.uniqueId].item, child6);
-    strictEqual(wipeout.bindings.render.renderedItems[child6.__woBag.uniqueId].parent, parent3);
-    
+    strictEqual(child1.getParent(), application);
+    strictEqual(child2.getParent(), application);
+    strictEqual(child1.getParent(true), parent1);
+    strictEqual(child2.getParent(true), parent1);
+    strictEqual(child3.getParent(), parent2);
+    strictEqual(child4.getParent(), parent2);
+    strictEqual(child5.getParent(), parent3);
+    strictEqual(child6.getParent(), parent3);    
 });
 
 test("shareParentScope", function() {
@@ -129,11 +120,10 @@ test("wipeout.utils.find", function() {
         <wo.contentControl id="me2">\
             <template>\
                 <wo.contentControl id="me3"\
-                    parent="$find(\'parent\')" grandParent="$find(\'grandParent\')" greatGrandParent="$find(\'greatGrandParent\')"\
-                    cc0="$find(wo.contentControl)" cc1="$find(wo.contentControl, {$i: 1})"\
-                    v0="$find(\'instanceOf:    wo.view\')" v1="$find(\'instanceof:wo.view\', {$i: 1})"\
-                    f0="$find({id: \'me1\'})" fY="$find({id: \'me1\'}, {$i:1})" fX="$find({id: \'me3\'})"\
-                         >\
+                    parent="$find(\'parent\')" grandParent="$find({$a:\'grandParent\'})" greatGrandParent="$find({$a:\'greatGrandParent\'})"\
+                    cc0="$find(wo.contentControl)" cc1="$find({$t:wo.contentControl, $index: 1})"\
+                    v0="$find({$i:wo.view})" v1="$find({$i:wo.view, $index: 1})"\
+                    f0="$find({id: \'me1\'})" fY="$find({id: \'me1\'}, {$index:1})" fX="$find({id: \'me3\'})">\
                 </wo.contentControl>\
             </template>\
         </wo.contentControl>\
@@ -475,6 +465,74 @@ test("items control, $index, shareParentScope", function() {
     strictEqual($("#a").attr("data-index"), "0");
     strictEqual($("#b").attr("data-index"), "1");
     strictEqual($("#c").attr("data-index"), "2");
+});
+
+test("move view model", function() {
+    // arrange
+    application.template('<wo.contentControl id="toMove">\
+    <template>\
+        <span></span>\
+    </template>\
+</wo.contentControl>\
+<wo.contentControl id="moveToParent1" shareParentScope="true">\
+    <template>\
+        <div id="moveToPosition1"></div>\
+    </template>\
+</wo.contentControl>\
+<wo.contentControl id="moveToParent2">\
+    <template>\
+        <div id="moveToPosition2"></div>\
+    </template>\
+</wo.contentControl>');
+    
+    var toMove = application.templateItems.toMove;
+    var moveToParent2 = application.templateItems.moveToParent2;
+    strictEqual(toMove.getParent(), application);
+    strictEqual(moveToParent2.getParent(), application);
+    
+    // act
+    $(toMove.entireViewModelHtml()).appendTo("#moveToPosition1");
+    stop();
+    
+    // assert
+    setTimeout(function() {
+        strictEqual(toMove.getParent(true), application.templateItems.moveToParent1);
+        strictEqual(toMove, application.templateItems.toMove);
+        
+        $(toMove.entireViewModelHtml()).appendTo("#moveToPosition2");        
+        setTimeout(function() {
+            strictEqual(toMove.getParent(), application.templateItems.moveToParent2);
+            
+            // test template items have changed
+            ok(!application.templateItems.toMove);
+            strictEqual(toMove, application.templateItems.moveToParent2.templateItems.toMove);
+            
+            start();
+        }, 50);
+    }, 50);    
+});
+
+test("remove view model from dom", function() {
+    // arrange
+    application.template('<wo.contentControl id="toMove" dispose="function() { wo.contentControl.prototype.dispose.call(this); this.isDeleted = true; }">\
+    <template>\
+        <span></span>\
+    </template>\
+</wo.contentControl>');
+    
+    var toMove = application.templateItems.toMove;
+    ok(toMove);
+    
+    // act
+    $(toMove.entireViewModelHtml()).remove();
+    stop();
+    
+    // assert
+    setTimeout(function() {
+        ok(!application.templateItems.toMove);
+        ok(toMove.isDeleted);
+        start();
+    }, 50);    
 });
 
 /*test("aliases", function() {

@@ -43,12 +43,12 @@ testUtils.testWithUtils("find", "filters, no index", false, function(methods, cl
     // assert
 });
 
-testUtils.testWithUtils("find", "filters, $i index", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("find", "filters, $i instanceOf", false, function(methods, classes, subject, invoker) {
     // arrange
     var i = 11;
     subject._find = methods.customMethod(function(filters) {
-        strictEqual(filters.$index, i);
-        strictEqual(filters.$i, undefined);
+        strictEqual(filters.$instanceOf, i);
+        strictEqual(filters.$, undefined);
     });
     
     // act
@@ -57,11 +57,11 @@ testUtils.testWithUtils("find", "filters, $i index", false, function(methods, cl
     // assert
 });
 
-testUtils.testWithUtils("find", "constructor search term", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("find", "type search term", false, function(methods, classes, subject, invoker) {
     // arrange
     function x(){};
     subject._find = methods.customMethod(function(filters) {
-        strictEqual(filters.constructor, x);
+        strictEqual(filters.$type, x);
     });
     
     // act
@@ -83,11 +83,11 @@ testUtils.testWithUtils("find", "filters search term", false, function(methods, 
     // assert
 });
 
-testUtils.testWithUtils("find", "string search term", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("find", "ancestry search term", false, function(methods, classes, subject, invoker) {
     // arrange
     var hello = "zfgzhzfhzxfghxhnnxgn";
     subject._find = methods.customMethod(function(filters) {
-        strictEqual(filters.$searchTerm, hello);
+        strictEqual(filters.$ancestry, hello);
     });
     
     // act
@@ -116,54 +116,9 @@ testUtils.testWithUtils("regex", "", true, function(methods, classes, subject, i
     
     ok(find.regex.great.test("great"));
     ok(find.regex.grand.test("grand"));
-    
-    ok(find.regex.instanceOf.test("instanceof: a"));
-    ok(find.regex.instanceOf.test("instanceof:a"));
-    ok(!find.regex.instanceOf.test("instanceof: "));
-    ok(!find.regex.instanceOf.test("instanceof:"));
-    ok(!find.regex.instanceOf.test(" instanceof: a"));
 });
 
-testUtils.testWithUtils("_find", "no search term", true, function(methods, classes, subject, invoker) {
-    // arrange
-    // act
-    var output = invoker();
-    
-    // assert
-    ok(!output);
-});
-
-testUtils.testWithUtils("_find", "ancestors", true, function(methods, classes, subject, invoker) {
-    // arrange
-    var expected = {}, ctxt = {}, search = "parent";
-    classes.mock("wipeout.utils.find.ancestors", function() {
-        methods.method([ctxt, search])(arguments[0], arguments[1]);
-        return expected;
-    }, 1);
-    
-    // act
-    var actual = invoker(ctxt, search);
-    
-    // assert
-    strictEqual(actual, expected);
-});
-
-testUtils.testWithUtils("_find", "instanceOf", true, function(methods, classes, subject, invoker) {
-    // arrange
-    var expected = {}, ctxt = {}, search = "instanceof:";
-    classes.mock("wipeout.utils.find.instanceOf", function() {
-        methods.method([ctxt, search])(arguments[0], arguments[1]);
-        return expected;
-    }, 1);
-    
-    // act
-    var actual = invoker(ctxt, search);
-    
-    // assert
-    strictEqual(actual, expected);
-});
-
-testUtils.testWithUtils("ancestors", "", true, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("$ancestry", "", true, function(methods, classes, subject, invoker) {
     // arrange    
     // act
     // assert
@@ -177,35 +132,40 @@ testUtils.testWithUtils("ancestors", "", true, function(methods, classes, subjec
     strictEqual(invoker(null, "greatgrandparent", 3), false);
 });
 
-testUtils.testWithUtils("instanceOf", "", true, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("$instanceOf", "", true, function(methods, classes, subject, invoker) {
     // arrange
     classes.mock("tests.a.b.c.d.e");
     
     // act    
     // assert
-    strictEqual(invoker(new tests.a.b.c.d.e(), "instanceOf:      tests.a.b.c.d.e"), true);
-    strictEqual(invoker({}, "instanceOf:      tests.a.b.c.d.e"), false);
+    strictEqual(invoker(new tests.a.b.c.d.e(), tests.a.b.c.d.e), true);
+    strictEqual(invoker({}, tests.a.b.c.d.e), false);
     delete window.tests;
 });
 
 testUtils.testWithUtils("is", "", true, function(methods, classes, subject, invoker) {
     // arrange
-    var filter1 = {}, filter2 = {};
-    var item = {
-        i1: filter1,
-        i2: filter2,
-        asdjfvjsdvf:{}
-    };
     var filters = {
-        i1: filter1,
-        i2: filter2,
-        $kjbgkjbkjbkjb: {}
+        $index: {},
+        $special: {},
+        property: {}
     };
+    
+    var item = {
+        property: filters.property
+    };
+    
+    var special = false;
+    classes.mock("wipeout.utils.find.$index", function(){}, 0);
+    classes.mock("wipeout.utils.find.$special", function(){return special;}, 3);
     
     // act
-    // assert    
+    // assert 
+    ok(!invoker(item, filters));
+    
+    special = true;
     ok(invoker(item, filters));
     
-    filters.dkfkdfjbk = {};
+    delete item.property;
     ok(!invoker(item, filters));
 });

@@ -95,10 +95,14 @@ testUtils.testWithUtils("registerDisposable", "ids and dispose functions", false
 testUtils.testWithUtils("unTemplate", null, false, function(methods, classes, subject, invoker) {
     // arrange    
     subject.templateItems = {hello: true};
+    classes.mock("ko.cleanNode", function() {
+        strictEqual(arguments[0], subject.__woBag.nodes[0]);
+    }, 2); // once during emptyNode, once during cleanNode
     
-    $("#qunit-fixture").html("<div id=\"theElement\">some text</div>");
+    $("#qunit-fixture").html("<div id=\"theElement\"><span id=\"theOtherElement\"></span></div>");
     subject.__woBag = {
-        rootHtmlElement: $("#theElement")[0]
+        rootHtmlElement: $("#theElement")[0],
+        nodes: [$("#theOtherElement")[0]]
     };
     
     // act
@@ -107,6 +111,79 @@ testUtils.testWithUtils("unTemplate", null, false, function(methods, classes, su
     // assert
     strictEqual(subject.templateItems.hello, undefined);
     ok(!subject.__woBag.rootHtmlElement.innerHTML);
+});
+
+/*
+            if(this.__woBag.rootHtmlElement) {
+                if (this.__woBag.rootHtmlElement.nodeType === 1) {
+                    return [this.__woBag.rootHtmlElement];
+                } else if (wipeout.utils.ko.virtualElements.isVirtual(this.__woBag.rootHtmlElement)) {
+                    var output = [];
+                    var current = this.__woBag.rootHtmlElement;
+                    var closing = wipeout.utils.ko.virtualElements.closingTag(current);
+                    while (current && current !== closing) {
+                        output.push(current);
+                        current = current.nextSibling;
+                    }
+                    
+                    // no closing tag
+                    if(!current) {
+                        if(!wipeout.settings.suppressWarnings)
+                            console.error("The closing tag for " + this.__woBag.rootHtmlElement + " could not be found");
+                        return [];
+                    }
+                    
+                    output.push(current);
+                    return output;
+                }
+            }
+            
+            // visual has not been redered
+            return [];*/
+
+testUtils.testWithUtils("entireViewModelHtml", "no html", false, function(methods, classes, subject, invoker) {
+    // arrange    
+    subject.__woBag = {};
+    
+    // act
+    var actual = invoker();
+    
+    // assert
+    strictEqual(actual.length, 0);
+});
+
+testUtils.testWithUtils("entireViewModelHtml", "element", false, function(methods, classes, subject, invoker) {
+    // arrange    
+    subject.__woBag = {
+        rootHtmlElement: {
+            nodeType: 1,
+            nextSibling: {}
+        }
+    };
+    
+    // act
+    var actual = invoker();
+    
+    // assert
+    strictEqual(actual.length, 1);
+    strictEqual(actual[0], subject.__woBag.rootHtmlElement);
+});
+
+testUtils.testWithUtils("entireViewModelHtml", "virtual element", false, function(methods, classes, subject, invoker) {
+    // arrange    
+    var $dom = $("<!-- ko --><div>inner</div>hello<!-- a comment --><!-- /ko -->");
+    subject.__woBag = {
+        rootHtmlElement: $dom[0]
+    };
+    
+    // act
+    var actual = invoker();
+    
+    // assert
+    strictEqual(actual.length, $dom.length);
+    for(var i = 0; i < $dom.length; i++) {
+        strictEqual(actual[i], $dom[i]);
+    }
 });
 
 testUtils.testWithUtils("unRender", null, false, function(methods, classes, subject, invoker) {
@@ -177,21 +254,60 @@ testUtils.testWithUtils("getParentElement", "non virtual", true, function(method
     strictEqual(actual, html);
 });
 
-testUtils.testWithUtils("getParent", null, false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("getParent", "don't include shareParentScope", false, function(methods, classes, subject, invoker) {
     // arrange
     var expected = {};
+    var parentElement = {};
+    classes.mock("wipeout.utils.ko.virtualElements.parentElement", function() {
+        strictEqual(arguments[0], subject.__woBag.rootHtmlElement);
+        return parentElement;
+    }, 1);
+    
+    classes.mock("wipeout.utils.html.getViewModel", function() {
+        strictEqual(arguments[0], parentElement);
+        return {
+            shareParentScope: true,
+            getParent: function() {
+                ok(!arguments[0]);
+                return expected;
+            }
+        };
+    });
+    
     subject.__woBag = {
-        uniqueId: "sadasdasdasdsad"
+        rootHtmlElement: {}
     };
     
-    wipeout.bindings.render.renderedItems[subject.__woBag.uniqueId] = {parent:expected};
-    
     // act
-    var actual = invoker();
+    var actual = invoker(false);
     
     // assert
     strictEqual(actual, expected);
-    delete wipeout.bindings.render.renderedItems[subject.__woBag.uniqueId];
+});
+
+testUtils.testWithUtils("getParent", "include shareParentScope", false, function(methods, classes, subject, invoker) {
+    // arrange
+    var expected = {};
+    var parentElement = {};
+    classes.mock("wipeout.utils.ko.virtualElements.parentElement", function() {
+        strictEqual(arguments[0], subject.__woBag.rootHtmlElement);
+        return parentElement;
+    }, 1);
+    
+    classes.mock("wipeout.utils.html.getViewModel", function() {
+        strictEqual(arguments[0], parentElement);
+        return expected;
+    });
+    
+    subject.__woBag = {
+        rootHtmlElement: {}
+    };
+    
+    // act
+    var actual = invoker(false);
+    
+    // assert
+    strictEqual(actual, expected);
 });
 
 testUtils.testWithUtils("unRegisterRoutedEvent", "no event", false, function(methods, classes, subject, invoker) {

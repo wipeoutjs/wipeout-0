@@ -295,8 +295,6 @@ Class("wipeout.base.view", function () {
         
         this.triggerRoutedEvent(eventArgs.routedEvent, eventArgs.eventArgs);
     };
-    
-    view.allowDistributedViewModels = false;
 
     return view;
 });

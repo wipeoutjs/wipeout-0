@@ -55,10 +55,16 @@ Class("wipeout.utils.ko", function () {
             ///<summary>Returns the parent element or parent knockout virtual element of a node</summary>
             ///<param name="node" type="HTMLNode">The child element</param>
             ///<returns type="HTMLNode">The parent</returns>
+            var depth = 0;
             var current = node.previousSibling;
             while(current) {
                 if(_ko.virtualElements.isVirtual(current)) {
-                    return current;
+                    if(depth < 0)
+                        depth++;
+                    else
+                        return current;
+                } else if(_ko.virtualElements.isVirtualClosing(current)) {
+                    depth--;
                 }
                 
                 current = current.previousSibling;

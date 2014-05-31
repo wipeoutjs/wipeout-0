@@ -5,7 +5,7 @@ Class("wipeout.utils.find", function () {
             
             this.bindingContext = bindingContext;
         },
-        find: function(searchTerm, filters) {  
+        find: function(searchTerm, filters) {
             var temp = {};
             
             if(filters) {
@@ -16,21 +16,35 @@ Class("wipeout.utils.find", function () {
             // destroy object ref
             filters = temp;            
             if(!filters.$index) {
-                filters.$index = filters.$i || 0;
+                filters.$index = 0;
             }
-            
-            delete filters.$i;
             
             // shortcut for having constructor as search term
             if(searchTerm && searchTerm.constructor === Function) {
-                filters.constructor = searchTerm;
+                filters.$type = searchTerm;
             // shortcut for having filters as search term
             } else if(searchTerm && searchTerm.constructor !== String) {
                 for(var i in searchTerm)
                     filters[i] = searchTerm[i];
             } else {
-                filters.$searchTerm = wipeout.utils.obj.trim(searchTerm);
+                filters.$ancestry = wipeout.utils.obj.trim(searchTerm);
             }     
+                      
+            if(!filters.$instanceOf && filters.$i) {
+                filters.$instanceOf = filters.$i;
+            }
+                      
+            if(!filters.$ancestry && filters.$a) {
+                filters.$ancestry = filters.$a;
+            }
+                      
+            if(!filters.$type && filters.$t) {
+                filters.$type = filters.$t;
+            }
+            
+            delete filters.$i;
+            delete filters.$a;
+            delete filters.$t;
             
             return this._find(filters);
         },
@@ -46,7 +60,7 @@ Class("wipeout.utils.find", function () {
                 current = current.$parentContext;
 
                 // continue to loop until we find a binding context which matches the search term and filters
-                while(current && (!wipeout.utils.find._find(current.$data, filters.$searchTerm, i) || !wipeout.utils.find.is(current.$data, filters))) {
+                while(current && !wipeout.utils.find.is(current.$data, filters, i)) {
                     current = current.$parentContext;
                     i++;
                 }
@@ -65,25 +79,15 @@ Class("wipeout.utils.find", function () {
             regex: {
                 ancestors: /^(great)*(grand){0,1}parent$/,
                 great: /great/g,
-                grand: /grand/g,
-                
-                instanceOf: new RegExp("^instance[oO]f:\s*.+", "g")
+                grand: /grand/g
             },
-            _find: function(currentItem, searchTerm, index) {
-                if(!searchTerm || !currentItem) {
-                    return currentItem;
-                }
-                
-                if(wipeout.utils.find.regex.ancestors.test(searchTerm.toLowerCase())) {
-                    return wipeout.utils.find.ancestors(currentItem, searchTerm.toLowerCase(), index);
-                } else if(wipeout.utils.find.regex.instanceOf.test(searchTerm)) {                    
-                    return wipeout.utils.find.instanceOf(currentItem, searchTerm, index);
-                } else {
-                    debugger;
-                    return false;
-                }
+            $type: function(currentItem, searchTerm, index) {
+                return currentItem && currentItem.constructor === searchTerm;
             },
-            ancestors: function(currentItem, searchTerm, index) {
+            $ancestry: function(currentItem, searchTerm, index) {
+                
+                searchTerm = (searchTerm || "").toLowerCase();
+                
                 // invalid search term which passes regex
                 if(searchTerm.indexOf("greatparent") !== -1) return false;
                 
@@ -97,19 +101,20 @@ Class("wipeout.utils.find", function () {
                 
                 return total === index;
             },
-            instanceOf: function(currentItem, searchTerm, index) {
-                // 11 is "instanceof:".length
-                var constructor = wipeout.utils.obj.getObject(wipeout.utils.obj.trim(searchTerm.substr(11)));
-                if(!currentItem || !constructor || constructor.constructor !== Function)
+            $instanceOf: function(currentItem, searchTerm, index) {
+                if(!currentItem || !searchTerm || searchTerm.constructor !== Function)
                     return false;
                 
-                return currentItem instanceof constructor;
+                return currentItem instanceof searchTerm;
             },
-            is: function(item, filters) {
+            is: function(item, filters, index) {
                 for(var i in filters) {
-                    if (i[0] === "$") continue;
+                    if (i === "$index") continue;
                     
-                    if (filters[i] !== item[i])
+                    if (i[0] === "$") {
+                        if(!wipeout.utils.find[i](item, filters[i], index))
+                            return false;
+                    } else if (filters[i] !== item[i])
                         return false;
                 }
                 

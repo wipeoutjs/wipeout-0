@@ -34,6 +34,10 @@ Binding("wipeout", true, function () {
             utils: {
                 wipeoutKey: "__wipeout"
             }
+        },
+        moved: function(oldParentElement, newParentElement) {
+            this._super(oldParentElement, newParentElement);
+            this.render.moved(oldParentElement, newParentElement);
         }
     });
 });

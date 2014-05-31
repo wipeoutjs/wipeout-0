@@ -28,7 +28,7 @@ Class("wipeout.base.visual", function () {
         },
         statics: {
             shareParentScopeDefault: false,
-            //TODO: move to util
+            //TODO: move to util (actually I think it already is in there)
             getParentElement: function(node) {
                 ///<summary>Gets the parent or virtual parent of the element</summary>
                 ///<param name="node" type="HTMLNode" optional="false">The node to find the parent of</param>
@@ -110,22 +110,35 @@ Class("wipeout.base.visual", function () {
                 return output;
             }
         },
-// WORK IN PROGRESS
-//        move: function(moveLogic) {
-//            ///<summary>Safely move a wo.visual. Without using this function a moved visual will be disposed of</summary>
-//            ///<param name="moveLogic" type="Function" optional="false">The actual logic used to move the visual</param>
-//            
-//            try {
-//                var nodes =  wipeout.utils.obj.copyArray(this.__woBag.nodes);
-//                nodes.splice(0, 0, this.__woBag.rootHtmlElement);
-//                nodes.push(wipeout.utils.ko.virtualElements.closingTag(this.__woBag.rootHtmlElement));
-//                
-//                this.__woBag.freeze = true;
-//                moveLogic(nodes);
-//            } finally {
-//                this.__woBag.freeze = false;
-//            }
-//        },
+        //TODO: move to utils
+        entireViewModelHtml: function() {
+            if(this.__woBag.rootHtmlElement) {
+                if (this.__woBag.rootHtmlElement.nodeType === 1) {
+                    return [this.__woBag.rootHtmlElement];
+                } else if (wipeout.utils.ko.virtualElements.isVirtual(this.__woBag.rootHtmlElement)) {
+                    var output = [];
+                    var current = this.__woBag.rootHtmlElement;
+                    var closing = wipeout.utils.ko.virtualElements.closingTag(current);
+                    while (current && current !== closing) {
+                        output.push(current);
+                        current = current.nextSibling;
+                    }
+                    
+                    // no closing tag
+                    if(!current) {
+                        if(!wipeout.settings.suppressWarnings)
+                            console.error("The closing tag for " + this.__woBag.rootHtmlElement + " could not be found");
+                        return [];
+                    }
+                    
+                    output.push(current);
+                    return output;
+                }
+            }
+            
+            // visual has not been redered
+            return [];
+        },
         disposeOf: function(key) {
             ///<summary>Dispose of an item registered as a disposable</summary>
             ///<param name="key" type="String" optional="false">The key of the item to dispose</param>
@@ -167,21 +180,20 @@ Class("wipeout.base.visual", function () {
             }, this);
 
             if(this.__woBag.rootHtmlElement) {
-                //IE does not have document.contains
-                var doc = document.contains ? document : document.getElementsByTagName("body")[0];
-                if(doc) {
-                    if(doc.contains(this.__woBag.rootHtmlElement))
-                        ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
-                    else
-                        console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout). This may cause memory leaks and unwanted event subscriptions");
-                } else {
-                    try {
-                        ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
-                    } catch(e) {
-                        console.warn("Warning, could not dispose of html element correctly. This element has been manually moved from the DOM (not by knockout). This may cause memory leaks and unwanted event subscriptions");
-                    }
-                }
+                // clean down the template
+                if(document.body.contains(this.__woBag.rootHtmlElement))
+                    ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
+                
+                // clean down any nodes which have been removed from the template
+                enumerate(this.__woBag.nodes, function(node) {                      
+                    ko.cleanNode(node);
+                    
+                    if(!wipeout.settings.orphanMovedNodesOnTemplate && node.parentElement)
+                        node.parentElement.removeChild(node);
+                });
             }
+            
+            this.__woBag.nodes.length = 0;
         },
         unRender: function() {
             ///<summary>Prepares a visual to be re-rendered</summary>
@@ -211,25 +223,31 @@ Class("wipeout.base.visual", function () {
                 event.dispose();
             });
         },
-        getParents: function() {
+        getParents: function(includeSharedParentScopeItems) {
             ///<summary>Gets an array of the entire tree of ancestor visual objects</summary>
+            ///<param name="includeSharedParentScopeItems" type="Boolean" optional="true">Set to true if items marked with shareParentScope can be returned</param>
             ///<returns type="Array" generic0="wo.view" arrayType="wo.view">A tree of ancestor view models</returns>
-            var current = this;
+            var current = this.getParent(includeSharedParentScopeItems);
             var parents = [];
             while(current) {
                 parents.push(current);
-                current = current.getParent();
+                current = current.getParent(includeSharedParentScopeItems);
             }
 
             return parents;
         },
-        getParent: function() {
-            ///<summary>Get the parent visual of this visual</summary>
+        getParent: function(includeShareParentScopeItems) {
+            ///<summary>Get the parent visual of this visual</summary> 
+            ///<param name="includeSharedParentScopeItems" type="Boolean" optional="true">Set to true if items marked with shareParentScope can be returned</param>
             ///<returns type="wo.view">The parent view model</returns>
+            var pe;
+            var parent = !this.__woBag.rootHtmlElement || !(pe = wipeout.utils.ko.virtualElements.parentElement(this.__woBag.rootHtmlElement)) ?
+                null :
+                wipeout.utils.html.getViewModel(pe);
             
-            return wipeout.bindings.render.renderedItems[this.__woBag.uniqueId] ?
-                wipeout.bindings.render.renderedItems[this.__woBag.uniqueId].parent :
-                null;
+            return includeShareParentScopeItems || !parent || !parent.shareParentScope ?
+                parent :
+                parent.getParent(includeShareParentScopeItems);
         },
         unRegisterRoutedEvent: function(routedEvent, callback, callbackContext /* optional */) {  
             ///<summary>Unregister from a routed event. The callback and callback context must be the same as those passed in during registration</summary>  

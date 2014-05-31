@@ -1,14 +1,16 @@
 
 Debug code
-document aliases
 document async templates
 event priority
 trim template ids
 document move
-document allowDistributedViewModels
 test dom node removed cross browser
-"The DOMSubtreeModified event is not fired in Internet Explorer 9 when a node is inserted for the first time"
-MutationObserver
+
+polyfill MutationObserver
+workaround for no Mutation events
+document custom filters on find
+
+document user settings
 
 If, poke template
 
@@ -16,3 +18,4 @@ changes:    woInvisible -> shareParentScope
             renderedChildren -> null
             _initialized -> __woBag.initialized
             nodes -> .__woBag.nodes
+            getParent/getParents -> changed the way they work with shareParentScope

@@ -36,8 +36,17 @@ Binding("render", true, function () {
                 }, this);
             }
         },
-        hasMovedInDom: function() {
+        moved: function(oldParentElement, newParentElement) {
+            this._super(oldParentElement, newParentElement);
             
+            if(!wipeout.settings.suppressWarnings) {
+                for (var i = 0, ii = this.value.__woBag.nodes.length; i < ii; i++) {
+                    if(wipeout.utils.ko.virtualElements.parentElement(this.value.__woBag.nodes[i]) !== this.value.__woBag.rootHtmlElement) {
+                        console.warn("Only part of this view model was moved. Un moved nodes will be deleted or orphaned with their bindings cleared when this view model is re-rendered or disposed.");
+                        break;
+                    }
+                }
+            }
         },
         dispose: function() { 
             if(wipeout.bindings.render.freezeDispose) {
@@ -80,7 +89,6 @@ Binding("render", true, function () {
             if (this.value.__woBag.rootHtmlElement)
                 throw "This visual has already been rendered. Call its unRender() function before rendering again.";
             
-            //TODO: parent is second arg here
             wipeout.bindings.render.renderedItems[this.value.__woBag.uniqueId] = new renderedItem(newVal, this.bindingContext.$data);
             ko.utils.domData.set(this.element, wipeout.bindings.wipeout.utils.wipeoutKey, this.value);
             this.value.__woBag.rootHtmlElement = this.element;
@@ -132,8 +140,16 @@ Binding("render", true, function () {
                         templateEngine: wipeout.template.engine.instance,
                         name: child ? child.templateId.peek() : "",                
                         afterRender: child ? function(nodes, context) {
-                            var old = child.__woBag.nodes || [];
-                            child.__woBag.nodes = nodes;
+                            var old = [];
+                            enumerate(child.__woBag.nodes, function(node) {
+                                old.push(node);
+                            });
+                            
+                            child.__woBag.nodes.length = 0;
+                            enumerate(nodes || [], function(node) {
+                                child.__woBag.nodes.push(node);
+                            });                            
+                            
                             child.onRendered(old, nodes);
                         } : undefined
                     };
