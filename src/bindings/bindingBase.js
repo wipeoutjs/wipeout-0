@@ -11,7 +11,6 @@ Class("wipeout.bindings.bindingBase", function () {
                 throw "ArgumnetNullException";
             
             this.element = element;
-            this.parentElement = element.parentElement;
             
             var _this = this;
             this.obs = new MutationObserver(function(mutations) {
@@ -20,19 +19,24 @@ Class("wipeout.bindings.bindingBase", function () {
                         if(mutations[i].removedNodes[j] === element) {
                             if(!document.body.contains(element)) {
                                 _this.dispose();
-                                return;
                             } else {
                                 _this.obs.disconnect();
                                 _this.moved(_this.parentElement, element.parentElement);
                                 _this.parentElement = element.parentElement;
                                 _this.obs.observe(_this.parentElement, {childList: true});
                             }
+                            
+                            return;
                         }
                     }
                 }
             });
             
-            this.obs.observe(this.parentElement, {childList: true});
+            //TODO: if parentNode is null?
+            if(element.parentElement) {
+                _this.parentElement = element.parentElement;
+                _this.obs.observe(_this.parentElement, {childList: true});
+            }
         },
         dispose: function() {
             this._super();

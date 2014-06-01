@@ -132,5 +132,6 @@ testUtils.testWithUtils("createTemplate", "created", true, function(methods, cla
     invoker(id, content, hash);
     
     // assert
-    strictEqual($("#" + id + "[data-templatehash=" + hash + "]", "div[style=\"display: none\"]").html(), content);
+    strictEqual($("#" + id + "[data-templatehash=" + hash + "]").html(), content);
+    strictEqual($("#" + id + "[data-templatehash=" + hash + "]").parent()[0].style.display, "none");
 });

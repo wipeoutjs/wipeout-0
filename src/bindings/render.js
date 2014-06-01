@@ -49,12 +49,8 @@ Binding("render", true, function () {
             }
         },
         dispose: function() { 
-            if(wipeout.bindings.render.freezeDispose) {
-                wipeout.bindings.render.freezeDispose.push(this);
-            } else {                
-                this._super();
-                this.unRender();
-            }
+            this._super();
+            this.unRender();
         },
         reRender: function(value) {
             this.unRender();
@@ -159,22 +155,6 @@ Binding("render", true, function () {
 
                     return output;
                 };
-            },
-            move: function(moveCallback) {
-                if(wipeout.bindings.render.freezeDispose)
-                    throw "You can only have one move function running at one time";
-                
-                wipeout.bindings.render.freezeDispose = [];
-                
-                try {
-                    moveCallback();
-                } finally {
-                    enumerate(wipeout.bindings.render.freezeDispose, function(item) {
-                        item.hasMovedInDom();
-                    });
-                    
-                    delete wipeout.bindings.render.freezeDispose;
-                }
             }
         }
     });

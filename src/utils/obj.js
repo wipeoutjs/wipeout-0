@@ -101,6 +101,27 @@ var Class = function(classFullName, accessorFunction) {
     return tmp[classFullName[classFullName.length - 1]];
 };
 
+var Polyfill = function(classFullName, pollyfill, accessorFunction) {
+    ///<summary>Create a wipeout class</summary>
+    ///<param name="classFullName" type="String">The name of the class</param>
+    ///<param name="pollyfill" type="String">The name of the item to polyfill</param>
+    ///<param name="accessorFunction" type="Function">A function which returns the class</param>
+    
+    var output = Class(classFullName, accessorFunction);
+        
+    var current = window;
+    pollyfill = pollyfill.split(".");    
+    var namespace = pollyfill.splice(0, pollyfill.length - 1);
+    enumerate(namespace, function(part) {
+        current = current[part] = (current[part] || {});
+    });
+    
+    if(!current[pollyfill])
+        current[pollyfill] = output;
+    
+    return output;
+};
+
 var Extend = function(namespace, extendWith) {
     ///<summary>Similar to $.extend but with a namespace string which must begin with "wipeout"</summary>
     ///<param name="namespace" type="String">The namespace to add to</param>

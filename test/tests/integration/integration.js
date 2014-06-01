@@ -10,6 +10,7 @@ module("wipeout.tests.integration.integration", {
         
         ko.applyBindings({}, $application[0]);
         application = wo.html.getViewModel($application[0]);
+        application.application = true;
         
         window.views = {};
     },
@@ -508,8 +509,8 @@ test("move view model", function() {
             strictEqual(toMove, application.templateItems.moveToParent2.templateItems.toMove);
             
             start();
-        }, 50);
-    }, 50);    
+        }, 150);
+    }, 150);    
 });
 
 test("remove view model from dom", function() {
@@ -524,6 +525,7 @@ test("remove view model from dom", function() {
     ok(toMove);
     
     // act
+    debugger;
     $(toMove.entireViewModelHtml()).remove();
     stop();
     
@@ -532,29 +534,8 @@ test("remove view model from dom", function() {
         ok(!application.templateItems.toMove);
         ok(toMove.isDeleted);
         start();
-    }, 50);    
+    }, 150);    
 });
-
-/*test("aliases", function() {
-    // arrange    
-    // act
-    application.template('<wo.contentControl id="v1">\
-    <template>\
-        <wo.contentControl id="v2">\
-            <template>\
-                <wo.contentControl id="v3" v1="$find({id:\'v1\'})" v2="$find({id:\'v2\'})" cc="$find(wo.contentControl)">\
-                </wo.contentControl>\
-            </template>\
-        </wo.contentControl>\
-    </template>\
-</wo.contentControl>');
-    var last = application.templateItems.v1.templateItems.v2.templateItems.v3;
-    
-    // assert    
-    strictEqual(last.v1, application.templateItems.v1);
-    strictEqual(last.v2, application.templateItems.v1.templateItems.v2);
-    strictEqual(last.cc, application.templateItems.v1.templateItems.v2);
-});*/
 
 test("multi-dimentional binding", function() {
     // arrange

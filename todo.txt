@@ -9,6 +9,7 @@ test dom node removed cross browser
 polyfill MutationObserver
 workaround for no Mutation events
 document custom filters on find
+remove freeze
 
 document user settings
 
