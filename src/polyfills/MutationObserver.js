@@ -1,9 +1,12 @@
 
-Polyfill("wipeout.polyfils.MutationObserver", "MutationObserver", function () {
+Polyfill("wipeout.polyfills.MutationObserver", "MutationObserver", function () {
     
     // test if DOMNodeRemovedFromDocument is supported
     (function() {
         mutationObserver.DOMNodeRemovedFromDocument = false;
+        
+        if(!node.addEventListener) return;
+        
         var node = document.createElement("div");
         node.innerHTML = "<div></div>"
         document.body.appendChild(node);
@@ -20,7 +23,7 @@ Polyfill("wipeout.polyfils.MutationObserver", "MutationObserver", function () {
         this.callbacks = [];
         
         
-
+//TODO: mutationObserver.DOMNodeRemovedFromDocument === false
 //ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
 //  _this.dispose();
 //});

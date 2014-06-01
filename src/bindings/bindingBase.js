@@ -21,8 +21,8 @@ Class("wipeout.bindings.bindingBase", function () {
                                 _this.dispose();
                             } else {
                                 _this.obs.disconnect();
-                                _this.moved(_this.parentElement, element.parentElement);
-                                _this.parentElement = element.parentElement;
+                                _this.moved(_this.parentElement, getParentElement());
+                                _this.parentElement = getParentElement();
                                 _this.obs.observe(_this.parentElement, {childList: true});
                             }
                             
@@ -32,10 +32,14 @@ Class("wipeout.bindings.bindingBase", function () {
                 }
             });
             
+            function getParentElement() {
+                return _this.element.parentElement || _this.element.parentNode;
+            }
+            
             //TODO: if parentNode is null?
-            if(element.parentElement) {
-                _this.parentElement = element.parentElement;
-                _this.obs.observe(_this.parentElement, {childList: true});
+            if(getParentElement()) {
+                this.parentElement = getParentElement();
+                this.obs.observe(this.parentElement, {childList: true});
             }
         },
         dispose: function() {

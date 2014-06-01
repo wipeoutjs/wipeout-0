@@ -525,7 +525,6 @@ test("remove view model from dom", function() {
     ok(toMove);
     
     // act
-    debugger;
     $(toMove.entireViewModelHtml()).remove();
     stop();
     
