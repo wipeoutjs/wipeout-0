@@ -4,10 +4,10 @@ Polyfill("wipeout.polyfills.MutationObserver", "MutationObserver", function () {
     // test if DOMNodeRemovedFromDocument is supported
     (function() {
         mutationObserver.DOMNodeRemovedFromDocument = false;
+        var node = document.createElement("div");
         
         if(!node.addEventListener) return;
         
-        var node = document.createElement("div");
         node.innerHTML = "<div></div>"
         document.body.appendChild(node);
         node.addEventListener("DOMSubtreeModified", function() { 
@@ -16,45 +16,6 @@ Polyfill("wipeout.polyfills.MutationObserver", "MutationObserver", function () {
         node.innerHTML = "";
         document.body.removeChild(node);
     }());
-    
-    function innerMutationObserver(forElement) {
-        this.element = forElement;
-        this.nodes = wipeout.utils.obj.copyArray(this.element.childNodes);
-        this.callbacks = [];
-        
-        
-//TODO: mutationObserver.DOMNodeRemovedFromDocument === false
-//ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-//  _this.dispose();
-//});
-            
-        var _this = this;
-        this.element.addEventListener("DOMSubtreeModified", function(mutationEvent) {
-            var token = {};
-
-            _this.waiting = token;
-            setTimeout(function() {
-                if(_this.waiting === token)
-                    _this.onMutation();
-            }, 50);
-        });
-    }
-    
-    innerMutationObserver.prototype.onMutation = function() {
-        var diff = [];
-        var newNodes = wipeout.utils.obj.copyArray(this.element.childNodes);
-        for(var i = 0, ii = this.nodes.length; i < ii; i++) {
-            if(newNodes.indexOf(this.nodes[i]) === -1)
-                diff.push(this.nodes[i]);
-        }
-        
-        this.nodes = newNodes;
-        enumerate(this.callbacks, function(callback) {
-            setTimeout(function() {
-                callback([{removedNodes:diff}]);
-            }, 0);
-        });
-    }; 
     
     function mutationObserver(callback) {        
         this.elements = [];
@@ -81,7 +42,9 @@ Polyfill("wipeout.polyfills.MutationObserver", "MutationObserver", function () {
         
         this.elements.push(element);
         if(!element.__woMutationObserver)
-            element.__woMutationObserver = new innerMutationObserver(element);
+            element.__woMutationObserver = mutationObserver.DOMNodeRemovedFromDocument ?
+                new wipeout.polyfils.mutationEventWorker(element) :
+                new wipeout.polyfils.knockoutWorker(element);
         
         element.__woMutationObserver.callbacks.push(this.callback);
     };
