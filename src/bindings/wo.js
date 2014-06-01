@@ -1,30 +1,28 @@
 // Render From Script
 Binding("wo", true, function () {
     
-    return wipeout.bindings.bindingBase.extend({
+    return wipeout.bindings.render.extend({
         constructor: function(element, value, allBindingsAccessor, bindingContext) {
-            this._super(element);
-            
             var vals = wipeout.template.engine.scriptCache[value]();
-            this.renderedView = new vals.vmConstructor();
-            this.renderedView.__woBag.createdByWipeout = true;
-            vals.initialize(this.renderedView, bindingContext);
+            var value = new vals.vmConstructor();
+            this._super(element, value, allBindingsAccessor, bindingContext);
+            value.__woBag.createdByWipeout = true;
+            vals.initialize(value, bindingContext);
             
             if(vals.id) {
                 var current = bindingContext;
                 while(current.$data.shareParentScope)
                     current = current.$parentContext;
 
-                current.$data.templateItems[vals.id] = this.renderedView;
+                current.$data.templateItems[vals.id] = value;
             }
             
-            this.render = new wipeout.bindings.render(element, this.renderedView, allBindingsAccessor, bindingContext);
-            this.render.render(this.renderedView);            
+            this.render(value);
+            this.render = function() { throw "Cannont render this binding a second time, use the render binding instead"; };
         },
         dispose: function() {
             this.removeFromParentTemplateItems();
-            this.render.dispose();
-            this.renderedView.dispose();
+            this.value.dispose();
             this._super();
         },
         removeFromParentTemplateItems: function() {
@@ -35,7 +33,7 @@ Binding("wo", true, function () {
                 }
                 
                 if(parent)
-                    delete parent.templateItems[this.renderedView.id];
+                    delete parent.templateItems[this.value.id];
             }
         },
         statics: {
@@ -46,16 +44,15 @@ Binding("wo", true, function () {
         },
         moved: function(oldParentElement, newParentElement) {
             this._super(oldParentElement, newParentElement);
-            this.render.moved(oldParentElement, newParentElement);
             
-            if (this.renderedView.id != null) {
+            if (this.value.id != null) {
                 var oldVm = wipeout.utils.html.getViewModel(oldParentElement);
                 while (oldVm && oldVm.shareParentScope) {
                     oldVm = oldVm.getParent();
                 }
                 
                 if(oldVm)
-                    delete oldVm.templateItems[this.renderedView.id];
+                    delete oldVm.templateItems[this.value.id];
                 
                 var newVm = wipeout.utils.html.getViewModel(newParentElement);
                 while (newVm && newVm.shareParentScope) {
@@ -63,7 +60,7 @@ Binding("wo", true, function () {
                 }
                 
                 if(newVm)
-                    newVm.templateItems[this.renderedView.id] = this.renderedView;
+                    newVm.templateItems[this.value.id] = this.value;
             }
         }
     });

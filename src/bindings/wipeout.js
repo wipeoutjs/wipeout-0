@@ -1,9 +1,8 @@
 
 Binding("wipeout", true, function () {
     
-    return wipeout.bindings.bindingBase.extend({
-        constructor: function(element, type, allBindingsAccessor, viewModel, bindingContext) {
-            this._super(element);   
+    return wipeout.bindings.render.extend({
+        constructor: function(element, type, allBindingsAccessor, viewModel, bindingContext) {  
         
             if(wipeout.utils.html.getViewModel(element))
                 throw "This element is already bound to another model";
@@ -13,17 +12,19 @@ Binding("wipeout", true, function () {
 
             this.renderedView = new type();
             if(!(this.renderedView instanceof wipeout.base.view))
-                throw "Invalid view type";  
+                throw "Invalid view type";
             
-            this.renderedView.model(viewModel);            
-            this.render = new wipeout.bindings.render(element, this.renderedView, allBindingsAccessor, bindingContext);            
-            this.render.render(this.renderedView);
+            this._super(element, this.renderedView, allBindingsAccessor, bindingContext);   
+            
+            this.renderedView.model(viewModel);                   
+            this.render(this.renderedView);
+            this.render = function() { throw "Cannont render this binding a second time, use the render binding instead"; };
+            
             this.renderedView.onApplicationInitialized();
         },
         dispose: function() {
-            this.render.dispose();
-            this.renderedView.dispose();
             this._super();
+            this.renderedView.dispose();
         },
         statics: {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -34,10 +35,6 @@ Binding("wipeout", true, function () {
             utils: {
                 wipeoutKey: "__wipeout"
             }
-        },
-        moved: function(oldParentElement, newParentElement) {
-            this._super(oldParentElement, newParentElement);
-            this.render.moved(oldParentElement, newParentElement);
         }
     });
 });
