@@ -270,8 +270,6 @@ Class("wipeout.utils.html", function () {
     
     var html = function() { };
     
-    html.asynchronousTemplates = false;
-    
     html.cannotCreateTags = cannotCreateTags;
     html.createTemplatePlaceholder = createTemplatePlaceholder;
     html.specialTags = specialTags;

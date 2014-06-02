@@ -104,7 +104,7 @@ Binding("render", true, function () {
             if(this.value)
                 this.value.unTemplate();
 
-            if(newVal && wipeout.utils.html.asynchronousTemplates) {
+            if(newVal && wipeout.settings.asynchronousTemplates) {
                 ko.virtualElements.prepend(this.element, wipeout.utils.html.createTemplatePlaceholder(this.value))
                 wipeout.template.asyncLoader.instance.load(newVal, reRender);
             } else {

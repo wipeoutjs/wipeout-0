@@ -11,6 +11,7 @@ Class("wipeout.settings", function() {
     
     settings.orphanMovedNodesOnTemplate = false;
     settings.suppressWarnings = false;
+    settings.asynchronousTemplates = true;
     
     return settings;
 });
