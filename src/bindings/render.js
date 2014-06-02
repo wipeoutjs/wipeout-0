@@ -16,9 +16,8 @@ Binding("render", true, function () {
         constructor: function(element, value, allBindingsAccessor, bindingContext) {  
             this._super(element);
             
-            ko.bindingHandlers.template.init(element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);        
+            ko.bindingHandlers.template.init(this.element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);        
             
-            this.element = element;
             this.allBindingsAccessor = allBindingsAccessor;
             this.bindingContext = bindingContext;
             
@@ -64,13 +63,10 @@ Binding("render", true, function () {
 
                 if(this.templateChangedSubscription)
                     this.value.disposeOf(this.templateChangedSubscription);
-                
-                delete wipeout.bindings.render.renderedItems[this.value.__woBag.uniqueId];
             }
             
             delete this.value;
             delete this.templateChangedSubscription;
-
         },
         render: function (newVal) {
             if(this.value || this.templateChangedSubscription)
@@ -85,7 +81,6 @@ Binding("render", true, function () {
             if (this.value.__woBag.rootHtmlElement)
                 throw "This visual has already been rendered. Call its unRender() function before rendering again.";
             
-            wipeout.bindings.render.renderedItems[this.value.__woBag.uniqueId] = new renderedItem(newVal, this.bindingContext.$data);
             ko.utils.domData.set(this.element, wipeout.bindings.wipeout.utils.wipeoutKey, this.value);
             this.value.__woBag.rootHtmlElement = this.element;
             
@@ -117,7 +112,6 @@ Binding("render", true, function () {
             }
         },
         statics: {
-            renderedItems: {},
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
                 ///<summary>Initialize the render binding</summary>       
                 

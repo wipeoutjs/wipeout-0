@@ -513,66 +513,73 @@ test("move view model", function() {
     }, 150);    
 });
 
-test("dispose", function() {
-    // arrange
-    function disposeFunc() { this.isDisposed = true; wo.view.prototype.dispose.call(this); };
-    /*application.template('<wo.contentControl id="i1">\
-    <template>\
-        <wo.view inner="true" id="i2" />\
-    </template>\
-</wo.contentControl>\
-<wo.itemsControl id="i3" itemSource="[{},{}]"/>');*/
-    application.template('<wo.itemsControl id="i3" itemSource="[{},{}]"/>');
+function disposeTest (act) {
+    function disposeFunc() { this.isDisposed = true; this.constructor.prototype.dispose.call(this); };
+    application.template('<wo.view id="i0" />\
+<div id="a">\
+    <wo.contentControl id="i1">\
+        <template>\
+            <div id="b">\
+                <div id="c">\
+                    <wo.view inner="true" id="i2" />\
+                </div>\
+            </div>\
+        </template>\
+    </wo.contentControl>\
+    <div id="d">\
+        <div id="e">\
+            <wo.itemsControl id="i3" itemSource="[{},{}]">\
+                <template>\
+                    <div id="f">\
+                        <!-- ko itemsControl: null --><!-- /ko -->\
+                    </div>\
+                </template>\
+            </wo.itemsControl>\
+        </div\>\
+    </div\>\
+</div>');
     
-    var i1, i2, i3, i4, i5;
-    //ok(i1 = application.templateItems.i1);
-    //ok(i2 = i1.templateItems.i2);
+    var i0, i1, i2, i3, i4, i5;
+    ok(i0 = application.templateItems.i0);
+    ok(i1 = application.templateItems.i1);
+    ok(i2 = i1.templateItems.i2);
     ok(i3 = application.templateItems.i3);
     ok(i4 = i3.items()[0]);
     ok(i5 = i3.items()[1]);
     
-    //i1.dispose = disposeFunc;
-    //i2.dispose = disposeFunc;
+    i0.dispose = disposeFunc;
+    i1.dispose = disposeFunc;
+    i2.dispose = disposeFunc;
     i3.dispose = disposeFunc;
     i4.dispose = disposeFunc;
     i5.dispose = disposeFunc;
     
     // act
-    application.dispose();
+    act();
     stop();
     
     // assert
     setTimeout(function() {
-        //ok(i1.isDisposed);
-        //ok(i2.isDisposed);
+        ok(i0.isDisposed);
+        ok(i1.isDisposed);
+        ok(i2.isDisposed);
         ok(i3.isDisposed);
         ok(i4.isDisposed);
         ok(i5.isDisposed);
         start();
-    }, 150);
+    }, 150);    
+}
+
+test("dispose", function() {
+    disposeTest(function() { 
+        application.dispose();
+    });
 });
 
 test("remove view model from dom", function() {
-    // arrange
-    application.template('<wo.contentControl id="toMove" dispose="function() { wo.contentControl.prototype.dispose.call(this); this.isDeleted = true; }">\
-    <template>\
-        <span></span>\
-    </template>\
-</wo.contentControl>');
-    
-    var toMove = application.templateItems.toMove;
-    ok(toMove);
-    
-    // act
-    $(toMove.entireViewModelHtml()).remove();
-    stop();
-    
-    // assert
-    setTimeout(function() {
-        ok(!application.templateItems.toMove);
-        ok(toMove.isDeleted);
-        start();
-    }, 150);    
+    disposeTest(function() {  
+        $("#qunit-fixture").html("");
+    });  
 });
 
 test("multi-dimentional binding", function() {

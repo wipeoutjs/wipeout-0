@@ -22,8 +22,9 @@ Binding("wo", true, function () {
         },
         dispose: function() {
             this.removeFromParentTemplateItems();
-            this.value.dispose();
+            var value = this.value;
             this._super();
+            value.dispose();
         },
         removeFromParentTemplateItems: function() {
             if (this.parentElement) {

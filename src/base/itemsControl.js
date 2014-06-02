@@ -211,6 +211,15 @@ Class("wipeout.base.itemsControl", function () {
         ///<param name="item" type="wo.view" optional="false">The item rendered</param>
     };
     
+    itemsControl.prototype.dispose = function () {
+        ///<summary>Dispose of the items control and its items</summary>
+        enumerate(this.items(), function(i) {
+            i.dispose();
+        });
+        
+        this._super();
+    };    
+    
     //virtual
     itemsControl.prototype.onItemDeleted = function (item) {
         ///<summary>Disposes of deleted items</summary> 

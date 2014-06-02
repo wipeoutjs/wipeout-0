@@ -5,12 +5,14 @@ event priority
 trim template ids
 document move
 test dom node removed cross browser
+todo: unTemplate, are all ko bindings disposed of properly?
 
-polyfill MutationObserver
 workaround for no Mutation events
 document custom filters on find
 remove freeze
+ParentElement
 
+isStartComment() and isEndCOmment() in ko
 document user settings
 
 If, poke template

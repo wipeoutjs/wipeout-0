@@ -167,6 +167,16 @@ testUtils.testWithUtils("onItemDeleted", "", false, function(methods, classes, s
     invoker(item);
 });
 
+testUtils.testWithUtils("dispose", "", false, function(methods, classes, subject, invoker) {
+    // arrange    
+    subject._super = methods.method();
+    subject.items = ko.observableArray([{dispose: methods.method()},{dispose: methods.method()}]);
+    
+    // act
+    // assert
+    invoker();
+});
+
 testUtils.testWithUtils("_createItem", "", false, function(methods, classes, subject, invoker) {
     // arrange
     var model = {};
