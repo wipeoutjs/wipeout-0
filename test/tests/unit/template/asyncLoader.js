@@ -54,7 +54,7 @@ asyncTest("constructor, hammering the async loader, this is more of an integrati
     classes.mock("wipeout.utils.obj.ajax", function (input) {
         setTimeout(function() {
             input.success({});
-        // ajax request takes up to 2 sconds
+        // ajax request takes up to 2 seconds
         }, wipeout.utils.obj.random(2000));
     }, distinctTemplates - addedAlready);
 
