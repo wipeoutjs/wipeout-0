@@ -23,7 +23,7 @@ Binding("render", true, function () {
             
             if(ko.isObservable(value)) {
                 var val = value.peek();
-                value.subscribe(function(newVal) {
+                this.subscribed = value.subscribe(function(newVal) {
                     if(newVal === val)
                         return;
                     
@@ -49,6 +49,9 @@ Binding("render", true, function () {
         },
         dispose: function() { 
             this._super();
+            if(this.subscribed)
+                this.subscribed.dispose();
+            
             this.unRender();
         },
         reRender: function(value) {

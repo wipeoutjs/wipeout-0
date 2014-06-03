@@ -5,8 +5,9 @@ Class("wipeout.bindings.bindingBase", function () {
     function staticContructor() {
         if(sc) return;
         sc = true;
-        
+        /*
         new MutationObserver(function(mutations) {
+        //new wipeout.polyfills.MutationObserver(function(mutations) {
             enumerate(mutations || [], function(mutation) {
                 enumerate(mutation.removedNodes || [], function(node) {
                     var bindings;
@@ -26,7 +27,7 @@ Class("wipeout.bindings.bindingBase", function () {
                     }
                 });
             });
-        }).observe(document.body, {childList: true, subtree: true});
+        }).observe(document.body, {childList: true, subtree: true});*/
     }
     
     return wipeout.base.disposable.extend({

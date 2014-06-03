@@ -60,7 +60,7 @@ Polyfill("wipeout.polyfills.MutationObserver", "MutationObserver", function () {
             s.push(i);
         })
         
-        if(s.length !== 1 || s[0] !== "childList")
+        if(s.length !== 2 || s.indexOf("childList") === -1 || s.indexOf("subtree") === -1)
             console.error("Only settings of type {childList:tue} are supported. For the full MutationObserver functionality define a polyfill library before wipeout.");
     };
     
