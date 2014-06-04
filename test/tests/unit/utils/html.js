@@ -137,7 +137,7 @@ testUtils.testWithUtils("cleanNode", "", true, function(methods, classes, subjec
     id4 = $("#" + id4)[0];
     id5 = $("#" + id5)[0];
     
-    wipeout.utils.domData.set(id4, wipeout.bindings.bindingBase.dataKey, [{initReturnValue:{controlsDescendantBindings:true}, dispose: methods.method()}]);
+    wipeout.utils.domData.set(id4, wipeout.bindings.bindingBase.dataKey, [{bindingMeta:{controlsDescendantBindings:true}, dispose: methods.method()}]);
     
     var cleanElements = [];
     var cleanTextNodes = [];

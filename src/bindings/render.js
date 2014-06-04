@@ -16,12 +16,7 @@ Binding("render", true, function () {
         constructor: function(element, value, allBindingsAccessor, bindingContext) {  
             this._super(element);
             
-            if(wipeout.utils.domData.get(this.element, wipeout.bindings.render.dataKey))
-                throw "There is already a binding on this element for rendering content";
-            
-            wipeout.utils.domData.set(this.element, wipeout.bindings.render.dataKey, this);
-            
-            this.initReturnValue = ko.bindingHandlers.template.init(this.element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);            
+            this.bindingMeta = ko.bindingHandlers.template.init(this.element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);            
             this.allBindingsAccessor = allBindingsAccessor;
             this.bindingContext = bindingContext;
             
@@ -65,6 +60,28 @@ Binding("render", true, function () {
         reRender: function(value) {
             this.unRender();
             this.render(value);
+        },
+        unTemplate: function() {
+            ///<summary>Removes and disposes (if necessary) of all of the children of the visual</summary>
+                        
+            if(!this.value) return;
+            
+            // delete all template items
+            enumerate(this.value.templateItems, function(item, i) {            
+                delete this.value.templateItems[i];
+            }, this);
+            
+            // clean up all child nodes
+            var child = ko.virtualElements.firstChild(this.element);
+            while (child) {
+                wipeout.utils.html.cleanNode(child);
+                var oc = child;
+                child = ko.virtualElements.nextSibling(child);
+                oc.parentElement.removeChild(oc);
+            }
+            
+            // clear references to html nodes in view
+            this.value.__woBag.nodes.length = 0;
         },
         unRender: function() {
             
@@ -110,36 +127,6 @@ Binding("render", true, function () {
             this.templateChangedSubscription = this.value.registerDisposable(function() { subscription2.dispose(); });
             this.onTemplateChanged(this.value.templateId.peek());
         },
-        unTemplate: function() {
-            ///<summary>Removes and disposes (if necessary) of all of the children of the visual</summary>
-                        
-            if(!this.value) return;
-            
-            // delete all template items
-            enumerate(this.value.templateItems, function(item, i) {            
-                delete this.value.templateItems[i];
-            }, this);
-            
-            // clean up all child nodes
-            var child = ko.virtualElements.firstChild(this.element);
-            while (child) {
-                wipeout.utils.html.cleanNode(child);
-                var oc = child;
-                child = ko.virtualElements.nextSibling(child);
-                oc.parentElement.removeChild(oc);
-            }
-                
-            // delete any nodes which have been removed from the template
-            if(!wipeout.settings.orphanMovedNodesOnTemplate) {
-                enumerate(this.value.__woBag.nodes, function(node) {                    
-                    if(node.parentElement)
-                        node.parentElement.removeChild(node);
-                });
-            }
-            
-            // clear references to html nodes in view
-            this.value.__woBag.nodes.length = 0;
-        },
         onTemplateChanged: function(newVal) {
             var _this = this;
             function reRender() {
@@ -150,7 +137,7 @@ Binding("render", true, function () {
             this.unTemplate();
 
             if(newVal && wipeout.settings.asynchronousTemplates) {
-                ko.virtualElements.prepend(this.element, wipeout.utils.html.createTemplatePlaceholder(this.value))
+                ko.virtualElements.prepend(this.element, wipeout.utils.html.createTemplatePlaceholder(this.value));
                 wipeout.template.asyncLoader.instance.load(newVal, reRender);
             } else {
                 reRender();
@@ -165,13 +152,12 @@ Binding("render", true, function () {
                 wipeout.bindings["wipeout-type"].utils.comment(this.element, bindings["wipeout-type"]);
         },
         statics: {
-            dataKey: "wipeout.bindings.render",
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
                 ///<summary>Initialize the render binding</summary>       
                 
                 var binding = new wipeout.bindings.render(element, valueAccessor(), allBindingsAccessor, bindingContext);                
                 binding.render(wipeout.utils.ko.peek(valueAccessor()));
-                return binding.initReturnValue;
+                return binding.bindingMeta;
             },
             createValueAccessor: function(value) {
                 ///<summary>Create a value accessor for the knockout template binding.</summary>
@@ -179,28 +165,35 @@ Binding("render", true, function () {
                 // ensure template id does not trigger another update
                 // this will be handled within the binding
                 return function () {
-                    var child = wipeout.utils.ko.peek(value);
+                    value = wipeout.utils.ko.peek(value);
+                    
+                    // use the knockout vanilla template engine to render nothing
+                    if(!(value instanceof wipeout.base.visual))
+                         return {
+                             name: wipeout.base.visual.getBlankTemplateId()
+                         };
 
                     var output = {
                         templateEngine: wipeout.template.engine.instance,
-                        name: child ? child.templateId.peek() : "",                
-                        afterRender: child ? function(nodes, context) {
+                        name: value.templateId.peek(),
+                        afterRender: function(nodes, context) {
                             var old = [];
-                            enumerate(child.__woBag.nodes, function(node) {
+                            enumerate(value.__woBag.nodes, function(node) {
                                 old.push(node);
                             });
                             
-                            child.__woBag.nodes.length = 0;
+                            value.__woBag.nodes.length = 0;
                             enumerate(nodes || [], function(node) {
-                                child.__woBag.nodes.push(node);
+                                value.__woBag.nodes.push(node);
                             });                            
                             
-                            child.onRendered(old, nodes);
-                        } : undefined
+                            value.onRendered(old, nodes);
+                        }
                     };
 
-                    if(child && !child.shareParentScope)
-                        output.data = value || {};
+                    // do not move this to upper definition, knokout regards undefined as a value in this case and will use it as the current binding context
+                    if(!value.shareParentScope)
+                        output.data = value;
 
                     return output;
                 };

@@ -8,8 +8,7 @@ Class("wipeout.settings", function() {
             wipeout.settings[i] = setting;
         });        
     }
-    
-    settings.orphanMovedNodesOnTemplate = false;
+
     settings.suppressWarnings = false;
     settings.asynchronousTemplates = true;
     

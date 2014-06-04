@@ -126,8 +126,14 @@ Class("wipeout.base.object", function () {
             for(var item in childClass.constructor.prototype)
                 childClass[i] = childClass.constructor.prototype[i];
             
-        } else if(!childClass.constructor || childClass.constructor.constructor !== Function)
+        } else if (childClass.constructor === Object) {
+            // in case the consumer forgot to specify a constructor, default to parent constructor
+            childClass.constructor = function() {
+                this._super.apply(this, arguments);
+            };
+        } else if(!childClass.constructor || childClass.constructor.constructor !== Function) {
             throw "the property \"constructor\" must be a function";
+        }
         
         // static functions
         for (var p in this)

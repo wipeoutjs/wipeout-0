@@ -41,7 +41,7 @@ Binding("wo", true, function () {
         statics: {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
                 ///<summary>Initialize the render binding</summary>                
-                return new wipeout.bindings.wo(element, valueAccessor(), allBindingsAccessor, bindingContext).initReturnValue;
+                return new wipeout.bindings.wo(element, valueAccessor(), allBindingsAccessor, bindingContext).bindingMeta;
             }
         },
         moved: function(oldParentElement, newParentElement) {

@@ -253,6 +253,7 @@ Class("wipeout.utils.html", function () {
         return null;
     };
     
+    //TODO: move to settings
     var createTemplatePlaceholder = function(forViewModel) {
         ///<summary>Create a html node so serve as a temporary template while the template loads asynchronously</summary>
         ///<param name="forViewModel" type="wo.view">The view to which this temp template will be applied. May be null</param>
@@ -274,7 +275,7 @@ Class("wipeout.utils.html", function () {
         // check if children have to be disposed
         var controlChildren = false;
         enumerate(bindings, function(binding) {
-            controlChildren |= binding.initReturnValue.controlsDescendantBindings;
+            controlChildren |= binding.bindingMeta.controlsDescendantBindings;
         });
 
         // dispose of all children

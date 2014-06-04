@@ -42,17 +42,27 @@ Class("wipeout.bindings.bindingBase", function () {
             if(!element)
                 throw "ArgumnetNullException";
             
-            this.initReturnValue = {};
+            this.bindingMeta = {};
             this.element = element;
             var bindings = wipeout.utils.domData.get(this.element, wipeout.bindings.bindingBase.dataKey);
             if(!bindings)
                 bindings = wipeout.utils.domData.set(this.element, wipeout.bindings.bindingBase.dataKey, []);
+            
+            enumerate(bindings, function(binding) {
+                if(binding.bindingMeta.controlsDescendantBindings)
+                    throw "There is already a binding on this element which controls children.";
+            });
                 
             bindings.push(this);
             
             //TODO: if parentNode is null?
             this.parentElement = this.getParentElement();
             this.moved(null, this.parentElement);
+            
+            //TODO: strategy for this
+            //ko.utils.domNodeDisposal.addDisposeCallback(this.element, function() {
+                
+            //});
         },
         getParentElement: function() {
             // IE sometimes has null for parent element of a comment
