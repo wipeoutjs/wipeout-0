@@ -17,6 +17,9 @@ Class("wipeout.base.if", function () {
         staticConstructor();
         
         this._super(templateId, model);
+
+        //Specifies whether this object should be used as a binding context. If true, the binding context of this object will be it's parent. Default is true
+        this.shareParentScope = true;
         
         // if true, the template will be rendered, otherwise a blank template is rendered
         this.condition = ko.observable();
@@ -41,9 +44,6 @@ Class("wipeout.base.if", function () {
         
         this.copyTemplateId(this.templateId());
     }, "_if");
-    
-    // picked up by wipeout.base.visual constructor
-    _if.shareParentScopeDefault = true;
     
     _if.prototype.elseTemplateChanged = function (newVal) {
         ///<summary>Resets the template id to the else template if condition is not met</summary>  

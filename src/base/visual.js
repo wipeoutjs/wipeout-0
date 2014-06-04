@@ -7,8 +7,8 @@ Class("wipeout.base.visual", function () {
             ///<param name="templateId" type="String" optional="true">A default template id</param>
             this._super();
 
-            //Specifies whether this object should be used as a binding context. If false, the binding context of this object will be it's parent. 
-            this.shareParentScope = this.constructor.shareParentScopeDefault;
+            //Specifies whether this object should be used as a binding context. If true, the binding context of this object will be it's parent. Default is false
+            this.shareParentScope = false;
 
             //Dictionary of items created within the current template. The items can be visuals or html elements
             this.templateItems = {};
@@ -30,7 +30,6 @@ Class("wipeout.base.visual", function () {
             };
         },
         statics: {
-            shareParentScopeDefault: false,
             //TODO: move to util (actually I think it already is in there)
             getParentElement: function(node) {
                 ///<summary>Gets the parent or virtual parent of the element</summary>
