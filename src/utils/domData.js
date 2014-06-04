@@ -5,11 +5,12 @@ Class("wipeout.utils.domData", function () {
     }
     
     function store(element) {
+        if(!element) throw "Invalid html element";
         return element[domDataKey] = element[domDataKey] || {};
     }
     
     domData.get = function(element, key) {
-        return store(element)[key];
+        return arguments.length > 1 ? store(element)[key] : store(element);
     };
     
     domData.set = function(element, key, value) {

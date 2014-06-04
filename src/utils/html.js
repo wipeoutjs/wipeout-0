@@ -268,8 +268,37 @@ Class("wipeout.utils.html", function () {
         wipeout.template.asyncLoader.instance.load(templateId);
     };
     
+    var cleanNode = function(node) {
+        var bindings = wipeout.utils.domData.get(node, wipeout.bindings.bindingBase.dataKey);
+        
+        // check if children have to be disposed
+        var controlChildren = false;
+        enumerate(bindings, function(binding) {
+            controlChildren |= binding.initReturnValue.controlsDescendantBindings;
+        });
+
+        // dispose of all children
+        if(!controlChildren) {
+            var child = ko.virtualElements.firstChild(node);
+            while (child) {
+                cleanNode(child);
+                child = ko.virtualElements.nextSibling(child);
+            }
+        }
+        
+        // dispose of all wo bindings
+        enumerate(bindings, function(binding) {
+            binding.dispose();
+        });
+
+        // clear ko and wo data
+        wipeout.utils.domData.clear(node, wipeout.bindings.bindingBase.dataKey);
+        ko.cleanNode(node);
+    };
+    
     var html = function() { };
     
+    html.cleanNode = cleanNode;
     html.cannotCreateTags = cannotCreateTags;
     html.createTemplatePlaceholder = createTemplatePlaceholder;
     html.specialTags = specialTags;

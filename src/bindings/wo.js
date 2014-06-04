@@ -27,6 +27,7 @@ Binding("wo", true, function () {
             value.dispose();
         },
         removeFromParentTemplateItems: function() {
+            //TODO: use getParent function
             if (this.parentElement) {
                 var parent = wipeout.utils.html.getViewModel(this.parentElement);
                 while (parent && parent.shareParentScope) {
@@ -40,28 +41,32 @@ Binding("wo", true, function () {
         statics: {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
                 ///<summary>Initialize the render binding</summary>                
-                new wipeout.bindings.wo(element, valueAccessor(), allBindingsAccessor, bindingContext);
+                return new wipeout.bindings.wo(element, valueAccessor(), allBindingsAccessor, bindingContext).initReturnValue;
             }
         },
         moved: function(oldParentElement, newParentElement) {
             this._super(oldParentElement, newParentElement);
             
-            if (this.value.id != null) {
-                var oldVm = wipeout.utils.html.getViewModel(oldParentElement);
-                while (oldVm && oldVm.shareParentScope) {
-                    oldVm = oldVm.getParent();
+            if (this.value && this.value.id != null) {
+                if(oldParentElement) {
+                    var oldVm = wipeout.utils.html.getViewModel(oldParentElement);
+                    while (oldVm && oldVm.shareParentScope) {
+                        oldVm = oldVm.getParent();
+                    }
+
+                    if(oldVm)
+                        delete oldVm.templateItems[this.value.id];
                 }
                 
-                if(oldVm)
-                    delete oldVm.templateItems[this.value.id];
-                
-                var newVm = wipeout.utils.html.getViewModel(newParentElement);
-                while (newVm && newVm.shareParentScope) {
-                    newVm = newVm.getParent();
+                if(newParentElement) {                
+                    var newVm = wipeout.utils.html.getViewModel(newParentElement);
+                    while (newVm && newVm.shareParentScope) {
+                        newVm = newVm.getParent();
+                    }
+
+                    if(newVm)
+                        newVm.templateItems[this.value.id] = this.value;
                 }
-                
-                if(newVm)
-                    newVm.templateItems[this.value.id] = this.value;
             }
         }
     });

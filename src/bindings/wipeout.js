@@ -29,8 +29,7 @@ Binding("wipeout", true, function () {
         statics: {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
                 ///<summary>Initialize the render binding</summary>                
-                new wipeout.bindings.wipeout(element, valueAccessor(), allBindingsAccessor, viewModel, bindingContext);
-                return { controlsDescendantBindings: true };
+                return new wipeout.bindings.wipeout(element, valueAccessor(), allBindingsAccessor, viewModel, bindingContext).initReturnValue;
             },
             utils: {
                 wipeoutKey: "__wipeout"

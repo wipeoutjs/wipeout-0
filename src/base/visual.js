@@ -18,6 +18,9 @@ Class("wipeout.base.visual", function () {
 
             //A bag to put objects needed for the lifecycle of this object and its properties
             this.__woBag = {
+                //TODO: can I move any of this to the render binding
+                //TODO: do I want this event here?
+                disposed: wipeout.base.event(),
                 disposables: {},
                 createdByWipeout: false,
                 rootHtmlElement: null,
@@ -110,28 +113,27 @@ Class("wipeout.base.visual", function () {
                 return output;
             }
         },
-        //TODO: move to utils
         entireViewModelHtml: function() {
             if(this.__woBag.rootHtmlElement) {
                 if (this.__woBag.rootHtmlElement.nodeType === 1) {
                     return [this.__woBag.rootHtmlElement];
                 } else if (wipeout.utils.ko.virtualElements.isVirtual(this.__woBag.rootHtmlElement)) {
-                    var output = [];
-                    var current = this.__woBag.rootHtmlElement;
-                    var closing = wipeout.utils.ko.virtualElements.closingTag(current);
-                    while (current && current !== closing) {
+                    // add root element
+                    var output = [this.__woBag.rootHtmlElement];
+                    
+                    // add children
+                    var current = ko.virtualElements.firstChild(this.__woBag.rootHtmlElement);
+                    while(current) {
                         output.push(current);
-                        current = current.nextSibling;
+                        current = ko.virtualElements.nextSibling(current);
                     }
                     
-                    // no closing tag
-                    if(!current) {
-                        if(!wipeout.settings.suppressWarnings)
-                            console.error("The closing tag for " + this.__woBag.rootHtmlElement + " could not be found");
-                        return [];
-                    }
+                    // add root element closing tag
+                    var last = output[output.length - 1].nextSibling;
+                    if(!wipeout.utils.ko.virtualElements.isVirtualClosing(last))
+                        throw "Could not compile view model html";
                     
-                    output.push(current);
+                    output.push(last);
                     return output;
                 }
             }
@@ -171,47 +173,8 @@ Class("wipeout.base.visual", function () {
             ///<returns type="Node">The root element</returns>
             return this.__woBag.rootHtmlElement;
         },
-        unTemplate: function() {
-            ///<summary>Removes and disposes (if necessary) of all of the children of the visual</summary>
-                        
-            // delete all template items
-            enumerate(this.templateItems, function(item, i) {            
-                delete this.templateItems[i];
-            }, this);
-
-            if(this.__woBag.rootHtmlElement) {
-                // clean down the template
-                if(document.body.contains(this.__woBag.rootHtmlElement))
-                    ko.virtualElements.emptyNode(this.__woBag.rootHtmlElement);
-                
-                // clean down any nodes which have been removed from the template
-                enumerate(this.__woBag.nodes, function(node) {                      
-                    ko.cleanNode(node);
-                    
-                    if(!wipeout.settings.orphanMovedNodesOnTemplate && node.parentElement)
-                        node.parentElement.removeChild(node);
-                });
-            }
-            
-            this.__woBag.nodes.length = 0;
-        },
-        unRender: function() {
-            ///<summary>Prepares a visual to be re-rendered</summary>
-            
-            this.onUnrender();
-
-            this.unTemplate();
-
-            if(this.__woBag.rootHtmlElement) {
-                // disassociate the visual from its root element and empty the root element
-                ko.utils.domData.set(this.__woBag.rootHtmlElement, wipeout.bindings.wipeout.utils.wipeoutKey, undefined); 
-                delete this.__woBag.rootHtmlElement;
-            }
-        },
         dispose: function() {
             ///<summary>Dispose of this visual</summary>
-            
-            this.unRender();
 
             // dispose of any computeds
             for(var i in this)
@@ -222,6 +185,8 @@ Class("wipeout.base.visual", function () {
             enumerate(this.__woBag.routedEventSubscriptions.splice(0, this.__woBag.routedEventSubscriptions.length), function(event) {
                 event.dispose();
             });
+            
+            this.__woBag.disposed.trigger();
         },
         getParents: function(includeSharedParentScopeItems) {
             ///<summary>Gets an array of the entire tree of ancestor visual objects</summary>

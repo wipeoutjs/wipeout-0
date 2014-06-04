@@ -21,10 +21,19 @@ testUtils.testWithUtils("get, set, clear", "", false, function(methods, classes,
     strictEqual(val2, value);
     
     // act 3
+    var val3 = wipeout.utils.domData.get(element);
+    strictEqual(val3[key], value);
+    
+    // act 4
     wipeout.utils.domData.clear(element, key);
     strictEqual(element["__wipeout_domData"][key], undefined);
     
-    // act 4
+    // act 5
     wipeout.utils.domData.clear(element);
     strictEqual(element["__wipeout_domData"], undefined);
+    
+    // act 6
+    throws(function() {
+        wipeout.utils.domData.get(null);
+    });
 });

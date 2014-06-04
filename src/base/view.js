@@ -1,7 +1,7 @@
 
 Class("wipeout.base.view", function () {    
 
-    var modelRoutedEventKey = "wo.view.modelRoutedEvents";
+    var modelRoutedEventKey = "wipeout.base.view.modelRoutedEvents";
     
     var view = wipeout.base.visual.extend(function (templateId, model /*optional*/) {        
         ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>  

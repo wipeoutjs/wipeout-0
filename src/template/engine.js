@@ -54,7 +54,7 @@ Class("wipeout.template.engine", function () {
         } else {
             ko.templateEngine.prototype.rewriteTemplate.call(this, template, rewriterCallback, templateDocument);
         }
-    };    
+    };
     
     engine.wipeoutRewrite = function(xmlElement, rewriterCallback) {
         ///<summary>Recursively go through an xml element and replace all view models with render comments</summary>

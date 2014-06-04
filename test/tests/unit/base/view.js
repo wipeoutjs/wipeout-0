@@ -148,19 +148,19 @@ testUtils.testWithUtils("dispose", "", false, function(methods, classes, subject
     // arrange
     subject._super = methods.method();
     subject.__woBag = {
-        "wo.view.modelRoutedEvents": {},
+        "wipeout.base.view.modelRoutedEvents": {},
         bindings: {
             blabla: {}
         }
     };
-    subject.disposeOf = methods.method([subject.__woBag["wo.view.modelRoutedEvents"]]);
+    subject.disposeOf = methods.method([subject.__woBag["wipeout.base.view.modelRoutedEvents"]]);
     subject.disposeOfBinding = methods.method(["blabla"]);
     
     // act
     invoker();
     
     // assert    
-    ok(!subject.__woBag["wo.view.modelRoutedEvents"]);
+    ok(!subject.__woBag["wipeout.base.view.modelRoutedEvents"]);
 });
 
 testUtils.testWithUtils("elementHasModelBinding", "no model", true, function(methods, classes, subject, invoker) {
@@ -253,11 +253,11 @@ testUtils.testWithUtils("objectParser", "json", false, function(methods, classes
 testUtils.testWithUtils("onModelChanged", "", false, function(methods, classes, subject, invoker) {
     // arrange
     subject.__woBag = {
-        "wo.view.modelRoutedEvents": {}
+        "wipeout.base.view.modelRoutedEvents": {}
     };
     var disposable = {};
     var newVal = new wipeout.base.routedEventModel();
-    subject.disposeOf = methods.method([subject.__woBag["wo.view.modelRoutedEvents"]]);
+    subject.disposeOf = methods.method([subject.__woBag["wipeout.base.view.modelRoutedEvents"]]);
     subject.registerDisposable = methods.customMethod(function() {
         strictEqual(arguments[0].constructor, Function);
         return disposable;
@@ -268,7 +268,7 @@ testUtils.testWithUtils("onModelChanged", "", false, function(methods, classes, 
     invoker(null, newVal);
     
     // assert   
-    strictEqual(subject.__woBag["wo.view.modelRoutedEvents"], disposable);
+    strictEqual(subject.__woBag["wipeout.base.view.modelRoutedEvents"], disposable);
 });
 
 testUtils.testWithUtils("onModelRoutedEvent", "", false, function(methods, classes, subject, invoker) {

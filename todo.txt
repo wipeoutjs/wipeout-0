@@ -22,3 +22,8 @@ changes:    woInvisible -> shareParentScope
             _initialized -> __woBag.initialized
             nodes -> .__woBag.nodes
             getParent/getParents -> changed the way they work with shareParentScope
+            
+IMINENT ->  add unit tests for bindings
+            add move/delete element support (MutationObserver)
+            re do MutationObserver polyfill,
+            go through TODOs

@@ -5,6 +5,51 @@ module("wipeout.base.visual", {
     }
 });
 
+//TODO: move to render tests
+/*testUtils.testWithUtils("unTemplate", null, false, function(methods, classes, subject, invoker) {
+    // arrange    
+    subject.templateItems = {hello: true};
+    classes.mock("ko.cleanNode", function() {
+        strictEqual(arguments[0], subject.__woBag.nodes[0]);
+    }, 2); // once during emptyNode, once during cleanNode
+    
+    $("#qunit-fixture").html("<div id=\"theElement\"><span id=\"theOtherElement\"></span></div>");
+    subject.__woBag = {
+        rootHtmlElement: $("#theElement")[0],
+        nodes: [$("#theOtherElement")[0]]
+    };
+    
+    // act
+    invoker();
+    
+    // assert
+    strictEqual(subject.templateItems.hello, undefined);
+    ok(!subject.__woBag.rootHtmlElement.innerHTML);
+});*/
+
+/*
+
+testUtils.testWithUtils("unRender", null, false, function(methods, classes, subject, invoker) {
+    // arrange
+    $("#qunit-fixture").html("<div id=\"theElement\">some text</div>");
+    subject.onUnrender = methods.method();
+    subject.unTemplate = methods.method();
+        
+    var element = $("#theElement")[0];
+    subject.__woBag = {
+        rootHtmlElement: element
+    };
+    
+    ko.utils.domData.set(subject.__woBag.rootHtmlElement, wipeout.bindings.wipeout.utils.wipeoutKey, {});    
+    
+    // act
+    invoker();
+    
+    // assert
+    ok(!subject.__woBag.rootHtmlElement);
+    ok(!ko.utils.domData.set(element, wipeout.bindings.wipeout.utils.wipeoutKey));
+});*/
+
 var visual = wipeout.base.visual;
 
 testUtils.testWithUtils("constructor", null, false, function(methods, classes, subject, invoker) {
@@ -92,55 +137,6 @@ testUtils.testWithUtils("registerDisposable", "ids and dispose functions", false
     strictEqual(i1 + 1, i2);
 });
 
-testUtils.testWithUtils("unTemplate", null, false, function(methods, classes, subject, invoker) {
-    // arrange    
-    subject.templateItems = {hello: true};
-    classes.mock("ko.cleanNode", function() {
-        strictEqual(arguments[0], subject.__woBag.nodes[0]);
-    }, 2); // once during emptyNode, once during cleanNode
-    
-    $("#qunit-fixture").html("<div id=\"theElement\"><span id=\"theOtherElement\"></span></div>");
-    subject.__woBag = {
-        rootHtmlElement: $("#theElement")[0],
-        nodes: [$("#theOtherElement")[0]]
-    };
-    
-    // act
-    invoker();
-    
-    // assert
-    strictEqual(subject.templateItems.hello, undefined);
-    ok(!subject.__woBag.rootHtmlElement.innerHTML);
-});
-
-/*
-            if(this.__woBag.rootHtmlElement) {
-                if (this.__woBag.rootHtmlElement.nodeType === 1) {
-                    return [this.__woBag.rootHtmlElement];
-                } else if (wipeout.utils.ko.virtualElements.isVirtual(this.__woBag.rootHtmlElement)) {
-                    var output = [];
-                    var current = this.__woBag.rootHtmlElement;
-                    var closing = wipeout.utils.ko.virtualElements.closingTag(current);
-                    while (current && current !== closing) {
-                        output.push(current);
-                        current = current.nextSibling;
-                    }
-                    
-                    // no closing tag
-                    if(!current) {
-                        if(!wipeout.settings.suppressWarnings)
-                            console.error("The closing tag for " + this.__woBag.rootHtmlElement + " could not be found");
-                        return [];
-                    }
-                    
-                    output.push(current);
-                    return output;
-                }
-            }
-            
-            // visual has not been redered
-            return [];*/
-
 testUtils.testWithUtils("entireViewModelHtml", "no html", false, function(methods, classes, subject, invoker) {
     // arrange    
     subject.__woBag = {};
@@ -186,30 +182,8 @@ testUtils.testWithUtils("entireViewModelHtml", "virtual element", false, functio
     }
 });
 
-testUtils.testWithUtils("unRender", null, false, function(methods, classes, subject, invoker) {
-    // arrange
-    $("#qunit-fixture").html("<div id=\"theElement\">some text</div>");
-    subject.onUnrender = methods.method();
-    subject.unTemplate = methods.method();
-        
-    var element = $("#theElement")[0];
-    subject.__woBag = {
-        rootHtmlElement: element
-    };
-    
-    ko.utils.domData.set(subject.__woBag.rootHtmlElement, wipeout.bindings.wipeout.utils.wipeoutKey, {});    
-    
-    // act
-    invoker();
-    
-    // assert
-    ok(!subject.__woBag.rootHtmlElement);
-    ok(!ko.utils.domData.set(element, wipeout.bindings.wipeout.utils.wipeoutKey));
-});
-
 testUtils.testWithUtils("dispose", null, false, function(methods, classes, subject, invoker) {
     // arrange
-    subject.unRender = methods.method();
     subject.c1 = ko.computed(function() { return {}; });
     subject.c1.dispose = methods.method();
     subject.c2 = ko.computed(function() { return {}; });
@@ -219,7 +193,10 @@ testUtils.testWithUtils("dispose", null, false, function(methods, classes, subje
         routedEventSubscriptions: [
             {dispose: methods.method()},
             {dispose: methods.method()}
-        ]
+        ],
+        disposed: {
+            trigger: methods.method()
+        }
     };
     
     // act

@@ -5,7 +5,7 @@ Class("wipeout.base.routedEventModel", function () {
     var routedEventModel = wipeout.base.object.extend(function () {
         ///<summary>The base class for models if they wish to invoke routed events on their viewModel</summary>
         
-        this.__triggerRoutedEventOnVM = new wo.event();
+        this.__triggerRoutedEventOnVM = new wipeout.base.event();
     }, "routedEventModel");
         
     routedEventModel.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {

@@ -88,7 +88,7 @@ $.extend(testUtils, (function() {
         
         var methods = new methodMock();
         var classes = new classMock();
-        test(method + ", " + description, function() {
+        test(method + (description ? (", " + description) : ""), function() {
             try {
                 var subject = {};                
                 var testSubject = testUtils.currentModule;

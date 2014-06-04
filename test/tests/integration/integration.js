@@ -287,7 +287,7 @@ test("un render", function() {
     });
     
     // act
-    application.unRender();
+    wo.domData.get($application[0], wipeout.bindings.bindingBase.dataKey)[0].unRender();
     
     // assert
     wo.obj.enumerate(ctrls, function(item) {

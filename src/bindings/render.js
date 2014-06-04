@@ -16,8 +16,12 @@ Binding("render", true, function () {
         constructor: function(element, value, allBindingsAccessor, bindingContext) {  
             this._super(element);
             
-            ko.bindingHandlers.template.init(this.element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);        
+            if(wipeout.utils.domData.get(this.element, wipeout.bindings.render.dataKey))
+                throw "There is already a binding on this element for rendering content";
             
+            wipeout.utils.domData.set(this.element, wipeout.bindings.render.dataKey, this);
+            
+            this.initReturnValue = ko.bindingHandlers.template.init(this.element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);            
             this.allBindingsAccessor = allBindingsAccessor;
             this.bindingContext = bindingContext;
             
@@ -38,7 +42,7 @@ Binding("render", true, function () {
         moved: function(oldParentElement, newParentElement) {
             this._super(oldParentElement, newParentElement);
             
-            if(!wipeout.settings.suppressWarnings) {
+            if(!wipeout.settings.suppressWarnings && this.value) {
                 for (var i = 0, ii = this.value.__woBag.nodes.length; i < ii; i++) {
                     if(wipeout.utils.ko.virtualElements.parentElement(this.value.__woBag.nodes[i]) !== this.value.__woBag.rootHtmlElement) {
                         console.warn("Only part of this view model was moved. Un moved nodes will be deleted or orphaned with their bindings cleared when this view model is re-rendered or disposed.");
@@ -47,12 +51,16 @@ Binding("render", true, function () {
                 }
             }
         },
-        dispose: function() { 
-            this._super();
-            if(this.subscribed)
-                this.subscribed.dispose();
+        dispose: function() {
             
             this.unRender();
+            
+            this._super();     
+            
+            if(this.subscribed) {
+                this.subscribed.dispose();
+                delete this.subscribed;
+            }            
         },
         reRender: function(value) {
             this.unRender();
@@ -60,14 +68,22 @@ Binding("render", true, function () {
         },
         unRender: function() {
             
-            if (this.value) {
-                if(this.value instanceof wipeout.base.visual)
-                    this.value.unRender();
-
-                if(this.templateChangedSubscription)
-                    this.value.disposeOf(this.templateChangedSubscription);
-            }
+            if(!this.value) return;
             
+            this.unTemplate();
+            this.value.onUnrender();
+            if(this.value.__woBag.rootHtmlElement) {
+                // disassociate the visual from its root element and empty the root element
+                ko.utils.domData.set(this.value.__woBag.rootHtmlElement, wipeout.bindings.wipeout.utils.wipeoutKey, undefined); 
+                delete this.value.__woBag.rootHtmlElement;
+            }
+
+            if(this.templateChangedSubscription)
+                this.value.disposeOf(this.templateChangedSubscription);
+
+            this.value.disposeOf(this.onDisposeEventSubscription);
+            
+            delete this.onDisposeEventSubscription;
             delete this.value;
             delete this.templateChangedSubscription;
         },
@@ -87,25 +103,51 @@ Binding("render", true, function () {
             ko.utils.domData.set(this.element, wipeout.bindings.wipeout.utils.wipeoutKey, this.value);
             this.value.__woBag.rootHtmlElement = this.element;
             
-            var subscription = this.value.templateId.subscribe(this.onTemplateChanged, this);
-            this.templateChangedSubscription = this.value.registerDisposable(function() { subscription.dispose(); });
+            var subscription1 = this.value.__woBag.disposed.register(this.unRender, this);
+            this.onDisposeEventSubscription = this.value.registerDisposable(function() { subscription1.dispose(); });
+            
+            var subscription2 = this.value.templateId.subscribe(this.onTemplateChanged, this);
+            this.templateChangedSubscription = this.value.registerDisposable(function() { subscription2.dispose(); });
             this.onTemplateChanged(this.value.templateId.peek());
+        },
+        unTemplate: function() {
+            ///<summary>Removes and disposes (if necessary) of all of the children of the visual</summary>
+                        
+            if(!this.value) return;
+            
+            // delete all template items
+            enumerate(this.value.templateItems, function(item, i) {            
+                delete this.value.templateItems[i];
+            }, this);
+            
+            // clean up all child nodes
+            var child = ko.virtualElements.firstChild(this.element);
+            while (child) {
+                wipeout.utils.html.cleanNode(child);
+                var oc = child;
+                child = ko.virtualElements.nextSibling(child);
+                oc.parentElement.removeChild(oc);
+            }
+                
+            // delete any nodes which have been removed from the template
+            if(!wipeout.settings.orphanMovedNodesOnTemplate) {
+                enumerate(this.value.__woBag.nodes, function(node) {                    
+                    if(node.parentElement)
+                        node.parentElement.removeChild(node);
+                });
+            }
+            
+            // clear references to html nodes in view
+            this.value.__woBag.nodes.length = 0;
         },
         onTemplateChanged: function(newVal) {
             var _this = this;
             function reRender() {
-                // a more recent request has been sent. Cancel this one
                 if(_this.value && _this.value.templateId.peek() !== newVal) return;
-                
-                ko.bindingHandlers.template.update(_this.element, wipeout.bindings.render.createValueAccessor(_this.value), _this.allBindingsAccessor, null, _this.bindingContext);
-
-                var bindings = _this.allBindingsAccessor();
-                if(bindings["wipeout-type"])
-                    wipeout.bindings["wipeout-type"].utils.comment(_this.element, bindings["wipeout-type"]);
+                _this.doRendering();
             }
 
-            if(this.value)
-                this.value.unTemplate();
+            this.unTemplate();
 
             if(newVal && wipeout.settings.asynchronousTemplates) {
                 ko.virtualElements.prepend(this.element, wipeout.utils.html.createTemplatePlaceholder(this.value))
@@ -114,12 +156,22 @@ Binding("render", true, function () {
                 reRender();
             }
         },
+        doRendering: function() {
+
+            ko.bindingHandlers.template.update(this.element, wipeout.bindings.render.createValueAccessor(this.value), this.allBindingsAccessor, null, this.bindingContext);
+
+            var bindings = this.allBindingsAccessor();
+            if(bindings["wipeout-type"])
+                wipeout.bindings["wipeout-type"].utils.comment(this.element, bindings["wipeout-type"]);
+        },
         statics: {
+            dataKey: "wipeout.bindings.render",
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
                 ///<summary>Initialize the render binding</summary>       
                 
                 var binding = new wipeout.bindings.render(element, valueAccessor(), allBindingsAccessor, bindingContext);                
                 binding.render(wipeout.utils.ko.peek(valueAccessor()));
+                return binding.initReturnValue;
             },
             createValueAccessor: function(value) {
                 ///<summary>Create a value accessor for the knockout template binding.</summary>

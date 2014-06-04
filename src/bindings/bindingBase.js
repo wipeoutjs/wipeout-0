@@ -42,6 +42,7 @@ Class("wipeout.bindings.bindingBase", function () {
             if(!element)
                 throw "ArgumnetNullException";
             
+            this.initReturnValue = {};
             this.element = element;
             var bindings = wipeout.utils.domData.get(this.element, wipeout.bindings.bindingBase.dataKey);
             if(!bindings)
@@ -51,6 +52,7 @@ Class("wipeout.bindings.bindingBase", function () {
             
             //TODO: if parentNode is null?
             this.parentElement = this.getParentElement();
+            this.moved(null, this.parentElement);
         },
         getParentElement: function() {
             // IE sometimes has null for parent element of a comment
@@ -59,9 +61,12 @@ Class("wipeout.bindings.bindingBase", function () {
         dispose: function() {
             this._super();
             
-            // incase binding has been disposed of already
-            if(this.element)
-                wipeout.bindings.bindingBase.disposeOfAncestors(this.element);
+            this.moved(this.parentElement, null);
+            
+            var i;
+            var bindings = wipeout.utils.domData.get(this.element, wipeout.bindings.bindingBase.dataKey);
+            while((i = bindings.indexOf(this)) !== -1)
+                bindings.splice(i, 1);
             
             delete this.element;
             delete this.parentElement;
@@ -75,28 +80,8 @@ Class("wipeout.bindings.bindingBase", function () {
         moved: function(oldParentElement, newParentElement) {
         },
         statics: {
-            dataKey: "wipeout.bindings.bindingBase",
-            disposeOfAncestors: function(element) {
-                var children = [], child;
-                if(child = ko.virtualElements.firstChild(element))
-                    wipeout.bindings.bindingBase.disposeOrRecurse(child);
-                
-                while (child && (child = ko.virtualElements.nextSibling(child)))
-                    wipeout.bindings.bindingBase.disposeOrRecurse(child);
-                    
-            },
-            disposeOrRecurse: function(element) {
-                var bindings = wipeout.utils.domData.get(element, wipeout.bindings.bindingBase.dataKey);
-                if(bindings) {
-                    enumerate(bindings, function(binding) {
-                        binding.dispose();
-                    });
-                    
-                    wipeout.utils.domData.clear(element, wipeout.bindings.bindingBase.dataKey);
-                } else {
-                    wipeout.bindings.bindingBase.disposeOfAncestors(element);
-                }
-            }
+            dataKey: "wipeout.bindings.bindingBase"
+            //TODO: can I put in a generic init function?
         }
     }, "bindingBase");
 });
