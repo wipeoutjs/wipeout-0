@@ -3,11 +3,8 @@ Binding("wipeout", true, function () {
     
     return wipeout.bindings.render.extend({
         constructor: function(element, type, allBindingsAccessor, viewModel, bindingContext) {  
-        
-            if(wipeout.utils.html.getViewModel(element))
-                throw "This element is already bound to another model";
 
-            if(!type || !(type instanceof Function))
+            if(!(type instanceof Function))
                 throw "Invalid view type";
 
             this.renderedView = new type();
