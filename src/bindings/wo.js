@@ -3,21 +3,20 @@ Binding("wo", true, function () {
     
     return wipeout.bindings.render.extend({
         constructor: function(element, value, allBindingsAccessor, bindingContext) {
-            var vals = wipeout.template.engine.scriptCache[value]();
-            var value = new vals.vmConstructor();
-            this._super(element, value, allBindingsAccessor, bindingContext);
-            value.__woBag.createdByWipeout = true;
-            vals.initialize(value, bindingContext);
+            var view = new value.type();
+            this._super(element, view, allBindingsAccessor, bindingContext);
+            view.__woBag.createdByWipeout = true;
+            view.initialize(wipeout.template.engine.xmlCache[value.initXml], bindingContext);
             
-            if(vals.id) {
+            if(value.id) {
                 var current = bindingContext;
                 while(current.$data.shareParentScope)
                     current = current.$parentContext;
 
-                current.$data.templateItems[vals.id] = value;
+                current.$data.templateItems[value.id] = view;
             }
             
-            this.render(value);
+            this.render(view);
             this.render = function() { throw "Cannont render this binding a second time, use the render binding instead"; };
         },
         dispose: function() {

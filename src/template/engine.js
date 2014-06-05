@@ -66,22 +66,16 @@ Class("wipeout.template.engine", function () {
                     engine.wipeoutRewrite(xmlElement.childNodes[i], rewriterCallback);
         } else {
             var newScriptId = engine.newScriptId();
-            engine.scriptCache[newScriptId] = function() {
-                return {
-                    vmConstructor: wipeout.utils.obj.getObject(xmlElement.nodeName),
-                    id: engine.getId(xmlElement),
-                    initialize: function(viewModel, bindingContext) {
-                        if(!(viewModel instanceof wipeout.base.view)) throw "Only wo.view elements can be created in this way";
-                        viewModel.initialize(xmlElement, bindingContext);
-                    }
-                };
-            };
+            engine.xmlCache[newScriptId] = xmlElement;
             
             var tags = "<!-- ko";
             if(DEBUG)
                 tags += " wipeout-type: '" + xmlElement.nodeName + "',";
             
-            tags += " wo: " + newScriptId + " --><!-- /ko -->";
+            var id = engine.getId(xmlElement);
+            if(id)
+                id = "'" + id + "'";
+            tags += " wo: { type: " + xmlElement.nodeName + ", id: " + id + ", initXml: '" + newScriptId + "'} --><!-- /ko -->";
             
             var nodes = new DOMParser().parseFromString("<root>" + rewriterCallback(tags) + "</root>", "application/xml").documentElement;
             while(nodes.childNodes.length) {
@@ -184,6 +178,7 @@ Class("wipeout.template.engine", function () {
         };
     })();
     
+    engine.xmlCache = {};
     engine.scriptCache = {};
     engine.openCodeTag = "<!-- wipeout_code: {"
     engine.closeCodeTag = "} -->";

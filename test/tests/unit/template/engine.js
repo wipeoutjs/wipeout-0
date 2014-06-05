@@ -147,42 +147,6 @@ testUtils.testWithUtils("wipeoutRewrite", "html only", true, function(methods, c
 
 testUtils.testWithUtils("wipeoutRewrite", "custom tag", true, function(methods, classes, subject, invoker) {
     // arrange
-    var data = "<div><my.tag/></div>";
-    var element = new DOMParser().parseFromString(data, "application/xml").documentElement;
-    var rewriter = methods.customMethod(function() {
-        return arguments[0];
-    });
-    
-    // act    
-    invoker(element, rewriter);
-    
-    //assert
-    ok(/^<div><!-- ko wipeout-type: 'my.tag', wo: [0-9]+ --><!-- \/ko --><\/div>$/.test(new XMLSerializer().serializeToString(element)));
-});
-
-testUtils.testWithUtils("wipeoutRewrite", "render script logic, invalid vm type", true, function(methods, classes, subject, invoker) {
-    // arrange
-    window.my = {
-        tag: function() {}
-    };
-    var element = new DOMParser().parseFromString("<div><my.tag/></div>", "application/xml").documentElement;
-    invoker(element, function(){ return arguments[0]; });
-    var data = new XMLSerializer().serializeToString(element).substring("<div><!-- ko wipeout-type: 'my.tag', wo: ".length);
-    data = data.substring(0, data.length - " --><!-- /ko --></div>".length);
-    
-    ok(engine.scriptCache[data]);
-    
-    // act   
-    // assert
-    throws(function() {
-        engine.scriptCache[data](bindingContext);
-    });
-    
-    delete window.my;
-});
-
-testUtils.testWithUtils("wipeoutRewrite", "render script logic", true, function(methods, classes, subject, invoker) {
-    // arrange
     window.my = {
         tag: wo.view.extend(function() { 
             this._super();
@@ -190,26 +154,20 @@ testUtils.testWithUtils("wipeoutRewrite", "render script logic", true, function(
         })
     };
     
-    var id = {};
     var bindingContext = {};
-    var element = new DOMParser().parseFromString("<div><my.tag/></div>", "application/xml").documentElement;
+    var element = new DOMParser().parseFromString("<div><my.tag id='hello'/></div>", "application/xml").documentElement;
     var configTag = element.firstElementChild;
+        
+    // act    
     invoker(element, function(){ return arguments[0]; });
     var data = new XMLSerializer().serializeToString(element).substring("<div><!-- ko wipeout-type: 'my.tag', wo: ".length);
-    data = data.substring(0, data.length - " --><!-- /ko --></div>".length);
-    classes.mock("wipeout.template.engine.getId", function() {
-        strictEqual(arguments[0], configTag);
-        return id;
-    });
-    
-    ok(engine.scriptCache[data]);
-    
-    // act    
-    var actual = engine.scriptCache[data]();
+    data = new Function("return " + data.substring(0, data.length - " --><!-- /ko --></div>".length))();
     
     // assert
-    strictEqual(actual.vmConstructor, window.my.tag);
-    strictEqual(actual.id, id);
+    strictEqual(engine.xmlCache[data.initXml].nodeName, "my.tag");
+    strictEqual(engine.xmlCache[data.initXml].id, "hello");
+    strictEqual(data.type, window.my.tag);
+    strictEqual(data.id, "hello");
     
     delete window.my;
 });  
