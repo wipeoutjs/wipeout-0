@@ -165,7 +165,7 @@ testUtils.testWithUtils("wipeoutRewrite", "custom tag", true, function(methods, 
     
     // assert
     strictEqual(engine.xmlCache[data.initXml].nodeName, "my.tag");
-    strictEqual(engine.xmlCache[data.initXml].id, "hello");
+    strictEqual(engine.xmlCache[data.initXml].getAttribute("id"), "hello");
     strictEqual(data.type, window.my.tag);
     strictEqual(data.id, "hello");
     

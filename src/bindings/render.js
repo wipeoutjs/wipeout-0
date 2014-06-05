@@ -77,7 +77,7 @@ Binding("render", true, function () {
                 wipeout.utils.html.cleanNode(child);
                 var oc = child;
                 child = ko.virtualElements.nextSibling(child);
-                oc.parentElement.removeChild(oc);
+                (oc.parentElement || oc.parentNode).removeChild(oc);
             }
             
             // clear references to html nodes in view
