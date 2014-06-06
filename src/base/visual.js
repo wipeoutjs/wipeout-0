@@ -229,11 +229,12 @@ Class("wipeout.base.visual", function () {
 
             return false;
         },
-        registerRoutedEvent: function(routedEvent, callback, callbackContext /* optional */) {
+        registerRoutedEvent: function(routedEvent, callback, callbackContext, priority) {
             ///<summary>Register for a routed event</summary>   
             ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
             ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
             ///<param name="callbackContext" type="Any" optional="true">The context "this" to use within the callback</param>
+            ///<param name="priority" type="Number" optional="true">The event priorty. Event priority does not affect event bubbling order</param>
             ///<returns type="wo.eventRegistration">A dispose function</returns>         
 
             var rev;
@@ -249,7 +250,7 @@ Class("wipeout.base.visual", function () {
                 this.__woBag.routedEventSubscriptions.push(rev);
             }
 
-            return rev.event.register(callback, callbackContext);
+            return rev.event.register(callback, callbackContext, priority);
         },
         triggerRoutedEvent: function(routedEvent, eventArgs) {
             ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual. Overrides wo.object.triggerRoutedEvent</summary>        

@@ -9,6 +9,7 @@ Class("wipeout.base.eventRegistration", function () {
         ///<param name="callback" type="Any" optional="false">The event logic</param>
         ///<param name="context" type="Any" optional="true">The context of the event logic</param>
         ///<param name="dispose" type="Function" optional="false">A dispose function</param>
+        ///<param name="priority" type="Number">The event priorty. The lower the priority number the sooner the callback will be triggered.</param>
         this._super(dispose);    
                                                           
         this.callback = callback;
@@ -61,17 +62,22 @@ Class("wipeout.base.event", function () {
         this._registrations.length = 0;
     }
     
-    event.prototype.register = function(callback, context /* optional */) {
+    event.prototype.register = function(callback, context, priority) {
         ///<summary>Subscribe to an event</summary>
         ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
         ///<param name="context" type="Any" optional="true">The context "this" to use within the calback</param>
+        ///<param name="priority" type="Number" optional="true">The event priorty. The lower the priority number the sooner the callback will be triggered. The default is 0</param>
         ///<returns type="wo.eventRegistration">An object with the details of the registration, including a dispose() function</returns>
         
         if(!(callback instanceof Function))
             throw "Invalid event callback";
         
+        if(priority && !(priority instanceof Number))
+            throw "Invalid event priority";
+        
         var reg = this._registrations;
         var evnt = { 
+            priority: priority || 0,
             callback: callback, 
             context: context == null ? window : context,
             dispose: function() {
@@ -81,9 +87,17 @@ Class("wipeout.base.event", function () {
             }
         };
         
-        this._registrations.push(evnt);
+        for(var i = 0, ii = this._registrations.length; i < ii; i++) {
+            if(evnt.priority < this._registrations[i].priority) {
+                this._registrations.splice(i, 0, evnt);
+                break;
+            }
+        }
         
-        return new wipeout.base.eventRegistration(evnt.callback, evnt.context, evnt.dispose);
+        if(i === ii)
+            this._registrations.push(evnt);
+        
+        return new wipeout.base.eventRegistration(evnt.callback, evnt.context, evnt.dispose, evnt.priority);
     };
     
     return event;

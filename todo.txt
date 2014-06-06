@@ -11,6 +11,11 @@ workaround for no Mutation events
 document custom filters on find
 remove freeze
 ParentElement
+document event priority
+
+$model filter on find
+
+dataContext
 
 isStartComment() and isEndCOmment() in ko
 document user settings
@@ -22,6 +27,9 @@ changes:    woInvisible -> shareParentScope
             _initialized -> __woBag.initialized
             nodes -> .__woBag.nodes
             getParent/getParents -> changed the way they work with shareParentScope
+            find
+            move
+            event priority
             
 IMINENT ->  add move/delete element support (MutationObserver)
             re do MutationObserver polyfill,
