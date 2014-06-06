@@ -26,21 +26,23 @@ Binding("wo", true, function () {
             value.dispose();
         },
         removeFromParentTemplateItems: function() {
-            //TODO: use getParent function
-            if (this.parentElement) {
-                var parent = wipeout.utils.html.getViewModel(this.parentElement);
-                while (parent && parent.shareParentScope) {
-                    parent = parent.getParent();
-                }
-                
-                if(parent)
-                    delete parent.templateItems[this.value.id];
+            if (this.parentElement && this.value.id) {
+                wipeout.bindings.wo.removeFromParentTemplateItems(this.parentElement, this.value.id);
             }
         },
         statics: {
             init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
                 ///<summary>Initialize the render binding</summary>                
                 return new wipeout.bindings.wo(element, valueAccessor(), allBindingsAccessor, bindingContext).bindingMeta;
+            },
+            removeFromParentTemplateItems: function(parentElement, id) {
+                var parent = wipeout.utils.html.getViewModel(parentElement);
+                while (parent && parent.shareParentScope) {
+                    parent = parent.getParent();
+                }
+                
+                if(parent)
+                    delete parent.templateItems[id];
             }
         },
         moved: function(oldParentElement, newParentElement) {
@@ -48,13 +50,7 @@ Binding("wo", true, function () {
             
             if (this.value && this.value.id != null) {
                 if(oldParentElement) {
-                    var oldVm = wipeout.utils.html.getViewModel(oldParentElement);
-                    while (oldVm && oldVm.shareParentScope) {
-                        oldVm = oldVm.getParent();
-                    }
-
-                    if(oldVm)
-                        delete oldVm.templateItems[this.value.id];
+                    wipeout.bindings.wo.removeFromParentTemplateItems(oldParentElement, this.value.id);
                 }
                 
                 if(newParentElement) {                
