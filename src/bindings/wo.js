@@ -44,25 +44,6 @@ Binding("wo", true, function () {
                 if(parent)
                     delete parent.templateItems[id];
             }
-        },
-        moved: function(oldParentElement, newParentElement) {
-            this._super(oldParentElement, newParentElement);
-            
-            if (this.value && this.value.id != null) {
-                if(oldParentElement) {
-                    wipeout.bindings.wo.removeFromParentTemplateItems(oldParentElement, this.value.id);
-                }
-                
-                if(newParentElement) {                
-                    var newVm = wipeout.utils.html.getViewModel(newParentElement);
-                    while (newVm && newVm.shareParentScope) {
-                        newVm = newVm.getParent();
-                    }
-
-                    if(newVm)
-                        newVm.templateItems[this.value.id] = this.value;
-                }
-            }
         }
     });
 });

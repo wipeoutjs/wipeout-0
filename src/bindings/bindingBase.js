@@ -90,8 +90,43 @@ Class("wipeout.bindings.bindingBase", function () {
         moved: function(oldParentElement, newParentElement) {
         },
         statics: {
+            getBindings: function(node, bindingType) {
+                if(bindingType && !(bindingType instanceof Function)) throw "Invalid binding type";
+                
+                var stop = false;
+                var bindings = [];
+                enumerate(wipeout.utils.domData.get(node, wipeout.bindings.bindingBase.dataKey), function(binding) {
+                    if(!bindingType || binding instanceof bindingType) {
+                        bindings.push(binding);
+                        stop |= binding.bindingMeta.controlsDescendantBindings;
+                    }
+                });
+                
+                if(!stop) {
+                    wipeout.utils.ko.virtualElements.enumerateOverChildren(node, function(child) {
+                        enumerate(wipeout.bindings.bindingBase.getBindings(node, bindingType), function(binding) {
+                            bindings.push(binding);
+                        });
+                    });
+                }
+                
+                return bindings;                
+            },
             dataKey: "wipeout.bindings.bindingBase"
             //TODO: can I put in a generic init function?
         }
     }, "bindingBase");
 });
+
+
+
+
+
+
+
+
+
+
+
+
+

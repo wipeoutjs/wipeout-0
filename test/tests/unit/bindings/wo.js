@@ -105,38 +105,3 @@ testUtils.testWithUtils("init", "", true, function(methods, classes, subject, in
     // assert
     strictEqual(actual, meta);
 });
-
-testUtils.testWithUtils("moved", "", false, function(methods, classes, subject, invoker) {
-    // arrange
-    var actualParent = {
-        templateItems:{}
-    };
-    var parent = {
-        shareParentScope: true,
-        getParent: function() {
-            return actualParent;
-        }
-    };
-    var oldP = {}, newP = {};
-    subject._super = methods.method([oldP, newP]);
-    subject.value = {
-        id: "KKLKBKJBJKB"
-    };
-    
-    classes.mock("wipeout.bindings.wo.removeFromParentTemplateItems", function() {
-        strictEqual(arguments[0], oldP);
-        strictEqual(arguments[1], subject.value.id);
-    }, 1);
-    
-    classes.mock("wipeout.utils.html.getViewModel", function() {
-        strictEqual(arguments[0], newP);
-        return parent;
-    }, 1);
-    
-    
-    // act
-    var actual = invoker(oldP, newP);
-    
-    // assert
-    strictEqual(actualParent.templateItems[subject.value.id], subject.value);
-});

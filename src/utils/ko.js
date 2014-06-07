@@ -84,6 +84,13 @@ Class("wipeout.utils.ko", function () {
             ///<param name="node" type="HTMLNode">The node to test</param>
             ///<returns type="Boolean"></returns>
             return node.nodeType === 8 && trim(node.nodeValue) === "/ko";
+        },
+        enumerateOverChildren: function(node, callback) {
+            node = ko.virtualElements.firstChild(node);
+            while (node) {
+                callback(node);
+                child = ko.virtualElements.nextSibling(node);
+            }
         }
     };
     
