@@ -253,7 +253,6 @@ Class("wipeout.utils.html", function () {
         return null;
     };
     
-    //TODO: move to settings
     var createTemplatePlaceholder = function(forViewModel) {
         ///<summary>Create a html node so serve as a temporary template while the template loads asynchronously</summary>
         ///<param name="forViewModel" type="wo.view">The view to which this temp template will be applied. May be null</param>

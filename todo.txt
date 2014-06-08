@@ -1,11 +1,8 @@
 
 Debug code
 document async templates
-event priority
 trim template ids
 document move
-test dom node removed cross browser
-todo: unTemplate, are all ko bindings disposed of properly?
 
 workaround for no Mutation events
 document custom filters on find
@@ -31,6 +28,3 @@ changes:    woInvisible -> shareParentScope
             move
             event priority
             
-IMINENT ->  add move/delete element support (MutationObserver)
-            re do MutationObserver polyfill,
-            go through TODOs

@@ -134,7 +134,6 @@ Class("wipeout.template.engine", function () {
         ///<returns type="Array">An array of html nodes to insert</returns>
         
         // if data is not a view, cannot render.
-        //TODO: default to native template engine
         if (!(bindingContext.$data instanceof wipeout.base.view))
             return [];
         

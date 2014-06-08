@@ -30,11 +30,6 @@ Class("wipeout.bindings.bindingBase", function () {
             //TODO: if parentNode is null?
             this.parentElement = this.getParentElement();
             this.moved(null, this.parentElement);
-            
-            //TODO: strategy for this
-            //ko.utils.domNodeDisposal.addDisposeCallback(this.element, function() {
-                
-            //});
         },
         getParentElement: function() {
             // IE sometimes has null for parent element of a comment
