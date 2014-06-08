@@ -2,6 +2,11 @@
 
 Class("wipeout.utils.ko", function () {
     
+    // copied from knockout lib
+    var commentNodesHaveTextProperty = document && document.createComment("test").text === "<!--test-->";
+    var startCommentRegex = commentNodesHaveTextProperty ? /^<!--\s*ko(?:\s+(.+\s*\:[\s\S]*))?\s*-->$/ : /^\s*ko(?:\s+(.+\s*\:[\s\S]*))?\s*$/;
+    var endCommentRegex =   commentNodesHaveTextProperty ? /^<!--\s*\/ko\s*-->$/ : /^\s*\/ko\s*$/;
+    
     var _ko = function() { };
     
     _ko.version = function() {
@@ -72,18 +77,19 @@ Class("wipeout.utils.ko", function () {
             
             return node.parentNode;
         },
-        //TODO: this
+        // copied from knockout
         isVirtual: function(node) {
             ///<summary>Whether a html node is a knockout virtual element or not</summary>
             ///<param name="node" type="HTMLNode">The node to test</param>
             ///<returns type="Boolean"></returns>
-            return node.nodeType === 8 && node.nodeValue.replace(/^\s+/,'').indexOf('ko') === 0;
+            return (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(startCommentRegex);
         },
+        // copied from knockout
         isVirtualClosing: function(node) {
             ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
             ///<param name="node" type="HTMLNode">The node to test</param>
             ///<returns type="Boolean"></returns>
-            return node.nodeType === 8 && trim(node.nodeValue) === "/ko";
+            return (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(endCommentRegex);
         },
         enumerateOverChildren: function(node, callback) {
             node = ko.virtualElements.firstChild(node);
