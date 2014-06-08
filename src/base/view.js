@@ -193,6 +193,7 @@ Class("wipeout.base.view", function () {
             }
             
             try {
+                //TODO: can I get the view from somewhere else?
                 bindingContext.__$woCurrent = this;
                 wipeout.template.engine.createJavaScriptEvaluatorFunction(
         "(function() {\
