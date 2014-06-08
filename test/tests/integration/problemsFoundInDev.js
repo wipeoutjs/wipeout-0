@@ -39,7 +39,7 @@ test("cannot render binding twice", function() {
     delete window.views;
     ko.cleanNode($application[0]);
     stop();
-    wo.move(function() {
+    wo.html(function() {
         $fixture.html("");
         $fixture = null;
         $application = null;

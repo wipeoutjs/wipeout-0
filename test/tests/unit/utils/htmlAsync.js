@@ -1,4 +1,4 @@
-module("wipeout.utils.moveAsync", {
+module("wipeout.utils.htmlAsync", {
     setup: function() {
     },
     teardown: function() {
@@ -33,7 +33,7 @@ testUtils.testWithUtils("integration test", "", false, function(methods, classes
     // act
     for(var i = 0; i < numberOfTimes; i++) {
         setTimeout(function() {
-            wipeout.utils.moveAsync(function(callback) {
+            wipeout.utils.htmlAsync(function(callback) {
                 setTimeout(function() {
                     callback();
                 }, Math.floor(Math.random() * time)); // task takes up to 2 seconds to complete

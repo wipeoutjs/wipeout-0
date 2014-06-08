@@ -1,5 +1,5 @@
 
-Class("wipeout.utils.moveAsync", function () { 
+Class("wipeout.utils.htmlAsync", function () { 
     
     var asyncHandler = (function() {
         
@@ -35,7 +35,7 @@ Class("wipeout.utils.moveAsync", function () {
                     console.error("Cleanup callback for async move method was not called. Cleanup has been automatically called, which may cause undesired behaviour.");
                 
                 hf();
-            }, wipeout.settings.moveAsyncTimeout > 0 ? wipeout.settings.moveAsyncTimeout : 10000);
+            }, wipeout.settings.htmlAsyncTimeout > 0 ? wipeout.settings.htmlAsyncTimeout : 10000);
         }
         
         function handleFinished() { 

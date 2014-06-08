@@ -580,7 +580,7 @@ test("dispose", function() {
 
 test("remove view model from dom", function() {
     disposeTest(function() {  
-        wo.move(function() {
+        wo.html(function() {
             $("#qunit-fixture").html("");
         });
     });  

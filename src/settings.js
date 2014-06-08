@@ -11,7 +11,7 @@ Class("wipeout.settings", function() {
 
     settings.suppressWarnings = false;
     settings.asynchronousTemplates = true;
-    settings.moveAsyncTimeout = 10000;
+    settings.htmlAsyncTimeout = 10000;
     
     return settings;
 });

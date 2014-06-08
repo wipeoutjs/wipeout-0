@@ -297,7 +297,12 @@ Class("wipeout.utils.html", function () {
         ko.cleanNode(node);
     };
     
-    var html = function() { };
+    var html = function(htmlManipulationLogic) {
+        wipeout.utils.htmlAsync(function(cleanupCallback) {
+            htmlManipulationLogic();
+            cleanupCallback();
+        });
+    };
     
     html.cleanNode = cleanNode;
     html.cannotCreateTags = cannotCreateTags;

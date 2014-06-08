@@ -5,6 +5,18 @@ module("wipeout.utils.html", {
     }
 });
 
+testUtils.testWithUtils("constructor", "", false, function(methods, classes, subject, invoker) {
+    // arrange
+    classes.mock("wipeout.utils.htmlAsync", function(input) {
+        input(methods.method());
+    }, 1);
+    
+    // act
+    invoker(methods.method());
+    
+    // assert
+});
+
 test("outerHTML", function() {
     // arrange    
     // act    
