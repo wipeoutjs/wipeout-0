@@ -122,9 +122,9 @@ test("wipeout.utils.find", function() {
             <template>\
                 <wo.contentControl id="me3"\
                     parent="$find(\'parent\')" grandParent="$find({$a:\'grandParent\'})" greatGrandParent="$find({$a:\'greatGrandParent\'})"\
-                    cc0="$find(wo.contentControl)" cc1="$find({$t:wo.contentControl, $index: 1})"\
-                    v0="$find({$i:wo.view})" v1="$find({$i:wo.view, $index: 1})"\
-                    f0="$find({id: \'me1\'})" fY="$find({id: \'me1\'}, {$index:1})" fX="$find({id: \'me3\'})">\
+                    cc0="$find(wo.contentControl)" cc1="$find({$t:wo.contentControl, $number: 1})"\
+                    v0="$find({$i:wo.view})" v1="$find({$i:wo.view, $number: 1})"\
+                    f0="$find({id: \'me1\'})" fY="$find({id: \'me1\'}, {$number:1})" fX="$find({id: \'me3\'})">\
                 </wo.contentControl>\
             </template>\
         </wo.contentControl>\
@@ -418,10 +418,10 @@ test("advanced items control, creating/destroying", function() {
     strictEqual($("#f").length, 1);
 });
 
-test("items control, $index", function() {
+test("items control, $number", function() {
     // arrange
     var templateId = wo.contentControl.createAnonymousTemplate('<!-- ko itemsControl: null --><!-- /ko -->');
-    var itemTemplateId = wo.contentControl.createAnonymousTemplate('<div data-bind="attr: { id: model, \'data-index\': $index }"></div><wo.view id="item" index="$parentContext.$index" />');
+    var itemTemplateId = wo.contentControl.createAnonymousTemplate('<div data-bind="attr: { id: model, \'data-index\': $number }"></div><wo.view id="item" index="$parentContext.$number" />');
     
     var itemsControl1 = new wo.itemsControl();
     itemsControl1.templateId(templateId);
@@ -442,10 +442,10 @@ test("items control, $index", function() {
     strictEqual(itemsControl1.items()[2].templateItems.item.index, 2);
 });
 
-test("items control, $index, shareParentScope", function() {
+test("items control, $number, shareParentScope", function() {
     // arrange
     var templateId = wo.contentControl.createAnonymousTemplate('<!-- ko itemsControl: null --><!-- /ko -->');
-    var itemTemplateId = wo.contentControl.createAnonymousTemplate('<div data-bind="attr: { id: model, \'data-index\': $index }"></div>');
+    var itemTemplateId = wo.contentControl.createAnonymousTemplate('<div data-bind="attr: { id: model, \'data-index\': $number }"></div>');
     
     var itemsControl1 = new wo.itemsControl();
     itemsControl1.templateId(templateId);

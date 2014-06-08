@@ -22,7 +22,7 @@ testUtils.testWithUtils("constructor", "", false, function(methods, classes, sub
 testUtils.testWithUtils("find", "no filters", false, function(methods, classes, subject, invoker) {
     // arrange
     subject._find = methods.customMethod(function(filters) {
-        strictEqual(filters.$index, 0);
+        strictEqual(filters.$number, 0);
     });
     
     // act
@@ -34,7 +34,7 @@ testUtils.testWithUtils("find", "no filters", false, function(methods, classes, 
 testUtils.testWithUtils("find", "filters, no index", false, function(methods, classes, subject, invoker) {
     // arrange
     subject._find = methods.customMethod(function(filters) {
-        strictEqual(filters.$index, 0);
+        strictEqual(filters.$number, 0);
     });
     
     // act
@@ -146,7 +146,7 @@ testUtils.testWithUtils("$instanceOf", "", true, function(methods, classes, subj
 testUtils.testWithUtils("is", "", true, function(methods, classes, subject, invoker) {
     // arrange
     var filters = {
-        $index: {},
+        $number: {},
         $special: {},
         property: {}
     };
@@ -156,7 +156,7 @@ testUtils.testWithUtils("is", "", true, function(methods, classes, subject, invo
     };
     
     var special = false;
-    classes.mock("wipeout.utils.find.$index", function(){}, 0);
+    classes.mock("wipeout.utils.find.$number", function(){}, 0);
     classes.mock("wipeout.utils.find.$special", function(){return special;}, 3);
     
     // act

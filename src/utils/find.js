@@ -15,8 +15,8 @@ Class("wipeout.utils.find", function () {
             
             // destroy object ref
             filters = temp;            
-            if(!filters.$index) {
-                filters.$index = 0;
+            if(!filters.$number) {
+                filters.$number = 0;
             }
             
             // shortcut for having constructor as search term
@@ -30,8 +30,16 @@ Class("wipeout.utils.find", function () {
                 filters.$ancestry = wipeout.utils.obj.trim(searchTerm);
             }     
                       
+            if(!filters.$number && filters.$n) {
+                filters.$number = filters.$n;
+            }     
+                      
             if(!filters.$instanceOf && filters.$i) {
                 filters.$instanceOf = filters.$i;
+            }    
+                      
+            if(!filters.$instanceOf && filters.$instanceof) {
+                filters.$instanceOf = filters.$instanceof;
             }
                       
             if(!filters.$ancestry && filters.$a) {
@@ -42,6 +50,8 @@ Class("wipeout.utils.find", function () {
                 filters.$type = filters.$t;
             }
             
+            delete filters.$n;
+            delete filters.$instanceof;
             delete filters.$i;
             delete filters.$a;
             delete filters.$t;
@@ -54,7 +64,7 @@ Class("wipeout.utils.find", function () {
                 return null;
             
             var current = this.bindingContext;            
-            for (var index = filters.$index; index >= 0 && current; index--) {
+            for (var index = filters.$number; index >= 0 && current; index--) {
                 var i = 0;
                 
                 current = current.$parentContext;
@@ -109,7 +119,7 @@ Class("wipeout.utils.find", function () {
             },
             is: function(item, filters, index) {
                 for(var i in filters) {
-                    if (i === "$index") continue;
+                    if (i === "$number") continue;
                     
                     if (i[0] === "$") {
                         if(!wipeout.utils.find[i](item, filters[i], index))
