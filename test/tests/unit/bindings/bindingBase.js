@@ -32,7 +32,8 @@ testUtils.testWithUtils("constructor", null, false, function(methods, classes, s
     
     // assert
     strictEqual(subject.element, element);
-    ok(subject.bindingMeta, element);
+    ok(subject.bindingMeta);
+    ok(subject.bindingId);
     ok(wipeout.utils.domData.get(element, wipeout.bindings.bindingBase.dataKey).indexOf(subject) !== -1);
 });
 
@@ -56,11 +57,13 @@ testUtils.testWithUtils("getParentElement", "parentNode", false, function(method
 
 testUtils.testWithUtils("dispose", null, false, function(methods, classes, subject, invoker) {
     // arrange
+    subject.bindingId = "KJHBKJBKJBKJBKJB";
     var element = subject.element = {};
     subject.parentElement = {};
     subject._super = methods.method();
     subject.moved = methods.method([subject.parentElement, null]);
     wipeout.utils.domData.set(subject.element, wipeout.bindings.bindingBase.dataKey, [subject, {}]);
+    wipeout.bindings.bindingBase.registered[subject.bindingId] = subject;
     
     // act
     invoker();
@@ -70,11 +73,13 @@ testUtils.testWithUtils("dispose", null, false, function(methods, classes, subje
     notEqual(wipeout.utils.domData.get(element, wipeout.bindings.bindingBase.dataKey)[0], subject);
     ok(!subject.element);
     ok(!subject.parentElement);
+    ok(!wipeout.bindings.bindingBase.registered[subject.bindingId]);
 });
 
 testUtils.testWithUtils("hasMoved", null, false, function(methods, classes, subject, invoker) {
     // arrange
     var newParent = {}, oldParent = {};
+    subject.checkHasMoved = function() { return true; };
     subject.getParentElement = function() { return newParent; };
     subject.parentElement = oldParent;    
     subject.moved = methods.method([oldParent, newParent]);
@@ -114,7 +119,7 @@ testUtils.testWithUtils("getBindings", null, true, function(methods, classes, su
     wipeout.utils.domData.set(elements["d3"], wipeout.bindings.bindingBase.dataKey, [binding3]);
     wipeout.utils.domData.set(elements["d4"], wipeout.bindings.bindingBase.dataKey, [binding4]);
     wipeout.utils.domData.set(elements["d5"], wipeout.bindings.bindingBase.dataKey, [binding5]);
-    debugger;
+    
     // act
     var bindings = invoker(elements["d1"], bindingType);
     

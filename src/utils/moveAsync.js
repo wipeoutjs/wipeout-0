@@ -10,7 +10,9 @@ Class("wipeout.utils.moveAsync", function () {
         function run() {
             if(worker || !actions.length) return;
             
-            worker = new wipeout.utils.domManipulationWorker();
+            worker = window.MutationObserver ? 
+                new wipeout.utils.mutationObserverDomManipulationWorker() :
+                new wipeout.utils.bindingDomManipulationWorker();
             
             var hf = function() {
                 // ensure it can only be called once

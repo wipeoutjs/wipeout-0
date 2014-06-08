@@ -31,19 +31,19 @@ test("cannot render binding twice", function() {
     $application = $($fixture.children()[0]);
     
     // act
-    stop();
     ko.applyBindings({}, $application[0]);
-    //setTimeout(function() {
     
-        // assert
-        ok(document.getElementById("theView"));    
+    // assert
+    ok(document.getElementById("theView"));    
 
-        delete window.views;
-        ko.cleanNode($application[0]);
+    delete window.views;
+    ko.cleanNode($application[0]);
+    stop();
+    wo.move(function() {
         $fixture.html("");
         $fixture = null;
         $application = null;
         application = null;
         start();
-    //}, 10);
+    });
 });

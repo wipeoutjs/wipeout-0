@@ -11,6 +11,7 @@ Class("wipeout.bindings.bindingBase", function () {
             if(!element)
                 throw "ArgumnetNullException";
             
+            this.bindingId = wipeout.bindings.bindingBase.uniqueId();
             this.bindingMeta = {};
             this.element = element;
             var bindings = wipeout.utils.domData.get(this.element, wipeout.bindings.bindingBase.dataKey);
@@ -23,6 +24,8 @@ Class("wipeout.bindings.bindingBase", function () {
             });
                 
             bindings.push(this);
+            
+            wipeout.bindings.bindingBase.registered[this.bindingId] = this;
             
             //TODO: if parentNode is null?
             this.parentElement = this.getParentElement();
@@ -49,9 +52,13 @@ Class("wipeout.bindings.bindingBase", function () {
             
             delete this.element;
             delete this.parentElement;
+            delete wipeout.bindings.bindingBase.registered[this.bindingId];
+        },
+        checkHasMoved: function() {
+            return this.getParentElement() !== this.parentElement;
         },
         hasMoved: function() {
-            if(this.getParentElement() !== this.parentElement) {
+            if(this.checkHasMoved()) {
                 this.moved(this.parentElement, this.getParentElement());
                 this.parentElement = this.getParentElement();
             }
@@ -59,6 +66,16 @@ Class("wipeout.bindings.bindingBase", function () {
         moved: function(oldParentElement, newParentElement) {
         },
         statics: {
+            registered: {},
+            uniqueId: (function () {
+                var i = Math.floor(Math.random() * 1000000000); 
+                return function () {
+                    ///<summary>Returns a unique Id for a view</summary>    
+                    ///<returns type="String"></returns>
+                    
+                    return "binding-" + (++i);
+                };
+            })(),
             getBindings: function(node, bindingType) {
                 if(bindingType && !(bindingType instanceof Function)) throw "Invalid binding type";
                 
