@@ -85,3 +85,44 @@ testUtils.testWithUtils("hasMoved", null, false, function(methods, classes, subj
     // assert
     strictEqual(subject.parentElement, newParent);
 });
+
+testUtils.testWithUtils("getBindings", null, true, function(methods, classes, subject, invoker) {
+    // arrange
+    var bindingType = function() { this.bindingMeta = {}; };
+    var elements = testUtils.html('<div id="d1">\
+    <div id="d2">\
+        <div id="d3">\
+        </div>\
+    </div>\
+    <div id="d4">\
+        <div id="d5">\
+        </div>\
+    </div>\
+</div>');
+    
+    var binding1 = new bindingType();
+    var binding11 = new bindingType();
+    var binding2 = new bindingType();
+    var binding3 = new bindingType();
+    var binding4 = new bindingType();
+    var binding5 = new bindingType();
+    
+    binding2.bindingMeta.controlsDescendantBindings = true;
+    
+    wipeout.utils.domData.set(elements["d1"], wipeout.bindings.bindingBase.dataKey, [binding1, binding11]);
+    wipeout.utils.domData.set(elements["d2"], wipeout.bindings.bindingBase.dataKey, [binding2, {}]);
+    wipeout.utils.domData.set(elements["d3"], wipeout.bindings.bindingBase.dataKey, [binding3]);
+    wipeout.utils.domData.set(elements["d4"], wipeout.bindings.bindingBase.dataKey, [binding4]);
+    wipeout.utils.domData.set(elements["d5"], wipeout.bindings.bindingBase.dataKey, [binding5]);
+    debugger;
+    // act
+    var bindings = invoker(elements["d1"], bindingType);
+    
+    // assert
+    strictEqual(bindings.length, 5);
+    strictEqual(bindings[0], binding1);
+    strictEqual(bindings[1], binding11);
+    strictEqual(bindings[2], binding2);
+    strictEqual(bindings[3], binding4);
+    strictEqual(bindings[4], binding5);
+});

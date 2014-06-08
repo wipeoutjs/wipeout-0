@@ -89,7 +89,7 @@ Class("wipeout.utils.ko", function () {
             node = ko.virtualElements.firstChild(node);
             while (node) {
                 callback(node);
-                child = ko.virtualElements.nextSibling(node);
+                node = ko.virtualElements.nextSibling(node);
             }
         }
     };

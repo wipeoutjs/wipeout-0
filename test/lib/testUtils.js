@@ -113,6 +113,23 @@ $.extend(testUtils, (function() {
         });
     };
     
+    function html(html, appendFunction /*optional*/) {
+        var $html = $(html);
+        if(appendFunction)
+            appendFunction($html.toArray());
+        else {
+            $("#qunit-fixture").empty();
+            $("#qunit-fixture").append($html);
+        }
+        
+        var ids = {};
+        $html.filter("[id]").add($("[id]", $html)).each(function() {
+            ids[this.id] = this;
+        });
+        
+        return ids;
+    }
+    
     QUnit.moduleStart(function( details ) {
       testUtils.currentModule = details.name;
     });
@@ -127,6 +144,7 @@ $.extend(testUtils, (function() {
     };
     
     return {
+        html: html,
         testWithUtils: testWithUtils,
         classMock: classMock,
         methodMock: methodMock

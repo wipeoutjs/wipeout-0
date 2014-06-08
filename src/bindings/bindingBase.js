@@ -1,41 +1,10 @@
 
 Class("wipeout.bindings.bindingBase", function () {
-    
-    var sc = false;
-    function staticContructor() {
-        if(sc) return;
-        sc = true;
-        /*
-        new MutationObserver(function(mutations) {
-        //new wipeout.polyfills.MutationObserver(function(mutations) {
-            enumerate(mutations || [], function(mutation) {
-                enumerate(mutation.removedNodes || [], function(node) {
-                    var bindings;
-                    if(!document.body.contains(node)) {
-                        if(bindings = wipeout.utils.domData.get(node, wipeout.bindings.bindingBase.dataKey)) {
-                            wipeout.utils.domData.clear(node, wipeout.bindings.bindingBase.dataKey);
-                            enumerate(bindings, function(binding) {
-                                binding.dispose();
-                            });
-                        } else {
-                            wipeout.bindings.bindingBase.disposeOfAncestors(node);
-                        }
-                    } else if(bindings = wipeout.utils.domData.get(node, wipeout.bindings.bindingBase.dataKey)) {
-                        enumerate(bindings, function(binding) {
-                            binding.hasMoved();
-                        });
-                    }
-                });
-            });
-        }).observe(document.body, {childList: true, subtree: true});*/
-    }
-    
+        
     return wipeout.base.disposable.extend({
         constructor: function(element) {
             ///<summary>A knockout binding</summary>   
             ///<param name="element" type="HTMLElement" optional="false">The node containing the data-bind attribute for this binding</param>
-            
-            staticContructor();
             
             this._super();
             
@@ -104,7 +73,7 @@ Class("wipeout.bindings.bindingBase", function () {
                 
                 if(!stop) {
                     wipeout.utils.ko.virtualElements.enumerateOverChildren(node, function(child) {
-                        enumerate(wipeout.bindings.bindingBase.getBindings(node, bindingType), function(binding) {
+                        enumerate(wipeout.bindings.bindingBase.getBindings(child, bindingType), function(binding) {
                             bindings.push(binding);
                         });
                     });
@@ -117,16 +86,3 @@ Class("wipeout.bindings.bindingBase", function () {
         }
     }, "bindingBase");
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
