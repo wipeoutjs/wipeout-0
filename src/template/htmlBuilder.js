@@ -41,11 +41,7 @@ Class("wipeout.template.htmlBuilder", function () {
         ///<param name="templateString">The template</param>
                    
         // need to convert to xml and back as string is an XML string, not a HTML string
-        var xmlTemplate = new DOMParser().parseFromString("<root>" + templateString + "</root>", "application/xml").documentElement;        
-        if(xmlTemplate.firstChild && xmlTemplate.firstChild.nodeName === "parsererror") {
-			var ser = new XMLSerializer();
-			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
-		}
+        var xmlTemplate = wipeout.utils.html.parseXml("<root>" + templateString + "</root>");
         
         var template = wipeout.template.htmlBuilder.generateTemplate(xmlTemplate);
         
@@ -73,7 +69,6 @@ Class("wipeout.template.htmlBuilder", function () {
         this.preRendered.push(template);
     };
     
-    //TODO: this is done at render time, can it be cached?
     htmlBuilder.getTemplateIds = function (element) {
         ///<summary>Return all html elements with an id</summary>
         ///<param name="element">The parent element to query</param>
@@ -110,7 +105,7 @@ Class("wipeout.template.htmlBuilder", function () {
             if(child.nodeType == 1) {
                 
                 // create copy with no child nodes
-                var ch = new DOMParser().parseFromString(ser.serializeToString(child), "application/xml").documentElement;
+                var ch = wipeout.utils.html.parseXml(ser.serializeToString(child));
                 while (ch.childNodes.length) {
                     ch.removeChild(ch.childNodes[0]);
                 }

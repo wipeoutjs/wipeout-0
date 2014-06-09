@@ -303,6 +303,23 @@ Class("wipeout.utils.html", function () {
         });
     };
     
+    try {
+        //http://stackoverflow.com/questions/11563554/how-do-i-detect-xml-parsing-errors-when-using-javascripts-domparser-in-a-cross
+        var parseErrorNamespace = new DOMParser().parseFromString('<', 'text/xml').getElementsByTagName("parsererror")[0].namespaceURI;
+    } catch (e) {
+        // IE throws an exception on invalid xml
+    }
+    
+    var parseXml = function(xmlString) {        
+        var xmlTemplate = new DOMParser().parseFromString(xmlString, "application/xml");        
+        if(xmlTemplate.getElementsByTagNameNS(parseErrorNamespace, 'parsererror').length) {
+			throw "Invalid xml template:\n" + new XMLSerializer().serializeToString(xmlTemplate.firstChild);
+		}
+        
+        return xmlTemplate.documentElement;
+    };
+    
+    html.parseXml = parseXml;
     html.cleanNode = cleanNode;
     html.cannotCreateTags = cannotCreateTags;
     html.createTemplatePlaceholder = createTemplatePlaceholder;

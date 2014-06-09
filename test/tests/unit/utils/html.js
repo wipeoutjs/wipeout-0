@@ -66,6 +66,17 @@ testUtils.testWithUtils("getFirstTagName", "", true, function(methods, classes, 
     strictEqual(invoker(" sadsad   <asuhdvjauhsvdjhv "), "asuhdvjauhsvdjhv");
 });
 
+testUtils.testWithUtils("parseXml", "", true, function(methods, classes, subject, invoker) {
+    // arrange    
+    // act
+    // assert
+    throws(function() {
+        invoker("SAHDAHSVD");
+    });
+    
+    strictEqual(invoker("<val>hello</val>").firstChild.textContent, "hello");
+});
+
 testUtils.testWithUtils("createElements", "", true, function(methods, classes, subject, invoker) {
     // arrange
     

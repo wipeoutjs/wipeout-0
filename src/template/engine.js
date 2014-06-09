@@ -77,7 +77,7 @@ Class("wipeout.template.engine", function () {
                 id = "'" + id + "'";
             tags += " wo: { type: " + xmlElement.nodeName + ", id: " + id + ", initXml: '" + newScriptId + "'} --><!-- /ko -->";
             
-            var nodes = new DOMParser().parseFromString("<root>" + rewriterCallback(tags) + "</root>", "application/xml").documentElement;
+            var nodes = wipeout.utils.html.parseXml("<root>" + rewriterCallback(tags) + "</root>");
             while(nodes.childNodes.length) {
                 var node = nodes.childNodes[0];
                 node.parentNode.removeChild(node);
@@ -107,11 +107,7 @@ Class("wipeout.template.engine", function () {
         ///<param name="rewriterCallback" type="Function">A function which will do the re-writing (provided by knockout)</param>
         
         var ser = new XMLSerializer();
-        var xmlTemplate = new DOMParser().parseFromString("<root>" + script.textContent + "</root>", "application/xml").documentElement;        
-        if(xmlTemplate.firstChild && xmlTemplate.firstChild.nodeName === "parsererror") {
-            //TODO: copy pasted
-			throw "Invalid xml template:\n" + ser.serializeToString(xmlTemplate.firstChild);
-		}
+        var xmlTemplate = wipeout.utils.html.parseXml("<root>" + script.textContent + "</root>");
         
         var scriptContent = [];
         // do not use ii, xmlTemplate.childNodes may change
