@@ -1,12 +1,9 @@
 
 Debug code
 document async templates
-trim template ids
 document move
 
-workaround for no Mutation events
 document custom filters on find
-remove freeze
 ParentElement
 document event priority
 

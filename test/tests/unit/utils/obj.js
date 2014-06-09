@@ -157,18 +157,6 @@ testUtils.testWithUtils("copyArray", "", true, function(methods, classes, subjec
         strictEqual(actual[i], expected[i]);        
 });
 
-testUtils.testWithUtils("tryFreeze", "", true, function(methods, classes, subject, invoker) {
-    // arrange
-    var obj = {hello: "eee"};
-    
-    // act
-    invoker(obj);
-    obj.hello = "JKLBLKJBJKB";
-    
-    // assert
-    strictEqual(obj.hello, "eee");
-});
-
 testUtils.testWithUtils("endsWith", "", true, function(methods, classes, subject, invoker) {
     // arrange
     var end = "LKJBKJB";

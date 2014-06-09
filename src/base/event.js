@@ -13,9 +13,7 @@ Class("wipeout.base.eventRegistration", function () {
         this._super(dispose);    
                                                           
         this.callback = callback;
-        this.context = context;
-                
-        wipeout.utils.obj.tryFreeze(this);
+        this.context = context;                
     }, "eventRegistration");
 });
 

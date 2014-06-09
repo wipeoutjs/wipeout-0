@@ -7,8 +7,6 @@ Binding("render", true, function () {
         
         this.item = item;
         this.parent = parent instanceof wipeout.base.visual ? parent : null;
-        
-        wipeout.utils.obj.tryFreeze(this);
     }
     
     return wipeout.bindings.bindingBase.extend({
