@@ -20,6 +20,6 @@ changes:    woInvisible -> shareParentScope
             _initialized -> __woBag.initialized
             nodes -> .__woBag.nodes
             getParent/getParents -> changed the way they work with shareParentScope
-            find
+            find/call
             move
             event priority
