@@ -23,13 +23,3 @@ changes:    woInvisible -> shareParentScope
             find
             move
             event priority
-            
-            
-            
-            
-            
-            
-            
-            
-default $find is $i:
-another facet to find: $call(myClass).call("something")(args)

@@ -61,7 +61,7 @@ testUtils.testWithUtils("find", "type search term", false, function(methods, cla
     // arrange
     function x(){};
     subject._find = methods.customMethod(function(filters) {
-        strictEqual(filters.$type, x);
+        strictEqual(filters.$instanceOf, x);
     });
     
     // act

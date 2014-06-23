@@ -21,7 +21,7 @@ Class("wipeout.utils.find", function () {
             
             // shortcut for having constructor as search term
             if(searchTerm && searchTerm.constructor === Function) {
-                filters.$type = searchTerm;
+                filters.$instanceOf = searchTerm;
             // shortcut for having filters as search term
             } else if(searchTerm && searchTerm.constructor !== String) {
                 for(var i in searchTerm)
