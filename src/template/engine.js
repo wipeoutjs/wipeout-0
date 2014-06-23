@@ -6,11 +6,20 @@ Class("wipeout.template.engine", function () {
     };
     engine.prototype = new ko.templateEngine();
     
+    var $find = /\$find/;
+    var $call = /\$call/;
     engine.createJavaScriptEvaluatorFunction = function(script) {
         ///<summary>Modify a block of script so that it's running context is bindingContext.$data first and biningContext second</summary>
         ///<param name="script" type="String">The script to modify</param>
         ///<returns type="Function">The compiled script</returns>
-        return new Function("bindingContext", "with(bindingContext) {\n\tvar $find = wipeout.utils.find.create(bindingContext);\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
+        
+        var f = $find.test(script);
+        var find = f ? "\n\tvar $find = wipeout.utils.find.create(bindingContext);" : "";
+        
+        // reuse existing $find if possible
+        var call = $call.test(script) ? "\n\tvar $call = wipeout.utils.call.create(" + (f ? "$find" : "wipeout.utils.find.create(bindingContext)") + ");" : "";
+        
+        return new Function("bindingContext", "with(bindingContext) {" + find + call + "\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
     }
     
     engine.createJavaScriptEvaluatorBlock = function(script) {

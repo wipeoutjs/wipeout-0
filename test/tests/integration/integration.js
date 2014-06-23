@@ -72,6 +72,58 @@ test("parent child views", function() {
     strictEqual(child6.getParent(), parent3);    
 });
 
+test("call", function() {
+    
+    // arrange        
+    application.id = "ASDASDASDSADASD";
+    var mocks = new testUtils.methodMock();
+    application.myFunction = mocks.customMethod(function() {
+        strictEqual(arguments[0], application.templateItems.content);
+        ok(arguments[1]);
+    });
+    
+    application.template('<wo.contentControl id="content">\
+    <template>\
+        <button id="myButton" data-bind="click: $call({ id: \'' + application.id + '\' }).dot(\'myFunction\')">\
+        </button>\
+    </template>\
+</wo.contentControl>');    
+    
+    // act
+    document.getElementById('myButton').click();
+    
+    // assert
+    mocks.verifyAllExpectations();
+});
+
+test("call with args", function() {
+    
+    // arrange
+    var arg1 = 234234234, arg2 = 4353453;
+        
+    application.id = "ASDASDASDSADASD";
+    var mocks = new testUtils.methodMock();
+    application.myFunction = mocks.customMethod(function() {
+        strictEqual(arguments[0], arg1);
+        strictEqual(arguments[1], arg2);
+        strictEqual(arguments[2], application.templateItems.content);
+        ok(arguments[3]);
+    });
+    
+    application.template('<wo.contentControl id="content">\
+    <template>\
+        <button id="myButton" data-bind="click: $call({ id: \'' + application.id + '\' }).dot(\'myFunction\').args(' + arg1 + ', ' + arg2 + ')">\
+        </button>\
+    </template>\
+</wo.contentControl>');    
+    
+    // act
+    document.getElementById('myButton').click();
+    
+    // assert
+    mocks.verifyAllExpectations();
+});
+
 test("shareParentScope", function() {
     
     // arrange
