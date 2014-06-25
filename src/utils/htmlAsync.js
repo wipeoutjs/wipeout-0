@@ -52,8 +52,10 @@ Class("wipeout.utils.htmlAsync", function () {
         };
     }());
     
-    return function(moveFunctionality) {
+    var htmlAsync = function(moveFunctionality) {
         if(!(moveFunctionality instanceof Function)) throw "Invalid move functionality";
         asyncHandler.add(moveFunctionality);
     };
+    
+    return htmlAsync;
 });
