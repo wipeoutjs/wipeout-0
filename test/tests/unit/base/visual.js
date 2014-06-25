@@ -161,31 +161,6 @@ testUtils.testWithUtils("dispose", null, false, function(methods, classes, subje
     ok(!subject.__woBag.routedEventSubscriptions.length);
 });
 
-testUtils.testWithUtils("getParentElement", "virtual", true, function(methods, classes, subject, invoker) {
-    // arrange
-    var html = $("<div><!-- ko --><div></div><span></span><!-- /ko --></div>")[0];
-    var child = $("span", html)[0];
-    var expected = html.childNodes[0];
-    
-    // act
-    var actual = invoker(child);
-    
-    // assert
-    strictEqual(actual, expected);
-});
-
-testUtils.testWithUtils("getParentElement", "non virtual", true, function(methods, classes, subject, invoker) {
-    // arrange
-    var html = $("<div><div></div><span></span></div>")[0];
-    var child = $("span", html)[0];
-    
-    // act
-    var actual = invoker(child);
-    
-    // assert
-    strictEqual(actual, html);
-});
-
 testUtils.testWithUtils("getParent", "don't include shareParentScope", false, function(methods, classes, subject, invoker) {
     // arrange
     var expected = {};

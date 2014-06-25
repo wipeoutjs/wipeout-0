@@ -29,31 +29,6 @@ Class("wipeout.base.visual", function () {
             };
         },
         statics: {
-            //TODO: move to util (actually I think it already is in there)
-            getParentElement: function(node) {
-                ///<summary>Gets the parent or virtual parent of the element</summary>
-                ///<param name="node" type="HTMLNode" optional="false">The node to find the parent of</param>
-                ///<returns type="HTMLNode">The parent element</returns>    
-
-                var depth = 0;
-                var current = node.previousSibling;
-                while(current) {
-                    if(wipeout.utils.ko.virtualElements.isVirtualClosing(current)) {
-                        depth--;
-                    }
-
-                    if(wipeout.utils.ko.virtualElements.isVirtual(current)) {
-                        if(depth === 0)
-                            return current;
-
-                        depth++;
-                    }
-
-                    current = current.previousSibling;
-                }
-
-                return node.parentNode;
-            },
             getDefaultTemplateId: (function () {
                 var templateId = null;
                 return function () {
