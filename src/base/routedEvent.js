@@ -57,7 +57,7 @@ Class("wipeout.base.routedEventArgs", function () {
     
 
 Class("wipeout.base.routedEventRegistration", function () {
-    //TODO: private
+    
     var routedEventRegistration = function(routedEvent) {  
         ///<summary>Holds routed event registration details</summary>
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>

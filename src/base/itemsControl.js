@@ -30,12 +30,12 @@ Class("wipeout.base.itemsControl", function () {
         this.items = ko.observableArray([]);
 
         if(wipeout.utils.ko.version()[0] < 3) {
-            itemsControl.subscribeV2.call(this);
+            itemsControl._subscribeV2.call(this);
         } else {
-            itemsControl.subscribeV3.call(this);
+            itemsControl._subscribeV3.call(this);
         }
         
-        var d1 = this.items.subscribe(this.syncModelsAndViewModels, this);
+        var d1 = this.items.subscribe(this._syncModelsAndViewModels, this);
         this.registerDisposable(function() { d1.dispose(); });
 
         itemTemplateId = this.itemTemplateId.peek();
@@ -51,14 +51,13 @@ Class("wipeout.base.itemsControl", function () {
         this.registerDisposable(function() { d2.dispose(); });
     }, "itemsControl");
     
-    //TODO: private
-    itemsControl.subscribeV2 = function() {
+    itemsControl._subscribeV2 = function() {
         ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl</summary>
         var initialItemSource = this.itemSource.peek();
         
         var d1 = this.itemSource.subscribe(function() {
             try {
-                if(this.modelsAndViewModelsAreSynched())
+                if(this._modelsAndViewModelsAreSynched())
                     return;
                 this._itemSourceChanged(ko.utils.compareArrays(initialItemSource, arguments[0] || []));
             } finally {
@@ -78,8 +77,7 @@ Class("wipeout.base.itemsControl", function () {
         this.registerDisposable(function() { d2.dispose() });
     };
     
-    //TODO: private
-    itemsControl.subscribeV3 = function() {
+    itemsControl._subscribeV3 = function() {
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
         var d1 = this.itemSource.subscribe(this._itemSourceChanged, this, "arrayChange");
         this.registerDisposable(function() { d1.dispose(); });
@@ -103,8 +101,7 @@ Class("wipeout.base.itemsControl", function () {
         this._super(propertiesXml, parentBindingContext);
     };
     
-    //TODO: private
-    itemsControl.prototype.syncModelsAndViewModels = function() {
+    itemsControl.prototype._syncModelsAndViewModels = function() {
         ///<summary>Ensures that the itemsSource array and items array are in sync</summary>
         var changed = false, modelNull = false;
         var models = this.itemSource();
@@ -135,8 +132,7 @@ Class("wipeout.base.itemsControl", function () {
         }
     };
 
-    //TODO: private
-    itemsControl.prototype.modelsAndViewModelsAreSynched = function() {
+    itemsControl.prototype._modelsAndViewModelsAreSynched = function() {
         ///<summary>Returns whether all models have a corresponding view model at the correct index</summary>
         ///<returns type="Boolean"></summary>
         var model = this.itemSource() || [];

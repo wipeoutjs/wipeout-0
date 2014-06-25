@@ -35,12 +35,12 @@ testUtils.testWithUtils("constructor", "", false, function(methods, classes, sub
         methods.method([subject.itemTemplateId, subject])(arguments[0], arguments[1]);
     }, 1);
     
-    var mock = wipeout.utils.ko.version()[0] < 3 ? "subscribeV2" : "subscribeV3";
+    var mock = wipeout.utils.ko.version()[0] < 3 ? "_subscribeV2" : "_subscribeV3";
     classes.mock("wipeout.base.itemsControl." + mock, function() {
         strictEqual(this, subject);
     }, 1);
     
-    subject.syncModelsAndViewModels = function(){};
+    subject._syncModelsAndViewModels = function(){};
     subject.registerDisposable = methods.method();
     
     // act
@@ -52,7 +52,7 @@ testUtils.testWithUtils("constructor", "", false, function(methods, classes, sub
     ok(ko.isObservable(subject.items));
 });
 
-testUtils.testWithUtils("syncModelsAndViewModels", "null models", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("_syncModelsAndViewModels", "null models", false, function(methods, classes, subject, invoker) {
     // arrange
     var m0 = {}, m1 = {};
     subject.itemSource = ko.observableArray(null);
@@ -68,7 +68,7 @@ testUtils.testWithUtils("syncModelsAndViewModels", "null models", false, functio
     strictEqual(subject.itemSource()[1], m1);
 });
 
-testUtils.testWithUtils("syncModelsAndViewModels", "", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("_syncModelsAndViewModels", "", false, function(methods, classes, subject, invoker) {
     // arrange
     var m0 = {}, m1 = {};
     subject.itemSource = ko.observableArray([{}, {}, {}, {}]);
@@ -84,7 +84,7 @@ testUtils.testWithUtils("syncModelsAndViewModels", "", false, function(methods, 
     strictEqual(subject.itemSource()[1], m1);
 });
 
-testUtils.testWithUtils("modelsAndViewModelsAreSynched", "different lengths", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("_modelsAndViewModelsAreSynched", "different lengths", false, function(methods, classes, subject, invoker) {
     // arrange
     var m0 = {}, m1 = {};
     subject.itemSource = ko.observableArray([m0, m1, {}]);
@@ -97,7 +97,7 @@ testUtils.testWithUtils("modelsAndViewModelsAreSynched", "different lengths", fa
     ok(!actual);
 });
 
-testUtils.testWithUtils("modelsAndViewModelsAreSynched", "different values", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("_modelsAndViewModelsAreSynched", "different values", false, function(methods, classes, subject, invoker) {
     // arrange
     var m0 = {}, m1 = {};
     subject.itemSource = ko.observableArray([m0, {}]);
@@ -110,7 +110,7 @@ testUtils.testWithUtils("modelsAndViewModelsAreSynched", "different values", fal
     ok(!actual);
 });
 
-testUtils.testWithUtils("modelsAndViewModelsAreSynched", "are synched", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("_modelsAndViewModelsAreSynched", "are synched", false, function(methods, classes, subject, invoker) {
     // arrange
     var m0 = {}, m1 = {};
     subject.itemSource = ko.observableArray([m0, m1]);
