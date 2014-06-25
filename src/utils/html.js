@@ -242,7 +242,7 @@ Class("wipeout.utils.html", function () {
         ///<summary>Get the view model associated with a html node</summary>
         ///<param name="forHtmlNode" type="HTMLNode">The element which is the root node of a wo.view</param>
         ///<returns type="wo.view">The view model associated with this node, or null</returns>
-        var vm = ko.utils.domData.get(forHtmlNode, wipeout.bindings.wipeout.utils.wipeoutKey);
+        var vm = wipeout.utils.domData.get(forHtmlNode, wipeout.bindings.wipeout.utils.wipeoutKey);
         if(vm)
             return vm;
         

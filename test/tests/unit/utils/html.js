@@ -134,7 +134,7 @@ testUtils.testWithUtils("getViewModel", "", true, function(methods, classes, sub
     id1 = $("#" + id1)[0];
     id2 = $("#" + id2)[0];
     
-    ko.utils.domData.set(id1, wipeout.bindings.wipeout.utils.wipeoutKey, viewModel);
+    wipeout.utils.domData.set(id1, wipeout.bindings.wipeout.utils.wipeoutKey, viewModel);
     
     // act
     // assert    
@@ -175,7 +175,7 @@ testUtils.testWithUtils("cleanNode", "", true, function(methods, classes, subjec
         }
     });
     
-    ko.utils.domData.set(id1, wipeout.bindings.wipeout.utils.wipeoutKey, viewModel);
+    wipeout.utils.domData.set(id1, wipeout.bindings.wipeout.utils.wipeoutKey, viewModel);
     
     // act
     invoker(id1);

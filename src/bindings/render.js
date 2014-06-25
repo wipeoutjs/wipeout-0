@@ -82,7 +82,7 @@ Binding("render", true, function () {
         this.value.onUnrender();
         if(this.value.__woBag.rootHtmlElement) {
             // disassociate the visual from its root element and empty the root element
-            ko.utils.domData.set(this.value.__woBag.rootHtmlElement, wipeout.bindings.wipeout.utils.wipeoutKey, undefined); 
+            wipeout.utils.domData.set(this.value.__woBag.rootHtmlElement, wipeout.bindings.wipeout.utils.wipeoutKey, undefined); 
             delete this.value.__woBag.rootHtmlElement;
         }
 
@@ -109,7 +109,7 @@ Binding("render", true, function () {
         if (this.value.__woBag.rootHtmlElement)
             throw "This visual has already been rendered. Call its unRender() function before rendering again.";
 
-        ko.utils.domData.set(this.element, wipeout.bindings.wipeout.utils.wipeoutKey, this.value);
+        wipeout.utils.domData.set(this.element, wipeout.bindings.wipeout.utils.wipeoutKey, this.value);
         this.value.__woBag.rootHtmlElement = this.element;
 
         var subscription1 = this.value.__woBag.disposed.register(this.unRender, this);

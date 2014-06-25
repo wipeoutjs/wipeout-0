@@ -74,7 +74,7 @@ testUtils.testWithUtils("unRender", null, false, function(methods, classes, subj
     };
     
     var element = {};
-    ko.utils.domData.set(element, wipeout.bindings.wipeout.utils.wipeoutKey, {}); 
+    wipeout.utils.domData.set(element, wipeout.bindings.wipeout.utils.wipeoutKey, {}); 
     
     var val = {
         onUnrender: methods.method(),
@@ -103,7 +103,7 @@ testUtils.testWithUtils("unRender", null, false, function(methods, classes, subj
     invoker();
     
     // assert
-    ok(!ko.utils.domData.get(element, wipeout.bindings.wipeout.utils.wipeoutKey)); 
+    ok(!wipeout.utils.domData.get(element, wipeout.bindings.wipeout.utils.wipeoutKey)); 
     ok(!val.__woBag.rootHtmlElement);
     ok(!subject.onDisposeEventSubscription);
     ok(!subject.value);
@@ -147,7 +147,7 @@ testUtils.testWithUtils("render", "not a visual", false, function(methods, class
     invoker(val);
     
     // assert
-    strictEqual(ko.utils.domData.get(subject.element, wipeout.bindings.wipeout.utils.wipeoutKey), val);
+    strictEqual(wipeout.utils.domData.get(subject.element, wipeout.bindings.wipeout.utils.wipeoutKey), val);
     strictEqual(subject.value.__woBag.rootHtmlElement, subject.element);
     ok(subject.onDisposeEventSubscription);
     ok(subject.templateChangedSubscription);
@@ -171,7 +171,7 @@ testUtils.testWithUtils("render", "not a visual", false, function(methods, class
     invoker(val);
     
     // assert
-    strictEqual(ko.utils.domData.get(subject.element, wipeout.bindings.wipeout.utils.wipeoutKey), val);
+    strictEqual(wipeout.utils.domData.get(subject.element, wipeout.bindings.wipeout.utils.wipeoutKey), val);
     strictEqual(subject.value.__woBag.rootHtmlElement, subject.element);
     ok(subject.onDisposeEventSubscription);
     ok(subject.templateChangedSubscription);

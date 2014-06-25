@@ -70,7 +70,7 @@ Class("wipeout.base.visual", function () {
             wipeout.utils.obj.enumerate(visual.visualGraph(child), output.push, output);
         });
 
-        var vm = ko.utils.domData.get(rootElement, wipeout.bindings.wipeout.utils.wipeoutKey);        
+        var vm = wipeout.utils.domData.get(rootElement, wipeout.bindings.wipeout.utils.wipeoutKey);        
         if (vm) {
             return [{ viewModel: vm, display: displayFunction(vm), children: output}];
         }
