@@ -16,7 +16,9 @@ Binding("wo", true, function () {
         }
 
         this.render(view);
-        this.render = function() { throw "Cannont render this binding a second time, use the render binding instead"; };
+        
+        // override render binding method
+        this.render = function() { throw "Cannot render this binding a second time, use the render binding instead"; };
     }, "wo");
     
     wo.prototype.dispose = function() {
