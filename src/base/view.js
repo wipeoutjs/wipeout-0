@@ -18,7 +18,7 @@ Class("wipeout.base.view", function () {
         
         var d1 = this.model.subscribe(function(newVal) {
             try {
-                this.onModelChanged(model, newVal);
+                this._onModelChanged(model, newVal);
             } finally {
                 model = newVal;
             }                                          
@@ -272,7 +272,7 @@ Class("wipeout.base.view", function () {
         }
     };
         
-    view.prototype.onModelChanged = function (oldValue, newValue) {
+    view.prototype._onModelChanged = function (oldValue, newValue) {
         ///<summary>Called when the model has changed</summary>
         ///<param name="oldValue" type="Any" optional="false">The old model</param>
         ///<param name="newValue" type="Any" optional="false">The new mode</param>
@@ -286,6 +286,15 @@ Class("wipeout.base.view", function () {
                 this.__woBag[modelRoutedEventKey] = this.registerDisposable(d1);
             }
         }
+        
+        this.onModelChanged(oldValue, newValue);
+    };
+        
+    // virtual
+    view.prototype.onModelChanged = function (oldValue, newValue) {
+        ///<summary>Called when the model has changed</summary>
+        ///<param name="oldValue" type="Any" optional="false">The old model</param>
+        ///<param name="newValue" type="Any" optional="false">The new mode</param>        
     };
     
     view.prototype.onModelRoutedEvent = function (eventArgs) {

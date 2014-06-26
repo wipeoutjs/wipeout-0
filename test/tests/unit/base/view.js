@@ -92,7 +92,7 @@ testUtils.testWithUtils("constructor", "", false, function(methods, classes, sub
     
     // test on model changed
     var newModel = {};
-    subject.onModelChanged = methods.method([model, newModel]);
+    subject._onModelChanged = methods.method([model, newModel]);
     subject.model(newModel);
 });
 
@@ -250,7 +250,7 @@ testUtils.testWithUtils("objectParser", "json", false, function(methods, classes
     strictEqual(json.val2, "3");
 });
 
-testUtils.testWithUtils("onModelChanged", "", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("_onModelChanged", "", false, function(methods, classes, subject, invoker) {
     // arrange
     subject.__woBag = {
         "wipeout.base.view.modelRoutedEvents": {}
@@ -262,6 +262,7 @@ testUtils.testWithUtils("onModelChanged", "", false, function(methods, classes, 
         return disposable;
     });
     subject.onModelRoutedEvent = function(){};
+    subject.onModelChanged = methods.method([null, newVal]);
     
     // act
     invoker(null, newVal);
