@@ -148,9 +148,9 @@ Class("wipeout.base.view", function () {
         return false;
     };
     
+    // properties which will not be copied onto the view if defined in the template
     view.reservedPropertyNames = ["constructor", "constructor-tw", "id","id-tw"];
     
-    //TODO private
     view.prototype._initialize = function(propertiesXml, parentBindingContext) {
         ///<summary>Takes an xml fragment and binding context and sets its properties accordingly</summary>
         ///<param name="propertiesXml" type="Element" optional="false">An XML element containing property setters for the view</param>
@@ -246,6 +246,7 @@ Class("wipeout.base.view", function () {
         }, this);
     };
     
+    //TODO: document
     view.objectParser = {
         "json": function (value) {
             //TODO: browser compatability
@@ -282,7 +283,7 @@ Class("wipeout.base.view", function () {
             delete this.__woBag[modelRoutedEventKey];
             
             if(newValue instanceof wipeout.base.routedEventModel) {
-                var d1 = newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this);
+                var d1 = newValue.__triggerRoutedEventOnVM.register(this._onModelRoutedEvent, this);
                 this.__woBag[modelRoutedEventKey] = this.registerDisposable(d1);
             }
         }
@@ -297,7 +298,7 @@ Class("wipeout.base.view", function () {
         ///<param name="newValue" type="Any" optional="false">The new mode</param>        
     };
     
-    view.prototype.onModelRoutedEvent = function (eventArgs) {
+    view.prototype._onModelRoutedEvent = function (eventArgs) {
         ///<summary>When the model of this class fires a routed event, catch it and continue the traversal upwards</summary>
         ///<param name="eventArgs" type="wo.routedEventArgs" optional="false">The routed event args</param>
         

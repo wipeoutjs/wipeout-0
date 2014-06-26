@@ -271,7 +271,7 @@ testUtils.testWithUtils("_onModelChanged", "", false, function(methods, classes,
     strictEqual(subject.__woBag["wipeout.base.view.modelRoutedEvents"], disposable);
 });
 
-testUtils.testWithUtils("onModelRoutedEvent", "", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("_onModelRoutedEvent", "", false, function(methods, classes, subject, invoker) {
     // arrange
     var eventArgs = {
         routedEvent: new wipeout.base.routedEvent(),
