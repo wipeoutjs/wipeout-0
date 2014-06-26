@@ -130,7 +130,7 @@ Class("wipeout.base.view", function () {
         });
     };    
     
-    view.elementHasModelBinding = function(element) {
+    view._elementHasModelBinding = function(element) {
         ///<summary>returns whether the view defined in the element was explicitly given a model property</summary>
         ///<param name="element" type="Element" optional="false">The element to check for a model setter property</param>
         ///<returns type="Boolean"></returns>
@@ -171,7 +171,7 @@ Class("wipeout.base.view", function () {
         if(prop)
             this.shareParentScope = parseBool(prop);
                 
-        if(!view.elementHasModelBinding(propertiesXml) && wipeout.utils.ko.peek(this.model) == null) {
+        if(!view._elementHasModelBinding(propertiesXml) && wipeout.utils.ko.peek(this.model) == null) {
             this.bind('model', parentBindingContext.$data.model);
         }
         

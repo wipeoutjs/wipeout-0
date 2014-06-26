@@ -163,7 +163,7 @@ testUtils.testWithUtils("dispose", "", false, function(methods, classes, subject
     ok(!subject.__woBag["wipeout.base.view.modelRoutedEvents"]);
 });
 
-testUtils.testWithUtils("elementHasModelBinding", "no model", true, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("_elementHasModelBinding", "no model", true, function(methods, classes, subject, invoker) {
     // arrange
     var element = new DOMParser().parseFromString("<root></root>", "application/xml").documentElement;
     
@@ -174,7 +174,7 @@ testUtils.testWithUtils("elementHasModelBinding", "no model", true, function(met
     ok(!actual);
 });    
 
-testUtils.testWithUtils("elementHasModelBinding", "model as attribute", true, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("_elementHasModelBinding", "model as attribute", true, function(methods, classes, subject, invoker) {
     // arrange
     var element = new DOMParser().parseFromString("<root model='asdsad'></root>", "application/xml").documentElement;
     
@@ -185,7 +185,7 @@ testUtils.testWithUtils("elementHasModelBinding", "model as attribute", true, fu
     ok(actual);
 });      
 
-testUtils.testWithUtils("elementHasModelBinding", "model as element", true, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("_elementHasModelBinding", "model as element", true, function(methods, classes, subject, invoker) {
     // arrange
     var element = new DOMParser().parseFromString("<root><model /></root>", "application/xml").documentElement;
     
