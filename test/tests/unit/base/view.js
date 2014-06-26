@@ -261,7 +261,7 @@ testUtils.testWithUtils("_onModelChanged", "", false, function(methods, classes,
     subject.registerDisposable = methods.customMethod(function() {
         return disposable;
     });
-    subject.onModelRoutedEvent = function(){};
+    subject._onModelRoutedEvent = function(){};
     subject.onModelChanged = methods.method([null, newVal]);
     
     // act
