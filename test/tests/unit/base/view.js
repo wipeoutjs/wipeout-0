@@ -215,7 +215,7 @@ testUtils.testWithUtils("initialize", "more of an integration test than a unit t
 </root>', "application/xml").documentElement;
     
     // act
-    subject.initialize(element, bindingContext);
+    subject._initialize(element, bindingContext);
     
     // assert
     strictEqual(subject.__woBag.type, "root");

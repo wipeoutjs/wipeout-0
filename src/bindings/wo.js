@@ -5,7 +5,7 @@ Binding("wo", true, function () {
         var view = new value.type();
         this._super(element, view, allBindingsAccessor, bindingContext);
         view.__woBag.createdByWipeout = true;
-        view.initialize(wipeout.template.engine.xmlCache[value.initXml], bindingContext);
+        view._initialize(wipeout.template.engine.xmlCache[value.initXml], bindingContext);
 
         if(value.id) {
             var current = bindingContext;

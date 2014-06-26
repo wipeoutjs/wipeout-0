@@ -23,7 +23,7 @@ testUtils.testWithUtils("constructor", "", false, function(methods, classes, sub
             type: function() {
                 this.__woBag = {};
                 created = this;
-                this.initialize = methods.method([wipeout.template.engine.xmlCache.asd, bindingContext]);
+                this._initialize = methods.method([wipeout.template.engine.xmlCache.asd, bindingContext]);
             }, 
             initXml: "asd", 
             id: "LKNLKNK"

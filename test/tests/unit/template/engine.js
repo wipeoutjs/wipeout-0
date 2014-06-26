@@ -150,7 +150,7 @@ testUtils.testWithUtils("wipeoutRewrite", "custom tag", true, function(methods, 
     window.my = {
         tag: wo.view.extend(function() { 
             this._super();
-            this.initialize = methods.method([configTag, bindingContext]);
+            this._initialize = methods.method([configTag, bindingContext]);
         })
     };
     

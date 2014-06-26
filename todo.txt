@@ -17,6 +17,7 @@ If, poke template
 
 changes:    woInvisible -> shareParentScope
             renderedChildren -> null
+            initialize -> _initialize
             _initialized -> __woBag.initialized
             nodes -> .__woBag.nodes
             getParent/getParents -> changed the way they work with shareParentScope
