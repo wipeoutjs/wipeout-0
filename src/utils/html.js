@@ -52,6 +52,7 @@ Class("wipeout.utils.html", function () {
         return getTagName(htmlContent.substring(i));
     };
         
+    // tags which cannot go into a <div /> tag, along with the tag they should go into
     var specialTags = {
         area: "map",
         base: "head",
@@ -79,6 +80,7 @@ Class("wipeout.utils.html", function () {
         tr: "tbody"
     };
     
+    // tags which, if the root, wipeout will refuse to create
     var cannotCreateTags = {
         html:true,
         basefont: true,
@@ -98,6 +100,7 @@ Class("wipeout.utils.html", function () {
         }
     }
     
+    // tags which are readonly once created in IE
     var ieReadonlyElements = {
         audio: true,
         col: true, 
@@ -117,6 +120,7 @@ Class("wipeout.utils.html", function () {
         tr: true
     };
     
+    // firefox replaces some tags with others
     var replaceTags = {
         keygen: "select"
     };
