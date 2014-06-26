@@ -184,25 +184,14 @@ Class("wipeout.base.view", function () {
             if(attr.nodeName.length > 3 && name.indexOf("-tw") === attr.nodeName.length - 3) {
                 name = name.substr(0, name.length - 3);
                 setter = 
-",\
-            function(val) {\
-                if(!ko.isObservable(" + attr.value + "))\
-                    throw 'Two way bindings must be between 2 observables';\
-                " + attr.value + "(val);\
-            }";
+        ",\n\t\t\tfunction(val) {\n\t\t\t\tif(!ko.isObservable(" + attr.value + "))\n\t\t\t\t\tthrow 'Two way bindings must be between 2 observables';\n\t\t\t\t" + attr.value + "(val);\n\t\t\t}";
             }
             
             try {
                 //TODO: can I get the view from somewhere else?
                 bindingContext.__$woCurrent = this;
                 wipeout.template.engine.createJavaScriptEvaluatorFunction(
-        "(function() {\
-            __$woCurrent.bind('" + name + "', function() {\
-                return " + attr.value + ";\
-            }" + setter + ");\
-\
-            return '';\
-        })()"
+        "(function() {\n\t\t\t__$woCurrent.bind('" + name + "', function() {\n\t\t\t\treturn " + attr.value + ";\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()"
                 )(bindingContext);
             } finally {
                 delete bindingContext.__$woCurrent;
