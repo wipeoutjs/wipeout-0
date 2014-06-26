@@ -188,7 +188,6 @@ Class("wipeout.base.view", function () {
             }
             
             try {
-                //TODO: can I get the view from somewhere else?
                 bindingContext.__$woCurrent = this;
                 wipeout.template.engine.createJavaScriptEvaluatorFunction(
         "(function() {\n\t\t\t__$woCurrent.bind('" + name + "', function() {\n\t\t\t\treturn " + attr.value + ";\n\t\t\t}" + setter + ");\n\n\t\t\treturn '';\n\t\t})()"
@@ -235,10 +234,9 @@ Class("wipeout.base.view", function () {
         }, this);
     };
     
-    //TODO: document
+    //TODO: document. node: JSON not avaliable in IE <= 7
     view.objectParser = {
         "json": function (value) {
-            //TODO: browser compatability
             return JSON.parse(value);
         },
         "string": function (value) {
