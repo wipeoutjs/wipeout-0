@@ -191,8 +191,8 @@ Class("wipeout.utils.html", function () {
         ///<returns type="Array" generic0="HTMLNode">All of the nodes in the element</returns>
         
         var children = [];
-        if (wipeout.utils.ko.virtualElements.isVirtual(element)) {
-            var parent = wipeout.utils.ko.virtualElements.parentElement(element);
+        if (wipeout.utils.ko.isVirtual(element)) {
+            var parent = wipeout.utils.ko.parentElement(element);
             
             // find index of "element"
             for (var i = 0, ii = parent.childNodes.length; i < ii; i++) {
@@ -216,7 +216,7 @@ Class("wipeout.utils.html", function () {
         var depth = 0;
  
         for (var i = 0, ii = children.length; i < ii; i++) {
-            if (wipeout.utils.ko.virtualElements.isVirtualClosing(children[i])) {
+            if (wipeout.utils.ko.isVirtualClosing(children[i])) {
                 depth--;
                 
                 // we are in a virtual parent element
@@ -231,7 +231,7 @@ Class("wipeout.utils.html", function () {
             output.push(children[i]);
             
             // the next element will be in a virtual child
-            if (wipeout.utils.ko.virtualElements.isVirtual(children[i]))
+            if (wipeout.utils.ko.isVirtual(children[i]))
                 depth++;
         }
  
@@ -246,7 +246,7 @@ Class("wipeout.utils.html", function () {
         if(vm)
             return vm;
         
-        var parent = wipeout.utils.ko.virtualElements.parentElement(forHtmlNode);
+        var parent = wipeout.utils.ko.parentElement(forHtmlNode);
         if(parent)
             return getViewModel(parent);
         

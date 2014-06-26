@@ -248,7 +248,7 @@ testUtils.testWithUtils("getParent", "don't include shareParentScope", false, fu
     // arrange
     var expected = {};
     var parentElement = {};
-    classes.mock("wipeout.utils.ko.virtualElements.parentElement", function() {
+    classes.mock("wipeout.utils.ko.parentElement", function() {
         strictEqual(arguments[0], subject.__woBag.rootHtmlElement);
         return parentElement;
     }, 1);
@@ -279,7 +279,7 @@ testUtils.testWithUtils("getParent", "include shareParentScope", false, function
     // arrange
     var expected = {};
     var parentElement = {};
-    classes.mock("wipeout.utils.ko.virtualElements.parentElement", function() {
+    classes.mock("wipeout.utils.ko.parentElement", function() {
         strictEqual(arguments[0], subject.__woBag.rootHtmlElement);
         return parentElement;
     }, 1);

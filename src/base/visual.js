@@ -79,23 +79,23 @@ Class("wipeout.base.visual", function () {
     };
     
     visual.prototype.entireViewModelHtml = function() {
+        ///<summary>Gets all of the html nodes included in this view model</summary>
+        ///<returns type="Array" generic0="Node">The html elements</returns>
+        
         if(this.__woBag.rootHtmlElement) {
             if (this.__woBag.rootHtmlElement.nodeType === 1) {
                 return [this.__woBag.rootHtmlElement];
-            } else if (wipeout.utils.ko.virtualElements.isVirtual(this.__woBag.rootHtmlElement)) {
+            } else if (wipeout.utils.ko.isVirtual(this.__woBag.rootHtmlElement)) {
                 // add root element
                 var output = [this.__woBag.rootHtmlElement];
-
-                // add children
-                var current = ko.virtualElements.firstChild(this.__woBag.rootHtmlElement);
-                while(current) {
-                    output.push(current);
-                    current = ko.virtualElements.nextSibling(current);
-                }
+                
+                wipeout.utils.ko.enumerateOverChildren(this.__woBag.rootHtmlElement, function(child) {
+                    output.push(child);
+                })
 
                 // add root element closing tag
                 var last = output[output.length - 1].nextSibling;
-                if(!wipeout.utils.ko.virtualElements.isVirtualClosing(last))
+                if(!wipeout.utils.ko.isVirtualClosing(last))
                     throw "Could not compile view model html";
 
                 output.push(last);
@@ -151,7 +151,7 @@ Class("wipeout.base.visual", function () {
     };
     
     visual.prototype.getRootHtmlElement = function() {
-        ///<summary>Get the root of this view model. It will most likely be a knockout virtual element</summary>
+        ///<summary>Get the root of this view model. Unless rendered manually using the render binding, it will be a knockout virtual element</summary>
         ///<returns type="Node">The root element</returns>
         return this.__woBag.rootHtmlElement;
     };
@@ -191,7 +191,7 @@ Class("wipeout.base.visual", function () {
         ///<param name="includeSharedParentScopeItems" type="Boolean" optional="true">Set to true if items marked with shareParentScope can be returned</param>
         ///<returns type="wo.view">The parent view model</returns>
         var pe;
-        var parent = !this.__woBag.rootHtmlElement || !(pe = wipeout.utils.ko.virtualElements.parentElement(this.__woBag.rootHtmlElement)) ?
+        var parent = !this.__woBag.rootHtmlElement || !(pe = wipeout.utils.ko.parentElement(this.__woBag.rootHtmlElement)) ?
             null :
             wipeout.utils.html.getViewModel(pe);
 
@@ -281,6 +281,7 @@ Class("wipeout.base.visual", function () {
         ///<summary>Triggered after the entire application has been initialized. Will only be triggered on the viewModel created directly by the wipeout binding</summary>    
     };
     
+    //TODO: document
     // list of html tags which will not be treated as objects
     var reservedTags = ["a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "command", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "head", "header", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "map", "mark", "menu", "meta", "meter", "nav", "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"];
     

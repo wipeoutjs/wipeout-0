@@ -26,7 +26,7 @@ Binding("render", true, function () {
         this._super(oldParentElement, newParentElement);
         if(DEBUG && !wipeout.settings.suppressWarnings && this.value) {
             for(var i = 0, ii = this.value.__woBag.nodes.length; i < ii; i++) {
-                if(wipeout.utils.ko.virtualElements.parentElement(this.value.__woBag.nodes[i]) !== this.value.__woBag.rootHtmlElement) {
+                if(wipeout.utils.ko.parentElement(this.value.__woBag.nodes[i]) !== this.value.__woBag.rootHtmlElement) {
                     console.warn("Only part of this view model was moved. Un moved nodes will be deleted or orphaned with their bindings cleared when this view model is re-rendered or disposed.");
                     break;
                 }

@@ -91,7 +91,7 @@ Class("wipeout.bindings.bindingBase", function () {
         });
 
         if(!stop) {
-            wipeout.utils.ko.virtualElements.enumerateOverChildren(node, function(child) {
+            wipeout.utils.ko.enumerateOverChildren(node, function(child) {
                 enumerate(wipeout.bindings.bindingBase.getBindings(child, bindingType), function(binding) {
                     bindings.push(binding);
                 });
