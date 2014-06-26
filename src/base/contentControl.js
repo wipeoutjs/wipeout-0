@@ -28,7 +28,7 @@ Class("wipeout.base.contentControl", function () {
         });
         
         if(owner instanceof wipeout.base.visual)
-            owner.registerDisposable(function() { output.dispose(); });
+            owner.registerDisposeCallback(function() { output.dispose(); });
         
         return output;
     };

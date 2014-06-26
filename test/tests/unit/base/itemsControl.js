@@ -41,7 +41,7 @@ testUtils.testWithUtils("constructor", "", false, function(methods, classes, sub
     }, 1);
     
     subject._syncModelsAndViewModels = function(){};
-    subject.registerDisposable = methods.method();
+    subject.registerDisposeCallback = methods.method();
     
     // act
     invoker(templateId, itemTemplateId, model);

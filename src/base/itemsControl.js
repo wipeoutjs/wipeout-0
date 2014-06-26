@@ -36,7 +36,7 @@ Class("wipeout.base.itemsControl", function () {
         }
         
         var d1 = this.items.subscribe(this._syncModelsAndViewModels, this);
-        this.registerDisposable(function() { d1.dispose(); });
+        this.registerDisposeCallback(function() { d1.dispose(); });
 
         itemTemplateId = this.itemTemplateId.peek();
         var d2 = this.itemTemplateId.subscribe(function (newValue) {
@@ -48,7 +48,7 @@ Class("wipeout.base.itemsControl", function () {
                 }
             }
         }, this);
-        this.registerDisposable(function() { d2.dispose(); });
+        this.registerDisposeCallback(function() { d2.dispose(); });
     }, "itemsControl");
     
     itemsControl._subscribeV2 = function() {
@@ -64,7 +64,7 @@ Class("wipeout.base.itemsControl", function () {
                 initialItemSource = wipeout.utils.obj.copyArray(arguments[0] || []);
             }
         }, this);
-        this.registerDisposable(function() { d1.dispose(); });
+        this.registerDisposeCallback(function() { d1.dispose(); });
         
         var initialItems = this.items.peek();
         var d2 = this.items.subscribe(function() {
@@ -74,16 +74,16 @@ Class("wipeout.base.itemsControl", function () {
                 initialItems = wipeout.utils.obj.copyArray(arguments[0] || []);
             }
         }, this);
-        this.registerDisposable(function() { d2.dispose() });
+        this.registerDisposeCallback(function() { d2.dispose() });
     };
     
     itemsControl._subscribeV3 = function() {
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
         var d1 = this.itemSource.subscribe(this._itemSourceChanged, this, "arrayChange");
-        this.registerDisposable(function() { d1.dispose(); });
+        this.registerDisposeCallback(function() { d1.dispose(); });
         
         var d2 = this.items.subscribe(this._itemsChanged, this, "arrayChange");
-        this.registerDisposable(function() { d2.dispose(); });
+        this.registerDisposeCallback(function() { d2.dispose(); });
         
     };
     

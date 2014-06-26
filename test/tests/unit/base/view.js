@@ -81,7 +81,7 @@ testUtils.testWithUtils("constructor", "", false, function(methods, classes, sub
     var model = {};
     subject.__woBag = {};
     subject._super = methods.method([templateId]);
-    subject.registerDisposable = methods.customMethod(function() { strictEqual(arguments[0].constructor, Function); });
+    subject.registerDisposeCallback = methods.customMethod(function() { strictEqual(arguments[0].constructor, Function); });
     
     // act
     invoker(templateId, model);
@@ -258,7 +258,7 @@ testUtils.testWithUtils("onModelChanged", "", false, function(methods, classes, 
     var disposable = {};
     var newVal = new wipeout.base.routedEventModel();
     subject.disposeOf = methods.method([subject.__woBag["wipeout.base.view.modelRoutedEvents"]]);
-    subject.registerDisposable = methods.customMethod(function() {
+    subject.registerDisposeCallback = methods.customMethod(function() {
         strictEqual(arguments[0].constructor, Function);
         return disposable;
     });

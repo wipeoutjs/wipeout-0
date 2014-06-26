@@ -23,3 +23,4 @@ changes:    woInvisible -> shareParentScope
             find/call
             move
             event priority
+            registerDisposable -> registerDisposeCallback

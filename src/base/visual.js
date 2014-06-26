@@ -122,7 +122,7 @@ Class("wipeout.base.visual", function () {
             this.disposeOf(i);
     };
     
-    visual.prototype.registerDisposable = (function() {
+    visual.prototype.registerDisposeCallback = (function() {
         var i = 0;
         return function(disposeFunction) {
             ///<summary>Register a dispose function which will be called when this object is disposed of.</summary>
@@ -136,6 +136,19 @@ Class("wipeout.base.visual", function () {
             return id;
         };
     })();
+    
+    visual.prototype.registerDisposable = function(disposableOrDisposableGetter) {
+        ///<summary>An object with a dispose function to be disposed when this object is disposed of.</summary>
+        //TODO: example in docs
+        ///<param name="disposableOrDisposableGetter" type="Function" optional="false">The function to dispose of on dispose, ar a function to get this object</param>
+        ///<returns type="String">A key to dispose off this object manually</returns>
+        
+        if(!disposableOrDisposableGetter) throw "Invalid disposeable object";        
+        if(disposeFunction.constructor === Function) disposableOrDisposableGetter = disposableOrDisposableGetter.call(this);        
+        if(!(disposableOrDisposableGetter.dispose instanceof Function)) throw "The disposable object must have a dispose(...) function";
+
+        return this.registerDisposeCallback(function() { disposableOrDisposableGetter.dispose(); });
+    };
     
     visual.prototype.getRootHtmlElement = function() {
         ///<summary>Get the root of this view model. It will most likely be a knockout virtual element</summary>

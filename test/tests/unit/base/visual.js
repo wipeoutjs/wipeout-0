@@ -67,7 +67,7 @@ testUtils.testWithUtils("disposeOfAll", null, false, function(methods, classes, 
     // assert
 });
 
-testUtils.testWithUtils("registerDisposable", "not function", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("registerDisposeCallback", "not function", false, function(methods, classes, subject, invoker) {
     // arrange    
     // act
     // assert
@@ -76,7 +76,7 @@ testUtils.testWithUtils("registerDisposable", "not function", false, function(me
     });    
 });
 
-testUtils.testWithUtils("registerDisposable", "ids and dispose functions", false, function(methods, classes, subject, invoker) {
+testUtils.testWithUtils("registerDisposeCallback", "ids and dispose functions", false, function(methods, classes, subject, invoker) {
     // arrange
     subject.__woBag = { disposables: {}};
     function d1(){}
