@@ -28,7 +28,7 @@ Class("wipeout.base.if", function () {
         this.elseTemplateId = ko.observable(_if.blankTemplateId);
         
         var d1 = this.elseTemplateId.subscribe(this.elseTemplateChanged, this);
-        this.registerDisposeCallback(function() { d1.dispose(); });
+        this.registerDisposable(d1);
         
         // anonymous version of elseTemplateId
         this.elseTemplate = wipeout.base.contentControl.createTemplatePropertyFor(this.elseTemplateId, this);
@@ -37,10 +37,10 @@ Class("wipeout.base.if", function () {
         this.__cachedTemplateId = this.templateId();
         
         var d2 = this.condition.subscribe(this.onConditionChanged, this);
-        this.registerDisposeCallback(function() { d2.dispose(); });
+        this.registerDisposable(d2);
         
         var d3 = this.templateId.subscribe(this.copyTemplateId, this);
-        this.registerDisposeCallback(function() { d3.dispose(); });
+        this.registerDisposable(d3);
         
         this.copyTemplateId(this.templateId());
     }, "_if");

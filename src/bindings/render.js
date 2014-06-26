@@ -113,10 +113,10 @@ Binding("render", true, function () {
         this.value.__woBag.rootHtmlElement = this.element;
 
         var subscription1 = this.value.__woBag.disposed.register(this.unRender, this);
-        this.onDisposeEventSubscription = this.value.registerDisposeCallback(function() { subscription1.dispose(); });
+        this.onDisposeEventSubscription = this.value.registerDisposable(subscription1);
 
         var subscription2 = this.value.templateId.subscribe(this.onTemplateChanged, this);
-        this.templateChangedSubscription = this.value.registerDisposeCallback(function() { subscription2.dispose(); });
+        this.templateChangedSubscription = this.value.registerDisposable(subscription2);
         this.onTemplateChanged(this.value.templateId.peek());
     };
     

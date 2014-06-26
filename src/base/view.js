@@ -23,7 +23,7 @@ Class("wipeout.base.view", function () {
                 model = newVal;
             }                                          
         }, this);
-        this.registerDisposeCallback(function() { d1.dispose() });
+        this.registerDisposable(d1);
                                 
         //Placeholder to store binding disposeal objects
         this.__woBag.bindings = {};
@@ -283,7 +283,7 @@ Class("wipeout.base.view", function () {
             
             if(newValue instanceof wipeout.base.routedEventModel) {
                 var d1 = newValue.__triggerRoutedEventOnVM.register(this.onModelRoutedEvent, this);
-                this.__woBag[modelRoutedEventKey] = this.registerDisposeCallback(function() { d1.dispose(); });
+                this.__woBag[modelRoutedEventKey] = this.registerDisposable(d1);
             }
         }
     };
