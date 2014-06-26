@@ -224,7 +224,6 @@ Class("wipeout.base.itemsControl", function () {
         item.dispose();
     };
 
-    // virtual
     itemsControl.prototype._createItem = function (model) {
         ///<summary>Defines how a view model should be created given a model. The default is to create a view and give it the itemTemplateId</summary>
         ///<param name="model" type="Any" optional="false">The model for the view to create</param>

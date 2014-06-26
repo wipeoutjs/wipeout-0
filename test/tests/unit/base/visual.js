@@ -92,6 +92,89 @@ testUtils.testWithUtils("registerDisposeCallback", "ids and dispose functions", 
     strictEqual(i1 + 1, i2);
 });
 
+testUtils.testWithUtils("registerDisposable", "object, null", false, function(methods, classes, subject, invoker) {
+    // arrange    
+    // act    
+    // assert
+    throws(function() {
+        invoker();
+    });
+});
+
+testUtils.testWithUtils("registerDisposable", "object, invalid dispose function", false, function(methods, classes, subject, invoker) {
+    // arrange    
+    // act    
+    // assert
+    throws(function() {
+        invoker({});
+    });
+});
+
+testUtils.testWithUtils("registerDisposable", "callback, null", false, function(methods, classes, subject, invoker) {
+    // arrange    
+    // act    
+    // assert
+    throws(function() {
+        invoker(function(){});
+    });
+});
+
+testUtils.testWithUtils("registerDisposable", "callback, invalid dispose function", false, function(methods, classes, subject, invoker) {
+    // arrange    
+    // act    
+    // assert
+    throws(function() {
+        invoker(function(){return {};});
+    });
+});
+
+testUtils.testWithUtils("registerDisposable", "ok, obj", false, function(methods, classes, subject, invoker) {
+    // arrange
+    var callback;
+    var expected = {};
+    subject.registerDisposeCallback = methods.customMethod(function() {
+        if(callback) ok(false);
+        callback = arguments[0];
+        return expected;
+    });
+    
+    var dispose = {
+        dispose: methods.method()
+    };
+    
+    // act
+    var actual = invoker(dispose);
+    
+    // assert
+    strictEqual(actual, expected);
+    callback();
+});
+
+
+testUtils.testWithUtils("registerDisposable", "ok, obj", false, function(methods, classes, subject, invoker) {
+    // arrange
+    var callback;
+    var expected = {};
+    subject.registerDisposeCallback = methods.customMethod(function() {
+        if(callback) ok(false);
+        callback = arguments[0];
+        return expected;
+    });
+    
+    var dispose = function() {
+        return {
+            dispose: methods.method()
+        };
+    };
+    
+    // act
+    var actual = invoker(dispose);
+    
+    // assert
+    strictEqual(actual, expected);
+    callback();
+});
+
 testUtils.testWithUtils("entireViewModelHtml", "no html", false, function(methods, classes, subject, invoker) {
     // arrange    
     subject.__woBag = {};
