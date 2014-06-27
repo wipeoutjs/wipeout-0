@@ -28,7 +28,6 @@ Class("wipeout.base.object", function () {
         }
     };
     
-    //TODO: document
     // The virtual cache caches overridden methods for quick lookup later. It is not safe to use if two function prototypes which are not related share the same function, or function prototypes are modified after an application initilisation stage
     object.useVirtualCache = true;
     
@@ -105,8 +104,6 @@ Class("wipeout.base.object", function () {
         
         var newClass = object.extend(childClass.constructor);
     };
-
-    //TODO document 2 extend methods
     
     var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_0-9]*$/;
     object.extend = function (childClass, className/* optional */) {

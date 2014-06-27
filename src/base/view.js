@@ -234,7 +234,6 @@ Class("wipeout.base.view", function () {
         }, this);
     };
     
-    //TODO: document. node: JSON not avaliable in IE <= 7
     view.objectParser = {
         "json": function (value) {
             return JSON.parse(value);

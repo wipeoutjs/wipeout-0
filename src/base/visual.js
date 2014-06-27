@@ -17,8 +17,6 @@ Class("wipeout.base.visual", function () {
 
         //A bag to put objects needed for the lifecycle of this object and its properties
         this.__woBag = {
-            //TODO: can I move any of this to the render binding
-            //TODO: do I want this event here?
             disposed: wipeout.base.event(),
             disposables: {},
             createdByWipeout: false,
@@ -139,7 +137,6 @@ Class("wipeout.base.visual", function () {
     
     visual.prototype.registerDisposable = function(disposableOrDisposableGetter) {
         ///<summary>An object with a dispose function to be disposed when this object is disposed of.</summary>
-        //TODO: example in docs
         ///<param name="disposableOrDisposableGetter" type="Function" optional="false">The function to dispose of on dispose, ar a function to get this object</param>
         ///<returns type="String">A key to dispose off this object manually</returns>
         
@@ -281,7 +278,6 @@ Class("wipeout.base.visual", function () {
         ///<summary>Triggered after the entire application has been initialized. Will only be triggered on the viewModel created directly by the wipeout binding</summary>    
     };
     
-    //TODO: document
     // list of html tags which will not be treated as objects
     var reservedTags = ["a", "abbr", "acronym", "address", "applet", "area", "article", "aside", "audio", "b", "base", "basefont", "bdi", "bdo", "big", "blockquote", "body", "br", "button", "canvas", "caption", "center", "cite", "code", "col", "colgroup", "command", "datalist", "dd", "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "embed", "fieldset", "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "head", "header", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "html", "i", "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li", "link", "map", "mark", "menu", "meta", "meter", "nav", "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p", "param", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script", "section", "select", "small", "source", "span", "strike", "strong", "style", "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th", "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"];
     

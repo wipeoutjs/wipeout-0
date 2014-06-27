@@ -132,7 +132,6 @@ Class("wipeout.template.engine", function () {
     
     engine.prototype.renderTemplateSource = function (templateSource, bindingContext, options) {
         ///<summary>Build html from a template source</summary>
-        //TODO: check object types
         ///<param name="templateSource" type="Object">The template</param>
         ///<param name="bindingContext" type="ko.bindingContext">The current binding context to apply to the template</param>
         ///<param name="options" type="Object">The knockout template options</param>

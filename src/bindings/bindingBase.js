@@ -13,6 +13,9 @@ Class("wipeout.bindings.bindingBase", function () {
         this.bindingId = wipeout.bindings.bindingBase.uniqueId();
         this.bindingMeta = {};
         this.element = element;
+        if(!this.getParentElement())
+            throw "Cannot apply a \"wipeout.bindings.bindingBase\" binding on an element without a parent node.";
+        
         var bindings = wipeout.utils.domData.get(this.element, wipeout.bindings.bindingBase.dataKey);
         if(!bindings)
             bindings = wipeout.utils.domData.set(this.element, wipeout.bindings.bindingBase.dataKey, []);
@@ -26,7 +29,6 @@ Class("wipeout.bindings.bindingBase", function () {
 
         wipeout.bindings.bindingBase.registered[this.bindingId] = this;
 
-        //TODO: if parentNode is null?
         this.parentElement = this.getParentElement();
         this.moved(null, this.parentElement);
     }, "bindingBase");

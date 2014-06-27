@@ -25,3 +25,12 @@ changes:    woInvisible -> shareParentScope
             move
             event priority
             registerDisposable -> registerDisposeCallback
+            
+document view.objectParser. note: JSON not avaliable in IE <= 7
+document 2 types of object.extend()
+document useVirtualCache
+document types of register disposable
+document visual.regesteredTags
+do a doc on disposal in general
+
+search on API page????
