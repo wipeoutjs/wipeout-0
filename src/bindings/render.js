@@ -62,12 +62,12 @@ Binding("render", true, function () {
         }, this);
 
         // clean up all child nodes
-        var child = ko.virtualElements.firstChild(this.element);
+        var oc, child = ko.virtualElements.firstChild(this.element);
         while (child) {
             wipeout.utils.html.cleanNode(child);
-            var oc = child;
+            oc = child;
             child = ko.virtualElements.nextSibling(child);
-            (oc.parentElement || oc.parentNode).removeChild(oc);
+            wipeout.bindings.bindingBase.getParentElement(oc).removeChild(oc);
         }
 
         // clear references to html nodes in view

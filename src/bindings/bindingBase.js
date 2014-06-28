@@ -33,9 +33,14 @@ Class("wipeout.bindings.bindingBase", function () {
         this.moved(null, this.parentElement);
     }, "bindingBase");
     
+    bindingBase.getParentElement = function(element) {
+        // IE sometimes has null for parent element of a comment
+        return element.parentElement || element.parentNode;
+    };
+    
     bindingBase.prototype.getParentElement = function() {
         // IE sometimes has null for parent element of a comment
-        return this.element.parentElement || this.element.parentNode;
+        return bindingBase.getParentElement(this.element);
     };
     
     bindingBase.prototype.dispose = function() {

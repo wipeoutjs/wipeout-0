@@ -4,7 +4,6 @@ document async templates
 document move
 
 document custom filters on find
-ParentElement
 document event priority
 
 $model filter on find
