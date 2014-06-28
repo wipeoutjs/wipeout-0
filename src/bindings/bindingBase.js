@@ -34,16 +34,25 @@ Class("wipeout.bindings.bindingBase", function () {
     }, "bindingBase");
     
     bindingBase.getParentElement = function(element) {
+        ///<summary>Get the parent element of a node. (browser safe)</summary>
+        ///<param name="element" type="HTMLElement" optional="false">The node to get the parent of</param>
+        ///<returns type="HTMLElement">The node to get the parent of</returns>
+        
         // IE sometimes has null for parent element of a comment
         return element.parentElement || element.parentNode;
     };
     
     bindingBase.prototype.getParentElement = function() {
+        ///<summary>Get the parent element of a node this.element. (browser safe)</summary>
+        ///<returns type="HTMLElement">The node to get the parent of</returns>
+        
         // IE sometimes has null for parent element of a comment
         return bindingBase.getParentElement(this.element);
     };
     
     bindingBase.prototype.dispose = function() {
+        ///<summary>Dispose of this binding</summary>
+        
         this._super();
 
         this.moved(this.parentElement, null);
@@ -59,10 +68,15 @@ Class("wipeout.bindings.bindingBase", function () {
     };
     
     bindingBase.prototype.checkHasMoved = function() {
+        ///<summary>Check whether the element that this binding is on has moved</summary>
+        ///<returns type="Boolean">The node to get the parent of</returns>
+        
         return this.getParentElement() !== this.parentElement;
     };
     
     bindingBase.prototype.hasMoved = function() {
+        ///<summary>Perform actions if the element that this binding is on has moved</summary>
+        
         if(this.checkHasMoved()) {
             this.moved(this.parentElement, this.getParentElement());
             this.parentElement = this.getParentElement();
@@ -71,8 +85,12 @@ Class("wipeout.bindings.bindingBase", function () {
     
     // virtual
     bindingBase.prototype.moved = function(oldParentElement, newParentElement) {
+        ///<summary>Perform actions after the element that this binding is on has moved</summary>
+        ///<param name="oldParentElement" type="HTMLElement" optional="false">The old parent element</param>
+        ///<param name="newParentElement" type="HTMLElement" optional="false">The new parent element</param>
     };
     
+    // a placeholder for all bindings
     bindingBase.registered = {};
     
     bindingBase.uniqueId = (function () {
@@ -86,6 +104,10 @@ Class("wipeout.bindings.bindingBase", function () {
     })();
     
     bindingBase.getBindings = function(node, bindingType) {
+        ///<summary>Get all bindings on a node and it's decendant elements. Does not return bindings of element which control their own decendant bindings</summary>
+        ///<param name="node" type="HTMLElement" optional="false">The element to get bindings from</param>
+        ///<returns type="HTMLElement">The node to get the parent of</returns>
+        
         if(bindingType && !(bindingType instanceof Function)) throw "Invalid binding type";
 
         var stop = false;
@@ -108,6 +130,7 @@ Class("wipeout.bindings.bindingBase", function () {
         return bindings;                
     };
     
+    // the key for bindings
     bindingBase.dataKey = "wipeout.bindings.bindingBase";
     
     //TODO: can I put in a generic init function?
