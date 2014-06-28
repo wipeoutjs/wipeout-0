@@ -1,10 +1,21 @@
 Binding("render", true, function () {
     
-    var render = wipeout.bindings.bindingBase.extend(function(element, value, allBindingsAccessor, bindingContext) {  
+    var render = wipeout.bindings.bindingBase.extend(function(element, value, allBindingsAccessor, bindingContext) { 
+        ///<summary>A knockout binding to render a wo.view</summary>
+        ///<param name="element" type="HTMLElement" optional="false">The to bind to</param>
+        ///<param name="value" type="wo.view" optional="false">The content to render</param>
+        ///<param name="allBindingsAccessor" type="Function" optional="false">Other bindings on the element</param>
+        ///<param name="bindingContext" type="ko.bindingContext" optional="false">The binding context</param>
+        
         this._super(element);
 
-        this.bindingMeta = ko.bindingHandlers.template.init(this.element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);            
+        // metadata for the binding
+        this.bindingMeta = ko.bindingHandlers.template.init(this.element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);
+        
+        // Other bindings on the element
         this.allBindingsAccessor = allBindingsAccessor;
+        
+        // The binding context
         this.bindingContext = bindingContext;
 
         if(ko.isObservable(value)) {
@@ -23,6 +34,10 @@ Binding("render", true, function () {
     }, "render");
     
     render.prototype.moved = function(oldParentElement, newParentElement) {
+        ///<summary>Perform actions after the element that this binding is on has moved</summary>
+        ///<param name="oldParentElement" type="HTMLElement" optional="false">The old parent element</param>
+        ///<param name="newParentElement" type="HTMLElement" optional="false">The new parent element</param>
+        
         this._super(oldParentElement, newParentElement);
         if(DEBUG && !wipeout.settings.suppressWarnings && this.value) {
             for(var i = 0, ii = this.value.__woBag.nodes.length; i < ii; i++) {
@@ -35,6 +50,7 @@ Binding("render", true, function () {
     };
     
     render.prototype.dispose = function() {
+        ///<summary>Dispose of this binding</summary>
 
         this.unRender();
 
@@ -47,6 +63,9 @@ Binding("render", true, function () {
     };
     
     render.prototype.reRender = function(value) {
+        ///<summary>Re render the value</summary>
+        ///<param name="value" type="wo.view" optional="false">The value to render</param>
+        
         this.unRender();
         this.render(value);
     };
@@ -75,6 +94,7 @@ Binding("render", true, function () {
     };
     
     render.prototype.unRender = function() {
+        ///<summary>Un renders all of the content of the binding</summary>
 
         if(!this.value) return;
 
@@ -97,6 +117,9 @@ Binding("render", true, function () {
     };
     
     render.prototype.render = function (newVal) {
+        ///<summary>Render a given value</summary>
+        ///<param name="value" type="wo.view" optional="false">The value to render</param>
+        
         if(this.value || this.templateChangedSubscription)
             throw "This binding is already rendering a visual. Call unRender before rendering again.";
 
@@ -121,6 +144,9 @@ Binding("render", true, function () {
     };
     
     render.prototype.onTemplateChanged = function(newVal) {
+        ///<summary>Apply the template of the value to the binding element</summary>  
+        ///<param name="newVal" type="wo.view" optional="false">The value to render</param>      
+        
         var _this = this;
         function reRender() {
             if(_this.value && _this.value.templateId.peek() !== newVal) return;
@@ -138,6 +164,7 @@ Binding("render", true, function () {
     };
     
     render.prototype.doRendering = function() {
+        ///<summary>Do the rendering</summary>  
 
         ko.bindingHandlers.template.update(this.element, wipeout.bindings.render.createValueAccessor(this.value), this.allBindingsAccessor, null, this.bindingContext);
 
@@ -147,7 +174,12 @@ Binding("render", true, function () {
     };
     
     render.init = function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        ///<summary>Initialize the render binding</summary>       
+        ///<summary>Initialize the render binding</summary> 
+        ///<param name="element" type="HTMLElement" optional="false">The to bind to</param>
+        ///<param name="valueAccessor" type="wo.view" optional="false">The content to render</param>
+        ///<param name="allBindingsAccessor" type="Function" optional="false">Other bindings on the element</param>
+        ///<param name="viewModel" type="Object" optional="true">Not used</param>
+        ///<param name="bindingContext" type="ko.bindingContext" optional="false">The binding context</param>
 
         var binding = new wipeout.bindings.render(element, valueAccessor(), allBindingsAccessor, bindingContext);                
         binding.render(wipeout.utils.ko.peek(valueAccessor()));
@@ -156,6 +188,7 @@ Binding("render", true, function () {
     
     render.createValueAccessor = function(value) {
         ///<summary>Create a value accessor for the knockout template binding.</summary>
+        ///<param name="value" type="wo.view" optional="false">The value to render</param>      
 
         // ensure template id does not trigger another update
         // this will be handled within the binding

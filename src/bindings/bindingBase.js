@@ -10,8 +10,13 @@ Class("wipeout.bindings.bindingBase", function () {
         if(!element)
             throw "ArgumnetNullException";
 
+        // the binding id
         this.bindingId = wipeout.bindings.bindingBase.uniqueId();
+        
+        // metadata for the binding
         this.bindingMeta = {};
+        
+        // the element to bind to
         this.element = element;
         if(!this.getParentElement())
             throw "Cannot apply a \"wipeout.bindings.bindingBase\" binding on an element without a parent node.";
@@ -29,7 +34,9 @@ Class("wipeout.bindings.bindingBase", function () {
 
         wipeout.bindings.bindingBase.registered[this.bindingId] = this;
 
+        // the parent of the element to bind to
         this.parentElement = this.getParentElement();
+        
         this.moved(null, this.parentElement);
     }, "bindingBase");
     
