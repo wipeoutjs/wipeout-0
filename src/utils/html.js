@@ -301,6 +301,9 @@ Class("wipeout.utils.html", function () {
     };
     
     var html = function(htmlManipulationLogic) {
+        ///<summary>If html elements are to be moved or deleted, wrap the move logic in a call to this function to ensure disposal of unused view models</summary> 
+        ///<param name="htmlManipulationLogic" type="Function" optional="false">A callback to manipulate html</param>
+        
         wipeout.utils.htmlAsync(function(cleanupCallback) {
             htmlManipulationLogic();
             cleanupCallback();

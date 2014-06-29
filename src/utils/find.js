@@ -1,12 +1,19 @@
 Class("wipeout.utils.find", function () {
     
     var find = wipeout.base.object.extend(function(bindingContext) {
+        ///<summary>Find an ancestor from the binding context</summary>
+        ///<param name="bindingContext" type="ko.bindingContext" optional="false">The ancestor chain</param>
         this._super();
 
         this.bindingContext = bindingContext;
     }, "find");
     
     find.prototype.find = function(searchTerm, filters) {
+        ///<summary>Find an ancestor item based on the search term and filters</summary>
+        ///<param name="searchTerm" type="Any" optional="false">If an object, will be used as extra filters. If a function, will be used as an $instanceof filter. If a String will be used as an &ancestory filter</param>
+        ///<param name="filters" type="Object" optional="false">Items to filter the output by</param>
+        ///<returns type="Any">The search result</returns>
+        
         var temp = {};
 
         if(filters) {
@@ -65,6 +72,10 @@ Class("wipeout.utils.find", function () {
     };
     
     find.prototype._find = function(filters, getModel) {  
+        ///<summary>Find an ancestor item based on the filters and whether view models or models are to be returned</summary>
+        ///<param name="filters" type="Object" optional="false">Items to filter the output by</param>
+        ///<param name="getModel" type="Boolean" optional="true">Specify that models are to be searched</param>
+        ///<returns type="Any">The search result</returns>
             
         if(!this.bindingContext ||!this.bindingContext.$parentContext)
             return null;
@@ -94,6 +105,10 @@ Class("wipeout.utils.find", function () {
     };
     
     find.create = function(bindingContext) {
+        ///<summary>Get a function wich points directly to (new wo.find(..)).find(...)</summary>
+        ///<param name="bindingContext" type="ko.bindingContext" optional="false">The find functionality</param>
+        ///<returns type="Function">The find function</returns>
+        
         var f = new wipeout.utils.find(bindingContext);
 
         return function(searchTerm, filters) {
@@ -101,6 +116,7 @@ Class("wipeout.utils.find", function () {
         };
     };
     
+    // regular expressions used by the find class
     find.regex = {
         ancestors: /^(great)*(grand){0,1}parent$/,
         great: /great/g,
@@ -108,10 +124,21 @@ Class("wipeout.utils.find", function () {
     };
     
     find.$type = function(currentItem, searchTerm, index) {
+        ///<summary>Find an item based on exact type matching</summary>
+        ///<param name="currentItem" type="Any" optional="false">The item to decide whether it is a match or not</param>
+        ///<param name="searchTerm" type="Function" optional="false">The value of $type in the search filter</param>
+        ///<param name="index" type="Number" optional="false">The current search index. This is incremented by 1 each time the ancestoral tree is traversed</param>
+        ///<returns type="Boolean">Whether the current item is a match or not</returns>
+        
         return currentItem && currentItem.constructor === searchTerm;
     };
     
     find.$ancestry = function(currentItem, searchTerm, index) {
+        ///<summary>Find an item based on its ancestory. (Parent, grandparent, etc...)</summary>
+        ///<param name="currentItem" type="Any" optional="false">The item to decide whether it is a match or not</param>
+        ///<param name="searchTerm" type="String" optional="false">The value of $ancestry in the search filter</param>
+        ///<param name="index" type="Number" optional="false">The current search index. This is incremented by 1 each time the ancestoral tree is traversed</param>
+        ///<returns type="Boolean">Whether the current item is a match or not</returns>
                 
         searchTerm = (searchTerm || "").toLowerCase();
 
@@ -130,6 +157,12 @@ Class("wipeout.utils.find", function () {
     };
     
     find.$instanceOf = function(currentItem, searchTerm, index) {
+        ///<summary>Find an item based on instanceof type matching</summary>
+        ///<param name="currentItem" type="Any" optional="false">The item to decide whether it is a match or not</param>
+        ///<param name="searchTerm" type="Function" optional="false">The value of $instanceof in the search filter</param>
+        ///<param name="index" type="Number" optional="false">The current search index. This is incremented by 1 each time the ancestoral tree is traversed</param>
+        ///<returns type="Boolean">Whether the current item is a match or not</returns>
+        
         if(!currentItem || !searchTerm || searchTerm.constructor !== Function)
             return false;
 
@@ -137,6 +170,12 @@ Class("wipeout.utils.find", function () {
     };
     
     find.is = function(item, filters, index) {
+        ///<summary>Find an item based on the given filters</summary>
+        ///<param name="item" type="Any" optional="false">The item to decide whether it is a match or not</param>
+        ///<param name="filters" type="Object" optional="false">The filters</param>
+        ///<param name="index" type="Number" optional="false">The current search index. This is incremented by 1 each time the ancestoral tree is traversed</param>
+        ///<returns type="Boolean">Whether the current item is a match or not</returns>
+        
         if (!item)
             return false;
         

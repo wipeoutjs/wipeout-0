@@ -1,12 +1,15 @@
 Class("wipeout.utils.domManipulationWorkerBase", function () { 
     
-    var domManipulationWorkerBase = wipeout.base.object.extend(function() {
+    var domManipulationWorkerBase = wipeout.base.object.extend(function() {  
+        ///<summary>Monitor changes to html globaly and cleanup wipeout state on finish(...)</summary>
+        
         this._super();
         
         this._mutations = [];
     });
     
-    domManipulationWorkerBase.prototype.finish = function() {
+    domManipulationWorkerBase.prototype.finish = function() {  
+        ///<summary>Cleanup any moved or removed nodes</summary>
         
         // dispose of removed nodes
         for(var i = 0; i < this._mutations.length; i++) {

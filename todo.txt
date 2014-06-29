@@ -30,6 +30,7 @@ document 2 types of object.extend()
 document useVirtualCache
 document types of register disposable
 document visual.regesteredTags
+document custom find functions
 do a doc on disposal in general
 
 search on API page????
