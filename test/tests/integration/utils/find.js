@@ -145,6 +145,33 @@ testUtils.testWithUtils("find", "instanceof and index", false, function(methods,
 
 
 
+testUtils.testWithUtils("find", "instanceof and model", false, function(methods, classes, subject, invoker) {
+    function myClass() {};
+    
+    // arrange
+    var model = new myClass();
+    var bc = {
+        $data: {},
+        $parentContext: {        
+            $data: {},
+            $parentContext: {        
+                $data: new wo.view()
+            }
+        }
+    };
+    
+    bc.$parentContext.$parentContext.$data.model(model);    
+    subject = new find(bc);
+    
+    // act
+    var actual = subject.find({$i:myClass, $m: true});
+    
+    // assert
+    strictEqual(actual, model);
+});
+
+
+
 
 
 

@@ -50,35 +50,47 @@ Class("wipeout.utils.find", function () {
         if(!filters.$type && filters.$t) {
             filters.$type = filters.$t;
         }
+        
+        var getModel = filters.$m || filters.$model;
 
+        delete filters.$m;
+        delete filters.$model;
         delete filters.$n;
         delete filters.$instanceof;
         delete filters.$i;
         delete filters.$a;
         delete filters.$t;
 
-        return this._find(filters);
+        return this._find(filters, getModel);
     };
     
-    find.prototype._find = function(filters) {  
+    find.prototype._find = function(filters, getModel) {  
             
         if(!this.bindingContext ||!this.bindingContext.$parentContext)
             return null;
+        
+        var getItem = getModel ? 
+            function(item) {
+                return item && item.$data instanceof wo.view ? item.$data.model() : null;
+            } : 
+            function(item) { 
+                return item ? item.$data : null;
+            };
 
-        var current = this.bindingContext;            
-        for (var index = filters.$number; index >= 0 && current; index--) {
+        var currentItem, currentContext = this.bindingContext;
+        for (var index = filters.$number; index >= 0 && currentContext; index--) {
             var i = 0;
 
-            current = current.$parentContext;
+            currentContext = currentContext.$parentContext;
 
             // continue to loop until we find a binding context which matches the search term and filters
-            while(current && !wipeout.utils.find.is(current.$data, filters, i)) {
-                current = current.$parentContext;
+            while(!wipeout.utils.find.is(currentItem = getItem(currentContext), filters, i) && currentContext) {
+                currentContext = currentContext.$parentContext;
                 i++;
             }
         }
 
-        return current ? current.$data : null;
+        return currentItem;
     };
     
     find.create = function(bindingContext) {
@@ -125,14 +137,18 @@ Class("wipeout.utils.find", function () {
     };
     
     find.is = function(item, filters, index) {
-        for(var i in filters) {
+        if (!item)
+            return false;
+        
+        for (var i in filters) {
             if (i === "$number") continue;
 
             if (i[0] === "$") {
                 if(!wipeout.utils.find[i](item, filters[i], index))
                     return false;
-            } else if (filters[i] !== item[i])
+            } else if (filters[i] !== item[i]) {
                 return false;
+            }
         }
 
         return true;

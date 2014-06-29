@@ -21,8 +21,9 @@ testUtils.testWithUtils("constructor", "", false, function(methods, classes, sub
 
 testUtils.testWithUtils("find", "no filters", false, function(methods, classes, subject, invoker) {
     // arrange
-    subject._find = methods.customMethod(function(filters) {
+    subject._find = methods.customMethod(function(filters, model) {
         strictEqual(filters.$number, 0);
+        ok(!model);
     });
     
     // act
@@ -33,8 +34,9 @@ testUtils.testWithUtils("find", "no filters", false, function(methods, classes, 
 
 testUtils.testWithUtils("find", "filters, no index", false, function(methods, classes, subject, invoker) {
     // arrange
-    subject._find = methods.customMethod(function(filters) {
+    subject._find = methods.customMethod(function(filters, model) {
         strictEqual(filters.$number, 0);
+        ok(!model);
     });
     
     // act
@@ -46,9 +48,10 @@ testUtils.testWithUtils("find", "filters, no index", false, function(methods, cl
 testUtils.testWithUtils("find", "filters, $i instanceOf", false, function(methods, classes, subject, invoker) {
     // arrange
     var i = 11;
-    subject._find = methods.customMethod(function(filters) {
+    subject._find = methods.customMethod(function(filters, model) {
         strictEqual(filters.$instanceOf, i);
         strictEqual(filters.$, undefined);
+        ok(!model);
     });
     
     // act
@@ -60,8 +63,9 @@ testUtils.testWithUtils("find", "filters, $i instanceOf", false, function(method
 testUtils.testWithUtils("find", "type search term", false, function(methods, classes, subject, invoker) {
     // arrange
     function x(){};
-    subject._find = methods.customMethod(function(filters) {
+    subject._find = methods.customMethod(function(filters, model) {
         strictEqual(filters.$instanceOf, x);
+        ok(!model);
     });
     
     // act
@@ -73,8 +77,9 @@ testUtils.testWithUtils("find", "type search term", false, function(methods, cla
 testUtils.testWithUtils("find", "filters search term", false, function(methods, classes, subject, invoker) {
     // arrange
     var hello = "LKBLKJBLKJBLKJB";
-    subject._find = methods.customMethod(function(filters) {
+    subject._find = methods.customMethod(function(filters, model) {
         strictEqual(filters.aa, hello);
+        ok(!model);
     });
     
     // act
@@ -86,8 +91,9 @@ testUtils.testWithUtils("find", "filters search term", false, function(methods, 
 testUtils.testWithUtils("find", "ancestry search term", false, function(methods, classes, subject, invoker) {
     // arrange
     var hello = "zfgzhzfhzxfghxhnnxgn";
-    subject._find = methods.customMethod(function(filters) {
+    subject._find = methods.customMethod(function(filters, model) {
         strictEqual(filters.$ancestry, hello);
+        ok(!model);
     });
     
     // act
@@ -95,6 +101,20 @@ testUtils.testWithUtils("find", "ancestry search term", false, function(methods,
     
     // assert
 });
+
+testUtils.testWithUtils("find", "model", false, function(methods, classes, subject, invoker) {
+    // arrange
+    subject._find = methods.customMethod(function(filters, model) {
+        strictEqual(filters.$number, 0);
+        ok(model);
+    });
+    
+    // act
+    invoker({$m: true});
+    
+    // assert
+});
+
 
 testUtils.testWithUtils("create", "smoke test", true, function(methods, classes, subject, invoker) {
     // arrange
