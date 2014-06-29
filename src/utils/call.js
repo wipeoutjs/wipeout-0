@@ -19,7 +19,7 @@ Class("wipeout.utils.call", function () {
         return {
             dot: function(functionName) {
 
-                var obj = find(searchTerm, filters);
+                var obj = find(searchTermOrFilters, filters);
 
                 if(!obj)
                     throw "Could not find an object to call function :\"" + functionName + "\" on.";

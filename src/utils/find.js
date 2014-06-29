@@ -8,9 +8,9 @@ Class("wipeout.utils.find", function () {
         this.bindingContext = bindingContext;
     }, "find");
     
-    find.prototype.find = function(searchTerm, filters) {
+    find.prototype.find = function(searchTermOrFilters, filters) {
         ///<summary>Find an ancestor item based on the search term and filters</summary>
-        ///<param name="searchTerm" type="Any" optional="false">If an object, will be used as extra filters. If a function, will be used as an $instanceof filter. If a String will be used as an &ancestory filter</param>
+        ///<param name="searchTermOrFilters" type="Any" optional="false">If an object, will be used as extra filters. If a function, will be used as an $instanceof filter. If a String will be used as an &ancestory filter</param>
         ///<param name="filters" type="Object" optional="false">Items to filter the output by</param>
         ///<returns type="Any">The search result</returns>
         
@@ -28,14 +28,14 @@ Class("wipeout.utils.find", function () {
         }
 
         // shortcut for having constructor as search term
-        if(searchTerm && searchTerm.constructor === Function) {
-            filters.$instanceOf = searchTerm;
+        if(searchTermOrFilters && searchTermOrFilters.constructor === Function) {
+            filters.$instanceOf = searchTermOrFilters;
         // shortcut for having filters as search term
-        } else if(searchTerm && searchTerm.constructor !== String) {
-            for(var i in searchTerm)
-                filters[i] = searchTerm[i];
+        } else if(searchTermOrFilters && searchTermOrFilters.constructor !== String) {
+            for(var i in searchTermOrFilters)
+                filters[i] = searchTermOrFilters[i];
         } else {
-            filters.$ancestry = wipeout.utils.obj.trim(searchTerm);
+            filters.$ancestry = wipeout.utils.obj.trim(searchTermOrFilters);
         }     
 
         if(!filters.$number && filters.$n) {
