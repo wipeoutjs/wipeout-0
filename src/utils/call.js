@@ -15,37 +15,47 @@ Class("wipeout.utils.call", function () {
         ///<param name="filters" type="Object" optional="true">Filters to be passed to find</param>
         ///<returns type="Object">An item to create a function with the correct context and custom arguments</returns>
         
-        var find = this.find;
-        return {
-            dot: function(functionName) {
+        var obj = this.find(searchTermOrFilters, filters);
 
-                var obj = find(searchTermOrFilters, filters);
+        if(!obj)
+            throw "Could not find an object to call function on.";
+        
+        var dots = [];
+        var args = null;
+        var output = function() {
+            var current = obj;
+            
+            for (var i = 0, ii = dots.length - 1; i < ii && current; i++) {
+                current = ko.utils.unwrapObservable(current[dots[i]]);
+            }
+            
+            if(!current) {
+                var message = "Could not find the object " + dots[i - 1];
+            }
 
-                if(!obj)
-                    throw "Could not find an object to call function :\"" + functionName + "\" on.";
-
-                if(!obj[functionName])
-                    throw "Could not find function :\"" + functionName + "\" on this object.";
-
-                var output = function() {
-                    if(args) {
-                        var ar = wipeout.utils.obj.copyArray(args);
-                        enumerate(arguments, function(arg) { ar.push(arg); });
-                        return obj[functionName].apply(obj, ar);
-                    } else {
-                        return obj[functionName].apply(obj, arguments);
-                    }
-                };
-
-                var args = null;
-                output.args = function() {
-                    args = wipeout.utils.obj.copyArray(arguments);
-                    return output;
-                };
-
-                return output;              
+            if(!obj[dots[i]])
+                throw "Could not find function :\"" + dots[i] + "\" on this object.";
+            
+            if(args) {
+                var ar = wipeout.utils.obj.copyArray(args);
+                enumerate(arguments, function(arg) { ar.push(arg); });
+                return obj[dots[i]].apply(obj, ar);
+            } else {
+                return obj[dots[i]].apply(obj, arguments);
             }
         };
+        
+        output.dot = function(functionName) {
+            dots.push(functionName);
+            return output;
+        };
+        
+        output.args = function() {
+            args = wipeout.utils.obj.copyArray(arguments);
+            return output;
+        };
+        
+        return output;
     };
     
     call.create = function(find) {
