@@ -24,24 +24,34 @@ Class("wipeout.utils.call", function () {
         var args = null;
         var output = function() {
             var current = obj;
+            var currentFunction = null;
             
-            for (var i = 0, ii = dots.length - 1; i < ii && current; i++) {
-                current = ko.utils.unwrapObservable(current[dots[i]]);
-            }
+            if(dots.length > 0) {            
+                for (var i = 0, ii = dots.length - 1; i < ii && current; i++) {
+                    current = ko.utils.unwrapObservable(current[dots[i]]);
+                }
             
-            if(!current) {
-                var message = "Could not find the object " + dots[i - 1];
-            }
+                if(!current) {
+                    var message = "Could not find the object " + dots[i - 1];
+                }
 
-            if(!obj[dots[i]])
-                throw "Could not find function :\"" + dots[i] + "\" on this object.";
+                if(!current[dots[i]])
+                    throw "Could not find function :\"" + dots[i] + "\" on this object.";
+                
+                currentFunction = current[dots[i]];
+            } else {
+                if(obj.constructor !== Function)
+                    throw "Cannot call an object like a functino";
+                    
+                currentFunction = obj;
+            }
             
             if(args) {
                 var ar = wipeout.utils.obj.copyArray(args);
                 enumerate(arguments, function(arg) { ar.push(arg); });
-                return obj[dots[i]].apply(obj, ar);
+                return currentFunction.apply(current, ar);
             } else {
-                return obj[dots[i]].apply(obj, arguments);
+                return currentFunction.apply(current, arguments);
             }
         };
         

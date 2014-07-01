@@ -52,7 +52,7 @@ $.extend(testUtils, (function() {
         evaluatorFunction = evaluatorFunction || function() { };
         var output = function () {
             output.__called = true;
-            return evaluatorFunction.apply(window, arguments);
+            return evaluatorFunction.apply(this, arguments);
         };
  
         this.calls.push({ name: name, method: output });

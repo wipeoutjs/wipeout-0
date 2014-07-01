@@ -77,14 +77,19 @@ test("call", function() {
     // arrange        
     application.id = "ASDASDASDSADASD";
     var mocks = new testUtils.methodMock();
-    application.myFunction = mocks.customMethod(function() {
-        strictEqual(arguments[0], application.templateItems.content);
-        ok(arguments[1]);
+    application.myVal = ko.observable({
+        myFunction: mocks.customMethod(function() {
+            strictEqual(this, application.myVal());
+            
+            strictEqual(arguments[0], "aaa");
+            strictEqual(arguments[1], application.templateItems.content);
+            ok(arguments[2]);
+        })
     });
     
     application.template('<wo.contentControl id="content">\
     <template>\
-        <button id="myButton" data-bind="click: $call({ id: \'' + application.id + '\' }).dot(\'myFunction\')">\
+        <button id="myButton" data-bind="click: $call({ id: \'' + application.id + '\' }).dot(\'myVal\').dot(\'myFunction\').args(\'aaa\')">\
         </button>\
     </template>\
 </wo.contentControl>');    
