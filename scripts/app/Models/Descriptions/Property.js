@@ -71,9 +71,6 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
                     diff: {
                         description: "ko constants for operating on array changes (\"added\", \"deleted\", \"retained\")."
                     }
-                },
-                virtualElements: { 
-                    description: "Utils for operating on knockout virtual elements"
                 }
             },
             object: {

@@ -60,15 +60,23 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
         }
         
         if(this.constructorFunction.constructor === Function) {
-            var anInstance = new this.constructorFunction();        
-            for(var i in anInstance) {
-                if(anInstance.hasOwnProperty(i)) {                    
-                    if(anInstance[i] instanceof wo.event) { 
-                        this.events.push(new Wipeout.Docs.Models.Descriptions.Event(this.constructorFunction, i, this.classFullName));
-                    } else if(anInstance[i] instanceof Function && !ko.isObservable(anInstance[i])) { 
-                        this.functions.push(new Wipeout.Docs.Models.Descriptions.Function(anInstance[i], i, this.classFullName));
-                    } else {
-                        this.properties.push(new Wipeout.Docs.Models.Descriptions.Property(this.constructorFunction, i, this.classFullName));
+            
+            var anInstance;
+            try {
+                anInstance = new this.constructorFunction();
+            } catch (e) {
+            }
+            
+            if (anInstance) {
+                for(var i in anInstance) {
+                    if(anInstance.hasOwnProperty(i)) {                    
+                        if(anInstance[i] instanceof wo.event) { 
+                            this.events.push(new Wipeout.Docs.Models.Descriptions.Event(this.constructorFunction, i, this.classFullName));
+                        } else if(anInstance[i] instanceof Function && !ko.isObservable(anInstance[i])) { 
+                            this.functions.push(new Wipeout.Docs.Models.Descriptions.Function(anInstance[i], i, this.classFullName));
+                        } else {
+                            this.properties.push(new Wipeout.Docs.Models.Descriptions.Property(this.constructorFunction, i, this.classFullName));
+                        }
                     }
                 }
             }
