@@ -3,6 +3,10 @@
 var wipeout = {};
 
 var ajax = function (options) {
+    ///<summary>Perform an ajax request</summary>
+    ///<param name="options" type="Object">Configure teh request</param>
+    ///<returns type="XMLHttpRequest">The ajax request object</returns>
+    
     var xmlhttp = window.XMLHttpRequest ?
         new XMLHttpRequest() :
         new ActiveXObject("Microsoft.XMLHTTP");
@@ -20,6 +24,8 @@ var ajax = function (options) {
 
     xmlhttp.open(options.type || "GET", options.url || document.location.href, options.async !== undefined ? options.async : true);
     xmlhttp.send();
+    
+    return xmlhttp;
 };
     
 var enumerate = function(enumerate, action, context) {
@@ -203,6 +209,11 @@ Class("wipeout.utils.obj", function () {
     };
     
     var endsWith = function(string, endsWith) {
+        ///<summary>Determine whether a string ends with another string</summary>
+        ///<param name="string" type="String">The container string</param>
+        ///<param name="endsWith" type="String">The contained string</param>
+        ///<returns type="Boolean"></returns>
+        
         return string.indexOf(endsWith, string.length - endsWith.length) !== -1;
     };
     

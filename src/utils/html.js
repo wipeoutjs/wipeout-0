@@ -273,6 +273,9 @@ Class("wipeout.utils.html", function () {
     };
     
     var cleanNode = function(node) {
+        ///<summary>Clean down and dispose of all of the bindings (ko and wo) associated with this node and its children</summary> 
+        ///<param name="node" type="HTMLNode" optional="false">The node</param>
+        
         var bindings = wipeout.utils.domData.get(node, wipeout.bindings.bindingBase.dataKey);
         
         // check if children have to be disposed
@@ -317,7 +320,11 @@ Class("wipeout.utils.html", function () {
         // IE throws an exception on invalid xml
     }
     
-    var parseXml = function(xmlString) {        
+    var parseXml = function(xmlString) {  
+        ///<summary>Parse a string into an xm ldocumen</summary> 
+        ///<param name="xmlString" type="String" optional="false">the xml string</param>
+        ///<returns type="Element" optional="false">Xml</returns>
+        
         var xmlTemplate = new DOMParser().parseFromString(xmlString, "application/xml");        
         if(xmlTemplate.getElementsByTagNameNS(parseErrorNamespace, 'parsererror').length) {
 			throw "Invalid xml template:\n" + new XMLSerializer().serializeToString(xmlTemplate.firstChild);

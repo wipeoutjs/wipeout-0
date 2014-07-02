@@ -73,6 +73,10 @@ Binding("wo", true, function () {
     };
     
     wo.create = function(value) {
+        ///<summary>Create an object from the output of the wo template engine</summary>
+        ///<param name="value" type="Object" optional="false">The template engine output</param>
+        ///<returns type="Any">An object</returns>
+        
         if(!value.type) {
             throw "Cannot create an instance of \"" + value.name + "\"";
         }
