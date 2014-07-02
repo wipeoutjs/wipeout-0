@@ -34,3 +34,6 @@ document custom find functions
 do a doc on disposal in general
 
 search on API page????
+
+property alieses
+class alieses

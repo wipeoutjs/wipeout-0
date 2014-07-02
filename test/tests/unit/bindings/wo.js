@@ -105,3 +105,23 @@ testUtils.testWithUtils("init", "", true, function(methods, classes, subject, in
     // assert
     strictEqual(actual, meta);
 });
+
+testUtils.testWithUtils("create", "bad", true, function(methods, classes, subject, invoker) {
+    // arrange    
+    // act
+    // assert
+    throws(function() {
+        invoker({})
+    });
+});
+
+testUtils.testWithUtils("create", "OK", true, function(methods, classes, subject, invoker) {
+    // arrange
+    function cons(){}
+    
+    // act
+    var output = invoker({type: cons});
+    
+    // assert
+    strictEqual(output.constructor, cons);
+});

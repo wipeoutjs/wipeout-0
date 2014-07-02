@@ -84,14 +84,14 @@ Class("wipeout.template.engine", function () {
             var id = engine.getId(xmlElement);
             if(id)
                 id = "'" + id + "'";
-            tags += " wo: { type: " + xmlElement.nodeName + ", id: " + id + ", initXml: '" + newScriptId + "'} --><!-- /ko -->";
+            tags += " wo: { type: " + xmlElement.nodeName + ", id: " + id + ", name: '" + xmlElement.nodeName + "', initXml: '" + newScriptId + "'} --><!-- /ko -->";
             
             var nodes = wipeout.utils.html.parseXml("<root>" + rewriterCallback(tags) + "</root>");
-            while(nodes.childNodes.length) {
+            while (nodes.childNodes.length) {
                 var node = nodes.childNodes[0];
                 node.parentNode.removeChild(node);
                 xmlElement.parentNode.insertBefore(node, xmlElement);
-            };
+            }
             
             xmlElement.parentNode.removeChild(xmlElement);
         }

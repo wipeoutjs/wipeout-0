@@ -8,7 +8,7 @@ Binding("wo", true, function () {
         ///<param name="allBindingsAccessor" type="Function" optional="false">Other bindings on the element</param>
         ///<param name="bindingContext" type="ko.bindingContext" optional="false">The binding context</param>
         
-        var view = new value.type();
+        var view = wo.create(value);
         this._super(element, view, allBindingsAccessor, bindingContext);
         view.__woBag.createdByWipeout = true;
         view._initialize(wipeout.template.engine.xmlCache[value.initXml], bindingContext);
@@ -70,6 +70,14 @@ Binding("wo", true, function () {
             return delete parent.templateItems[id];
         
         return false;
+    };
+    
+    wo.create = function(value) {
+        if(!value.type) {
+            throw "Cannot create an instance of \"" + value.name + "\"";
+        }
+        
+        return new value.type();
     };
     
     return wo;
