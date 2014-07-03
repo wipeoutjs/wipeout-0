@@ -320,18 +320,20 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
                     _icRenderPage,
                     itemsControlPage,
                     renderPage,
+                    _wipeoutPage,
                     wipeout_typePage,
-                    _woPage,
-                    _wipeoutPage
+                    _woPage
                 ]);
             })();
             
             var _template = (function() {
                 currentApi.forClass("ko.templateEngine");
+                var asyncLoader = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("asyncLoader", currentApi.forClass("wipeout.template.asyncLoader"));
                 var engine = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("engine", currentApi.forClass("wipeout.template.engine"));
                 var htmlBuilder = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("htmlBuilder", currentApi.forClass("wipeout.template.htmlBuilder"));
                 
                 return new Wipeout.Docs.Models.Components.TreeViewBranch("template", [
+                    asyncLoader,
                     engine,
                     htmlBuilder
                 ]);
@@ -339,17 +341,33 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
             
             var _utils = (function() {
                 
+                //TODO: ko
+                
+                var domManipulationWorkerBaseBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("domManipulationWorkerBase", currentApi.forClass("wipeout.utils.domManipulationWorkerBase"));
+                var bindingDomManipulationWorkerBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("bindingDomManipulationWorker", currentApi.forClass("wipeout.utils.bindingDomManipulationWorker"));
+                var callBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("call", currentApi.forClass("wipeout.utils.call"));
+                var domDataBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("domData", currentApi.forClass("wipeout.utils.domData"));
+                var findBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("find", currentApi.forClass("wipeout.utils.find"));
+                var htmlAsyncBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("htmlAsync", currentApi.forClass("wipeout.utils.htmlAsync"));
+                var mutationObserverDomManipulationWorkerBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("mutationObserverDomManipulationWorker", currentApi.forClass("wipeout.utils.mutationObserverDomManipulationWorker"));
                 var htmlBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("html", currentApi.forClass("wipeout.utils.html"));
-                var koArrayBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("array", currentApi.forClass("wipeout.utils.ko.array"));
-                var koBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("ko", currentApi.forClass("wipeout.utils.ko"), {staticProperties: { "array": koArrayBranch}});
+                //var koArrayBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("array", currentApi.forClass("wipeout.utils.ko.array"));
+                //var koBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("ko", currentApi.forClass("wipeout.utils.ko"), {staticProperties: { "array": koArrayBranch}});
                 var objBranch = new Wipeout.Docs.Models.Components.ClassTreeViewBranch("obj", currentApi.forClass("wipeout.utils.obj"));
                 
                 return new Wipeout.Docs.Models.Components.TreeViewBranch("utils", [
+                    bindingDomManipulationWorkerBranch,
+                    callBranch,
+                    domDataBranch,
+                    domManipulationWorkerBaseBranch,
+                    findBranch,
                     htmlBranch,
-                    koBranch,
+                    htmlAsyncBranch,
+                    //koBranch,
+                    mutationObserverDomManipulationWorkerBranch,
                     objBranch
                 ]);
-            })();
+            })(); 
             
             return new Wipeout.Docs.Models.Components.TreeViewBranch("wipeout (debug mode only)", [
                 _base,
