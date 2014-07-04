@@ -137,7 +137,7 @@ Class("wipeout.base.object", function () {
         
         // static functions
         for (var p in this)
-            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache && childClass.constructor[p] === undefined)
+            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache && this[p] !== object._extendFromObject && childClass.constructor[p] === undefined)
                 childClass.constructor[p] = this[p];
  
         // use eval so that browser debugger will get class name
