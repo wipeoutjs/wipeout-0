@@ -6,6 +6,7 @@ Class("wipeout.utils.call", function () {
         
         this._super();
 
+        //The worker used to find the root object
         this.find = find;
     }, "call");
     

@@ -132,6 +132,10 @@ Class("wipeout.base.contentControl", function () {
     contentControl.deleteAnonymousTemplate = tmp.del;
     contentControl.createTemplate = tmp.createTemplate;
     contentControl.templateExists = function(templateId) {
+        ///<summary>Describs whether a template exists</summary>
+        ///<param name="templateId" type="String" optional="false">The id of the template</param>
+        ///<returns type="Boolean"></returns>
+        
         return !!document.getElementById(templateId);
     };
 

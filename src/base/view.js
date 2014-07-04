@@ -30,6 +30,11 @@ Class("wipeout.base.view", function () {
     }, "view"); 
     
     view.setObservable = function(obj, property, value) {
+        ///<summary>Set an observable or non observable property</summary>
+        ///<param name="obj" type="Any" optional="false">The object to set the property on</param>
+        ///<param name="property" type="String" optional="false">The name of the property/param>
+        ///<param name="value" type="String" optional="false">The value to set the property to</param>
+        
         if(ko.isObservable(obj[property])) {
             obj[property](ko.utils.unwrapObservable(value));
         } else {

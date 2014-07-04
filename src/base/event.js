@@ -11,8 +11,11 @@ Class("wipeout.base.eventRegistration", function () {
         ///<param name="dispose" type="Function" optional="false">A dispose function</param>
         ///<param name="priority" type="Number">The event priorty. The lower the priority number the sooner the callback will be triggered.</param>
         this._super(dispose);    
-                                                          
+               
+        // the callback to use when the event is triggered
         this.callback = callback;
+        
+        // the context to usse with the callback when the event is triggered
         this.context = context;                
     }, "eventRegistration");
 });

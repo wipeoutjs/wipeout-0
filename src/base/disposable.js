@@ -6,6 +6,7 @@ Class("wipeout.base.disposable", function () {
         ///<param name="disposeFunction" type="Function" optional="false">A dispose function</param>
         this._super();
         
+        // the function to call when disposing
         this.disposeFunction = disposeFunction || function() {};
     }, "disposable");
     
