@@ -34,7 +34,7 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
                     return null;
             }
         }
-        
+         
         result = search(new RegExp("\\s*this\\s*\\.\\s*" + propertyName + "\\s*="));
         if(result)
             return result;
@@ -116,9 +116,84 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
                         description: "Regex to determine whether knockout has rewritten a template."
                     }
                 }
+            },
+            bindings: {
+                bindingBase: {
+                    dataKey: {
+                        description: "A key for dom data related to wipeout bindings"
+                    },
+                    registered: {
+                        description: "A cache of all bindings created"
+                    }
+                },
+                itemsControl: {
+                    utils: {
+                        description: "Utils used by the itemsControl binding"                            
+                    }
+                },
+                wipeout: {
+                    utils: {
+                        description: "Utils used by the wipeout binding"                            
+                    }
+                },
+                'wipeout-type': {
+                    utils: {
+                        description: "Utils used by the wipeout-type binding"
+                    }
+                }
+            },
+            template: {
+                asyncLoader: {                    
+                    instance: {
+                        description: "A static instance of the async loader"
+                    }
+                },
+                engine: {
+                    closeCodeTag: { 
+                        description: "Signifies the end of a wipeout code block: \"" + wipeout.template.engine.closeCodeTag + "\"."
+                    },
+                    instance: { 
+                        description: "An instance of a wipeout.template.engine which is used by the render binding."
+                    },
+                    openCodeTag: { 
+                        description: "Signifies the beginning of a wipeout code block: \"" + wipeout.template.engine.openCodeTag + "\"."
+                    },
+                    scriptCache: { 
+                        description: "A placeholder for precompiled scripts."
+                    },
+                    scriptHasBeenReWritten: { 
+                        description: "Regex to determine whether knockout has rewritten a template."
+                    },
+                    prototype: {
+                        isTemplateRewritten: {
+                            description: "A knockout native function"
+                        },
+                        makeTemplateSource: {
+                            description: "A knockout native function"
+                        },
+                        renderTemplate: {
+                            description: "A knockout native function"
+                        }
+                    }
+                }
+            },
+            utils: {
+                find: {
+                    regex: {
+                        description: "Regular expressions used by $find"
+                    }
+                },
+                html: {
+                    cannotCreateTags: {
+                        description: "A list of html tags which wipeout refuses to create, for example <html>."
+                    },
+                    specialTags: {
+                        description: "A list of html tags which cannot be placed inside a div element."
+                    }
+                }
             }
         }
     };
     
-    return property;
-});
+    return property;  
+}); 
