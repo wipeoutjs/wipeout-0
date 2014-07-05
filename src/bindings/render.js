@@ -9,13 +9,13 @@ Binding("render", true, function () {
         
         this._super(element);
 
-        // metadata for the binding
+        ///<Summary type="Object">metadata for the binding</Summary>
         this.bindingMeta = ko.bindingHandlers.template.init(this.element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);
         
-        // Other bindings on the element
+        ///<Summary type="Function">Other bindings on the element</Summary>
         this.allBindingsAccessor = allBindingsAccessor;
         
-        // The binding context
+        ///<Summary type="ko.bindingContext">The binding context</Summary>
         this.bindingContext = bindingContext;
 
         if(ko.isObservable(value)) {

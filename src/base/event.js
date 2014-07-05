@@ -12,10 +12,10 @@ Class("wipeout.base.eventRegistration", function () {
         ///<param name="priority" type="Number">The event priorty. The lower the priority number the sooner the callback will be triggered.</param>
         this._super(dispose);    
                
-        // the callback to use when the event is triggered
+        ///<Summary type="Function">The callback to use when the event is triggered</Summary>
         this.callback = callback;
         
-        // the context to usse with the callback when the event is triggered
+        ///<Summary type="Any">The context to usse with the callback when the event is triggered</Summary>
         this.context = context;                
     }, "eventRegistration");
 });
@@ -29,7 +29,7 @@ Class("wipeout.base.event", function () {
         if(!(this instanceof event))
            return new event();
         
-        //Array of callbacks to fire when event is triggered
+        ///<Summary type="Array" generic0="wipeout.base.eventRegistration">Array of callbacks to fire when event is triggered</Summary>
         this._registrations = [];
     };
 

@@ -17,16 +17,16 @@ Class("wipeout.base.itemsControl", function () {
         staticConstructor();
         this._super(templateId || deafaultTemplateId, model);
 
-        //The id of the template to render for each item
+        ///<Summary type="ko.observable" generic0="String">The id of the template to render for each item</Summary>
         this.itemTemplateId = ko.observable(itemTemplateId);
 
-        //The template which corresponds to the itemTemplateId for this object
+        ///<Summary type="ko.observable" generic0="String">The template which corresponds to the itemTemplateId for this object</Summary>
         this.itemTemplate = wipeout.base.contentControl.createTemplatePropertyFor(this.itemTemplateId, this);
         
-        //An array of models to render
+        ///<Summary type="ko.observableArray" generic0="Any">An array of models to render</Summary>
         this.itemSource = ko.observableArray([]);
         
-        //An array of viewmodels, each corresponding to a mode in the itemSource property
+        ///<Summary type="ko.observable" generic0="wo.view">An array of viewmodels, each corresponding to a mode in the itemSource property</Summary>
         this.items = ko.observableArray([]);
 
         if(wipeout.utils.ko.version()[0] < 3) {

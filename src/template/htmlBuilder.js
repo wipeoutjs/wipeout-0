@@ -4,7 +4,7 @@ Class("wipeout.template.htmlBuilder", function () {
         ///<summary>Pre-compile that needed to render html from a binding context from a given template</summary>
         ///<param name="xmlTemplate" type="Element">The template to build html from</param>
         
-        // pre rendered strings or string generating functions which make up the final html
+        ///<Summary type="Array" generic0="Any">Pre rendered strings or string generating functions which make up the final html</Summary>
         this.preRendered = [];
         this.generatePreRender(xmlTemplate);
     };

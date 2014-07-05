@@ -18,22 +18,22 @@ Class("wipeout.base.if", function () {
         
         this._super(templateId, model);
 
-        //Specifies whether this object should be used as a binding context. If true, the binding context of this object will be it's parent. Default is true
+        ///<Summary type="Boolean">Specifies whether this object should be used as a binding context. If true, the binding context of this object will be it's parent. Default is true</Summary>
         this.shareParentScope = true;
         
-        // if true, the template will be rendered, otherwise a blank template is rendered
+        ///<Summary type="ko.observable" generic0="Boolean">if true, the template will be rendered, otherwise a blank template is rendered</Summary>
         this.condition = ko.observable();
         
-        // the template to render if the condition is false. Defaults to a blank template
+        ///<Summary type="ko.observable" generic0="String">the template to render if the condition is false. Defaults to a blank template</Summary>
         this.elseTemplateId = ko.observable(_if.blankTemplateId);
         
         var d1 = this.elseTemplateId.subscribe(this.elseTemplateChanged, this);
         this.registerDisposable(d1);
         
-        // anonymous version of elseTemplateId
+        ///<Summary type="ko.observable" generic0="String">Anonymous version of elseTemplateId</Summary>
         this.elseTemplate = wipeout.base.contentControl.createTemplatePropertyFor(this.elseTemplateId, this);
         
-        // stores the template id if the condition is false
+        ///<Summary type="String">Stores the template id if the condition is false</Summary>
         this.__cachedTemplateId = this.templateId();
         
         var d2 = this.condition.subscribe(this.onConditionChanged, this);

@@ -23,7 +23,7 @@ Binding("wo", true, function () {
 
         this.render(view);
         
-        // override render binding method
+        ///<Summary type="Function">The render method is overridden to prevent re-rendering</Summary>
         this.render = function() { throw "Cannot render this binding a second time, use the render binding instead"; };
     }, "wo");
     

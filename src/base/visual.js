@@ -6,16 +6,16 @@ Class("wipeout.base.visual", function () {
         ///<param name="templateId" type="String" optional="true">A default template id</param>
         this._super();
 
-        //Specifies whether this object should be used as a binding context. If true, the binding context of this object will be it's parent. Default is false
+        ///<Summary type="Boolean">Specifies whether this object should be used as a binding context. If true, the binding context of this object will be it's parent. Default is false</Summary>
         this.shareParentScope = false;
 
-        //Dictionary of items created within the current template. The items can be visuals or html elements
+        ///<Summary type="Object">Dictionary of items created within the current template. The items can be visuals or html elements</Summary>
         this.templateItems = {};
 
-        //The template of the visual, giving it an appearance
+        ///<Summary type="ko.observable" generic0="String">The template of the visual, giving it an appearance</Summary>
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
 
-        //A bag to put objects needed for the lifecycle of this object and its properties
+        ///<Summary type="Object">A bag to put objects needed for the lifecycle of this object and its properties</Summary>
         this.__woBag = {
             disposed: wipeout.base.event(),
             disposables: {},

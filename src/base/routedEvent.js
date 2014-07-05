@@ -42,13 +42,13 @@ Class("wipeout.base.routedEventArgs", function () {
         ///<param name="eventArgs" type="Any" optional="true">The inner event args</param>
         ///<param name="originator" type="Any" optional="false">A pointer to event raise object</param>
         
-        //Signals whether the routed event has been handled and should not propagate any further
+        ///<Summary type="Boolean">Signals whether the routed event has been handled and should not propagate any further</Summary>
         this.handled = false;
         
-        //The original event args used when the routedEvent has been triggered
+        ///<Summary type="Any">The original event args used when the routedEvent has been triggered</Summary>
         this.data = eventArgs;
         
-        //The object which triggered the event
+        ///<Summary type="Any">The object which triggered the event</Summary>
         this.originator = originator;
     };
     
@@ -62,10 +62,10 @@ Class("wipeout.base.routedEventRegistration", function () {
         ///<summary>Holds routed event registration details</summary>
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
         
-        // The routed event
+        ///<Summary type="wo.routedEvent">The routed event</Summary>
         this.routedEvent = routedEvent;
         
-        //An inner event to handler triggering callbacks
+        ///<Summary type="wo.event">An inner event to handler triggering callbacks</Summary>
         this.event = new wipeout.base.event();        
     };
     

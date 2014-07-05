@@ -6,7 +6,7 @@ Class("wipeout.utils.mutationObserverDomManipulationWorker", function () {
         this._super();   
         var _this = this;
         
-        //The mutation observer used
+        ///<Summary type="MutrationObserver">The mutation observer used</Summary>
         this._observer = new MutationObserver(function(mutations) {
             _this.appendRemovedNodes(mutations);
         });

@@ -25,7 +25,7 @@ Class("wipeout.base.view", function () {
         }, this);
         this.registerDisposable(d1);
                                 
-        //Placeholder to store binding disposeal objects
+        ///<Summary type="Object">Placeholder to store binding disposal objects</Summary>
         this.__woBag.bindings = {};
     }, "view"); 
     

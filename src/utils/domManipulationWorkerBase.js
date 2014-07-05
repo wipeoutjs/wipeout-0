@@ -5,7 +5,7 @@ Class("wipeout.utils.domManipulationWorkerBase", function () {
         
         this._super();
         
-        //The list of html nodes which have changed
+        ///<Summary type="Array" generic0="Node">The list of html nodes which have changed</Summary>
         this._mutations = [];
     });
     

@@ -12,6 +12,7 @@ Binding("wipeout", true, function () {
         if(!(type instanceof Function))
             throw "Invalid view type";
 
+        ///<Summary type="wo.view">The view to render</Summary>
         this.renderedView = new type();
         if(!(this.renderedView instanceof wipeout.base.view))
             throw "Invalid view type";
@@ -23,6 +24,8 @@ Binding("wipeout", true, function () {
 
         this.renderedView.model(viewModel);                   
         this.render(this.renderedView);
+        
+        ///<Summary type="Function">The render method is overridden to prevent re-rendering</Summary>
         this.render = function() { throw "Cannont render this binding a second time, use the render binding instead"; };
 
         this.renderedView.onApplicationInitialized();

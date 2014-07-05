@@ -5,7 +5,7 @@ Class("wipeout.utils.find", function () {
         ///<param name="bindingContext" type="ko.bindingContext" optional="false">The ancestor chain</param>
         this._super();
 
-        // the binding context to use when finding objects
+        ///<Summary type="ko.bindingContext">the binding context to use when finding objects</Summary>
         this.bindingContext = bindingContext;
     }, "find");
     

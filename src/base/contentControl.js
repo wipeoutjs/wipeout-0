@@ -7,7 +7,7 @@ Class("wipeout.base.contentControl", function () {
         ///<param name="model" type="Any" optional="true">The initial model to use</param>
         this._super(templateId || wipeout.base.visual.getBlankTemplateId(), model);
 
-        //The template which corresponds to the templateId for this item
+        ///<Summary type="ko.observable" generic0="string">The template which corresponds to the templateId for this item</Summary>
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
     }, "contentControl");    
     
