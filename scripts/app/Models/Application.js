@@ -1,7 +1,6 @@
 compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function() {
     
     function application() {
-        debugger;
         var currentApi = new Wipeout.Docs.Models.Components.ApiBuilder(wipeout, "wipeout")
             .build({
                 knownParents: [{key:"ko.templateEngine", value: ko.templateEngine}], 

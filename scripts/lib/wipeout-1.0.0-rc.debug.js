@@ -3,10 +3,6 @@
 var wipeout = {};
 
 var ajax = function (options) {
-    ///<summary>Perform an ajax request</summary>
-    ///<param name="options" type="Object">Configure teh request</param>
-    ///<returns type="XMLHttpRequest">The ajax request object</returns>
-    
     var xmlhttp = window.XMLHttpRequest ?
         new XMLHttpRequest() :
         new ActiveXObject("Microsoft.XMLHTTP");
@@ -24,8 +20,6 @@ var ajax = function (options) {
 
     xmlhttp.open(options.type || "GET", options.url || document.location.href, options.async !== undefined ? options.async : true);
     xmlhttp.send();
-    
-    return xmlhttp;
 };
     
 var enumerate = function(enumerate, action, context) {
@@ -209,11 +203,6 @@ Class("wipeout.utils.obj", function () {
     };
     
     var endsWith = function(string, endsWith) {
-        ///<summary>Determine whether a string ends with another string</summary>
-        ///<param name="string" type="String">The container string</param>
-        ///<param name="endsWith" type="String">The contained string</param>
-        ///<returns type="Boolean"></returns>
-        
         return string.indexOf(endsWith, string.length - endsWith.length) !== -1;
     };
     
@@ -2361,7 +2350,7 @@ Binding("wo", true, function () {
         ///<param name="allBindingsAccessor" type="Function" optional="false">Other bindings on the element</param>
         ///<param name="bindingContext" type="ko.bindingContext" optional="false">The binding context</param>
         
-        var view = wo.create(value);
+        var view = new value.type();
         this._super(element, view, allBindingsAccessor, bindingContext);
         view.__woBag.createdByWipeout = true;
         view._initialize(wipeout.template.engine.xmlCache[value.initXml], bindingContext);
@@ -2423,18 +2412,6 @@ Binding("wo", true, function () {
             return delete parent.templateItems[id];
         
         return false;
-    };
-    
-    wo.create = function(value) {
-        ///<summary>Create an object from the output of the wo template engine</summary>
-        ///<param name="value" type="Object" optional="false">The template engine output</param>
-        ///<returns type="Any">An object</returns>
-        
-        if(!value.type) {
-            throw "Cannot create an instance of \"" + value.name + "\"";
-        }
-        
-        return new value.type();
     };
     
     return wo;
@@ -2739,14 +2716,14 @@ Class("wipeout.template.engine", function () {
             var id = engine.getId(xmlElement);
             if(id)
                 id = "'" + id + "'";
-            tags += " wo: { type: " + xmlElement.nodeName + ", id: " + id + ", name: '" + xmlElement.nodeName + "', initXml: '" + newScriptId + "'} --><!-- /ko -->";
+            tags += " wo: { type: " + xmlElement.nodeName + ", id: " + id + ", initXml: '" + newScriptId + "'} --><!-- /ko -->";
             
             var nodes = wipeout.utils.html.parseXml("<root>" + rewriterCallback(tags) + "</root>");
-            while (nodes.childNodes.length) {
+            while(nodes.childNodes.length) {
                 var node = nodes.childNodes[0];
                 node.parentNode.removeChild(node);
                 xmlElement.parentNode.insertBefore(node, xmlElement);
-            }
+            };
             
             xmlElement.parentNode.removeChild(xmlElement);
         }
@@ -3014,57 +2991,37 @@ Class("wipeout.utils.call", function () {
         ///<param name="filters" type="Object" optional="true">Filters to be passed to find</param>
         ///<returns type="Object">An item to create a function with the correct context and custom arguments</returns>
         
-        var obj = this.find(searchTermOrFilters, filters);
+        var find = this.find;
+        return {
+            dot: function(functionName) {
 
-        if(!obj)
-            throw "Could not find an object to call function on.";
-        
-        var dots = [];
-        var args = null;
-        var output = function() {
-            var current = obj;
-            var currentFunction = null;
-            
-            if(dots.length > 0) {            
-                for (var i = 0, ii = dots.length - 1; i < ii && current; i++) {
-                    current = ko.utils.unwrapObservable(current[dots[i]]);
-                }
-            
-                if(!current) {
-                    var message = "Could not find the object " + dots[i - 1];
-                }
+                var obj = find(searchTermOrFilters, filters);
 
-                if(!current[dots[i]])
-                    throw "Could not find function :\"" + dots[i] + "\" on this object.";
-                
-                currentFunction = current[dots[i]];
-            } else {
-                if(obj.constructor !== Function)
-                    throw "Cannot call an object like a functino";
-                    
-                currentFunction = obj;
-            }
-            
-            if(args) {
-                var ar = wipeout.utils.obj.copyArray(args);
-                enumerate(arguments, function(arg) { ar.push(arg); });
-                return currentFunction.apply(current, ar);
-            } else {
-                return currentFunction.apply(current, arguments);
+                if(!obj)
+                    throw "Could not find an object to call function :\"" + functionName + "\" on.";
+
+                if(!obj[functionName])
+                    throw "Could not find function :\"" + functionName + "\" on this object.";
+
+                var output = function() {
+                    if(args) {
+                        var ar = wipeout.utils.obj.copyArray(args);
+                        enumerate(arguments, function(arg) { ar.push(arg); });
+                        return obj[functionName].apply(obj, ar);
+                    } else {
+                        return obj[functionName].apply(obj, arguments);
+                    }
+                };
+
+                var args = null;
+                output.args = function() {
+                    args = wipeout.utils.obj.copyArray(arguments);
+                    return output;
+                };
+
+                return output;              
             }
         };
-        
-        output.dot = function(functionName) {
-            dots.push(functionName);
-            return output;
-        };
-        
-        output.args = function() {
-            args = wipeout.utils.obj.copyArray(arguments);
-            return output;
-        };
-        
-        return output;
     };
     
     call.create = function(find) {
@@ -3649,9 +3606,6 @@ Class("wipeout.utils.html", function () {
     };
     
     var cleanNode = function(node) {
-        ///<summary>Clean down and dispose of all of the bindings (ko and wo) associated with this node and its children</summary> 
-        ///<param name="node" type="HTMLNode" optional="false">The node</param>
-        
         var bindings = wipeout.utils.domData.get(node, wipeout.bindings.bindingBase.dataKey);
         
         // check if children have to be disposed
@@ -3696,11 +3650,7 @@ Class("wipeout.utils.html", function () {
         // IE throws an exception on invalid xml
     }
     
-    var parseXml = function(xmlString) {  
-        ///<summary>Parse a string into an xm ldocumen</summary> 
-        ///<param name="xmlString" type="String" optional="false">the xml string</param>
-        ///<returns type="Element" optional="false">Xml</returns>
-        
+    var parseXml = function(xmlString) {        
         var xmlTemplate = new DOMParser().parseFromString(xmlString, "application/xml");        
         if(xmlTemplate.getElementsByTagNameNS(parseErrorNamespace, 'parsererror').length) {
 			throw "Invalid xml template:\n" + new XMLSerializer().serializeToString(xmlTemplate.firstChild);
@@ -3829,6 +3779,20 @@ Class("wipeout.utils.ko", function () {
         }
     };
     
+    _ko.closingTag = function(openingTag) {
+        var depth = 1;
+
+        while (depth > 0 && openingTag) {
+            openingTag = openingTag.nextSibling;
+            if(_ko.isVirtual(openingTag))
+                depth++;
+            else if(_ko.isVirtualClosing(openingTag))
+                depth--;
+        }
+
+        return openingTag;
+    };
+    
     _ko.parentElement = function(node) {
         ///<summary>Returns the parent element or parent knockout virtual element of a node</summary>
         ///<param name="node" type="HTMLNode">The child element</param>
@@ -3873,10 +3837,6 @@ Class("wipeout.utils.ko", function () {
     };
     
     _ko.enumerateOverChildren = function(node, callback) {
-        ///<summary>Unumerate over the children of an element or ko virtual element</summary>
-        ///<param name="node" type="HTMLNode">The parent</param>
-        ///<param name="callback" type="Function">The callback to apply to each node</param>
-        
         node = ko.virtualElements.firstChild(node);
         while (node) {
             callback(node);
