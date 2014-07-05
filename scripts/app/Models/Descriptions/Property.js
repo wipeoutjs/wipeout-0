@@ -4,17 +4,24 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
         
         this.propertyName = propertyName;
         this.classFullName = classFullName;
+        
+        var xml = property.getPropertySummaryXml(constructorFunction, propertyName, classFullName);
+        this.propertyType = xml ? property.getPropertyType(xml) : null;
                 
         this.fullyQualifiedName = ko.computed(function() {
             return this.classFullName + "." + this.propertyName;
         }, this);
     };
     
-    var inlineCommentOnly = /^\/\//;
+    var summary = /^\/\/\/<[sS]ummary\s*type=".+".*>.*<\/[sS]ummary>/;
     property.getPropertySummary = function(constructorFunction, propertyName, classFullName) {
+        return (property.getPropertySummaryXml(constructorFunction, propertyName, classFullName) || {}).innerHTML;
+    };
+    
+    property.getPropertySummaryXml = function(constructorFunction, propertyName, classFullName) {
         var result;
         if(result = property.getPropertyDescriptionOverride(classFullName + "." + propertyName))
-            return result.description;
+            return new DOMParser().parseFromString(result.description, "application/xml").documentElement;
         
         constructorFunction = constructorFunction.toString();
                 
@@ -28,10 +35,11 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
                 } 
                 
                 func = func.replace(/^\s+|\s+$/g, '');
-                if(inlineCommentOnly.test(func))
-                    return func.substring(2);
-                else
+                if(summary.test(func)) {
+                    return new DOMParser().parseFromString(func.substring(3), "application/xml").documentElement;
+                } else {
                     return null;
+                }
             }
         }
          
@@ -41,6 +49,22 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
                 
         return search(new RegExp("\\s*this\\s*\\[\\s*\"" + propertyName + "\"\\s*\\]\\s*="));        
     };
+            
+    property.getPropertyType = function(xmlDefinition) {
+        
+        var generics = [];
+
+        var tmp;
+        var g = "generic";
+        for(var i = 0; tmp = xmlDefinition.getAttribute(g + i); i++) {
+            generics.push(tmp);
+        }
+
+        return {
+            type: xmlDefinition.getAttribute("type"),
+            genericTypes: generics
+        };  
+    };   
     
     property.getPropertyDescriptionOverride = function(classDelimitedPropertyName) {
         
@@ -54,125 +78,63 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
     };
         
     property.descriptionOverrides = {
-        wo: {
-            'if': {
-                woInvisibleDefault: { 
-                    description: "The default value for woInvisible for the wo.if class."
-                }
-            },
-            html: {
-                specialTags: { 
-                    description: "A list of html tags which cannot be placed inside a div element."
-                }
-            },
-            ko: {
-                array: { 
-                    description: "Utils for operating on observableArrays",
-                    diff: {
-                        description: "ko constants for operating on array changes (\"added\", \"deleted\", \"retained\")."
-                    }
-                }
-            },
-            object: {
-                useVirtualCache: { 
-                    description: "When _super methods are called, the result of the lookup is cached for next time. Set this to false and call clearVirtualCache() to disable this feature."
-                }
-            },
-            view: {
-                //TODO: give this a page
-                objectParser: { 
-                    description: "Used to parse string values into a given type"
-                },
-                //TODO: give this a page
-                reservedPropertyNames: { 
-                    description: "Properties which cannot be set on a wipeout object via the template"
-                }
-            },
-            visual: {
-                reservedTags: { 
-                    description: "A list of names which cannot be used as wipeout object names. These are mostly html tag names"
-                },
-                woInvisibleDefault: { 
-                    description: "The default value for woInvisible for the wo.visual class."
-                }
-            }
-        },
         wipeout: {
-            template: {
-                engine: {
-                    closeCodeTag: { 
-                        description: "Signifies the end of a wipeout code block: \"" + wipeout.template.engine.closeCodeTag + "\"."
-                    },
-                    instance: { 
-                        description: "An instance of a wipeout.template.engine which is used by the render binding."
-                    },
-                    openCodeTag: { 
-                        description: "Signifies the beginning of a wipeout code block: \"" + wipeout.template.engine.openCodeTag + "\"."
-                    },
-                    scriptCache: { 
-                        description: "A placeholder for precompiled scripts."
-                    },
-                    scriptHasBeenReWritten: { 
-                        description: "Regex to determine whether knockout has rewritten a template."
-                    }
-                }
-            },
             bindings: {
                 bindingBase: {
                     dataKey: {
-                        description: "A key for dom data related to wipeout bindings"
+                        description: "<summary type=\"String\">A key for dom data related to wipeout bindings</summary>"
                     },
                     registered: {
-                        description: "A cache of all bindings created"
+                        description: "<summary type=\"Object\">A cache of all bindings created</summary>"
                     }
                 },
                 itemsControl: {
                     utils: {
-                        description: "Utils used by the itemsControl binding"                            
+                        description: "<summary type=\"Object\">Utils used by the itemsControl binding</summary>"                            
                     }
                 },
                 wipeout: {
                     utils: {
-                        description: "Utils used by the wipeout binding"                            
+                        description: "<summary type=\"Object\">Utils used by the wipeout binding</summary>"                            
                     }
                 },
                 'wipeout-type': {
                     utils: {
-                        description: "Utils used by the wipeout-type binding"
+                        description: "<summary type=\"Object\">Utils used by the wipeout-type binding</summary>"
                     }
                 }
             },
             template: {
                 asyncLoader: {                    
                     instance: {
-                        description: "A static instance of the async loader"
+                        description: "<summary type=\"wipeout.template.asyncLoader\">A static instance of the async loader</summary>"
                     }
                 },
                 engine: {
                     closeCodeTag: { 
-                        description: "Signifies the end of a wipeout code block: \"" + wipeout.template.engine.closeCodeTag + "\"."
+                        description: "<summary type=\"String\">Signifies the end of a wipeout code block: \"" + wipeout.template.engine.closeCodeTag + "\".</summary>"
                     },
                     instance: { 
-                        description: "An instance of a wipeout.template.engine which is used by the render binding."
+                        description: "<summary type=\"wipeout.template.engin\">An instance of a wipeout.template.engine which is used by the render binding.</summary>"
                     },
                     openCodeTag: { 
-                        description: "Signifies the beginning of a wipeout code block: \"" + wipeout.template.engine.openCodeTag + "\"."
+                        description: "<summary type=\"String\">Signifies the beginning of a wipeout code block: \"" + wipeout.template.engine.openCodeTag + "\".</summary>"
                     },
                     scriptCache: { 
-                        description: "A placeholder for precompiled scripts."
+                        description: "<summary type=\"Object\">A placeholder for precompiled scripts.</summary>"
                     },
                     scriptHasBeenReWritten: { 
-                        description: "Regex to determine whether knockout has rewritten a template."
+                        description: "<summary type=\"Regexp\">Regex to determine whether knockout has rewritten a template.</summary>"
                     },
                     prototype: {
                         isTemplateRewritten: {
-                            description: "A knockout native function"
+                            description: "<summary type=\"\">A knockout native function</summary>"
                         },
                         makeTemplateSource: {
-                            description: "A knockout native function"
+                            description: "<summary type=\"\">A knockout native function</summary>"
                         },
                         renderTemplate: {
-                            description: "A knockout native function"
+                            description: "<summary type=\"\">A knockout native function</summary>"
                         }
                     }
                 }
@@ -180,15 +142,15 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
             utils: {
                 find: {
                     regex: {
-                        description: "Regular expressions used by $find"
+                        description: "<summary type=\"Object\">Regular expressions used by $find</summary>"
                     }
                 },
                 html: {
                     cannotCreateTags: {
-                        description: "A list of html tags which wipeout refuses to create, for example <html>."
+                        description: "<summary type=\"Object\">A list of html tags which wipeout refuses to create, for example <html>.</summary>"
                     },
                     specialTags: {
-                        description: "A list of html tags which cannot be placed inside a div element."
+                        description: "<summary type=\"Object\">A list of html tags which cannot be placed inside a div element.</summary>"
                     }
                 }
             }

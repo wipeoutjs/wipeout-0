@@ -424,7 +424,7 @@ Class("wipeout.utils.domManipulationWorkerBase", function () {
         
         this._super();
         
-        //The list of html nodes which have changed
+        ///<Summary type="Array" generic0="Node">The list of html nodes which have changed</Summary>
         this._mutations = [];
     });
     
@@ -459,7 +459,7 @@ Class("wipeout.base.disposable", function () {
         ///<param name="disposeFunction" type="Function" optional="false">A dispose function</param>
         this._super();
         
-        // the function to call when disposing
+        ///<summary type="Function">The function to call when disposing</summary>
         this.disposeFunction = disposeFunction || function() {};
     }, "disposable");
     
@@ -483,16 +483,16 @@ Class("wipeout.base.visual", function () {
         ///<param name="templateId" type="String" optional="true">A default template id</param>
         this._super();
 
-        //Specifies whether this object should be used as a binding context. If true, the binding context of this object will be it's parent. Default is false
+        ///<Summary type="Boolean">Specifies whether this object should be used as a binding context. If true, the binding context of this object will be it's parent. Default is false</Summary>
         this.shareParentScope = false;
 
-        //Dictionary of items created within the current template. The items can be visuals or html elements
+        ///<Summary type="Object">Dictionary of items created within the current template. The items can be visuals or html elements</Summary>
         this.templateItems = {};
 
-        //The template of the visual, giving it an appearance
+        ///<Summary type="ko.observable" generic0="String">The template of the visual, giving it an appearance</Summary>
         this.templateId = ko.observable(templateId || visual.getDefaultTemplateId());
 
-        //A bag to put objects needed for the lifecycle of this object and its properties
+        ///<Summary type="Object">A bag to put objects needed for the lifecycle of this object and its properties</Summary>
         this.__woBag = {
             disposed: wipeout.base.event(),
             disposables: {},
@@ -793,7 +793,7 @@ Class("wipeout.base.view", function () {
         }, this);
         this.registerDisposable(d1);
                                 
-        //Placeholder to store binding disposeal objects
+        ///<Summary type="Object">Placeholder to store binding disposal objects</Summary>
         this.__woBag.bindings = {};
     }, "view"); 
     
@@ -1129,7 +1129,7 @@ Class("wipeout.base.contentControl", function () {
         ///<param name="model" type="Any" optional="true">The initial model to use</param>
         this._super(templateId || wipeout.base.visual.getBlankTemplateId(), model);
 
-        //The template which corresponds to the templateId for this item
+        ///<Summary type="ko.observable" generic0="string">The template which corresponds to the templateId for this item</Summary>
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
     }, "contentControl");    
     
@@ -1293,10 +1293,10 @@ Class("wipeout.base.eventRegistration", function () {
         ///<param name="priority" type="Number">The event priorty. The lower the priority number the sooner the callback will be triggered.</param>
         this._super(dispose);    
                
-        // the callback to use when the event is triggered
+        ///<Summary type="Function">The callback to use when the event is triggered</Summary>
         this.callback = callback;
         
-        // the context to usse with the callback when the event is triggered
+        ///<Summary type="Any">The context to usse with the callback when the event is triggered</Summary>
         this.context = context;                
     }, "eventRegistration");
 });
@@ -1310,7 +1310,7 @@ Class("wipeout.base.event", function () {
         if(!(this instanceof event))
            return new event();
         
-        //Array of callbacks to fire when event is triggered
+        ///<Summary type="Array" generic0="wipeout.base.eventRegistration">Array of callbacks to fire when event is triggered</Summary>
         this._registrations = [];
     };
 
@@ -1405,22 +1405,22 @@ Class("wipeout.base.if", function () {
         
         this._super(templateId, model);
 
-        //Specifies whether this object should be used as a binding context. If true, the binding context of this object will be it's parent. Default is true
+        ///<Summary type="Boolean">Specifies whether this object should be used as a binding context. If true, the binding context of this object will be it's parent. Default is true</Summary>
         this.shareParentScope = true;
         
-        // if true, the template will be rendered, otherwise a blank template is rendered
+        ///<Summary type="ko.observable" generic0="Boolean">if true, the template will be rendered, otherwise a blank template is rendered</Summary>
         this.condition = ko.observable();
         
-        // the template to render if the condition is false. Defaults to a blank template
+        ///<Summary type="ko.observable" generic0="String">the template to render if the condition is false. Defaults to a blank template</Summary>
         this.elseTemplateId = ko.observable(_if.blankTemplateId);
         
         var d1 = this.elseTemplateId.subscribe(this.elseTemplateChanged, this);
         this.registerDisposable(d1);
         
-        // anonymous version of elseTemplateId
+        ///<Summary type="ko.observable" generic0="String">Anonymous version of elseTemplateId</Summary>
         this.elseTemplate = wipeout.base.contentControl.createTemplatePropertyFor(this.elseTemplateId, this);
         
-        // stores the template id if the condition is false
+        ///<Summary type="String">Stores the template id if the condition is false</Summary>
         this.__cachedTemplateId = this.templateId();
         
         var d2 = this.condition.subscribe(this.onConditionChanged, this);
@@ -1485,16 +1485,16 @@ Class("wipeout.base.itemsControl", function () {
         staticConstructor();
         this._super(templateId || deafaultTemplateId, model);
 
-        //The id of the template to render for each item
+        ///<Summary type="ko.observable" generic0="String">The id of the template to render for each item</Summary>
         this.itemTemplateId = ko.observable(itemTemplateId);
 
-        //The template which corresponds to the itemTemplateId for this object
+        ///<Summary type="ko.observable" generic0="String">The template which corresponds to the itemTemplateId for this object</Summary>
         this.itemTemplate = wipeout.base.contentControl.createTemplatePropertyFor(this.itemTemplateId, this);
         
-        //An array of models to render
+        ///<Summary type="ko.observableArray" generic0="Any">An array of models to render</Summary>
         this.itemSource = ko.observableArray([]);
         
-        //An array of viewmodels, each corresponding to a mode in the itemSource property
+        ///<Summary type="ko.observable" generic0="wo.view">An array of viewmodels, each corresponding to a mode in the itemSource property</Summary>
         this.items = ko.observableArray([]);
 
         if(wipeout.utils.ko.version()[0] < 3) {
@@ -1769,13 +1769,13 @@ Class("wipeout.base.routedEventArgs", function () {
         ///<param name="eventArgs" type="Any" optional="true">The inner event args</param>
         ///<param name="originator" type="Any" optional="false">A pointer to event raise object</param>
         
-        //Signals whether the routed event has been handled and should not propagate any further
+        ///<Summary type="Boolean">Signals whether the routed event has been handled and should not propagate any further</Summary>
         this.handled = false;
         
-        //The original event args used when the routedEvent has been triggered
+        ///<Summary type="Any">The original event args used when the routedEvent has been triggered</Summary>
         this.data = eventArgs;
         
-        //The object which triggered the event
+        ///<Summary type="Any">The object which triggered the event</Summary>
         this.originator = originator;
     };
     
@@ -1789,10 +1789,10 @@ Class("wipeout.base.routedEventRegistration", function () {
         ///<summary>Holds routed event registration details</summary>
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
         
-        // The routed event
+        ///<Summary type="wo.routedEvent">The routed event</Summary>
         this.routedEvent = routedEvent;
         
-        //An inner event to handler triggering callbacks
+        ///<Summary type="wo.event">An inner event to handler triggering callbacks</Summary>
         this.event = new wipeout.base.event();        
     };
     
@@ -1811,6 +1811,7 @@ Class("wipeout.base.routedEventModel", function () {
     var routedEventModel = wipeout.base.object.extend(function () {
         ///<summary>The base class for models if they wish to invoke routed events on their viewModel</summary>
         
+        ///<Summary type="wo.event">The even twhich will trigger a routed event on the owning view</Summary>
         this.__triggerRoutedEventOnVM = new wipeout.base.event();
     }, "routedEventModel");
         
@@ -1838,13 +1839,13 @@ Class("wipeout.bindings.bindingBase", function () {
         if(!element)
             throw "ArgumnetNullException";
 
-        // the binding id
+        ///<Summary type="String">the binding id</Summary>
         this.bindingId = wipeout.bindings.bindingBase.uniqueId();
         
-        // metadata for the binding
+        ///<Summary type="Object">metadata for the binding</Summary>
         this.bindingMeta = {};
         
-        // the element to bind to
+        ///<Summary type="Node">the element to bind to</Summary>
         this.element = element;
         if(!this.getParentElement())
             throw "Cannot apply a \"wipeout.bindings.bindingBase\" binding on an element without a parent node.";
@@ -1862,7 +1863,7 @@ Class("wipeout.bindings.bindingBase", function () {
 
         wipeout.bindings.bindingBase.registered[this.bindingId] = this;
 
-        // the parent of the element to bind to
+        ///<Summary type="HTMLElement">the parent of the element to bind to</Summary>
         this.parentElement = this.getParentElement();
         
         this.moved(null, this.parentElement);
@@ -2056,13 +2057,13 @@ Binding("render", true, function () {
         
         this._super(element);
 
-        // metadata for the binding
+        ///<Summary type="Object">metadata for the binding</Summary>
         this.bindingMeta = ko.bindingHandlers.template.init(this.element, wipeout.bindings.render.createValueAccessor(value), allBindingsAccessor, null, bindingContext);
         
-        // Other bindings on the element
+        ///<Summary type="Function">Other bindings on the element</Summary>
         this.allBindingsAccessor = allBindingsAccessor;
         
-        // The binding context
+        ///<Summary type="ko.bindingContext">The binding context</Summary>
         this.bindingContext = bindingContext;
 
         if(ko.isObservable(value)) {
@@ -2324,6 +2325,7 @@ Binding("wipeout", true, function () {
         if(!(type instanceof Function))
             throw "Invalid view type";
 
+        ///<Summary type="wo.view">The view to render</Summary>
         this.renderedView = new type();
         if(!(this.renderedView instanceof wipeout.base.view))
             throw "Invalid view type";
@@ -2335,6 +2337,8 @@ Binding("wipeout", true, function () {
 
         this.renderedView.model(viewModel);                   
         this.render(this.renderedView);
+        
+        ///<Summary type="Function">The render method is overridden to prevent re-rendering</Summary>
         this.render = function() { throw "Cannont render this binding a second time, use the render binding instead"; };
 
         this.renderedView.onApplicationInitialized();
@@ -2390,7 +2394,7 @@ Binding("wo", true, function () {
 
         this.render(view);
         
-        // override render binding method
+        ///<Summary type="Function">The render method is overridden to prevent re-rendering</Summary>
         this.render = function() { throw "Cannot render this binding a second time, use the render binding instead"; };
     }, "wo");
     
@@ -2598,8 +2602,8 @@ Class("wipeout.template.asyncLoader", function () {
     
     var asyncLoader = function() {
         ///<summary>Loads remote templates and runs callbacks when the template is added to the DOM</summary>
-        
-        // individual template loaders
+                
+        ///<Summary type="Object">individual template loaders</Summary>
         this.pending = {};
     };
     
@@ -2867,7 +2871,7 @@ Class("wipeout.template.htmlBuilder", function () {
         ///<summary>Pre-compile that needed to render html from a binding context from a given template</summary>
         ///<param name="xmlTemplate" type="Element">The template to build html from</param>
         
-        // pre rendered strings or string generating functions which make up the final html
+        ///<Summary type="Array" generic0="Any">Pre rendered strings or string generating functions which make up the final html</Summary>
         this.preRendered = [];
         this.generatePreRender(xmlTemplate);
     };
@@ -3019,7 +3023,7 @@ Class("wipeout.utils.call", function () {
         
         this._super();
 
-        //The worker used to find the root object
+        ///<Summary type="wo.find">The worker used to find the root object</Summary>
         this.find = find;
     }, "call");
     
@@ -3198,7 +3202,7 @@ Class("wipeout.utils.find", function () {
         ///<param name="bindingContext" type="ko.bindingContext" optional="false">The ancestor chain</param>
         this._super();
 
-        // the binding context to use when finding objects
+        ///<Summary type="ko.bindingContext">the binding context to use when finding objects</Summary>
         this.bindingContext = bindingContext;
     }, "find");
     
@@ -3911,7 +3915,7 @@ Class("wipeout.utils.mutationObserverDomManipulationWorker", function () {
         this._super();   
         var _this = this;
         
-        //The mutation observer used
+        ///<Summary type="MutrationObserver">The mutation observer used</Summary>
         this._observer = new MutationObserver(function(mutations) {
             _this.appendRemovedNodes(mutations);
         });
