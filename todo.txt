@@ -8,6 +8,9 @@ document event priority
 
 $model filter on find
 
+bug, put &lt; in anonymous template
+bug, handle null template id better
+
 dataContext
 
 document user settings
