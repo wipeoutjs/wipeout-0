@@ -33,10 +33,3 @@
     Returns: <span data-bind="text: model().returns.type"></span>
 </h2>
 <span data-bind="text: model().returns.summary"></span>
-<div data-bind="visible: usagesTemplateId() !== wo.contentControl.getBlankTemplateId()">
-    <h2>
-        <span>Using</span>
-        <span data-bind="html: model().functionName"></span>
-    </h2>
-    <wo.view templateId="$parent.usagesTemplateId" model="$parent.model().classConstructor" />
-</div>

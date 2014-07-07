@@ -1,6 +1,6 @@
 compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Docs.Models.Descriptions.ClassItem", function() {
-    var property = function(constructorFunction, propertyName, classFullName) {
-        this._super(propertyName, property.getPropertySummary(constructorFunction, propertyName, classFullName));
+    var property = function(constructorFunction, propertyName, classFullName, isStatic) {
+        this._super(propertyName, property.getPropertySummary(constructorFunction, propertyName, classFullName), isStatic);
         
         this.propertyName = propertyName;
         this.classFullName = classFullName;
@@ -79,6 +79,13 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
         
     property.descriptionOverrides = {
         wipeout: {
+            base: {
+                visual: {
+                    reservedTags: {
+                        description: "<summary type=\"Object\">A dictionary of html tags which wipeout will ignore. For example div and span.</summary>"
+                    }
+                }
+            },
             bindings: {
                 bindingBase: {
                     dataKey: {

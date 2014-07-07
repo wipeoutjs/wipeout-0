@@ -22,6 +22,11 @@ layout: default
         setTimeout(function() {
             window.model = new Wipeout.Docs.Models.Application();
             ko.applyBindings(window.model, document.getElementById("PageRoot"));
+            
+            Wipeout.Docs.ViewModels.Application.parseRoute();
+            window.onpopstate = function() {
+                Wipeout.Docs.ViewModels.Application.parseRoute();
+            };
         }, 500);
     });
 </script>

@@ -2131,9 +2131,9 @@ Binding("render", true, function () {
         // clean up all child nodes
         var oc, child = ko.virtualElements.firstChild(this.element);
         while (child) {
-            wipeout.utils.html.cleanNode(child);
             oc = child;
             child = ko.virtualElements.nextSibling(child);
+            wipeout.utils.html.cleanNode(oc);
             wipeout.bindings.bindingBase.getParentElement(oc).removeChild(oc);
         }
 
