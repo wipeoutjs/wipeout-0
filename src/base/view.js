@@ -13,7 +13,7 @@ Class("wipeout.base.view", function () {
         if(model === undefined)
             model = null;
         
-        //The model of view. If not set, it will default to the model of its parent view
+        ///<Summary type="ko.observable" generic0="Any">The model of view. If not set, it will default to the model of its parent view</Summary>
         this.model = ko.observable(model);
         
         var d1 = this.model.subscribe(function(newVal) {
