@@ -901,8 +901,6 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Argument", "wo.object",
     return argument;
 });
 
-window.xxx = wo.itemsControl.extend(function(){this._super();this.templateId("Wipeout.Docs.ViewModels.Pages.PropertyPage_GenericTypes");});
-
 compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", function() {
     var classDescription = function(classFullName, api) {
         this._super();
