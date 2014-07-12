@@ -4,7 +4,7 @@ var wipeout = {};
 
 var ajax = function (options) {
     ///<summary>Perform an ajax request</summary>
-    ///<param name="options" type="Object">Configure teh request</param>
+    ///<param name="options" type="Object">Configure the request</param>
     ///<returns type="XMLHttpRequest">The ajax request object</returns>
     
     var xmlhttp = window.XMLHttpRequest ?

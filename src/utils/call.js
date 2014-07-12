@@ -12,7 +12,7 @@ Class("wipeout.utils.call", function () {
     
     call.prototype.call = function(searchTermOrFilters, filters) {
         ///<summary>Find an item given a search term and filters. Call a method with it's dot(...) method and pass in custom argument with it's arg(...) method</summary>
-        ///<param name="searchTerm" type="Any" optional="false">Search term or filters to be passed to find</param>
+        ///<param name="searchTermOrFilters" type="Any" optional="false">Search term or filters to be passed to find</param>
         ///<param name="filters" type="Object" optional="true">Filters to be passed to find</param>
         ///<returns type="Object">An item to create a function with the correct context and custom arguments</returns>
         

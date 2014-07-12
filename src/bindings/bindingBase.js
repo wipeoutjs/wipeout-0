@@ -113,7 +113,8 @@ Class("wipeout.bindings.bindingBase", function () {
     bindingBase.getBindings = function(node, bindingType) {
         ///<summary>Get all bindings on a node and it's decendant elements. Does not return bindings of element which control their own decendant bindings</summary>
         ///<param name="node" type="HTMLElement" optional="false">The element to get bindings from</param>
-        ///<returns type="HTMLElement">The node to get the parent of</returns>
+        ///<param name="bindingType" type="Function" optional="true">The type of binding to find</param>
+        ///<returns type="Array" generic0="wipeout.base.bindingBase">The node to get the parent of</returns>
         
         if(bindingType && !(bindingType instanceof Function)) throw "Invalid binding type";
 

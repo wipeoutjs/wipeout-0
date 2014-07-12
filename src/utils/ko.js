@@ -81,7 +81,7 @@ Class("wipeout.utils.ko", function () {
     };
     
     _ko.enumerateOverChildren = function(node, callback) {
-        ///<summary>Unumerate over the children of an element or ko virtual element</summary>
+        ///<summary>Enumerate over the children of an element or ko virtual element</summary>
         ///<param name="node" type="HTMLNode">The parent</param>
         ///<param name="callback" type="Function">The callback to apply to each node</param>
         

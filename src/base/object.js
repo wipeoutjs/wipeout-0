@@ -98,13 +98,6 @@ Class("wipeout.base.object", function () {
         return cached.apply(this, arguments);
     };
     
-    object._extendFromObject = function (childClass, className/* optional */) {
-        if(!childClass.constructor || childClass.constructor.constructor !== Function)
-            throw "the property \"constructor\" must be a function";
-        
-        var newClass = object.extend(childClass.constructor);
-    };
-    
     var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_0-9]*$/;
     object.extend = function (childClass, className/* optional */) {
         ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
@@ -137,7 +130,7 @@ Class("wipeout.base.object", function () {
         
         // static functions
         for (var p in this)
-            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache && this[p] !== object._extendFromObject && childClass.constructor[p] === undefined)
+            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache && childClass.constructor[p] === undefined)
                 childClass.constructor[p] = this[p];
  
         // use eval so that browser debugger will get class name

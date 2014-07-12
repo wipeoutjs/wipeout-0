@@ -118,7 +118,7 @@ Binding("render", true, function () {
     
     render.prototype.render = function (newVal) {
         ///<summary>Render a given value</summary>
-        ///<param name="value" type="wo.view" optional="false">The value to render</param>
+        ///<param name="newVal" type="wo.view" optional="false">The value to render</param>
         
         if(this.value || this.templateChangedSubscription)
             throw "This binding is already rendering a visual. Call unRender before rendering again.";

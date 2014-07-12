@@ -38,7 +38,7 @@ Class("wipeout.template.htmlBuilder", function () {
     
     htmlBuilder.prototype.generatePreRender = function(templateString) {
         ///<summary>Pre compile render code</summary>
-        ///<param name="templateString">The template</param>
+        ///<param name="templateString" type="String">The template</param>
                    
         // need to convert to xml and back as string is an XML string, not a HTML string
         var xmlTemplate = wipeout.utils.html.parseXml("<root>" + templateString + "</root>");
@@ -97,7 +97,8 @@ Class("wipeout.template.htmlBuilder", function () {
     htmlBuilder.generateTemplate = function(xmlTemplate) { 
         ///<summary>Convert an xml template to a string</summary>
         ///<param name="xmlTemplate" type="Element">The template</param>
-        ///<returns type="String">A string version of the template<returns>
+        ///<returns type="String">A string version of the template</returns>
+        
         var result = [];
         var ser = new XMLSerializer();
         

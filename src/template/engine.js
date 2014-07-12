@@ -48,7 +48,7 @@ Class("wipeout.template.engine", function () {
         ///<summary>First re-write the template via knockout, then re-write the template via wipeout</summary>
         ///<param name="template" type="String">The id of the template</param>
         ///<param name="rewriterCallback" type="Function">A function which will do the re-writing</param>
-        ///<param name="templateDocument"></param>
+        ///<param name="templateDocument">The owner document</param>
         
         var script = document.getElementById(template);
         if (script instanceof HTMLElement) {        
