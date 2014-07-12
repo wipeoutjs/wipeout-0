@@ -23,9 +23,9 @@ layout: default
             window.model = new Wipeout.Docs.Models.Application();
             ko.applyBindings(window.model, document.getElementById("PageRoot"));
             
-            Wipeout.Docs.ViewModels.Application.parseRoute();
+            crossroads.parse(location.pathname + location.search);
             window.onpopstate = function() {
-                Wipeout.Docs.ViewModels.Application.parseRoute();
+                crossroads.parse(location.pathname + location.search);
             };
         }, 500);
     });

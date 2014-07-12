@@ -9,7 +9,8 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.TreeViewBranch", "wo.
     
     treeViewBranch.prototype.onModelChanged = function(oldVal, newVal) {  
         this._super(oldVal, newVal);
-        if(newVal && (newVal.branches || newVal.payload())) {
+        
+        if(newVal && (newVal.branches || newVal.href)) {
             this.templateId(treeViewBranch.branchTemplate);
         } else if(newVal) {
             this.templateId(treeViewBranch.leafTemplate);
@@ -21,14 +22,14 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.TreeViewBranch", "wo.
     treeViewBranch.prototype.select = function() {
         if(this.model().branches)
             $(this.templateItems.content).toggle();
-        
-        var payload = this.model().payload();
-        if (($(this.templateItems.content).filter(":visible").length || !this.model().branches || !this.model().branches.length) && payload) {
-            this.triggerRoutedEvent(treeViewBranch.renderPage, payload);
+                
+        if(this.model().href) {  
+            if (($(this.templateItems.content).filter(":visible").length || !this.model().branches || !this.model().branches.length)) {
+                history.pushState(null, "", this.model().href);
+                crossroads.parse(location.pathname + location.search);
+            }
         }
     };
-    
-    treeViewBranch.renderPage = new wo.routedEvent(); 
     
     return treeViewBranch;
 });

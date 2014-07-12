@@ -4,6 +4,8 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Event", "Wipeout.Docs.M
                         
         this.eventName = eventName;
         this.classFullName = classFullName;
+        
+        this.title = this.eventName;
     };
     
     return eventDescription;

@@ -7,6 +7,8 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Doc
         this.functionName = functionName;
         this.classFullName = classFullName;
         
+        this.title = this.functionName;
+        
         var xmlSummary = this.getXmlSummary();
         
         this.arguments = this.getArguments(xmlSummary);

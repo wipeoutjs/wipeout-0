@@ -17,6 +17,8 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Class", "wo.object", fu
         this.functions = [];
         this.staticFunctions = [];
         
+        this.title = this.classFullName;
+        
         this.rebuild();
     };
     

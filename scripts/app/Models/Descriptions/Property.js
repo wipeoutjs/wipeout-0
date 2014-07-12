@@ -5,6 +5,8 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
         this.propertyName = propertyName;
         this.classFullName = classFullName;
         
+        this.title = this.propertyName;
+        
         var xml = property.getPropertySummaryXml(constructorFunction, propertyName, classFullName);
         this.propertyType = xml ? property.getPropertyType(xml) : null;
                 
@@ -78,11 +80,25 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
     };
         
     property.descriptionOverrides = {
+        wo: {},
         wipeout: {
             base: {
                 visual: {
                     reservedTags: {
                         description: "<summary type=\"Object\">A dictionary of html tags which wipeout will ignore. For example div and span.</summary>"
+                    }
+                },
+                object: {
+                    useVirtualCache: {
+                        description: "<summary type=\"Boolean\">If set to true, pointers to methods called using \"_super\" are cached for faster lookup in the future. Default: true</summary>"
+                    }
+                },
+                view: {
+                    objectParser: {
+                        description: "<summary type=\"Object\">A collection of objects to parse from string. These correspond to a the \"constructor\" property used in setting property types. Custom parsers can be added to this list</summary>"
+                    },
+                    reservedPropertyNames: {
+                        description: "<summary type=\"Array\">A list of property names which are not bound or are bound in a different way, e.g. \"constructor\" and \"id\"</summary>"
                     }
                 }
             },
@@ -119,19 +135,22 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
                 },
                 engine: {
                     closeCodeTag: { 
-                        description: "<summary type=\"String\">Signifies the end of a wipeout code block: \"" + wipeout.template.engine.closeCodeTag + "\".</summary>"
+                        description: "<summary type=\"String\">Signifies the end of a wipeout code block: \"" + wipeout.template.engine.closeCodeTag.replace("<", "&lt;").replace(">", "&gt;") + "\".</summary>"
                     },
                     instance: { 
                         description: "<summary type=\"wipeout.template.engin\">An instance of a wipeout.template.engine which is used by the render binding.</summary>"
                     },
                     openCodeTag: { 
-                        description: "<summary type=\"String\">Signifies the beginning of a wipeout code block: \"" + wipeout.template.engine.openCodeTag + "\".</summary>"
+                        description: "<summary type=\"String\">Signifies the beginning of a wipeout code block: \"" + wipeout.template.engine.openCodeTag.replace("<", "&lt;").replace(">", "&gt;") + "\".</summary>"
                     },
                     scriptCache: { 
                         description: "<summary type=\"Object\">A placeholder for precompiled scripts.</summary>"
                     },
                     scriptHasBeenReWritten: { 
                         description: "<summary type=\"Regexp\">Regex to determine whether knockout has rewritten a template.</summary>"
+                    },
+                    xmlCache: { 
+                        description: "<summary type=\"Object\">A repository for processed templates.</summary>"
                     },
                     prototype: {
                         isTemplateRewritten: {
@@ -154,15 +173,26 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
                 },
                 html: {
                     cannotCreateTags: {
-                        description: "<summary type=\"Object\">A list of html tags which wipeout refuses to create, for example <html>.</summary>"
+                        description: "<summary type=\"Object\">A list of html tags which wipeout refuses to create, for example \"html\".</summary>"
                     },
                     specialTags: {
                         description: "<summary type=\"Object\">A list of html tags which cannot be placed inside a div element.</summary>"
+                    }
+                },
+                ko: {
+                    array: {
+                        description: "<summary type=\"Object\">Items needed to deal with knockout arrays.</summary>"
                     }
                 }
             }
         }
     };
+    
+    for(var i in property.descriptionOverrides.wipeout.base)
+        property.descriptionOverrides.wo[i] = property.descriptionOverrides.wipeout.base[i];
+    
+    for(var i in property.descriptionOverrides.wipeout.utils)
+        property.descriptionOverrides.wo[i] = property.descriptionOverrides.wipeout.utils[i];
     
     return property;  
 }); 

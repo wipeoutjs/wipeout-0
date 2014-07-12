@@ -1,13 +1,6 @@
 
 compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", function() {
     
-    var getId = (function () {
-        var id = history.state && history.state.owner && !isNaN(history.state.owner) ? history.state.owner : 0;
-        return function() {
-            return ++id;
-        };
-    }());
-    
     function application() {
         this._super("Wipeout.Docs.ViewModels.Application");
                 
@@ -16,29 +9,16 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", functio
             _this.route(query);
         });
         
-        this.registerRoutedEvent(Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage, function (args) {
-            this.model().content(args.data);
-            
-            this.id = getId();
-            
-            if(args.data.$routableUrl) {
-                history.pushState({owner: this.id}, "", location.origin + location.pathname + "?" + args.data.$routableUrl());
-                application.parseRoute();
-            }
-        }, this);
-        
         this.registerDisposable(ko.computed(function() {
-            var tmp = this.model();
-            if(tmp) {
-                tmp = tmp.content();
-                if(tmp)
+            var tmp;
+            if( (tmp = this.model()) &&
+                (tmp = tmp.content()))
                     $("#headerText").html(tmp.title);
-            }
-            
         }, this));
     };
     
-    application.parseRoute = function() {
+    application.prototype.routeTo = function(item) {
+        history.pushState(null, '', Wipeout.Docs.Models.Application.routableUrl(item));
         crossroads.parse(location.pathname + location.search);
     };
     

@@ -1,7 +1,7 @@
 <wo.itemsControl itemSource="model().branches" select="$parent.select">
     <template>
         <div>
-            <a href="javascript:void(0)" data-bind="click: select, text: model().name"></a>
+            <a data-bind="click: select, text: model().name, attr: { href: model().href || 'javascript:void(0)'}"></a>
             <ul data-bind="itemsControl: null" style="display: none" id="content"></ul>
         </div>
     </template>
