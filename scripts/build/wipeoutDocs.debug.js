@@ -1634,7 +1634,6 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.TreeViewBranch", "wo.
         if(this.model().href) {  
             if (this.isOpen() || !this.model().branches || !this.model().branches.length) {
                 history.pushState(null, "", this.model().href);
-                debugger;
                 crossroads.parse(location.pathname + location.search);
             }
         }
