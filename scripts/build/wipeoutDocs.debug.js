@@ -1435,7 +1435,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", functio
         this._super("Wipeout.Docs.ViewModels.Application");
                 
         var _this = this;
-        crossroads.addRoute('/api.html{?query}', function(query){
+        crossroads.addRoute('/wipeout/api.html{?query}', function(query){
             _this.route(query);
         });
         
@@ -1634,6 +1634,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.TreeViewBranch", "wo.
         if(this.model().href) {  
             if (this.isOpen() || !this.model().branches || !this.model().branches.length) {
                 history.pushState(null, "", this.model().href);
+                debugger;
                 crossroads.parse(location.pathname + location.search);
             }
         }

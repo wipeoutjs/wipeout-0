@@ -5,7 +5,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", functio
         this._super("Wipeout.Docs.ViewModels.Application");
                 
         var _this = this;
-        crossroads.addRoute('/api.html{?query}', function(query){
+        crossroads.addRoute('/wipeout/api.html{?query}', function(query){
             _this.route(query);
         });
         
