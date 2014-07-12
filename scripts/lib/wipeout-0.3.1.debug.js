@@ -4,7 +4,7 @@ var wipeout = {};
 
 var ajax = function (options) {
     ///<summary>Perform an ajax request</summary>
-    ///<param name="options" type="Object">Configure teh request</param>
+    ///<param name="options" type="Object">Configure the request</param>
     ///<returns type="XMLHttpRequest">The ajax request object</returns>
     
     var xmlhttp = window.XMLHttpRequest ?
@@ -339,13 +339,6 @@ Class("wipeout.base.object", function () {
         return cached.apply(this, arguments);
     };
     
-    object._extendFromObject = function (childClass, className/* optional */) {
-        if(!childClass.constructor || childClass.constructor.constructor !== Function)
-            throw "the property \"constructor\" must be a function";
-        
-        var newClass = object.extend(childClass.constructor);
-    };
-    
     var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_0-9]*$/;
     object.extend = function (childClass, className/* optional */) {
         ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
@@ -378,7 +371,7 @@ Class("wipeout.base.object", function () {
         
         // static functions
         for (var p in this)
-            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache && this[p] !== object._extendFromObject && childClass.constructor[p] === undefined)
+            if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache && childClass.constructor[p] === undefined)
                 childClass.constructor[p] = this[p];
  
         // use eval so that browser debugger will get class name
@@ -781,7 +774,7 @@ Class("wipeout.base.view", function () {
         if(model === undefined)
             model = null;
         
-        //The model of view. If not set, it will default to the model of its parent view
+        ///<Summary type="ko.observable" generic0="Any">The model of view. If not set, it will default to the model of its parent view</Summary>
         this.model = ko.observable(model);
         
         var d1 = this.model.subscribe(function(newVal) {
@@ -1942,7 +1935,8 @@ Class("wipeout.bindings.bindingBase", function () {
     bindingBase.getBindings = function(node, bindingType) {
         ///<summary>Get all bindings on a node and it's decendant elements. Does not return bindings of element which control their own decendant bindings</summary>
         ///<param name="node" type="HTMLElement" optional="false">The element to get bindings from</param>
-        ///<returns type="HTMLElement">The node to get the parent of</returns>
+        ///<param name="bindingType" type="Function" optional="true">The type of binding to find</param>
+        ///<returns type="Array" generic0="wipeout.base.bindingBase">The node to get the parent of</returns>
         
         if(bindingType && !(bindingType instanceof Function)) throw "Invalid binding type";
 
@@ -2166,7 +2160,7 @@ Binding("render", true, function () {
     
     render.prototype.render = function (newVal) {
         ///<summary>Render a given value</summary>
-        ///<param name="value" type="wo.view" optional="false">The value to render</param>
+        ///<param name="newVal" type="wo.view" optional="false">The value to render</param>
         
         if(this.value || this.templateChangedSubscription)
             throw "This binding is already rendering a visual. Call unRender before rendering again.";
@@ -2721,7 +2715,7 @@ Class("wipeout.template.engine", function () {
         ///<summary>First re-write the template via knockout, then re-write the template via wipeout</summary>
         ///<param name="template" type="String">The id of the template</param>
         ///<param name="rewriterCallback" type="Function">A function which will do the re-writing</param>
-        ///<param name="templateDocument"></param>
+        ///<param name="templateDocument">The owner document</param>
         
         var script = document.getElementById(template);
         if (script instanceof HTMLElement) {        
@@ -2905,7 +2899,7 @@ Class("wipeout.template.htmlBuilder", function () {
     
     htmlBuilder.prototype.generatePreRender = function(templateString) {
         ///<summary>Pre compile render code</summary>
-        ///<param name="templateString">The template</param>
+        ///<param name="templateString" type="String">The template</param>
                    
         // need to convert to xml and back as string is an XML string, not a HTML string
         var xmlTemplate = wipeout.utils.html.parseXml("<root>" + templateString + "</root>");
@@ -2964,7 +2958,8 @@ Class("wipeout.template.htmlBuilder", function () {
     htmlBuilder.generateTemplate = function(xmlTemplate) { 
         ///<summary>Convert an xml template to a string</summary>
         ///<param name="xmlTemplate" type="Element">The template</param>
-        ///<returns type="String">A string version of the template<returns>
+        ///<returns type="String">A string version of the template</returns>
+        
         var result = [];
         var ser = new XMLSerializer();
         
@@ -3029,7 +3024,7 @@ Class("wipeout.utils.call", function () {
     
     call.prototype.call = function(searchTermOrFilters, filters) {
         ///<summary>Find an item given a search term and filters. Call a method with it's dot(...) method and pass in custom argument with it's arg(...) method</summary>
-        ///<param name="searchTerm" type="Any" optional="false">Search term or filters to be passed to find</param>
+        ///<param name="searchTermOrFilters" type="Any" optional="false">Search term or filters to be passed to find</param>
         ///<param name="filters" type="Object" optional="true">Filters to be passed to find</param>
         ///<returns type="Object">An item to create a function with the correct context and custom arguments</returns>
         
@@ -3893,7 +3888,7 @@ Class("wipeout.utils.ko", function () {
     };
     
     _ko.enumerateOverChildren = function(node, callback) {
-        ///<summary>Unumerate over the children of an element or ko virtual element</summary>
+        ///<summary>Enumerate over the children of an element or ko virtual element</summary>
         ///<param name="node" type="HTMLNode">The parent</param>
         ///<param name="callback" type="Function">The callback to apply to each node</param>
         
