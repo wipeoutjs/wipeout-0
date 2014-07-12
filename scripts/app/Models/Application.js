@@ -156,29 +156,28 @@ compiler.registerClass("Wipeout.Docs.Models.Application", "wo.object", function(
         ]);
         
         var _wo = new Wipeout.Docs.Models.Components.TreeViewBranch("wo", null, [
+            application.treeViewBranchFor(wipeoutApi, "wo.bindingDomManipulationWorker"),
+            application.treeViewBranchFor(wipeoutApi, "wo.call"),
             application.treeViewBranchFor(woApi, "wo.contentControl"),
             application.treeViewBranchFor(woApi, "wo.disposable"),
+            application.treeViewBranchFor(wipeoutApi, "wo.domData"),
+            application.treeViewBranchFor(wipeoutApi, "wo.domManipulationWorkerBase"),
             application.treeViewBranchFor(woApi, "wo.event"),
+            application.treeViewBranchFor(wipeoutApi, "wo.find"),
+            application.treeViewBranchFor(wipeoutApi, "wo.html"),
+            application.treeViewBranchFor(wipeoutApi, "wo.htmlAsync"),
             application.treeViewBranchFor(woApi, "wo.if"),
             application.treeViewBranchFor(woApi, "wo.itemsControl"),
+            application.treeViewBranchFor(wipeoutApi, "wo.ko"),
+            application.treeViewBranchFor(wipeoutApi, "wo.mutationObserverDomManipulationWorker"),
+            application.treeViewBranchFor(wipeoutApi, "wo.obj"),
             application.treeViewBranchFor(woApi, "wo.object"),
             application.treeViewBranchFor(woApi, "wo.routedEvent"),
             application.treeViewBranchFor(woApi, "wo.routedEventArgs"),
             application.treeViewBranchFor(woApi, "wo.routedEventModel"),
             application.treeViewBranchFor(woApi, "wo.routedEventRegistration"),                
             application.treeViewBranchFor(woApi, "wo.view"),
-            application.treeViewBranchFor(woApi, "wo.visual"),
-            
-            application.treeViewBranchFor(wipeoutApi, "wo.bindingDomManipulationWorker"),
-            application.treeViewBranchFor(wipeoutApi, "wo.call"),
-            application.treeViewBranchFor(wipeoutApi, "wo.domData"),
-            application.treeViewBranchFor(wipeoutApi, "wo.domManipulationWorkerBase"),
-            application.treeViewBranchFor(wipeoutApi, "wo.find"),
-            application.treeViewBranchFor(wipeoutApi, "wo.html"),
-            application.treeViewBranchFor(wipeoutApi, "wo.htmlAsync"),
-            application.treeViewBranchFor(wipeoutApi, "wo.ko"),
-            application.treeViewBranchFor(wipeoutApi, "wo.mutationObserverDomManipulationWorker"),
-            application.treeViewBranchFor(wipeoutApi, "wo.obj")
+            application.treeViewBranchFor(woApi, "wo.visual")
         ]);
         
         this.menu = new Wipeout.Docs.Models.Components.TreeViewBranch("API", null, [

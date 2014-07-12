@@ -83,6 +83,11 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
         wo: {},
         wipeout: {
             base: {
+                "if": {
+                    blankTemplateId: {
+                        description: "<summary type=\"Object\">An id for a blank template.</summary>"
+                    }
+                },
                 visual: {
                     reservedTags: {
                         description: "<summary type=\"Object\">A dictionary of html tags which wipeout will ignore. For example div and span.</summary>"

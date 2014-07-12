@@ -33,3 +33,15 @@
     Returns: <span data-bind="text: model().returns.type"></span>
 </h2>
 <span data-bind="text: model().returns.summary"></span>
+<br />
+<br />
+<br />
+<div>
+    <h3 style="display: inline-block">Function definition</h3>
+    <a href="javascript:void(0)" data-bind="click: function() { showCode(!showCode()); }"><small>(show/hide)</small></a>
+    <wo.if condition="showCode">
+        <template>
+            <Wipeout.Docs.ViewModels.Components.CodeBlock code="model()['function'].toString()"></Wipeout.Docs.ViewModels.Components.CodeBlock>
+        </template>
+    </wo.if>
+</div>
