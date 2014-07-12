@@ -33,6 +33,7 @@ body { padding-top: 70px; }
 
 .leftNav li {
     list-style: none;
+    margin-left: -20px;
 }
 
 p {
