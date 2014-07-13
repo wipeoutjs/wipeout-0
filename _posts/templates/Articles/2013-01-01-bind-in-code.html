@@ -1,0 +1,24 @@
+<h1>Binding to global values</h1>
+
+    <p>You can also bind values in javascript using the <a href="/wipeout-0/api.html?type=api&amp;className=wo.view&amp;functionName=bind&amp;isStatic=false">bind</a> function.</p>
+
+    <Wipeout.Docs.ViewModels.Components.CodeBlock newScriptId="'bind-in-code-script-1'">
+        <code>var objectToBindTo = ko.observable("Hello wipeout!");
+var myView = new wo.view();
+myView.bind("model", objectToBindTo, false);
+
+// Will log: "Hello wipeout!"
+console.log(myView.model());
+            
+objectToBindTo("Goodbye wipeout!");
+            
+// Will log: "Goodbye wipeout!"
+console.log(myView.model());</code>
+    </Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+    <p>
+        Mode details on binding can be found here:
+        TODO: link to bind how do i page
+</p>
+<br/>
+<br/>

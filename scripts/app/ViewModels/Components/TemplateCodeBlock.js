@@ -13,10 +13,14 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Components.TemplateCodeBlock", "
         document.getElementsByTagName("body")[0].appendChild(templateDiv);
     };
     
-    templateCodeBlock.prototype.onCodeChanged = function(newVal) {  
-        templateDiv.innerHTML += newVal
+    templateCodeBlock.prototype.getTemplateHtml = function(newVal) {
+        return newVal
             .replace(/\&lt;/g, "<")
             .replace(/\&gt;/g, ">");
+    };
+    
+    templateCodeBlock.prototype.onCodeChanged = function(newVal) {  
+        templateDiv.innerHTML += this.getTemplateHtml(newVal);
     };
     
     return templateCodeBlock;

@@ -1,0 +1,23 @@
+<h1>Binding to global values</h1>
+
+    <p>The scope also includes the window object, so you can bind to global variables</p>
+
+    <Wipeout.Docs.ViewModels.Components.JsCodeBlock newScriptId="'bind-to-global-script-1'">
+        <code>window.exampleValue = {
+    innerValue: "Hello wipeout!"
+};</code>
+    </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'bind-to-global-script-1'">
+        <code>&lt;wo.contentControl model="exampleValue.innerValue">
+    &lt;template>
+        Binding to global: &lt;span data-bind="text: model">&lt;/span>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'bind-to-global-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+<br/>
+<br/>

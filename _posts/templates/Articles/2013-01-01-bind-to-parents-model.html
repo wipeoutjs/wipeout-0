@@ -1,0 +1,29 @@
+<h1>Set the model from the parents model</h1>
+
+<p>
+In order to keep clean contextual boundaries, the model property of a child view model can be bound to a property of its parent's model
+</p>
+
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'bind-to-parents-model-script-1'">
+        <code>&lt;wo.contentControl model="{ value: 'Hello wipeout!' }">
+    &lt;template>
+        &lt;wo.contentControl model="$parent.model().value">
+            &lt;template>
+                Binding to a property on parent's model: &lt;span data-bind="text: model">&lt;/span>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'bind-to-parents-model-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+<p>
+    In this example there is a parent view model which has a child view model. 
+    The model of the child is bound to a property of the model of the parent. <a href="http://knockoutjs.com/documentation/binding-context.html">$parent</a> points to the scope of the view model 1 level up
+    
+</p>
+<br/>
+<br/>

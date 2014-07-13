@@ -1,0 +1,24 @@
+<h1>Bind to a property on the parents view model</h1>
+
+<p>
+You may wish to bind to someting 1 level up in the view model hierarchy
+</p>
+
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'bind-to-parents-view-model-script-1'">
+        <code>&lt;wo.contentControl value="{ innerValue: 'Hello wipeout!' }">
+    &lt;template>
+        &lt;wo.contentControl value="$parent.value.innerValue">
+            &lt;template>
+                Binding to a property on parent's view model: &lt;span data-bind="text: value">&lt;/span>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'bind-to-parents-view-model-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+<br/>
+<br/>
