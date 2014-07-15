@@ -31,6 +31,14 @@ Class("wipeout.base.object", function () {
     // The virtual cache caches overridden methods for quick lookup later. It is not safe to use if two function prototypes which are not related share the same function, or function prototypes are modified after an application initilisation stage
     object.useVirtualCache = true;
     
+    object.prototype._strictSuper = function(methodName) {        
+        ///<summary>Call the current method or constructor of the parent class with arguments. The first argument is the name of the method, all other arguments are passed into the parent method</summary>
+        ///<param name="methodName" type="String" optional="false">The name of the method to call on the parent class</param>
+        ///<returns type="Any">Whatever the overridden method returns</returns>
+        
+        //TODO
+    };
+    
     object.prototype._super = function() {        
         ///<summary>Call the current method or constructor of the parent class with arguments</summary>
         ///<returns type="Any">Whatever the overridden method returns</returns>
