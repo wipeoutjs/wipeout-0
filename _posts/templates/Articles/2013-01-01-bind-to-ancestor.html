@@ -1,16 +1,29 @@
-<h1>Using lists of items</h1>
+<h1>Bind to the property of an ancestor</h1>
 
-    <p>Lists of items are at the core of all javascript frameworks, and wipeout is no different. Within wipeout, 
-        simple js objects cannot be rendered, and so need to be converted to wo.view objects first. You can do this with an
-        <a href="/wipeout-0/api.html?type=api&amp;className=wo.itemsControl">itemsControl</a>
-    </p>
+    <p>There is a helper function which can find ancestors based on their proerties, type, depth or any other custom attribute you need.</p>
 
-    <Wipeout.Docs.ViewModels.Components.CodeBlock>
-        <code>&lt;wo.itemsControl itemSource="[{itemText: 'Item 1'}, {itemText: 'Item 2'}]">
-    &lt;itemTemplate>
-        &lt;div data-bind="text: model().itemText">&lt;/div>
-    &lt;/itemTemplate>
-&lt;/wo.itemsControl></code>
-    </Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <Wipeout.Docs.ViewModels.Components.JsCodeBlock newScriptId="'bind-to-global-script-1'">
+        <code>// create a custom class to distinguish type
+window.myType = wo.contentControl.extend(function () {
+    this._super();
+});</code>
+    </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'bind-to-ancestor-script-1'">
+        <code>&lt;myType model="'Hello wipeout!'">
+    &lt;template>
+        &lt;wo.contentControl model="$find(myType).model">
+            &lt;template>
+                Binding to a specific ancestor: &lt;span data-bind="text: model">&lt;/span>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/myType></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'bind-to-ancestor-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
 <br/>
 <br/>
+<p>There is a full customisable api for finding ancestors, documented here TODO</p>

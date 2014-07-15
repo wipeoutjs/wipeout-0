@@ -1,0 +1,48 @@
+<h1>Overriding methods</h1>
+
+    <p>In a prototypical inheritance model, all methods are virtual, which means all methods of a parent class can be overriden by methods of a child class.</p>
+
+    <Wipeout.Docs.ViewModels.Components.CodeBlock newScriptId="'bind-to-global-script-1'">
+        <code>var Account = wo.object.extend(function (balance) {
+    // call the constructor of the base class (wo.object)
+    this._super();
+            
+    this.balance = balance;
+});
+            
+Account.prototype.canWithdrawMoney = function() {
+    return this.balance > 0;
+};
+        
+var CurrentAccount = Account.extend(function (balance, overdraft) {
+    // call the constructor of the base class (Account)
+    this._super(balance);
+            
+    this.overdraft = overdraft;
+});
+            
+Account.prototype.canWithdrawMoney = function() {
+    return this.balance > -this.overdraft;
+};
+        
+var account = new Account(-50);
+console.log(account.canWithdrawMoney());
+        
+var currentAccount = new CurrentAccount(-50, 100);
+console.log(currentAccount.canWithdrawMoney());</code>
+    </Wipeout.Docs.ViewModels.Components.CodeBlock>
+<br/>
+<p>It is generally a good idea to call the method on the parent class which you are overriding as part of the child class. For this you can use the 
+    <a href="http://localhost:4000/wipeout-0/api.html?type=api&amp;className=wo.object&amp;functionName=_super&amp;isStatic=false">_super</a> method again.</p>
+    <Wipeout.Docs.ViewModels.Components.CodeBlock newScriptId="'bind-to-global-script-1'">
+        <code>Account.prototype.canWithdrawMoney = function() {
+    var canWithdrawMoneyBase = this._super();
+    return canWithdrawMoneyBase &amp;&amp; this.balance > -this.overdraft;
+};
+        
+var currentAccount = new CurrentAccount(-50, 100);
+console.log(currentAccount.canWithdrawMoney());</code>
+    </Wipeout.Docs.ViewModels.Components.CodeBlock>
+<p>The _super method is magic. Or rather, it is context aware and will always point to correct method on the prototype of an ancestor class</p>
+<br/>
+<br/>

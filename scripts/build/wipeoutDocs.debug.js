@@ -444,31 +444,26 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 text: "Call a method on another object",
                 href: buildHref({article: "call-method-out-of-scope"})
             }]
+        }, {
+            header: {
+                text: "Use the wipeout OO framework",
+                href: buildHref({article: "wipeout-oo"})
+            },
+            items: [{
+                text: "Inheritance",
+                href: buildHref({article: "inheritance"})
+            }, {
+                text: "Overriding methods",
+                href: buildHref({article: "overriding-methods"})
+            }, {
+                text: "Virtual method cache",
+                href: buildHref({article: "virtual-method-cache"})
+            }, {
+                text: "Strict mode",
+                href: buildHref({article: "strict-mode"})
+            }]
         }];
     };
-    
-    /*
-                    &lt;li>
-                        model().value:
-                        &lt;span data-bind="text: model().value">&lt;/span>
-                    &lt;/li>
-                    &lt;li>
-                        staticVal:
-                        &lt;span data-bind="text: staticVal">&lt;/span>
-                    &lt;/li>
-                    &lt;li>
-                        constantVal:
-                        &lt;span data-bind="text: constantVal">&lt;/span>
-                    &lt;/li>
-                    &lt;li>
-                        bindToParent:
-                        &lt;span data-bind="text: bindToParent">&lt;/span>
-                    &lt;/li>
-                    &lt;li>
-                        bindToThis:
-                        &lt;span data-bind="text: bindToThis">&lt;/span>
-                    &lt;/li>
-                &lt;/ul>                */
     
     return HowDoIApplication;
 });

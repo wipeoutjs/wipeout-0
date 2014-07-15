@@ -1,16 +1,36 @@
-<h1>Using lists of items</h1>
+<h1>Call a method of an ancestor</h1>
 
-    <p>Lists of items are at the core of all javascript frameworks, and wipeout is no different. Within wipeout, 
-        simple js objects cannot be rendered, and so need to be converted to wo.view objects first. You can do this with an
-        <a href="/wipeout-0/api.html?type=api&amp;className=wo.itemsControl">itemsControl</a>
-    </p>
+    <p>Using knockout event bindings always sets the context of your functions to the current scope. However, when using ancestors function, it is 
+    generally more useful to have ancestor obect as the scope. THe $call API will do this</p>
 
-    <Wipeout.Docs.ViewModels.Components.CodeBlock>
-        <code>&lt;wo.itemsControl itemSource="[{itemText: 'Item 1'}, {itemText: 'Item 2'}]">
-    &lt;itemTemplate>
-        &lt;div data-bind="text: model().itemText">&lt;/div>
-    &lt;/itemTemplate>
-&lt;/wo.itemsControl></code>
-    </Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+        <code>// create a custom class to distinguish type
+window.myType = wo.contentControl.extend(function () {
+    this._super();
+            
+    this.example = "Call the method of an ancestor: ";
+});
+        
+myType.prototype.click = function(text) {
+    alert(this.example + text);
+};</code>
+    </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'call-method-out-of-scope-script-1'">
+        <code>&lt;myType model="'Hello wipeout!'">
+    &lt;template>
+        &lt;wo.contentControl>
+            &lt;template>
+                &lt;button data-bind="click: $call(myType).dot('click').args('Hello wipeout!')">Test&lt;/button>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/myType></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'call-method-out-of-scope-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+There is <code>$call</code>, documented here TODO
 <br/>
 <br/>
