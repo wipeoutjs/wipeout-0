@@ -462,6 +462,12 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 text: "Strict mode",
                 href: buildHref({article: "strict-mode"})
             }]
+        }, {
+            header: {
+                text: "The model layer",
+                href: buildHref({article: "models"})
+            },
+            items: []
         }];
     };
     
