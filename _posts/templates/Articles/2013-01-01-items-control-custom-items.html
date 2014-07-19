@@ -1,0 +1,24 @@
+<h1>Using custom items control items</h1>
+
+<p>
+With a custom itemsControl you can control
+    <a href="/wipeout-0/api.html?type=api&amp;className=wo.itemsControl&amp;functionName=createItem&amp;isStatic=false">the types of items which are created</a>.
+</p>
+    
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>var myItemsControl = wo.itemsControl.extend({
+    constructor: function() {
+        this._super();
+    },
+    createItem: function(model) {
+        var item = new myViewModelType();
+        
+        item.model(model);        
+        item.templateId(this.itemTemplateId());
+        
+        return item;
+    }
+});</code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+<p>With a regular items control, all items are plain wo.view objects. If you override the createItem method you can alter this.</p>

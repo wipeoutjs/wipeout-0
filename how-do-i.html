@@ -24,6 +24,8 @@ layout: default
         window.onpopstate = function() {
             crossroads.parse(location.pathname + location.search);
         };
+        
+        document.getElementsByClassName("leftNav")[0].scrollByLines(1000000000)
     };
 </script>
       

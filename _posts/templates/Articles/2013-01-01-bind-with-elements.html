@@ -1,0 +1,26 @@
+<h1>Set proerties using XML elements</h1>
+
+<p>
+    To set more complex properties or long strings (such as templates) you can set properties as xml elements rather than xml attributes
+</p>
+
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'bind-with-elements-script-1'">
+        <code>&lt;wo.contentControl model="{ value: 'Hello wipeout!' }">
+    &lt;myJson constructor="json">
+            { "text": "Hello wipeout!" }
+    &lt;/myJson>
+    &lt;template>
+        Binding to element value: &lt;span data-bind="text: myJson.text">&lt;/span>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'bind-with-elements-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+<p>There is more info on setting properties in this manner <a href="TODO">here</a>.
+    
+</p>
+<br/>
+<br/>

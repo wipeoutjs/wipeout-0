@@ -1,6 +1,10 @@
 compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", function() {
     
     var buildHref = function(parameters) {
+        
+        //if(parameters.article && !wo.contentControl.templateExists(parameters.article))
+        //    throw "No template for " + parameters.article;
+        
         var output = []
         for(var i in parameters)
             output.push(i + "=" + parameters[i]);
@@ -59,6 +63,9 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 text: "Bind to a global value",
                 href: buildHref({article: "bind-to-global"})
             }, {
+                text: "Set properties using XML elements",
+                href: buildHref({article: "bind-with-elements"})
+            }, {
                 text: "Bind in javascript code",
                 href: buildHref({article: "bind-in-code"})
             }, {
@@ -80,6 +87,9 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 text: "Overriding methods",
                 href: buildHref({article: "overriding-methods"})
             }, {
+                text: "Another extend syntax",
+                href: buildHref({article: "another-extend-syntax"})
+            }, {
                 text: "Virtual method cache",
                 href: buildHref({article: "virtual-method-cache"})
             }, {
@@ -88,10 +98,70 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
             }]
         }, {
             header: {
-                text: "The model layer",
+                text: "Use the model layer",
                 href: buildHref({article: "models"})
             },
             items: []
+        }, {
+            header: {
+                text: "Use templates",
+                href: buildHref({article: "templates"})
+            },
+            items: [{
+                text: "template id",
+                href: buildHref({article: "template-id"})
+            }, {
+                text: "Referencing items in a template",
+                href: buildHref({article: "referencing-items-in-a-template"})
+            }, {
+                text: "Asynchronus templates",
+                href: buildHref({article: "asynchronous-templates"})
+            }, {
+                text: "wo.contentControl",
+                href: buildHref({article: "templates-content-control"})
+            }]
+        }, {
+            header: {
+                text: "Work wih lists",
+                href: buildHref({article: "working-with-lists"})
+            },
+            items: [{
+                text: "Setting the list template",
+                href: buildHref({article: "items-control-list-template"})
+            }, {
+                text: "List item lifecycle",
+                href: buildHref({article: "items-control-item-lifecycle"})
+            }, {
+                text: "Creating custom list items",
+                href: buildHref({article: "items-control-custom-items"})
+            }, {
+                text: "Self removing items",
+                href: buildHref({article: "items-control-self-removing-items"})
+            }]
+        }, {
+            header: {
+                text: "Use the if control",
+                href: buildHref({article: "if-control"})
+            },
+            items: []
+        }, {
+            header: {
+                text: "Work with events",
+                href: buildHref({article: "events"})
+            },
+            items: [{
+                text: "Advanced events",
+                href: buildHref({article: "advanced-events"})
+            }]
+        }, {
+            header: {
+                text: "Routed events",
+                href: buildHref({article: "routed-events"})
+            },
+            items: [{
+                text: "Advanced events",
+                href: buildHref({article: "advanced-events"})
+            }]
         }];
     };
     

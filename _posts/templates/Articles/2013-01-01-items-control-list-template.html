@@ -1,0 +1,23 @@
+<h1>Setting the list template</h1>
+
+<p>
+    List items are rendered in a <code>div</code> tag by default. You can change this using the 
+    <a href="/wipeout-0/api.html?type=api&amp;className=wo.itemsControl&amp;propertyName=template&amp;isStatic=false">template</a> property of the itemSource
+</p>
+    
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>&lt;wo.itemsControl itemSource="['Hello wipeout 1', 'Hello wipeout 2']">
+    &lt;template>
+        &lt;ul data-bind="itemSource: null">&lt;/ul>
+    &lt;/template>
+    &lt;itemTemplate>
+        &lt;li>
+            &lt;span data-bind="text: model">&lt;/span>
+            Index: &lt;span data-bind="text: $index">&lt;/span>
+        &lt;/li>
+    &lt;/itemTemplate>
+&lt;/wo.itemsControl></code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+<p>The <a href="TODO">itemsControl</a> binding is used to inform the template engine where to insert the items from the itemsControl. It does not need an argument.
+</p>

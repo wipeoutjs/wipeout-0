@@ -1,0 +1,47 @@
+<h1>Referencing items in a template and manipulating the DOM</h1>
+
+<p>Often it is useful to get handles on view models or html element defined in a template. 
+    With other web paradigms you might use jQuery or document.getElementById, but these methods are strongly discouraged by wipeout, as 
+    they are inaccurate. 
+    </p>
+    <p>
+    Within the MVVM pattern is is recommended that you only select items from within the cotext of the 
+    view model you are using. NOT from it's children and NOT from the entire document.
+        <br/>
+    Wipeout uses the <a href="/wipeout-0/api.html?type=api&amp;className=wo.visual&amp;propertyName=templateItems&amp;isStatic=false">templateItems</a> 
+        property to automatically grab items you want to manipulate at a later stage.
+</p>
+
+<div class="columns">
+    <div class="column-2 main-example-code">
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;script type="text/xml" id="theTemplate">
+    &lt;div id="myDiv">&lt;/div>
+    &lt;wo.view id="myViewModel" />
+&lt;/script></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+    </div>
+    <div class="column-2 main-example-code">
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>var customViewModel = wo.view.extend({
+    constructor: function() {
+        this._super("theTemplate");
+    },
+    onRendered: function (oldValues, newValues) {
+        this._super(oldValues, newValues);
+                
+        console.log(this.templateItems.myDiv);
+        console.log(this.templateItems.myViewModel);
+                
+        // manipulate the templateItems here
+    }
+});</code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+    </div>
+</div>
+
+<p>If you give a html element or view model within a template an id, that item will be appended to the templateItems of the view model which has been templated. 
+   The <a href="http://localhost:4000/wipeout-0/api.html?type=api&amp;className=wo.visual&amp;functionName=onRendered&amp;isStatic=false">onRendered</a> method is the place to do dom
+manipulation within a view model, as it is called after the view model has been fully templated and rendered</p>
+<p>Notice that the id property on the view model does not require inner quotations like other string properties. Id is a special property which does not go through the same property setting process</p>
+

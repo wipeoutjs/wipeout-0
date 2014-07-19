@@ -1,0 +1,25 @@
+<h1>Wipeout events</h1>
+
+    <p>Wipeout has a build in <a href="/wipeout-0/api.html?type=api&amp;className=wo.event">eventing system</a>.</p>
+
+
+    <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+        <code>
+var theEvent = wo.event();
+        
+function theEventHandler(args) {
+    console.log(args);
+}
+        
+var dispose = theEvent.register(theEventHandler);
+        
+// will log "Hello wipeout!"
+theEvent.trigger("Hello wipeout!");
+        
+dispose.dispose();
+            
+// will not log anything
+theEvent.trigger("Hello wipeout!");
+        
+        </code>
+    </Wipeout.Docs.ViewModels.Components.JsCodeBlock>

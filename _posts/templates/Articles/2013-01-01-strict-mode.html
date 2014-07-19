@@ -1,4 +1,13 @@
 <h1>Strict mode</h1>
 
-    <p>Unfortunately the _super method will not be able to find any functions defined in strict mode. For this you can use the 
-        <a href="http://localhost:4000/wipeout-0/api.html?type=api&amp;className=wo.object&amp;functionName=_strictSuper&amp;isStatic=false">_strictSuper</a> method instead.</p>
+<p>Unfortunately the <a href="/wipeout-0/api.html?type=api&amp;className=wo.object&amp;functionName=_super&amp;isStatic=false">_super</a> method will not be able to find any functions defined in javascript strict mode. You must reference the method directly instead.</p>
+
+<Wipeout.Docs.ViewModels.Components.CodeBlock newScriptId="'bind-to-parents-model-script-1'">
+    <code>myChildClass.prototype.myOverrideFunction = function() {
+    myParentClass.prototype.myOverrideFunction.apply(this, arguments);
+        
+    // continue with method override here
+}</code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+<p>The _super function will always be able to find the parent constructor.</p>
