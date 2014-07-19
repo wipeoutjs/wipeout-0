@@ -454,6 +454,9 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 text: "Find an ancestor to bind to",
                 href: buildHref({article: "bind-to-ancestor"})
             }, {
+                text: "Call a method on a view model",
+                href: buildHref({article: "call-a-method"})
+            }, {
                 text: "Call a method on another object",
                 href: buildHref({article: "call-method-out-of-scope"})
             }]
@@ -535,7 +538,16 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 text: "Advanced events",
                 href: buildHref({article: "advanced-events"})
             }]
-        }];
+        }/*, {
+            header: {
+                text: "Work with routed events",
+                href: buildHref({article: "routed-events"})
+            },
+            items: [{
+                text: "Advanced events",
+                href: buildHref({article: "advanced-events"})
+            }]
+        }*/];
     };
     
     return HowDoIApplication;
