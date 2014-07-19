@@ -244,22 +244,31 @@ Class("wipeout.base.visual", function () {
         ///<summary>Trigger a routed event. The event will bubble upwards to all ancestors of this visual. Overrides wo.object.triggerRoutedEvent</summary>        
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
         ///<param name="eventArgs" type="Any" optional="true">The event args to bubble up with the routed event</param>
+        
+        // create routed event args if neccessary
         if(!(eventArgs instanceof wipeout.base.routedEventArgs)) {
             eventArgs = new wipeout.base.routedEventArgs(eventArgs, this);
         }
 
+        // trigger event on this
         for(var i = 0, ii = this.__woBag.routedEventSubscriptions.length; i < ii; i++) {
             if(eventArgs.handled) return;
             if(this.__woBag.routedEventSubscriptions[i].routedEvent === routedEvent) {
                 this.__woBag.routedEventSubscriptions[i].event.trigger(eventArgs);
             }
         }
+        
+        // trigger event on model
+        if(eventArgs.handled) return;
+        if(this.model() instanceof wipeout.base.routedEventModel) {
+            this.model().routedEventTriggered(routedEvent, eventArgs);
+        }
 
-        if(!eventArgs.handled) {
-            var nextTarget = this.getParent();
-            if(nextTarget) {
-                nextTarget.triggerRoutedEvent(routedEvent, eventArgs);
-            }
+        // trigger event on parent
+        if(eventArgs.handled) return;
+        var nextTarget = this.getParent();
+        if(nextTarget) {
+            nextTarget.triggerRoutedEvent(routedEvent, eventArgs);
         }
     };
     

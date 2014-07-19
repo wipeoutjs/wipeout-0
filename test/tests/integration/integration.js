@@ -317,6 +317,24 @@ test("routed event, from model", function() {
     ok(triggered1);
 });
 
+test("routed event, to model", function() {
+    // arrange
+    var model = new wo.routedEventModel();
+    var aRoutedEvent = new wo.routedEvent();
+    var open = "<wo.contentControl id='item'><template>", close = "</template></wo.contentControl>";
+    application.template(open + open + open + "<div>hi</div>" + close + close + close);
+    application.registerRoutedEvent(aRoutedEvent, function() { this.__caught = true; }, application);
+    model.registerRoutedEvent(aRoutedEvent, function() { this.__caught = true; }, model);
+    application.templateItems.item.model(model);
+    
+    // act
+    application.templateItems.item.templateItems.item.templateItems.item.triggerRoutedEvent(aRoutedEvent, {});
+    
+    // assert
+    ok(application.__caught);
+    ok(model.__caught);
+});
+
 test("basic knockout binding, non observable", function() {
     // arrange
     var val = "LIB:OIPHJKB:OIYHJB";
