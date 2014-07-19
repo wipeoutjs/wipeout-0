@@ -186,6 +186,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
     var staticContructor = function() {
         if(window.wipeoutApi) return;
                         
+        //wipeout.profile.profile();
+        
         wipeoutApi = new Wipeout.Docs.Models.Components.ApiBuilder(wipeout, "wipeout")
             .build({
                 knownParents: [{key:"ko.templateEngine", value: ko.templateEngine}], 
@@ -1894,6 +1896,8 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Pages.FunctionPage", "wo.view", 
         
         this.showCode = ko.observable(false);
         
+        this.showReturnValue = true;
+                
         this.usagesTemplateId = ko.computed(function() {
             if(this.model()) {
                 var name = this.model().fullyQualifiedName() + functionPage.classUsagesTemplateSuffix;

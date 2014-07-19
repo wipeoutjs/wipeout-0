@@ -1,6 +1,12 @@
 
-<h2 data-bind="visible: model().classConstructor.summary">Constructor</h2>
-<div data-bind="html: model().classConstructor.summary"></div>
+<Wipeout.Docs.ViewModels.Pages.FunctionPage 
+                        model="$parent.model().classConstructor" 
+                        title="'Constructor'" 
+                        showReturnValue="false"
+                        functionDefinitionText="'Constructor definition'" />
+
+<hr style="border: 0; border-top: 4px solid #E7E7E7;"/>
+
 <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticProperties" title="'Static Properties'" itemType="'Property'" />
 <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticFunctions" title="'Static Functions'" itemType="'Function'" />
 <Wipeout.Docs.ViewModels.Pages.ClassItemTable itemSource="model().staticEvents" title="'Static Events'" itemType="'Event'" />

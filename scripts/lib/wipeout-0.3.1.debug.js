@@ -1271,7 +1271,7 @@ Class("wipeout.base.contentControl", function () {
                         templateArea.childNodes[j].id &&
                         // first use a hash to avoid computationally expensive string compare if possible
                         templateArea.childNodes[j].attributes[dataTemplateHash] &&
-                        templateArea.childNodes[j].attributes[dataTemplateHash].nodeValue === hash &&
+                        templateArea.childNodes[j].attributes[dataTemplateHash].value === hash &&
                         wipeout.utils.domData.get(templateArea.childNodes[j], "rawTemplate") === templateString) {
                             return templateArea.childNodes[j].id;
                         }
@@ -2644,7 +2644,7 @@ Class("wipeout.profile.profile", function () {
             profileState = {
                 highlighter: new wipeout.profile.highlighter(),
                 infoBox: wipeout.utils.html.createElement(
-                    '<div style="position: fixed; top: 10px; right: 10px; background-color: white; padding: 10px; border: 2px solid gray; display: none; max-height: 500px; overflow-y: scroll"></div>'),
+                    '<div style="position: fixed; top: 10px; right: 10px; background-color: white; padding: 10px; border: 2px solid gray; display: none; max-height: 500px; overflow-y: scroll; z-index: 10000"></div>'),
                 eventHandler: function(e) {
                     if (!e.altKey) return;
                     e.stopPropagation();
