@@ -2,7 +2,7 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
     
     var staticContructor = function() {
         if(window.wipeoutApi) return;
-                
+                        
         wipeoutApi = new Wipeout.Docs.Models.Components.ApiBuilder(wipeout, "wipeout")
             .build({
                 knownParents: [{key:"ko.templateEngine", value: ko.templateEngine}], 
@@ -102,6 +102,10 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
         friendlyName = friendlyName[friendlyName.length - 1];
         
         var definition = api.forClass(classFullName);
+        for (var i = definition.staticProperties.length - 1; i >= 0; i--)
+            if(definition.staticProperties[i].name === "__woName")
+                definition.staticProperties.splice(i, 1);
+        
         return new Wipeout.Docs.Models.Components.TreeViewBranch(
             friendlyName, 
             ApiApplication.routableUrl(definition), 

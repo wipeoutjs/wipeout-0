@@ -385,6 +385,7 @@ Class("wipeout.base.object", function () {
             function " + className + "() { this.constructor = childClass; }\
             " + className + ".prototype = parentClass.prototype;\
             childClass.prototype = new " + className + "();")(childClass.constructor, this);
+            childClass.constructor.__woName = className;
         } else {
             var prototypeTracker = function() { this.constructor = childClass.constructor; }     
             prototypeTracker.prototype = this.prototype;
@@ -559,10 +560,12 @@ Class("wipeout.base.visual", function () {
                 
                 wipeout.utils.ko.enumerateOverChildren(this.__woBag.rootHtmlElement, function(child) {
                     output.push(child);
-                })
-
-                // add root element closing tag
+                    if(wipeout.utils.ko.isVirtual(child))
+                        output.push(wipeout.utils.ko.getClosingTag(child));
+                });
+                
                 var last = output[output.length - 1].nextSibling;
+                
                 if(!wipeout.utils.ko.isVirtualClosing(last))
                     throw "Could not compile view model html";
 
@@ -1064,6 +1067,89 @@ Class("wipeout.base.view", function () {
 
 
 
+Class("wipeout.base.routedEvent", function () {
+    
+    var routedEvent = function() {
+        ///<summary>A routed event is triggerd on a visual and travels up to ancestor visuals all the way to the root of the application</summary>
+        
+        // allow for non use of the new key word
+        if(!(this instanceof routedEvent))
+           return new routedEvent();
+    };
+
+    routedEvent.prototype.trigger = function(triggerOnVisual, eventArgs) {
+        ///<summary>Trigger a routed event on a visual</summary>
+        ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual where the routed event starts</param>
+        ///<param name="eventArgs" type="Any" optional="true">The event args to bubble up with the routed event</param>
+        
+        triggerOnVisual.triggerRoutedEvent(this, new wipeout.base.routedEventArgs(eventArgs, triggerOnVisual));
+    };
+    
+    routedEvent.prototype.unRegister = function (callback, triggerOnVisual, context /* optional */) {
+        ///<summary>Unregister a routed event on a visual</summary>
+        ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
+        ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual passed into the register function</param>
+        ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
+        ///<returns type="Boolean">Whether the event registration was found or not</returns>         
+        return triggerOnVisual.unRegisterRoutedEvent(this, callback, context);
+    };
+    
+    routedEvent.prototype.register = function(callback, triggerOnVisual, context /* optional */) {
+        ///<summary>Register a routed event on a visual</summary>
+        ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
+        ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual registered to the routed event</param>
+        ///<param name="context" type="Any" optional="true">The context "this" to use within the callback</param>
+        ///<returns type="wo.eventRegistration">A dispose function</returns>         
+        
+        return triggerOnVisual.registerRoutedEvent(this, callback, context);
+    };
+    
+    return routedEvent;
+});
+
+Class("wipeout.base.routedEventArgs", function () {
+    
+    var routedEventArgs = function(eventArgs, originator) { 
+        ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>
+        ///<param name="eventArgs" type="Any" optional="true">The inner event args</param>
+        ///<param name="originator" type="Any" optional="false">A pointer to event raise object</param>
+        
+        ///<Summary type="Boolean">Signals whether the routed event has been handled and should not propagate any further</Summary>
+        this.handled = false;
+        
+        ///<Summary type="Any">The original event args used when the routedEvent has been triggered</Summary>
+        this.data = eventArgs;
+        
+        ///<Summary type="Any">The object which triggered the event</Summary>
+        this.originator = originator;
+    };
+    
+    return routedEventArgs;
+});
+    
+
+Class("wipeout.base.routedEventRegistration", function () {
+    
+    var routedEventRegistration = function(routedEvent) {  
+        ///<summary>Holds routed event registration details</summary>
+        ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
+        
+        ///<Summary type="wo.routedEvent">The routed event</Summary>
+        this.routedEvent = routedEvent;
+        
+        ///<Summary type="wo.event">An inner event to handler triggering callbacks</Summary>
+        this.event = new wipeout.base.event();        
+    };
+    
+    routedEventRegistration.prototype.dispose = function() {
+        ///<summary>Dispose of the callbacks associated with this registration</summary>
+        this.event.dispose();
+    };
+    
+    return routedEventRegistration;
+});
+
+
 Class("wipeout.debug", function () { 
     var jQ = function() {
         if(!window.jQuery)
@@ -1186,7 +1272,7 @@ Class("wipeout.base.contentControl", function () {
                         // first use a hash to avoid computationally expensive string compare if possible
                         templateArea.childNodes[j].attributes[dataTemplateHash] &&
                         templateArea.childNodes[j].attributes[dataTemplateHash].nodeValue === hash &&
-                        templateArea.childNodes[j].innerHTML === templateString) {
+                        wipeout.utils.domData.get(templateArea.childNodes[j], "rawTemplate") === templateString) {
                             return templateArea.childNodes[j].id;
                         }
                     }
@@ -1239,6 +1325,9 @@ Class("wipeout.base.contentControl", function () {
                 
                 script.textContent = template;
                 templateArea.appendChild(script);
+                
+                // keep a record of the template before the ko/wo template engine mangles it
+                wipeout.utils.domData.set(script, "rawTemplate", template);
             }
         };
     })();  
@@ -1247,7 +1336,7 @@ Class("wipeout.base.contentControl", function () {
     contentControl.deleteAnonymousTemplate = tmp.del;
     contentControl.createTemplate = tmp.createTemplate;
     contentControl.templateExists = function(templateId) {
-        ///<summary>Describs whether a template exists</summary>
+        ///<summary>Describes whether a template exists</summary>
         ///<param name="templateId" type="String" optional="false">The id of the template</param>
         ///<returns type="Boolean"></returns>
         
@@ -1466,7 +1555,7 @@ Class("wipeout.base.itemsControl", function () {
     var staticConstructor = function() {
         if(deafaultTemplateId) return;
         
-        deafaultTemplateId = wipeout.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");  
+        deafaultTemplateId = wipeout.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");
     };
     
     var itemsControl = wipeout.base.contentControl.extend(function (templateId, itemTemplateId, model) {
@@ -1510,6 +1599,8 @@ Class("wipeout.base.itemsControl", function () {
             }
         }, this);
         this.registerDisposable(d2);
+        
+        this.registerRoutedEvent(itemsControl.removeItem, this._removeItem, this);
     }, "itemsControl");
     
     itemsControl._subscribeV2 = function() {
@@ -1538,6 +1629,8 @@ Class("wipeout.base.itemsControl", function () {
         this.registerDisposable(d2);
     };
     
+    itemsControl.removeItem = wipeout.base.routedEvent();
+    
     itemsControl._subscribeV3 = function() {
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
         var d1 = this.itemSource.subscribe(this._itemSourceChanged, this, "arrayChange");
@@ -1546,6 +1639,23 @@ Class("wipeout.base.itemsControl", function () {
         var d2 = this.items.subscribe(this._itemsChanged, this, "arrayChange");
         this.registerDisposable(d2);
         
+    };
+    
+    itemsControl.prototype._removeItem = function(e) {
+        ///<summary>Remove an item from the item source</summary>
+        ///<param name="e" type="wo.routedEventArgs" optional="false">The item to remove</param>
+    
+        if(this.itemSource.indexOf(e.data) !== -1) {
+            this.removeItem(e.data);
+            e.handled = true;
+        }
+    };
+    
+    itemsControl.prototype.removeItem = function(item) {
+        ///<summary>Remove an item from the item source</summary>
+        ///<param name="item" type="Any" optional="false">The item to remove</param>
+    
+        this.itemSource.remove(item);
     };
     
     itemsControl.prototype._initialize = function(propertiesXml, parentBindingContext) {
@@ -1716,85 +1826,6 @@ Class("wipeout.base.itemsControl", function () {
     };
 
     return itemsControl;
-});
-
-
-Class("wipeout.base.routedEvent", function () {
-    
-    var routedEvent = function() {
-        ///<summary>A routed event is triggerd on a visual and travels up to ancestor visuals all the way to the root of the application</summary>
-    };
-
-    routedEvent.prototype.trigger = function(triggerOnVisual, eventArgs) {
-        ///<summary>Trigger a routed event on a visual</summary>
-        ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual where the routed event starts</param>
-        ///<param name="eventArgs" type="Any" optional="true">The event args to bubble up with the routed event</param>
-        
-        triggerOnVisual.triggerRoutedEvent(this, new wipeout.base.routedEventArgs(eventArgs, triggerOnVisual));
-    };
-    
-    routedEvent.prototype.unRegister = function (callback, triggerOnVisual, context /* optional */) {
-        ///<summary>Unregister a routed event on a visual</summary>
-        ///<param name="callback" type="Function" optional="false">The callback to un-register</param>
-        ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual passed into the register function</param>
-        ///<param name="context" type="Any" optional="true">The original context passed into the register function</param>
-        ///<returns type="Boolean">Whether the event registration was found or not</returns>         
-        return triggerOnVisual.unRegisterRoutedEvent(this, callback, context);
-    };
-    
-    routedEvent.prototype.register = function(callback, triggerOnVisual, context /* optional */) {
-        ///<summary>Register a routed event on a visual</summary>
-        ///<param name="callback" type="Function" optional="false">The callback to fire when the event is raised</param>
-        ///<param name="triggerOnVisual" type="wo.visual" optional="false">The visual registered to the routed event</param>
-        ///<param name="context" type="Any" optional="true">The context "this" to use within the callback</param>
-        ///<returns type="wo.eventRegistration">A dispose function</returns>         
-        
-        return triggerOnVisual.registerRoutedEvent(this, callback, context);
-    };
-    
-    return routedEvent;
-});
-
-Class("wipeout.base.routedEventArgs", function () {
-    
-    var routedEventArgs = function(eventArgs, originator) { 
-        ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>
-        ///<param name="eventArgs" type="Any" optional="true">The inner event args</param>
-        ///<param name="originator" type="Any" optional="false">A pointer to event raise object</param>
-        
-        ///<Summary type="Boolean">Signals whether the routed event has been handled and should not propagate any further</Summary>
-        this.handled = false;
-        
-        ///<Summary type="Any">The original event args used when the routedEvent has been triggered</Summary>
-        this.data = eventArgs;
-        
-        ///<Summary type="Any">The object which triggered the event</Summary>
-        this.originator = originator;
-    };
-    
-    return routedEventArgs;
-});
-    
-
-Class("wipeout.base.routedEventRegistration", function () {
-    
-    var routedEventRegistration = function(routedEvent) {  
-        ///<summary>Holds routed event registration details</summary>
-        ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
-        
-        ///<Summary type="wo.routedEvent">The routed event</Summary>
-        this.routedEvent = routedEvent;
-        
-        ///<Summary type="wo.event">An inner event to handler triggering callbacks</Summary>
-        this.event = new wipeout.base.event();        
-    };
-    
-    routedEventRegistration.prototype.dispose = function() {
-        ///<summary>Dispose of the callbacks associated with this registration</summary>
-        this.event.dispose();
-    };
-    
-    return routedEventRegistration;
 });
 
 
@@ -2452,144 +2483,238 @@ Binding("wo", true, function () {
     return wo;
 });
 
-Class("wipeout.profile.profiler", function () { 
-    var jQ = function() {
-        if(!window.jQuery)
-            throw "This debug tool requires jQuery";
-    };
+Class("wipeout.profile.highlightVM", function () { 
     
-    var profiler = wipeout.base.object.extend(function(vm) {
-        jQ();
+    var highlightVM = wipeout.base.object.extend(function(vm, cssClass) {
+        ///<summary>Highlight all of the nodes in a view model.</summary>
+        ///<param name="vm" type="wo.view" optional="false">The view model to highlight</param>
+        ///<param name="cssClass" type="String" optional="false">The class to use to highlight it</param>
+        
+        ///<Summary type="wo.view">The view model</Summary>
         this.vm = vm;
-        this.cssClass = "wipeout-profiler-" + profiler.newId();
+        
+        ///<Summary type="String">The css class</Summary>
+        this.cssClass = cssClass;
+                
+        ///<Summary type="Array" generic0="Node">The nodes belonging to the view model</Summary>
+        this.nodes = vm.entireViewModelHtml();
+        
+        wipeout.utils.obj.enumerate(this.nodes, function(node) {
+            if (node.classList)
+                node.classList.add(this.cssClass)
+        }, this);
     });
     
-    profiler.createStyle = function() {
-        if(profiler.style)
-            return;
+    highlightVM.prototype.dispose = function() {
+        ///<summary>Dispose of this instance.</summary>
         
-        profiler.style = document.createElement("style");     
-        $("body").append(profiler.style);   
+        wipeout.utils.obj.enumerate(this.nodes, function(node) {
+            if (node.classList)
+                node.classList.remove(this.cssClass)
+        }, this);
     };
     
-    profiler.prototype.allNodes = function() {
-        var $elements = $(wipeout.utils.html.getAllChildren(this.vm.__woBag.rootHtmlElement));
-        return $elements.find('*').add($elements);
-    };
-    
-    var eventNamespace = ".wipeoutProfiler";
-    profiler.prototype.profile = function() {
-        profiler.createStyle();
-        
-        var vm = this.vm;
-        
-        var _this = this;
-        this.allNodes().addClass(_this.cssClass).on("click" + eventNamespace, function (e) {
-                e.preventDefault();
-                e.stopPropagation();
+    return highlightVM;
+});
 
-                wipeout.profile.utils.popup(wipeout.profile.utils.generateInfo(vm));
-            });
-        
-        //profiler.style.innerHTML += "." + this.cssClass + " {background-color:#" + wipeout.profile.utils.generateColour() + " !important;}";
-        profiler.style.innerHTML += "." + this.cssClass + " {background-color:#efcdd9 !important;}";
-    };
+Class("wipeout.profile.highlighter", function () { 
     
-    profiler.prototype.dispose = function() {
-        // TODO: where nodeType = 1
-        this.allNodes()
-            .off("click" + eventNamespace)
-            .removeClass(this.cssClass);
-    };
-        
-    profiler.newId = (function () {
+    highlighter.newId = (function () {
         var i = 0;
         return function() {
+            ///<summary>Get a unique id int.</summary>
+            ///<returns type="Number">The id</returns>
+            
             return ++i;
         };
     })();
     
-    function queue() {
-        this.items = [];
+    highlighter.generateColour = function() {
+        ///<summary>Generate a random pastel colour.</summary>
+        ///<returns type="String">THe colour code</returns>
+        
+        var red = Math.floor((wipeout.utils.obj.random(255) + 255) / 2);
+        var green = Math.floor((wipeout.utils.obj.random(255) + 255) / 2);
+        var blue = Math.floor((wipeout.utils.obj.random(255) + 255) / 2);
+
+        return red.toString(16) + green.toString(16) + blue.toString(16);
     };
     
-    queue.prototype.push = function(callback) {
+    function highlighter() {
+        ///<summary>Highlight any view model which the mouse is over.</summary>
+        
+        ///<Summary type="Element">The style element for this highlighter</Summary>
+        this.style = document.createElement("style");     
+        
+        ///<Summary type="Number">The current css class index</Summary>
+        this.index = 0;
+        
+        ///<Summary type="Array" generic0="String">The css classes belonging to this profiler</Summary>
+        this.styles = [
+            "wipeout-profiler-" + highlighter.newId(),
+            "wipeout-profiler-" + highlighter.newId(),
+            "wipeout-profiler-" + highlighter.newId(),
+            "wipeout-profiler-" + highlighter.newId(),
+            "wipeout-profiler-" + highlighter.newId()
+        ];
+        
+        // generate 5 colours
+        for(var i = 0, ii = this.styles.length; i < ii; i++)
+            this.style.innerHTML += 
+                " ." + this.styles[i] + " {background-color:#" + highlighter.generateColour() + " !important; cursor: pointer !important}";
+        
+        document.head.appendChild(this.style);
+        
+        // dummy highlighter to deal with first dispose
+        ///<Summary type="wipeout.profile.highlightVM">The current highlight vm wrapper</Summary>
+        this.currentHighlighter = {dispose: function(){}};
+        
         var _this = this;
-        var cb = function() {
-            
-            _this.items.splice(_this.items.indexOf(cb), 1);
-            
-            callback();
-                        
-            if (_this.items.length)
-                _this.items.splice(0, 1)[0](_this);
+        
+        ///<Summary type="Function">A placeholder to be used in disposal</Summary>
+        this.eventHandler = function(e) {
+            _this.highlightVM(e);
         };
         
-        this.items.push(cb);
+        window.addEventListener("mousemove", this.eventHandler, false);
+    };
+            
+    highlighter.prototype.nextStyle = function() {
+        ///<summary>Get one of the 5 css classes belonging to this object. Classes are chosen sequentially.</summary>
+        ///<returns type="String">The class</returns>
         
-        if(this.items[0] === cb)
-            cb();
+        if(this.index >= this.styles.length)
+            this.index = 0;
+        else
+            this.index++;
+        
+        return this.styles[this.index];
     };
     
-    profiler.profile = function() {
-        var timeout;
-        var q = new queue();
-        var currentElement = null;
-        var currentProfiler = {dispose: function(){}};
-        $("body").on("mouseover", function(e) {
-            if(!e.fromElement || currentElement === e.fromElement) return;
+    highlighter.prototype.highlightVM = function(e) {
+        ///<summary>Highlight the current view model.</summary>
+        ///<param name="e" type="Any" optional="false">Mousemove event args</param>
+        
+        var newElement = document.elementFromPoint(e.clientX, e.clientY);
+        if(newElement === this.currentElement) return;
+        this.currentElement = newElement;
+        var vm = wipeout.utils.html.getViewModel(this.currentElement);
+        if(!vm || vm === this.currentHighlighter.vm) return;
+
+        var timeout = this.__timeoutToken = {};
+
+        var _this = this;
+        setTimeout(function() {
+            if(_this.__timeoutToken !== timeout) return;
             
-            currentElement = e.fromElement;
-            var vm = wipeout.utils.html.getViewModel(currentElement);
-            if(!vm || vm === currentProfiler.vm) return;
-                        
-            if(timeout) clearTimeout(timeout);
-            
-            // makes it less jumpy
-            timeout = setTimeout(function() {
-                // like thread.lock
-                q.push(function() {
-                    currentProfiler.dispose();
-                    currentProfiler = new profiler(vm);
-                    currentProfiler.profile();
-                });
-            }, 100);
-        });
+            _this.currentHighlighter.dispose();
+            _this.currentHighlighter = new wipeout.profile.highlightVM(vm, _this.nextStyle());
+        }, 100);
     };
     
-    return profiler;
+    highlighter.prototype.dispose = function() {
+        ///<summary>Dispose of this instances.</summary>
+        
+        if(this.style.parentElement)
+            this.style.parentElement.removeChild(this.style);
+        
+        delete this.__timeoutToken;
+        window.removeEventListener("mousemove", this.eventHandler);
+        this.currentHighlighter.dispose();
+    };
+    
+    return highlighter;
 });
 
-Class("wipeout.profile.utils", function () { 
-    var jQ = function() {
-        if(!window.jQuery)
-            throw "This debug tool requires jQuery";
+Class("wipeout.profile.profile", function () { 
+    
+    var doRendering, profileState;
+    var profile = function(profile) {
+        ///<summary>Profile this application.</summary>
+        ///<param name="profile" type="Boolean" optional="true">Switch profiling on or off. Default is true</param>
+        
+        if(arguments.length === 0)
+            profile = true;
+        
+        if((profile && profileState) || (!profile && !profileState)) return;
+        
+        doRendering = doRendering || wipeout.bindings.render.prototype.doRendering;
+        
+        if(profile) {
+            profileState = {
+                highlighter: new wipeout.profile.highlighter(),
+                infoBox: wipeout.utils.html.createElement(
+                    '<div style="position: fixed; top: 10px; right: 10px; background-color: white; padding: 10px; border: 2px solid gray; display: none; max-height: 500px; overflow-y: scroll"></div>'),
+                eventHandler: function(e) {
+                    if (!e.altKey) return;
+                    e.stopPropagation();
+                    e.preventDefault();
+
+                    var vm = wo.html.getViewModel(e.target);
+                    var vms = vm.getParents();
+                    vms.splice(0, 0, vm);
+
+                    profileState.infoBox.innerHTML = '<span style="float: right; margin-left: 10px; cursor: pointer;">x</span>click on a class to view it\'s details in a console window';
+                    profileState.infoBox.firstChild.addEventListener("click", function() { profileState.infoBox.style.display = "none"; });
+
+                    var html = [];
+                    for (var i = 0, ii = vms.length; i < ii; i++)
+                        profileState.infoBox.appendChild(buildProfile(vms[i]));
+                    
+                    profileState.infoBox.style.display = null;
+                },
+                dispose: function() {
+                    profileState.highlighter.dispose();
+                    if(profileState.infoBox.parentElement)
+                        profileState.infoBox.parentElement.removeChild(profileState.infoBox);
+                    
+                    document.body.removeEventListener("click", profileState.eventHandler);
+                    wipeout.bindings.render.prototype.doRendering = doRendering;
+                }
+            };
+            
+            wipeout.bindings.render.prototype.doRendering = function() {
+                var before = new Date();
+                doRendering.apply(this, arguments);
+                var time = new Date() - before;
+                
+                if(!this.value.__woBag.profiler)
+                    this.value.__woBag.profiler = {};
+                
+                this.value.__woBag.profiler["Render time"] = time;
+            };
+            
+            document.body.appendChild(profileState.infoBox);
+            document.body.addEventListener("click", profileState.eventHandler, false);
+            
+        } else {
+            profileState.dispose();            
+            profileState = null;
+        }
+        
+        return;
     };
     
-    return {
-        generateColour: function() {
-            var red = Math.floor((wipeout.utils.obj.random(255) + 255) / 2);
-            var green = Math.floor((wipeout.utils.obj.random(255) + 255) / 2);
-            var blue = Math.floor((wipeout.utils.obj.random(255) + 255) / 2);
-
-            return red.toString(16) + green.toString(16) + blue.toString(16);
-        },
-        generateInfo: function(vm) {
-            return vm.__woBag.rootHtmlElement.textContent;
-        },
-        popup: function(htmlString) {
-            var $content = $('<div style="z-index: 100000; position: fixed; top: 10%; left: 10%; background-color: white; height: 80%; width: 80%">\
-                <div>' + htmlString + '</div>\
-                <button id="wipeoutProfileCloseButton">Close</button>\
-            </div>');
-
-            $content.find("#wipeoutProfileCloseButton").on("click", function() {
-                $(this).parent().remove();
-            });
-
-            $("body").append($content[0]);
-        }
-    };
+    var viewVm = new Function("viewModel", "model", "//Use your browser's debugger to inspect the model and view model\ndebugger;");
+    
+    var buildProfile = function(vm) {
+                
+        var div = document.createElement('div');
+        
+        var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + (vm.constructor.__woName || 'unknown vm type') + "</h4>"];
+        if(vm.__woBag.profiler)
+            for(var i in vm.__woBag.profiler)
+                innerHTML.push("<label>" + i + ":</label> " + vm.__woBag.profiler[i]);
+        
+        div.innerHTML += innerHTML.join("");
+        div.firstChild.addEventListener("click", function() {
+            viewVm(vm, vm.model());
+        }, false);
+        
+        return div;
+    };    
+    
+    return profile;
 });
 
 Class("wipeout.template.asyncLoader", function () {
@@ -3876,7 +4001,7 @@ Class("wipeout.utils.ko", function () {
         ///<summary>Whether a html node is a knockout virtual element or not</summary>
         ///<param name="node" type="HTMLNode">The node to test</param>
         ///<returns type="Boolean"></returns>
-        return (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(startCommentRegex);
+        return node && (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(startCommentRegex);
     };
     
     // copied from knockout
@@ -3884,7 +4009,30 @@ Class("wipeout.utils.ko", function () {
         ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
         ///<param name="node" type="HTMLNode">The node to test</param>
         ///<returns type="Boolean"></returns>
-        return (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(endCommentRegex);
+        return node && (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(endCommentRegex);
+    };
+    
+    _ko.getClosingTag = function(node) {
+        ///<summary>Get the closing tag of a virtual element</summary>
+        ///<param name="node" type="HTMLNode">The virtual element to test</param>
+        ///<returns type="Node"></returns>
+        
+        if(!_ko.isVirtual(node))
+            throw "Invalid virtual element";
+        
+        var depth = 1;
+        while(node && depth > 0) {
+            node = node.nextSibling;
+            if(_ko.isVirtual(node))
+                depth++;
+            if(_ko.isVirtualClosing(node))
+                depth--;
+        }
+        
+        if(!node)
+            throw "Could not find closing tag for element.";
+        
+        return node;
     };
     
     _ko.enumerateOverChildren = function(node, callback) {
@@ -3942,6 +4090,7 @@ Class("wipeout.utils.mutationObserverDomManipulationWorker", function () {
     return mutationObserverDomManipulationWorker;
 });
 
+window.wipeout = wipeout;
 window.wo = {};
 enumerate(wipeout.base, function(item, i) {
     window.wo[i] = item;
@@ -3951,8 +4100,6 @@ enumerate(wipeout.utils, function(item, i) {
     window.wo[i] = item;
 });
 
-
-window.wipeout = wipeout;
 var DEBUG = wo.DEBUG = true;
 
 })();
