@@ -9,8 +9,9 @@
         </template>
         <itemTemplate>
             <div class="list-group">
-                <wo.if condition="model().header">
+                <wo.if condition="model().header &amp;&amp; model().header.visible()">
                     <template>
+                        <!--model().header.visible()-->
                         <Wipeout.Docs.ViewModels.Components.RouteLink text="model().header.text" href="model().header.href" class="'list-group-item active'" />
                     </template>
                 </wo.if>
@@ -19,7 +20,11 @@
                         <!-- ko itemsControl: null --><!-- /ko -->
                     </template>
                     <itemTemplate>
-                        <Wipeout.Docs.ViewModels.Components.RouteLink text="model().text" href="model().href" class="'list-group-item'" style="'padding-left: 30px'" />
+                        <wo.if condition="model().visible">
+                            <template>
+                                <Wipeout.Docs.ViewModels.Components.RouteLink text="model().text" href="model().href" class="'list-group-item'" style="'padding-left: 30px'" />
+                            </template>
+                        </wo.if>
                     </itemTemplate>
                 </wo.itemsControl>
             </div> 
