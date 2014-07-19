@@ -16,7 +16,7 @@ Class("wipeout.profile.profile", function () {
             profileState = {
                 highlighter: new wipeout.profile.highlighter(),
                 infoBox: wipeout.utils.html.createElement(
-                    '<div style="position: fixed; top: 10px; right: 10px; background-color: white; padding: 10px; border: 2px solid gray; display: none; max-height: 500px; overflow-y: scroll"></div>'),
+                    '<div style="position: fixed; top: 10px; right: 10px; background-color: white; padding: 10px; border: 2px solid gray; display: none; max-height: 500px; overflow-y: scroll; z-index: 10000"></div>'),
                 eventHandler: function(e) {
                     if (!e.altKey) return;
                     e.stopPropagation();

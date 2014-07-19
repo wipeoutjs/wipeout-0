@@ -70,7 +70,7 @@ Class("wipeout.base.contentControl", function () {
                         templateArea.childNodes[j].id &&
                         // first use a hash to avoid computationally expensive string compare if possible
                         templateArea.childNodes[j].attributes[dataTemplateHash] &&
-                        templateArea.childNodes[j].attributes[dataTemplateHash].nodeValue === hash &&
+                        templateArea.childNodes[j].attributes[dataTemplateHash].value === hash &&
                         wipeout.utils.domData.get(templateArea.childNodes[j], "rawTemplate") === templateString) {
                             return templateArea.childNodes[j].id;
                         }
