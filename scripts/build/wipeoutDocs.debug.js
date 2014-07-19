@@ -617,13 +617,14 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
             return;
         }
         
-        searchTerm = searchTerm.split(/\s+/);        
+        searchTerm = searchTerm.toLowerCase().split(/\s+/);        
         
         wo.obj.enumerate(this.flatList, function(item) {
             
             var visible = true;
+            var title = item.text.toLowerCase();
             for(var i = 0, ii = searchTerm.length; i < ii; i++)
-                visible &= (item.text.indexOf(searchTerm[i]) !== -1 || item.body.indexOf(searchTerm[i]) !== -1);
+                visible &= (title.indexOf(searchTerm[i]) !== -1 || item.body.indexOf(searchTerm[i]) !== -1);
             
             item.visible(visible);
         }, this);
@@ -641,7 +642,7 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
         }, this);
         
         wo.obj.enumerate(this.flatList, function(item) {
-            item.body = document.getElementById("Articles." + item.href.substr(item.href.indexOf("article=") + 8)).text;
+            item.body = document.getElementById("Articles." + item.href.substr(item.href.indexOf("article=") + 8)).text.toLowerCase();
         }, this);        
     };
     
@@ -1783,11 +1784,15 @@ compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Doc
         this.contentTemplate = ko.observable(wo.contentControl.getBlankTemplateId());
         
         var placeholder = document.getElementById("headerText");
-        var textbox = wo.html.createElement('<input style="margin-top: 20px;" type="text" placeholder="Search"></input>');
+        var textbox = wo.html.createElement('<input style="margin-top: 20px;" type="text" placeholder="Search Docs..."></input>');
         placeholder.parentElement.insertBefore(textbox, placeholder);
         
         var _this = this;
         textbox.addEventListener("keyup", function() {
+            _this.model().search(textbox.value);
+        });
+        
+        textbox.addEventListener("change", function() {
             _this.model().search(textbox.value);
         });
     };

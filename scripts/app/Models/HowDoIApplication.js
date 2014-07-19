@@ -235,13 +235,14 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
             return;
         }
         
-        searchTerm = searchTerm.split(/\s+/);        
+        searchTerm = searchTerm.toLowerCase().split(/\s+/);        
         
         wo.obj.enumerate(this.flatList, function(item) {
             
             var visible = true;
+            var title = item.text.toLowerCase();
             for(var i = 0, ii = searchTerm.length; i < ii; i++)
-                visible &= (item.text.indexOf(searchTerm[i]) !== -1 || item.body.indexOf(searchTerm[i]) !== -1);
+                visible &= (title.indexOf(searchTerm[i]) !== -1 || item.body.indexOf(searchTerm[i]) !== -1);
             
             item.visible(visible);
         }, this);
@@ -259,7 +260,7 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
         }, this);
         
         wo.obj.enumerate(this.flatList, function(item) {
-            item.body = document.getElementById("Articles." + item.href.substr(item.href.indexOf("article=") + 8)).text;
+            item.body = document.getElementById("Articles." + item.href.substr(item.href.indexOf("article=") + 8)).text.toLowerCase();
         }, this);        
     };
     

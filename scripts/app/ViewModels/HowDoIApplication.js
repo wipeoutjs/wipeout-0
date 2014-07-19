@@ -7,7 +7,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Doc
         this.contentTemplate = ko.observable(wo.contentControl.getBlankTemplateId());
         
         var placeholder = document.getElementById("headerText");
-        var textbox = wo.html.createElement('<input style="margin-top: 20px;" type="text" placeholder="Search"></input>');
+        var textbox = wo.html.createElement('<input style="margin-top: 20px;" type="text" placeholder="Search Docs..."></input>');
         placeholder.parentElement.insertBefore(textbox, placeholder);
         
         var _this = this;
