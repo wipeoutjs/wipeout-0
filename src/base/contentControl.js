@@ -71,7 +71,7 @@ Class("wipeout.base.contentControl", function () {
                         // first use a hash to avoid computationally expensive string compare if possible
                         templateArea.childNodes[j].attributes[dataTemplateHash] &&
                         templateArea.childNodes[j].attributes[dataTemplateHash].nodeValue === hash &&
-                        templateArea.childNodes[j].innerHTML === templateString) {
+                        wipeout.utils.domData.get(templateArea.childNodes[j], "rawTemplate") === templateString) {
                             return templateArea.childNodes[j].id;
                         }
                     }
@@ -124,6 +124,9 @@ Class("wipeout.base.contentControl", function () {
                 
                 script.textContent = template;
                 templateArea.appendChild(script);
+                
+                // keep a record of the template before the ko/wo template engine mangles it
+                wipeout.utils.domData.set(script, "rawTemplate", template);
             }
         };
     })();  
