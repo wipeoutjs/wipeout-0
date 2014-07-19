@@ -129,6 +129,20 @@ test("call with args", function() {
     mocks.verifyAllExpectations();
 });
 
+test("removeItem routed event", function() {
+    
+    // arrange    
+    var item = {};
+    application.items = ko.observableArray([{}, item]);
+    application.template('<wo.itemsControl id="cc" itemSource-tw="$parent.items"></wo.itemsControl>');
+    
+    // act
+    application.templateItems.cc.triggerRoutedEvent(wo.itemsControl.removeItem, item);
+    
+    // assert
+    strictEqual(application.items().indexOf(item), -1);
+});
+
 test("shareParentScope", function() {
     
     // arrange

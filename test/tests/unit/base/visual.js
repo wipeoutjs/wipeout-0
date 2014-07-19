@@ -220,6 +220,27 @@ testUtils.testWithUtils("entireViewModelHtml", "virtual element", false, functio
     }
 });
 
+testUtils.testWithUtils("entireViewModelHtml", "virtual elements", false, function(methods, classes, subject, invoker) {
+    // arrange    
+    var $dom = $("<!-- ko --><div>inner</div>hello<!-- a comment --><!-- ko --><div>something</div><!-- /ko --><!-- /ko -->");
+    subject.__woBag = {
+        rootHtmlElement: $dom[0]
+    };
+    
+    // act
+    var actual = invoker();
+    
+    // assert
+    strictEqual(actual.length, 7);
+    strictEqual(actual[0], $dom[0]);
+    strictEqual(actual[1], $dom[1]);
+    strictEqual(actual[2], $dom[2]);
+    strictEqual(actual[3], $dom[3]);
+    strictEqual(actual[4], $dom[4]);
+    strictEqual(actual[5], $dom[6]);
+    strictEqual(actual[6], $dom[7]);
+});
+
 testUtils.testWithUtils("dispose", null, false, function(methods, classes, subject, invoker) {
     // arrange
     subject.c1 = ko.computed(function() { return {}; });

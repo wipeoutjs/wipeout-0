@@ -43,6 +43,9 @@ testUtils.testWithUtils("constructor", "", false, function(methods, classes, sub
     subject._syncModelsAndViewModels = function(){};
     subject.registerDisposable = methods.method();
     
+    subject._removeItem = {};
+    subject.registerRoutedEvent = methods.method([wipeout.base.itemsControl.removeItem, subject._removeItem, subject]);
+    
     // act
     invoker(templateId, itemTemplateId, model);
     
@@ -175,6 +178,33 @@ testUtils.testWithUtils("dispose", "", false, function(methods, classes, subject
     // act
     // assert
     invoker();
+});
+
+testUtils.testWithUtils("_removeItem", "", false, function(methods, classes, subject, invoker) {
+    // arrange  
+    var item = {
+        data: {}
+    };    
+    subject.itemSource = ko.observableArray([item.data]);
+    subject.removeItem = methods.method([item.data]);
+    
+    // act
+    invoker(item);
+    
+    // assert
+    ok(item.handled);
+});
+
+testUtils.testWithUtils("removeItem", "", false, function(methods, classes, subject, invoker) {
+    // arrange    
+    var data = {};
+    subject.itemSource = ko.observableArray([data]);
+    
+    // act
+    invoker(data);
+    
+    // assert
+    strictEqual(subject.itemSource().length, 0)
 });
 
 testUtils.testWithUtils("_createItem", "", false, function(methods, classes, subject, invoker) {

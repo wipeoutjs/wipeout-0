@@ -69,7 +69,7 @@ Class("wipeout.utils.ko", function () {
         ///<summary>Whether a html node is a knockout virtual element or not</summary>
         ///<param name="node" type="HTMLNode">The node to test</param>
         ///<returns type="Boolean"></returns>
-        return (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(startCommentRegex);
+        return node && (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(startCommentRegex);
     };
     
     // copied from knockout
@@ -77,7 +77,30 @@ Class("wipeout.utils.ko", function () {
         ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
         ///<param name="node" type="HTMLNode">The node to test</param>
         ///<returns type="Boolean"></returns>
-        return (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(endCommentRegex);
+        return node && (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(endCommentRegex);
+    };
+    
+    _ko.getClosingTag = function(node) {
+        ///<summary>Get the closing tag of a virtual element</summary>
+        ///<param name="node" type="HTMLNode">The virtual element to test</param>
+        ///<returns type="Node"></returns>
+        
+        if(!_ko.isVirtual(node))
+            throw "Invalid virtual element";
+        
+        var depth = 1;
+        while(node && depth > 0) {
+            node = node.nextSibling;
+            if(_ko.isVirtual(node))
+                depth++;
+            if(_ko.isVirtualClosing(node))
+                depth--;
+        }
+        
+        if(!node)
+            throw "Could not find closing tag for element.";
+        
+        return node;
     };
     
     _ko.enumerateOverChildren = function(node, callback) {

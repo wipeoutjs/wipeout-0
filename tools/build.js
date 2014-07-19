@@ -1,3 +1,4 @@
+window.wipeout = wipeout;
 window.wo = {};
 enumerate(wipeout.base, function(item, i) {
     window.wo[i] = item;

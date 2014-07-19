@@ -89,10 +89,12 @@ Class("wipeout.base.visual", function () {
                 
                 wipeout.utils.ko.enumerateOverChildren(this.__woBag.rootHtmlElement, function(child) {
                     output.push(child);
-                })
-
-                // add root element closing tag
+                    if(wipeout.utils.ko.isVirtual(child))
+                        output.push(wipeout.utils.ko.getClosingTag(child));
+                });
+                
                 var last = output[output.length - 1].nextSibling;
+                
                 if(!wipeout.utils.ko.isVirtualClosing(last))
                     throw "Could not compile view model html";
 

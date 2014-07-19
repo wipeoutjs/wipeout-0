@@ -5,7 +5,7 @@ Class("wipeout.base.itemsControl", function () {
     var staticConstructor = function() {
         if(deafaultTemplateId) return;
         
-        deafaultTemplateId = wipeout.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");  
+        deafaultTemplateId = wipeout.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");
     };
     
     var itemsControl = wipeout.base.contentControl.extend(function (templateId, itemTemplateId, model) {
@@ -49,6 +49,8 @@ Class("wipeout.base.itemsControl", function () {
             }
         }, this);
         this.registerDisposable(d2);
+        
+        this.registerRoutedEvent(itemsControl.removeItem, this._removeItem, this);
     }, "itemsControl");
     
     itemsControl._subscribeV2 = function() {
@@ -77,6 +79,8 @@ Class("wipeout.base.itemsControl", function () {
         this.registerDisposable(d2);
     };
     
+    itemsControl.removeItem = wipeout.base.routedEvent();
+    
     itemsControl._subscribeV3 = function() {
         ///<summary>Bind items to itemSource for knockout v3. Context must be an itemsControl</summary>
         var d1 = this.itemSource.subscribe(this._itemSourceChanged, this, "arrayChange");
@@ -85,6 +89,23 @@ Class("wipeout.base.itemsControl", function () {
         var d2 = this.items.subscribe(this._itemsChanged, this, "arrayChange");
         this.registerDisposable(d2);
         
+    };
+    
+    itemsControl.prototype._removeItem = function(e) {
+        ///<summary>Remove an item from the item source</summary>
+        ///<param name="e" type="wo.routedEventArgs" optional="false">The item to remove</param>
+    
+        if(this.itemSource.indexOf(e.data) !== -1) {
+            this.removeItem(e.data);
+            e.handled = true;
+        }
+    };
+    
+    itemsControl.prototype.removeItem = function(item) {
+        ///<summary>Remove an item from the item source</summary>
+        ///<param name="item" type="Any" optional="false">The item to remove</param>
+    
+        this.itemSource.remove(item);
     };
     
     itemsControl.prototype._initialize = function(propertiesXml, parentBindingContext) {
