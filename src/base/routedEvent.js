@@ -3,6 +3,10 @@ Class("wipeout.base.routedEvent", function () {
     
     var routedEvent = function() {
         ///<summary>A routed event is triggerd on a visual and travels up to ancestor visuals all the way to the root of the application</summary>
+        
+        // allow for non use of the new key word
+        if(!(this instanceof routedEvent))
+           return new routedEvent();
     };
 
     routedEvent.prototype.trigger = function(triggerOnVisual, eventArgs) {
