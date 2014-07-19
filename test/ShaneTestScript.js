@@ -1,5 +1,6 @@
-(function () {
+(function () {    
     
+    wipeout.profile.profile();
     aRoutedEvent = new wo.routedEvent();
     
     initializeView = wipeout.base.contentControl.extend(function() {
@@ -42,7 +43,7 @@
     };
     
     rootView.prototype.profile = function() {
-        wipeout.profile.profiler.profile(this);
+        wipeout.profile.profile();
     };
         
     model = {

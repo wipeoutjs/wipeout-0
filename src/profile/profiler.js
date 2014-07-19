@@ -1,107 +1,90 @@
-Class("wipeout.profile.profiler", function () { 
-    var jQ = function() {
-        if(!window.jQuery)
-            throw "This debug tool requires jQuery";
-    };
+Class("wipeout.profile.profile", function () { 
     
-    var profiler = wipeout.base.object.extend(function(vm) {
-        jQ();
-        this.vm = vm;
-        this.cssClass = "wipeout-profiler-" + profiler.newId();
-    });
-    
-    profiler.createStyle = function() {
-        if(profiler.style)
-            return;
+    var doRendering, profileState;
+    var profile = function(profile) {
+        ///<summary>Profile this application.</summary>
+        ///<param name="profile" type="Boolean" optional="true">Switch profiling on or off. Default is true</param>
         
-        profiler.style = document.createElement("style");     
-        $("body").append(profiler.style);   
-    };
-    
-    profiler.prototype.allNodes = function() {
-        var $elements = $(wipeout.utils.html.getAllChildren(this.vm.__woBag.rootHtmlElement));
-        return $elements.find('*').add($elements);
-    };
-    
-    var eventNamespace = ".wipeoutProfiler";
-    profiler.prototype.profile = function() {
-        profiler.createStyle();
+        if(arguments.length === 0)
+            profile = true;
         
-        var vm = this.vm;
+        if((profile && profileState) || (!profile && !profileState)) return;
         
-        var _this = this;
-        this.allNodes().addClass(_this.cssClass).on("click" + eventNamespace, function (e) {
-                e.preventDefault();
-                e.stopPropagation();
+        doRendering = doRendering || wipeout.bindings.render.prototype.doRendering;
+        
+        if(profile) {
+            profileState = {
+                highlighter: new wipeout.profile.highlighter(),
+                infoBox: wipeout.utils.html.createElement(
+                    '<div style="position: fixed; top: 10px; right: 10px; background-color: white; padding: 10px; border: 2px solid gray; display: none; max-height: 500px; overflow-y: scroll"></div>'),
+                eventHandler: function(e) {
+                    if (!e.altKey) return;
+                    e.stopPropagation();
+                    e.preventDefault();
 
-                wipeout.profile.utils.popup(wipeout.profile.utils.generateInfo(vm));
-            });
-        
-        //profiler.style.innerHTML += "." + this.cssClass + " {background-color:#" + wipeout.profile.utils.generateColour() + " !important;}";
-        profiler.style.innerHTML += "." + this.cssClass + " {background-color:#efcdd9 !important;}";
-    };
-    
-    profiler.prototype.dispose = function() {
-        // TODO: where nodeType = 1
-        this.allNodes()
-            .off("click" + eventNamespace)
-            .removeClass(this.cssClass);
-    };
-        
-    profiler.newId = (function () {
-        var i = 0;
-        return function() {
-            return ++i;
-        };
-    })();
-    
-    function queue() {
-        this.items = [];
-    };
-    
-    queue.prototype.push = function(callback) {
-        var _this = this;
-        var cb = function() {
+                    var vm = wo.html.getViewModel(e.target);
+                    var vms = vm.getParents();
+                    vms.splice(0, 0, vm);
+
+                    profileState.infoBox.innerHTML = '<span style="float: right; margin-left: 10px; cursor: pointer;">x</span>click on a class to view it\'s details in a console window';
+                    profileState.infoBox.firstChild.addEventListener("click", function() { profileState.infoBox.style.display = "none"; });
+
+                    var html = [];
+                    for (var i = 0, ii = vms.length; i < ii; i++)
+                        profileState.infoBox.appendChild(buildProfile(vms[i]));
+                    
+                    profileState.infoBox.style.display = null;
+                },
+                dispose: function() {
+                    profileState.highlighter.dispose();
+                    if(profileState.infoBox.parentElement)
+                        profileState.infoBox.parentElement.removeChild(profileState.infoBox);
+                    
+                    document.body.removeEventListener("click", profileState.eventHandler);
+                    wipeout.bindings.render.prototype.doRendering = doRendering;
+                }
+            };
             
-            _this.items.splice(_this.items.indexOf(cb), 1);
+            wipeout.bindings.render.prototype.doRendering = function() {
+                var before = new Date();
+                doRendering.apply(this, arguments);
+                var time = new Date() - before;
+                
+                if(!this.value.__woBag.profiler)
+                    this.value.__woBag.profiler = {};
+                
+                this.value.__woBag.profiler["Render time"] = time;
+            };
             
-            callback();
-                        
-            if (_this.items.length)
-                _this.items.splice(0, 1)[0](_this);
-        };
+            document.body.appendChild(profileState.infoBox);
+            document.body.addEventListener("click", profileState.eventHandler, false);
+            
+        } else {
+            profileState.dispose();            
+            profileState = null;
+        }
         
-        this.items.push(cb);
-        
-        if(this.items[0] === cb)
-            cb();
+        return;
     };
     
-    profiler.profile = function() {
-        var timeout;
-        var q = new queue();
-        var currentElement = null;
-        var currentProfiler = {dispose: function(){}};
-        $("body").on("mouseover", function(e) {
-            if(!e.fromElement || currentElement === e.fromElement) return;
-            
-            currentElement = e.fromElement;
-            var vm = wipeout.utils.html.getViewModel(currentElement);
-            if(!vm || vm === currentProfiler.vm) return;
-                        
-            if(timeout) clearTimeout(timeout);
-            
-            // makes it less jumpy
-            timeout = setTimeout(function() {
-                // like thread.lock
-                q.push(function() {
-                    currentProfiler.dispose();
-                    currentProfiler = new profiler(vm);
-                    currentProfiler.profile();
-                });
-            }, 100);
-        });
-    };
+    var viewVm = new Function("viewModel", "model", "//Use your browser's debugger to inspect the model and view model\ndebugger;");
     
-    return profiler;
+    var buildProfile = function(vm) {
+                
+        var div = document.createElement('div');
+        
+        var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + (vm.constructor.__woName || 'unknown vm type') + "</h4>"];
+        if(vm.__woBag.profiler)
+            for(var i in vm.__woBag.profiler)
+                innerHTML.push("<label>" + i + ":</label> " + vm.__woBag.profiler[i]);
+        
+        div.innerHTML += innerHTML.join("");
+        div.firstChild.addEventListener("click", function() {
+            viewVm(vm, vm.model());
+        }, false);
+        
+        return div;
+    };    
+    
+    return profile;
 });
