@@ -73,6 +73,30 @@ testUtils.testWithUtils("enumerateOverChildren", "non virtual", true, function(m
     strictEqual(elements[8].nodeType, 3);
 });
 
+testUtils.testWithUtils("getClosingTag", null, true, function(methods, classes, subject, invoker) {
+    // arrange
+    var html = testUtils.html(
+'<!-- ko -->\
+    <div id="before"></div>\
+    <div>\
+        <!-- ko --><!-- /ko -->\
+    </div>\
+    <!-- ko -->\
+        <div id="last"></div>\
+    <!-- /ko -->\
+<!-- /ko -->');
+    
+    var first = html.before.previousSibling.previousSibling;
+    var last = html.last.nextSibling.nextSibling.nextSibling;
+    
+    ok(wo.ko.isVirtual(first));
+    ok(wo.ko.isVirtualClosing(last));
+        
+    // act    
+    // assert
+    strictEqual(invoker(first), last)
+});
+
 
 
 
