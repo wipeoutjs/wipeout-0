@@ -98,7 +98,7 @@ Class("wipeout.profile.highlighter", function () {
         ///<summary>Get one of the 5 css classes belonging to this object. Classes are chosen sequentially.</summary>
         ///<returns type="String">The class</returns>
         
-        if(this.index >= this.styles.length)
+        if(this.index >= this.styles.length - 1)
             this.index = 0;
         else
             this.index++;
