@@ -1,0 +1,25 @@
+<h1>The itemsControl binding</h1>
+
+<p>
+    The items control binding tells an <a href="/wipeout-0/api.html?type=api&amp;className=wo.itemsControl">itemsControl</a> view model where to render its items. 
+    It doesn't need an argument and will throw an exception if not used by an itemsControl. 
+</p>
+    
+<Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'items-control-binding-script-1'">
+    <code>&lt;wo.itemsControl itemSource="['Hello wipeout 1', 'Hello wipeout 2']">
+    &lt;template>
+        &lt;ul data-bind="itemsControl: null">&lt;/ul>
+    &lt;/template>
+    &lt;itemTemplate>
+        &lt;li>
+            &lt;span data-bind="text: model">&lt;/span>
+            Index: &lt;span data-bind="text: $index">&lt;/span>
+        &lt;/li>
+    &lt;/itemTemplate>
+&lt;/wo.itemsControl></code>
+</Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'items-control-binding-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>   

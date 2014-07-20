@@ -3,7 +3,7 @@
     <p>In a prototypical inheritance model, all methods are virtual, which means all methods of a parent class can be overriden by methods of a child class.</p>
 
     <Wipeout.Docs.ViewModels.Components.CodeBlock newScriptId="'bind-to-global-script-1'">
-        <code>var Account = wo.object.extend(function (balance) {
+        <code>var Account = wo.object.extend(function Account(balance) {
     // call the constructor of the base class (wo.object)
     this._super();
             
@@ -14,7 +14,7 @@ Account.prototype.canWithdrawMoney = function() {
     return this.balance > 0;
 };
         
-var CurrentAccount = Account.extend(function (balance, overdraft) {
+var CurrentAccount = Account.extend(function CurrentAccount(balance, overdraft) {
     // call the constructor of the base class (Account)
     this._super(balance);
             

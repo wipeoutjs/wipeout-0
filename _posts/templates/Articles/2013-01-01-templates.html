@@ -19,7 +19,7 @@ Wipeout view models alone do not have an appearance, for this we need templates.
     In most cases, you will not want the the template of a view model to change. For this case you can set the template id in the constructor of the view model.
     
         <Wipeout.Docs.ViewModels.Components.CodeBlock>
-            <code>var myViewModel = wo.view.extend(function () {
+            <code>var myViewModel = wo.view.extend(function myViewModel() {
     this._super('MyTemplateId');
                 
     // more constructor logic

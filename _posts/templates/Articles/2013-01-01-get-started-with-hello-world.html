@@ -7,7 +7,7 @@
             <code>// create a namespace for our application
 window.helloWipeout = {};
 
-helloWipeout.rootApplication = wo.view.extend(function () {
+helloWipeout.rootApplication = wo.view.extend(function rootApplication() {
     this._super("helloWipeout.rootApplication");
 });</code>
         </Wipeout.Docs.ViewModels.Components.CodeBlock>
@@ -76,7 +76,7 @@ helloWipeout.rootApplication = wo.view.extend(function () {
             // create a namespace for our application
             window.helloWipeout = {};
 
-            helloWipeout.rootApplication = wo.view.extend(function () {
+            helloWipeout.rootApplication = wo.view.extend(function rootApplication() {
                 // call the base constructor. The constructor for wo.view takes in a template id.
                 this._super("helloWipeout.rootApplication");
             });

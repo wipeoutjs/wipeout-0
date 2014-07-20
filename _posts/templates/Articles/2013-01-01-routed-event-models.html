@@ -1,0 +1,10 @@
+<h1>Routed Event Models</h1>
+
+    <p>Routed events are essentially for the view model layer. They travel up and down the view model stack, which is essentially the DOM, and do not interact with the model layer.
+ Models can interact with routed events by inheriting from the <a href="/wipeout-0/api.html?type=api&amp;className=wo.routedEventModel">routedEventModel</a> class </p>
+<p>The routed event model is a type known by the view model layer. When a routed event is caught by a view model, it:
+<ol>
+    <li>checks to see if it is subscribed to it</li>
+    <li>checks to see if it's model is a routedEventModel, and if so, informs the model of the routed event</li>
+</ol>
+Similarily, routed event models can trigger routed events by delegating their view model to trigger it for them</p>

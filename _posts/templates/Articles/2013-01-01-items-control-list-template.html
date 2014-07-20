@@ -5,10 +5,11 @@
     <a href="/wipeout-0/api.html?type=api&amp;className=wo.itemsControl&amp;propertyName=template&amp;isStatic=false">template</a> property of the itemSource
 </p>
     
-<Wipeout.Docs.ViewModels.Components.CodeBlock>
+  
+<Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'items-control-list-template-script-1'">
     <code>&lt;wo.itemsControl itemSource="['Hello wipeout 1', 'Hello wipeout 2']">
     &lt;template>
-        &lt;ul data-bind="itemSource: null">&lt;/ul>
+        &lt;ul data-bind="itemsControl: null">&lt;/ul>
     &lt;/template>
     &lt;itemTemplate>
         &lt;li>
@@ -17,7 +18,11 @@
         &lt;/li>
     &lt;/itemTemplate>
 &lt;/wo.itemsControl></code>
-</Wipeout.Docs.ViewModels.Components.CodeBlock>
+</Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+<Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+    <code>&lt;wo.view templateId="'items-control-list-template-script-1'" /></code>
+</Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
 
 <p>The <a href="TODO">itemsControl</a> binding is used to inform the template engine where to insert the items from the itemsControl. It does not need an argument.
 </p>

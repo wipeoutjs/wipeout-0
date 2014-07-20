@@ -481,6 +481,45 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
             }]
         }, {
             header: {
+                text: "Set properties using XML elements",
+                href: buildHref({article: "set-properties-using-xml-elements"}),
+                visible: ko.observable(true)
+            },
+            items: [{
+                text: "String Properties",
+                href: buildHref({article: "set-string-property"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Boolean Properties",
+                href: buildHref({article: "set-boolean-property"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Int Properties",
+                href: buildHref({article: "set-int-property"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Float Properties",
+                href: buildHref({article: "set-float-property"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Date Properties",
+                href: buildHref({article: "set-date-property"}),
+                visible: ko.observable(true)
+            }, {
+                text: "JSON Properties",
+                href: buildHref({article: "set-json-property"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Add custom parser",
+                href: buildHref({article: "add-property-parser"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Set Complex Properties",
+                href: buildHref({article: "set-complex-properties"}),
+                visible: ko.observable(true)
+            }]
+        }, {
+            header: {
                 text: "Use the wipeout OO framework",
                 href: buildHref({article: "wipeout-oo"}),
                 visible: ko.observable(true)
@@ -568,6 +607,25 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
             items: []
         }, {
             header: {
+                text: "Use wipeout bindings",
+                href: buildHref({article: "wipeout-bindings"}),
+                visible: ko.observable(true)
+            },
+            items: [{
+                text: "The wipeout binding",
+                href: buildHref({article: "wipeout-binding"}),
+                visible: ko.observable(true)
+            }, {
+                text: "The itemsControl binding",
+                href: buildHref({article: "items-control-binding"}),
+                visible: ko.observable(true)
+            }, {
+                text: "The render binding",
+                href: buildHref({article: "render-binding"}),
+                visible: ko.observable(true)
+            }]
+        }, {
+            header: {
                 text: "Work with events",
                 href: buildHref({article: "events"}),
                 visible: ko.observable(true)
@@ -577,18 +635,29 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 href: buildHref({article: "advanced-events"}),
                 visible: ko.observable(true)
             }]
-        }/*, {
+        }, {
             header: {
                 text: "Work with routed events",
                 href: buildHref({article: "routed-events"}),
                 visible: ko.observable(true)
             },
             items: [{
-                text: "Advanced events",
-                href: buildHref({article: "advanced-events"}),
+                text: "Advanced routed events",
+                href: buildHref({article: "advanced-routed-events"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Routed event models",
+                href: buildHref({article: "routed-event-models"}),
                 visible: ko.observable(true)
             }]
-        }*/];
+        }, {
+            header: {
+                text: "Share Parent Scope",
+                href: buildHref({article: "share-parent-scope"}),
+                visible: ko.observable(true)
+            },
+            items: []
+        }];
         
         this.flatList = [];
         this.index();

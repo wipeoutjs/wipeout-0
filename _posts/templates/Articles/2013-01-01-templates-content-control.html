@@ -25,7 +25,7 @@
     You can mimic template/templateId functionality on a custom vie model by using the 
     <a href="/wipeout-0/api.html?type=api&amp;className=wo.contentControl&amp;functionName=createTemplatePropertyFor&amp;isStatic=true">createTemplatePropertyFor</a> function.
     <Wipeout.Docs.ViewModels.Components.CodeBlock>
-        <code>var myViewModel = wo.view.extend(function() {
+        <code>var myViewModel = wo.view.extend(function myViewModel() {
     this._super();
             
     this.myTemplate = wo.contentControl.createTemplatePropertyFor(this.templateId, this);
