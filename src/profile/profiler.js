@@ -72,6 +72,7 @@ Class("wipeout.profile.profile", function () {
     var buildProfile = function(vm) {
                 
         var div = document.createElement('div');
+        wipeout.utils.domData.set(div, wipeout.bindings.wipeout.utils.wipeoutKey, vm);
         
         var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + (vm.constructor.__woName || 'unknown vm type') + "</h4>"];
         if(vm.__woBag.profiler)
