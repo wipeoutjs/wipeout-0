@@ -1,7 +1,7 @@
 
 Class("wipeout.base.routedEvent", function () {
     
-    var routedEvent = function() {
+    var routedEvent = function routedEvent() {
         ///<summary>A routed event is triggerd on a visual and travels up to ancestor visuals all the way to the root of the application</summary>
         
         // allow for non use of the new key word
@@ -41,7 +41,7 @@ Class("wipeout.base.routedEvent", function () {
 
 Class("wipeout.base.routedEventArgs", function () {
     
-    var routedEventArgs = function(eventArgs, originator) { 
+    var routedEventArgs = function routedEventArgs(eventArgs, originator) { 
         ///<summary>Arguments passed to routed event handlers. Set handled to true to stop routed event propogation</summary>
         ///<param name="eventArgs" type="Any" optional="true">The inner event args</param>
         ///<param name="originator" type="Any" optional="false">A pointer to event raise object</param>
@@ -62,7 +62,7 @@ Class("wipeout.base.routedEventArgs", function () {
 
 Class("wipeout.base.routedEventRegistration", function () {
     
-    var routedEventRegistration = function(routedEvent) {  
+    var routedEventRegistration = function routedEventRegistration(routedEvent) {  
         ///<summary>Holds routed event registration details</summary>
         ///<param name="routedEvent" type="wo.routedEvent" optional="false">The routed event</param>
         

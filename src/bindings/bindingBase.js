@@ -1,7 +1,7 @@
 
 Class("wipeout.bindings.bindingBase", function () {
         
-    var bindingBase = wipeout.base.disposable.extend(function(element) {
+    var bindingBase = wipeout.base.disposable.extend(function bindingBase(element) {
         ///<summary>A knockout binding</summary>   
         ///<param name="element" type="HTMLElement" optional="false">The node containing the data-bind attribute for this binding</param>
 
@@ -38,7 +38,7 @@ Class("wipeout.bindings.bindingBase", function () {
         this.parentElement = this.getParentElement();
         
         this.moved(null, this.parentElement);
-    }, "bindingBase");
+    });
     
     bindingBase.getParentElement = function(element) {
         ///<summary>Get the parent element of a node. (browser safe)</summary>

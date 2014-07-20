@@ -1,6 +1,6 @@
 Class("wipeout.utils.mutationObserverDomManipulationWorker", function () { 
     
-    var mutationObserverDomManipulationWorker = wipeout.utils.domManipulationWorkerBase.extend(function() {
+    var mutationObserverDomManipulationWorker = wipeout.utils.domManipulationWorkerBase.extend(function mutationObserverDomManipulationWorker() {
         ///<summary>Cleanup wipeout state using a global mutation observer</summary>
              
         this._super();   

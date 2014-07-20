@@ -1,6 +1,6 @@
 Class("wipeout.template.htmlBuilder", function () {
     
-    var htmlBuilder = function(xmlTemplate) {
+    var htmlBuilder = function htmlBuilder(xmlTemplate) {
         ///<summary>Pre-compile that needed to render html from a binding context from a given template</summary>
         ///<param name="xmlTemplate" type="Element">The template to build html from</param>
         

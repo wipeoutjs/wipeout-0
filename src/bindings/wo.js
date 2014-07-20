@@ -1,7 +1,7 @@
 // Render From Script
 Binding("wo", true, function () {
     
-    var wo = wipeout.bindings.render.extend(function(element, value, allBindingsAccessor, bindingContext) {
+    var wo = wipeout.bindings.render.extend(function wo(element, value, allBindingsAccessor, bindingContext) {
         ///<summary>Initialize the wo binding</summary> 
         ///<param name="element" type="HTMLElement" optional="false">The to bind to</param>
         ///<param name="value" type="wo.view" optional="false">The content to render</param>
@@ -25,7 +25,7 @@ Binding("wo", true, function () {
         
         ///<Summary type="Function">The render method is overridden to prevent re-rendering</Summary>
         this.render = function() { throw "Cannot render this binding a second time, use the render binding instead"; };
-    }, "wo");
+    });
     
     wo.prototype.dispose = function() {
         ///<summary>Diospose of this binding</summary> 

@@ -1,6 +1,6 @@
 Class("wipeout.utils.call", function () {
     
-    var call = wipeout.base.object.extend(function(find) {
+    var call = wipeout.base.object.extend(function call(find) {
         ///<summary>Extends find functionality to call functions with the correct context and custom arguments</summary>
         ///<param name="find" type="wo.find" optional="false">The find functionality</param>
         
@@ -8,7 +8,7 @@ Class("wipeout.utils.call", function () {
 
         ///<Summary type="wo.find">The worker used to find the root object</Summary>
         this.find = find;
-    }, "call");
+    });
     
     call.prototype.call = function(searchTermOrFilters, filters) {
         ///<summary>Find an item given a search term and filters. Call a method with it's dot(...) method and pass in custom argument with it's arg(...) method</summary>

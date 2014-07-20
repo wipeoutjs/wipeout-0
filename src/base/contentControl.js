@@ -1,7 +1,7 @@
 
 Class("wipeout.base.contentControl", function () {    
 
-    var contentControl = wipeout.base.view.extend(function (templateId, model) {
+    var contentControl = wipeout.base.view.extend(function contentControl(templateId, model) {
         ///<summary>Expands on visual and view functionality to allow the setting of anonymous templates</summary>
         ///<param name="templateId" type="string" optional="true">The template id. If not set, defaults to a blank template</param>
         ///<param name="model" type="Any" optional="true">The initial model to use</param>
@@ -9,7 +9,7 @@ Class("wipeout.base.contentControl", function () {
 
         ///<Summary type="ko.observable" generic0="string">The template which corresponds to the templateId for this item</Summary>
         this.template = contentControl.createTemplatePropertyFor(this.templateId, this);
-    }, "contentControl");    
+    });    
     
     contentControl.createTemplatePropertyFor = function(templateIdObservable, owner) {
         ///<summary>Creates a computed for a template property which is bound to the templateIdObservable property</summary>

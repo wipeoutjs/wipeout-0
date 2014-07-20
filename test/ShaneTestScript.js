@@ -3,7 +3,7 @@
     wipeout.profile.profile();
     aRoutedEvent = new wo.routedEvent();
     
-    initializeView = wipeout.base.contentControl.extend(function() {
+    initializeView = wipeout.base.contentControl.extend(function initializeView() {
         this._super();
         
         this.template("<div id='theDiv'>If this text is still here something went wrong</div>");
@@ -15,12 +15,12 @@
         
     };
     
-    childView = wipeout.base.contentControl.extend(function() {
+    childView = wipeout.base.contentControl.extend(function childView() {
         this._super();
         this.value = ko.observable("initial");
     });
     
-    rootView = wipeout.base.contentControl.extend(function() {
+    rootView = wipeout.base.contentControl.extend(function rootView() {
         this._super("STPTemplates/rootView.html");
         
         this.justDone = ko.observable("");

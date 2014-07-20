@@ -9,7 +9,7 @@ Class("wipeout.base.if", function () {
         _if.blankTemplateId = wipeout.base.contentControl.createAnonymousTemplate("", true);
     };
     
-    var _if = wipeout.base.contentControl.extend(function (templateId, model) {
+    var _if = wipeout.base.contentControl.extend(function _if(templateId, model) {
         ///<summary>The if class is a content control which provides the functionality of the knockout if binding</summary> 
         ///<param name="templateId" type="String" optional="true">The template id. If not set, defaults to a blank template</param>
         ///<param name="model" type="Any" optional="true">The initial model to use</param>
@@ -43,7 +43,7 @@ Class("wipeout.base.if", function () {
         this.registerDisposable(d3);
         
         this.copyTemplateId(this.templateId());
-    }, "_if");
+    });
     
     _if.prototype.elseTemplateChanged = function (newVal) {
         ///<summary>Resets the template id to the else template if condition is not met</summary>  

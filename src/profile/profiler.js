@@ -1,7 +1,7 @@
 Class("wipeout.profile.profile", function () { 
     
     var doRendering, profileState;
-    var profile = function(profile) {
+    var profile = function profile(profile) {
         ///<summary>Profile this application.</summary>
         ///<param name="profile" type="Boolean" optional="true">Switch profiling on or off. Default is true</param>
         
@@ -26,12 +26,13 @@ Class("wipeout.profile.profile", function () {
                     var vms = vm.getParents();
                     vms.splice(0, 0, vm);
 
-                    profileState.infoBox.innerHTML = '<span style="float: right; margin-left: 10px; cursor: pointer;">x</span>click on a class to view it\'s details in a console window';
+                    // todo: dispose of old content (dispose methods from buildProfile function)
+                    profileState.infoBox.innerHTML = '<span style="float: right; margin-left: 10px; cursor: pointer;">x</span>Open a console window and click on a class to debug it';
                     profileState.infoBox.firstChild.addEventListener("click", function() { profileState.infoBox.style.display = "none"; });
 
                     var html = [];
                     for (var i = 0, ii = vms.length; i < ii; i++)
-                        profileState.infoBox.appendChild(buildProfile(vms[i]));
+                        profileState.infoBox.appendChild(buildProfile(vms[i]).element);
                     
                     profileState.infoBox.style.display = null;
                 },
@@ -74,17 +75,26 @@ Class("wipeout.profile.profile", function () {
         var div = document.createElement('div');
         wipeout.utils.domData.set(div, wipeout.bindings.wipeout.utils.wipeoutKey, vm);
         
-        var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + (vm.constructor.__woName || 'unknown vm type') + "</h4>"];
+        var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + (vm.constructor.name || 'unknown vm type') + "</h4>"];
         if(vm.__woBag.profiler)
             for(var i in vm.__woBag.profiler)
                 innerHTML.push("<label>" + i + ":</label> " + vm.__woBag.profiler[i]);
         
         div.innerHTML += innerHTML.join("");
-        div.firstChild.addEventListener("click", function() {
-            viewVm(vm, vm.model());
-        }, false);
         
-        return div;
+        function listener() {
+            viewVm(vm, vm.model());
+        }
+        
+        div.firstChild.addEventListener("click", listener, false);
+        
+        return {
+            element: div,
+            dispsoe: function() {
+                div.firstChild.removeEventListener("click", listener);
+                wipeout.utils.domData.clear(div);
+            }
+        };
     };    
     
     return profile;

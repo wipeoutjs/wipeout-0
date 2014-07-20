@@ -1,6 +1,6 @@
 Class("wipeout.utils.domManipulationWorkerBase", function () { 
     
-    var domManipulationWorkerBase = wipeout.base.object.extend(function() {  
+    var domManipulationWorkerBase = wipeout.base.object.extend(function domManipulationWorkerBase() {  
         ///<summary>Monitor changes to html globaly and cleanup wipeout state on finish(...)</summary>
         
         this._super();

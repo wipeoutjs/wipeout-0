@@ -1,7 +1,10 @@
 
 Binding("wipeout", true, function () {
     
-    var _wipeout = wipeout.bindings.render.extend(function(element, type, allBindingsAccessor, viewModel, bindingContext) {  
+    // going to need the wipeout variable name
+    var w_out = wipeout;
+    
+    var _wipeout = w_out.bindings.render.extend(function wipeout(element, type, allBindingsAccessor, viewModel, bindingContext) {  
         ///<summary>Initialize the render binding</summary> 
         ///<param name="element" type="HTMLElement" optional="false">The to bind to</param>
         ///<param name="type" type="Function" optional="false">The type of the view model to render</param>
@@ -14,7 +17,7 @@ Binding("wipeout", true, function () {
 
         ///<Summary type="wo.view">The view to render</Summary>
         this.renderedView = new type();
-        if(!(this.renderedView instanceof wipeout.base.view))
+        if(!(this.renderedView instanceof w_out.base.view))
             throw "Invalid view type";
 
         this._super(element, this.renderedView, allBindingsAccessor, bindingContext);
@@ -29,7 +32,7 @@ Binding("wipeout", true, function () {
         this.render = function() { throw "Cannont render this binding a second time, use the render binding instead"; };
 
         this.renderedView.onApplicationInitialized();
-    }, "wipeout");
+    });
     
     _wipeout.prototype.dispose = function() {
         ///<summary>Dispose of this binding</summary> 
@@ -46,7 +49,7 @@ Binding("wipeout", true, function () {
         ///<param name="viewModel" type="Object" optional="true">Not used</param>
         ///<param name="bindingContext" type="ko.bindingContext" optional="false">The binding context</param>
         
-        return new wipeout.bindings.wipeout(element, valueAccessor(), allBindingsAccessor, viewModel, bindingContext).bindingMeta;
+        return new w_out.bindings.wipeout(element, valueAccessor(), allBindingsAccessor, viewModel, bindingContext).bindingMeta;
     };
     
     _wipeout.utils = {

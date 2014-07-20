@@ -1,7 +1,7 @@
 
 Class("wipeout.base.visual", function () {
     
-    var visual = wipeout.base.object.extend(function (templateId) {
+    var visual = wipeout.base.object.extend(function visual (templateId) {
         ///<summary>Base class for anything with a visual element. Interacts with the wipeout template engine to render content</summary>
         ///<param name="templateId" type="String" optional="true">A default template id</param>
         this._super();
@@ -24,7 +24,7 @@ Class("wipeout.base.visual", function () {
             routedEventSubscriptions: [],
             nodes: []
         };
-    }, "visual");
+    });
     
     visual.getDefaultTemplateId = (function () {
         var templateId = null;

@@ -2,7 +2,7 @@
 Class("wipeout.base.routedEventModel", function () {
     
     
-    var routedEventModel = wipeout.base.object.extend(function () {
+    var routedEventModel = wipeout.base.object.extend(function routedEventModel() {
         ///<summary>The base class for models if they wish to invoke routed events on their viewModel</summary>
         
         ///<Summary type="wo.event">The event which will trigger a routed event on the owning view</Summary>
@@ -10,7 +10,7 @@ Class("wipeout.base.routedEventModel", function () {
         
         ///<Summary type="Array" generic0="wo.routedEventRegistration">A placeholder for event subscriptions on this model</Summary>
         this.__routedEventSubscriptions = [];
-    }, "routedEventModel");
+    });
         
     routedEventModel.prototype.triggerRoutedEvent = function(routedEvent, eventArgs) {
         ///<summary>Trigger a routed event which will propogate to any view models where this object is it's model and continue to bubble from there</summary>

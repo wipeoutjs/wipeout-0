@@ -2,7 +2,7 @@
 
 Class("wipeout.utils.ko", function () {
         
-    var _ko = function() { };
+    var _ko = function ko() { };
     
     _ko.version = function() {
         ///<summary>Get the current knockout version as an array of numbers</summary>

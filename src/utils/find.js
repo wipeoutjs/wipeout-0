@@ -1,13 +1,13 @@
 Class("wipeout.utils.find", function () {
     
-    var find = wipeout.base.object.extend(function(bindingContext) {
+    var find = wipeout.base.object.extend(function find(bindingContext) {
         ///<summary>Find an ancestor from the binding context</summary>
         ///<param name="bindingContext" type="ko.bindingContext" optional="false">The ancestor chain</param>
         this._super();
 
         ///<Summary type="ko.bindingContext">the binding context to use when finding objects</Summary>
         this.bindingContext = bindingContext;
-    }, "find");
+    });
     
     find.prototype.find = function(searchTermOrFilters, filters) {
         ///<summary>Find an ancestor item based on the search term and filters</summary>

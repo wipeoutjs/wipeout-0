@@ -1,7 +1,7 @@
 
 Class("wipeout.template.engine", function () {
     
-    var engine = function() {
+    var engine = function engine() {
         ///<summary>The wipeout template engine, inherits from ko.templateEngine</summary>
     };
     engine.prototype = new ko.templateEngine();

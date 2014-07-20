@@ -224,7 +224,7 @@ Class("wipeout.utils.obj", function () {
         return Math.floor(Math.random() * max);
     };
     
-    var obj = function() { };
+    var obj = function obj() { };
     obj.ajax = ajax;
     obj.parseBool = parseBool;
     obj.trimToLower = trimToLower;
