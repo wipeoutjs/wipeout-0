@@ -1,6 +1,6 @@
 Class("wipeout.profile.profile", function () { 
     
-    var doRendering, profileState;
+    var doRendering, _initialize, rewriteTemplate, profileState;
     var profile = function profile(profile) {
         ///<summary>Profile this application.</summary>
         ///<param name="profile" type="Boolean" optional="true">Switch profiling on or off. Default is true</param>
@@ -11,6 +11,8 @@ Class("wipeout.profile.profile", function () {
         if((profile && profileState) || (!profile && !profileState)) return;
         
         doRendering = doRendering || wipeout.bindings.render.prototype.doRendering;
+        _initialize = _initialize || wipeout.base.view.prototype._initialize;
+        rewriteTemplate = rewriteTemplate || wipeout.template.engine.prototype.rewriteTemplate;
         
         if(profile) {
             profileState = {
@@ -44,6 +46,8 @@ Class("wipeout.profile.profile", function () {
                     
                     document.body.removeEventListener("click", profileState.eventHandler);
                     wipeout.bindings.render.prototype.doRendering = doRendering;
+                    wipeout.base.view.prototype._initialize =  _initialize;
+                    wipeout.template.engine.prototype.rewriteTemplate = rewriteTemplate;
                 }
             };
             
@@ -56,6 +60,35 @@ Class("wipeout.profile.profile", function () {
                     this.value.__woBag.profiler = {};
                 
                 this.value.__woBag.profiler["Render time"] = time;
+                var template = document.getElementById(this.value.templateId());
+                if(template)
+                    this.value.__woBag.profiler["Template compile time"] =  wipeout.utils.domData.get(template, "rewriteTemplateTime");
+            };
+            
+             wipeout.base.view.prototype._initialize = function() {
+                var before = new Date();
+                _initialize.apply(this, arguments);
+                var time = new Date() - before;
+                
+                if(!this.__woBag.profiler)
+                    this.__woBag.profiler = {};
+                
+                this.__woBag.profiler["Initialize time"] = time;
+             };
+            
+            wipeout.template.engine.prototype.rewriteTemplate = function(template) {
+                var before = new Date();
+                rewriteTemplate.apply(this, arguments);
+                var time = new Date() - before;
+                
+                var script = document.getElementById(template);
+                if (script instanceof HTMLElement) {
+                    var oldTime = wipeout.utils.domData.get(script, "rewriteTemplateTime");
+                    if(oldTime instanceof Number)
+                        time += oldTime;
+                    
+                    wipeout.utils.domData.set(script, "rewriteTemplateTime", time);
+                }
             };
             
             document.body.appendChild(profileState.infoBox);
@@ -88,7 +121,7 @@ Class("wipeout.profile.profile", function () {
             for(var i in vm.__woBag.profiler)
                 innerHTML.push("<label>" + i + ":</label> " + vm.__woBag.profiler[i]);
         
-        div.innerHTML += innerHTML.join("");
+        div.innerHTML += innerHTML.join("<br />");
         
         function listener() {
             viewVm(vm, vm.model());
