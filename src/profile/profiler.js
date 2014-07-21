@@ -30,7 +30,9 @@ Class("wipeout.profile.profile", function () {
                     vms.splice(0, 0, vm);
 
                     // todo: dispose of old content (dispose methods from buildProfile function)
-                    profileState.infoBox.innerHTML = '<span style="float: right; margin-left: 10px; cursor: pointer;">x</span>Open a console window and click on a class to debug it';
+                    profileState.infoBox.innerHTML = '<span style="float: right; margin-left: 10px; cursor: pointer;">x</span><br/>Open a console window and click on a class to debug it<br/>\
+If view models do not have names, you can <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name">name them</a><br/>\
+If view models have odd names ensure you are not using a minifier';
                     profileState.infoBox.firstChild.addEventListener("click", function() { profileState.infoBox.style.display = "none"; });
 
                     var html = [];
@@ -116,7 +118,7 @@ Class("wipeout.profile.profile", function () {
 			vm.constructor.name :
 			((tmp = vm.constructor.toString().match(functionName)) ? tmp[1] : 'unknown vm type');
 			
-        var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + fn + "</h4>"];
+        var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + fn + (vm.id ? (" #" + vm.id) : "") + "</h4>"];
         if(vm.__woBag.profiler)
             for(var i in vm.__woBag.profiler)
                 innerHTML.push("<label>" + i + ":</label> " + vm.__woBag.profiler[i]);
