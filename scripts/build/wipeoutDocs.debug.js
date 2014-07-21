@@ -689,19 +689,7 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 href: buildHref({article: "wipeout-utilities"}),
                 visible: ko.observable(true)
             },
-            items: [{
-                text: "Html Utilities",
-                href: buildHref({article: "utilities-html"}),
-                visible: ko.observable(true)
-            }, {
-                text: "Object utilities",
-                href: buildHref({article: "utilities-obj"}),
-                visible: ko.observable(true)
-            }, {
-                text: "Knockout utilities",
-                href: buildHref({article: "utilities-ko"}),
-                visible: ko.observable(true)
-            }]
+            items: []
         }];
         
         this.flatList = [];
