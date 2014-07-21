@@ -280,7 +280,7 @@ Class("wipeout.base.visual", function () {
     };
     
     // virtual
-    visual.prototype.onUnrender = function () {
+    visual.prototype.onUnrendered = function () {
         ///<summary>Triggered just before a visual is un rendered</summary>    
     };
     
