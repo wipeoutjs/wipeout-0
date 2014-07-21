@@ -71,12 +71,19 @@ Class("wipeout.profile.profile", function () {
     
     var viewVm = new Function("viewModel", "model", "//Use your browser's debugger to inspect the model and view model\ndebugger;");
     
+	var functionName = /^function\s*([^\s(]+)/;
     var buildProfile = function(vm) {
                 
         var div = document.createElement('div');
         wipeout.utils.domData.set(div, wipeout.bindings.wipeout.utils.wipeoutKey, vm);
         
-        var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + (vm.constructor.name || 'unknown vm type') + "</h4>"];
+		// IE doesn't support name
+		var tmp;		
+		var fn = vm.constructor.name ? 
+			vm.constructor.name :
+			((tmp = vm.constructor.toString().match(functionName)) ? tmp[1] : 'unknown vm type');
+			
+        var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + fn + "</h4>"];
         if(vm.__woBag.profiler)
             for(var i in vm.__woBag.profiler)
                 innerHTML.push("<label>" + i + ":</label> " + vm.__woBag.profiler[i]);
