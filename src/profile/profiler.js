@@ -18,11 +18,12 @@ Class("wipeout.profile.profile", function () {
                 infoBox: wipeout.utils.html.createElement(
                     '<div style="position: fixed; top: 10px; right: 10px; background-color: white; padding: 10px; border: 2px solid gray; display: none; max-height: 500px; overflow-y: scroll; z-index: 10000"></div>'),
                 eventHandler: function(e) {
-                    if (!e.altKey) return;
+                    if (!e.ctrlKey) return;
                     e.stopPropagation();
                     e.preventDefault();
 
                     var vm = wo.html.getViewModel(e.target);
+					if(!vm) return;
                     var vms = vm.getParents();
                     vms.splice(0, 0, vm);
 
@@ -34,7 +35,7 @@ Class("wipeout.profile.profile", function () {
                     for (var i = 0, ii = vms.length; i < ii; i++)
                         profileState.infoBox.appendChild(buildProfile(vms[i]).element);
                     
-                    profileState.infoBox.style.display = null;
+                    profileState.infoBox.style.display = "block";
                 },
                 dispose: function() {
                     profileState.highlighter.dispose();
