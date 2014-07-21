@@ -1,0 +1,69 @@
+<h1>Knockout Utilities</h1>
+
+<p>Html utilities are availiable on <a href="/wipeout-0/api.html?type=api&amp;className=wipeout.utils.ko">wo.ko</a>
+</p>
+
+<p>
+    Viewmodels can be controlled by overriding methods at various stages in the view's lifecycle. You can override a method by simply replacing it on the prototype of the derived class. 
+    For example:
+</p>
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>var myViewModel = wo.view.extend({
+    constructor: function myViewModel() {
+        this._super();
+    },
+    // override the onRendered function
+    onRendered: function(oldValues, newValues) {
+        this._super(oldValues, newValues);
+        
+        // custom logic here
+    }
+});</code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+
+<p>
+    There are quite a few methods to override in order to provide hooks into the viewmodel lifecycle
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>Function</td>
+                <td>Description</td>
+                <td>Usage</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="/wipeout-0/api.html?type=api&amp;className=wo.view&amp;functionName=onModelChanged&amp;isStatic=false">onModelChanged</a></td>
+                <td>Occurs each time the model changes.</td>
+                <td>Should be used to interact with the model</td>
+            </tr>
+            <tr>
+                <td><a href="/wipeout-0/api.html?type=api&amp;className=wo.view&amp;functionName=onInitialized&amp;isStatic=false">onInitialized</a></td>
+                <td>Occurs once, when all of the properties of the view model have been set as defined as in the template.</td>
+                <td>Should be used to interact with properties of the view model.</td>
+            </tr>
+            <tr>
+                <td><a href="/wipeout-0/api.html?type=api&amp;className=wo.view&amp;functionName=onRendered&amp;isStatic=false">onRendered</a></td>
+                <td>Occurs each time the view model is rendered: after the initial render and after each template id change. Should be u</td>
+                <td>Should be used interact with the 
+                    <Wipeout.Docs.ViewModels.Components.RouteLink href="'/wipeout-0/how-do-i.html?article=referencing-items-in-a-template'" text="'templateItems'" /> property and the DOM</td>
+            </tr>
+            <tr>
+                <td><a href="/wipeout-0/api.html?type=api&amp;className=wo.view&amp;functionName=onUnrendered&amp;isStatic=false">onUnrendered</a></td>
+                <td>Occurs when the view model is removed from the dom. In normal circumstances, will only occur once, before the view model is disposed of.</td>
+                <td>Should be used to dispose of anything DOM related</td>
+            </tr>
+            <tr>
+                <td><a href="/wipeout-0/api.html?type=api&amp;className=wo.view&amp;functionName=dispose&amp;isStatic=false">dispose</a></td>
+                <td>Occurs when the view model is disposed of</td>
+                <td>Should be used to dispose of the view model.</td>
+            </tr>
+            <tr>
+                <td><a href="/wipeout-0/api.html?type=api&amp;className=wo.view&amp;functionName=onApplicationInitialized&amp;isStatic=false">onApplicationInitialized</a></td>
+                <td>Occurs to first view model defined: the one defined in the wipeout binding. Occurs once per wipeout application after all rendering is complete.</td>
+                <td>Should be used to interact with the wipeout applicaiton as a whole</td>
+            </tr>
+        </tbody>
+</table>
+</p>
