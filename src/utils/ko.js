@@ -66,7 +66,7 @@ Class("wipeout.utils.ko", function () {
     
     // copied from knockout
     _ko.isVirtual = function(node) {
-        ///<summary>Whether a html node is a knockout virtual element or not</summary>
+        ///<summary>Determines whether a html node is a knockout virtual element or not</summary>
         ///<param name="node" type="HTMLNode">The node to test</param>
         ///<returns type="Boolean"></returns>
         return node && (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(startCommentRegex);
@@ -74,7 +74,7 @@ Class("wipeout.utils.ko", function () {
     
     // copied from knockout
     _ko.isVirtualClosing = function(node) {
-        ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
+        ///<summary>Determines whether a html node is a knockout virtual element closing tag</summary>
         ///<param name="node" type="HTMLNode">The node to test</param>
         ///<returns type="Boolean"></returns>
         return node && (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(endCommentRegex);
