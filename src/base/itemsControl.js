@@ -1,5 +1,5 @@
 
-Class("wipeout.base.itemsControl", function itemsControl() {
+Class("wipeout.base.itemsControl", function () {
     
     var deafaultTemplateId;
     var staticConstructor = function() {
