@@ -3252,7 +3252,7 @@ Class("wipeout.utils.call", function () {
     });
     
     call.prototype.call = function(rootObject) {
-        ///<summary>Find an item given a search term and filters. Call a method with it's dot(...) method and pass in custom argument with it's arg(...) method</summary>
+        ///<summary>Call a method with on the root object with dot(...) method and pass in custom argument with it's arg(...) method</summary>
         ///<param name="rootObject" type="Any" optional="false">The object to begin the find from</param>
         ///<returns type="Object">An item to create a function with the correct context and custom arguments</returns>
 
@@ -3621,6 +3621,7 @@ Class("wipeout.utils.findAndCall", function () {
         ///<param name="find" type="wo.find" optional="false">The find functionality</param>
         this._super();
         
+        ///<Summary type="wo.find">The find helper</Summary>
         this.find = find;
     });
     
