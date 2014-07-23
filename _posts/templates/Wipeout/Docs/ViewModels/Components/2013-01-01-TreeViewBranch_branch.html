@@ -1,8 +1,8 @@
 <wo.itemsControl itemSource="model().branches" id="content">
     <template>
         <div>
-            <a data-bind="click: $call(Wipeout.Docs.ViewModels.Components.TreeViewBranch).dot('select'), text: model().name, attr: { href: model().href || 'javascript:void(0)'}"></a>
-                <small style="color: #158cba; cursor: pointer" data-bind="attr: { 'class': $parent.glyphClass }, click: $call(Wipeout.Docs.ViewModels.Components.TreeViewBranch).dot('select')"></small>
+            <a data-bind="click: $findAndCall(Wipeout.Docs.ViewModels.Components.TreeViewBranch).dot('select'), text: model().name, attr: { href: model().href || 'javascript:void(0)'}"></a>
+                <small style="color: #158cba; cursor: pointer" data-bind="attr: { 'class': $parent.glyphClass }, click: $findAndCall(Wipeout.Docs.ViewModels.Components.TreeViewBranch).dot('select')"></small>
             <ul data-bind="itemsControl: null" style="display: none" id="content"></ul>
         </div>
     </template>

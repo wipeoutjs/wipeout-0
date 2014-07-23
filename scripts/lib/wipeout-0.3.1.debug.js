@@ -162,7 +162,7 @@ Class("wipeout.utils.obj", function () {
     var getObject = function(constructorString, context) {
         ///<summary>Get an object from string</summary>
         ///<param name="constructorString" type="String">A pointer to the object to create</param>
-        ///<param name="context" type="String">The root context</param>
+        ///<param name="context" type="Any" optional="true">The root context. Defaults to window</param>
         ///<returns type="Any">The object</returns>
         if(!context) context = window;
         
@@ -179,7 +179,7 @@ Class("wipeout.utils.obj", function () {
     var createObject = function(constructorString, context) {
         ///<summary>Create an object from string</summary>
         ///<param name="constructorString" type="String">A pointer to the object to create</param>
-        ///<param name="context" type="String">The root context</param>
+        ///<param name="context" type="Any" optional="true">The root context. Defaults to window</param>
         ///<returns type="Any">The created object</returns>
         
         var constructor = getObject(constructorString, context);
@@ -736,7 +736,7 @@ Class("wipeout.base.visual", function () {
     };
     
     // virtual
-    visual.prototype.onUnrender = function () {
+    visual.prototype.onUnrendered = function () {
         ///<summary>Triggered just before a visual is un rendered</summary>    
     };
     
@@ -1543,7 +1543,7 @@ Class("wipeout.base.if", function () {
 });
 
 
-Class("wipeout.base.itemsControl", function itemsControl() {
+Class("wipeout.base.itemsControl", function () {
     
     var deafaultTemplateId;
     var staticConstructor = function() {
@@ -2223,7 +2223,7 @@ Binding("render", true, function () {
         if(!this.value) return;
 
         this.unTemplate();
-        this.value.onUnrender();
+        this.value.onUnrendered();
         if(this.value.__woBag.rootHtmlElement) {
             // disassociate the visual from its root element and empty the root element
             wipeout.utils.domData.set(this.value.__woBag.rootHtmlElement, wipeout.bindings.wipeout.utils.wipeoutKey, undefined); 
@@ -2390,10 +2390,7 @@ Binding("wipeout-type", true, function () {
 
 Binding("wipeout", true, function () {
     
-    // going to need the wipeout variable name
-    var w_out = wipeout;
-    
-    var _wipeout = w_out.bindings.render.extend(function wipeout(element, type, allBindingsAccessor, viewModel, bindingContext) {  
+    var _wipeout = wipeout.bindings.render.extend(function wipeoutBinding(element, type, allBindingsAccessor, viewModel, bindingContext) {  
         ///<summary>Initialize the render binding</summary> 
         ///<param name="element" type="HTMLElement" optional="false">The to bind to</param>
         ///<param name="type" type="Function" optional="false">The type of the view model to render</param>
@@ -2406,7 +2403,7 @@ Binding("wipeout", true, function () {
 
         ///<Summary type="wo.view">The view to render</Summary>
         this.renderedView = new type();
-        if(!(this.renderedView instanceof w_out.base.view))
+        if(!(this.renderedView instanceof wipeout.base.view))
             throw "Invalid view type";
 
         this._super(element, this.renderedView, allBindingsAccessor, bindingContext);
@@ -2438,7 +2435,7 @@ Binding("wipeout", true, function () {
         ///<param name="viewModel" type="Object" optional="true">Not used</param>
         ///<param name="bindingContext" type="ko.bindingContext" optional="false">The binding context</param>
         
-        return new w_out.bindings.wipeout(element, valueAccessor(), allBindingsAccessor, viewModel, bindingContext).bindingMeta;
+        return new wipeout.bindings.wipeout(element, valueAccessor(), allBindingsAccessor, viewModel, bindingContext).bindingMeta;
     };
     
     _wipeout.utils = {
@@ -2682,7 +2679,7 @@ Class("wipeout.profile.highlighter", function () {
 
 Class("wipeout.profile.profile", function () { 
     
-    var doRendering, profileState;
+    var doRendering, _initialize, rewriteTemplate, profileState;
     var profile = function profile(profile) {
         ///<summary>Profile this application.</summary>
         ///<param name="profile" type="Boolean" optional="true">Switch profiling on or off. Default is true</param>
@@ -2693,6 +2690,8 @@ Class("wipeout.profile.profile", function () {
         if((profile && profileState) || (!profile && !profileState)) return;
         
         doRendering = doRendering || wipeout.bindings.render.prototype.doRendering;
+        _initialize = _initialize || wipeout.base.view.prototype._initialize;
+        rewriteTemplate = rewriteTemplate || wipeout.template.engine.prototype.rewriteTemplate;
         
         if(profile) {
             profileState = {
@@ -2700,23 +2699,26 @@ Class("wipeout.profile.profile", function () {
                 infoBox: wipeout.utils.html.createElement(
                     '<div style="position: fixed; top: 10px; right: 10px; background-color: white; padding: 10px; border: 2px solid gray; display: none; max-height: 500px; overflow-y: scroll; z-index: 10000"></div>'),
                 eventHandler: function(e) {
-                    if (!e.altKey) return;
+                    if (!e.ctrlKey) return;
                     e.stopPropagation();
                     e.preventDefault();
 
                     var vm = wo.html.getViewModel(e.target);
+					if(!vm) return;
                     var vms = vm.getParents();
                     vms.splice(0, 0, vm);
 
                     // todo: dispose of old content (dispose methods from buildProfile function)
-                    profileState.infoBox.innerHTML = '<span style="float: right; margin-left: 10px; cursor: pointer;">x</span>Open a console window and click on a class to debug it';
+                    profileState.infoBox.innerHTML = '<span style="float: right; margin-left: 10px; cursor: pointer;">x</span><br/>Open a console window and click on a class to debug it<br/>\
+If view models do not have names, you can <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/name">name them</a><br/>\
+If view models have odd names ensure you are not using a minifier';
                     profileState.infoBox.firstChild.addEventListener("click", function() { profileState.infoBox.style.display = "none"; });
 
                     var html = [];
                     for (var i = 0, ii = vms.length; i < ii; i++)
                         profileState.infoBox.appendChild(buildProfile(vms[i]).element);
                     
-                    profileState.infoBox.style.display = null;
+                    profileState.infoBox.style.display = "block";
                 },
                 dispose: function() {
                     profileState.highlighter.dispose();
@@ -2725,6 +2727,8 @@ Class("wipeout.profile.profile", function () {
                     
                     document.body.removeEventListener("click", profileState.eventHandler);
                     wipeout.bindings.render.prototype.doRendering = doRendering;
+                    wipeout.base.view.prototype._initialize =  _initialize;
+                    wipeout.template.engine.prototype.rewriteTemplate = rewriteTemplate;
                 }
             };
             
@@ -2737,6 +2741,35 @@ Class("wipeout.profile.profile", function () {
                     this.value.__woBag.profiler = {};
                 
                 this.value.__woBag.profiler["Render time"] = time;
+                var template = document.getElementById(this.value.templateId());
+                if(template)
+                    this.value.__woBag.profiler["Template compile time"] =  wipeout.utils.domData.get(template, "rewriteTemplateTime");
+            };
+            
+             wipeout.base.view.prototype._initialize = function() {
+                var before = new Date();
+                _initialize.apply(this, arguments);
+                var time = new Date() - before;
+                
+                if(!this.__woBag.profiler)
+                    this.__woBag.profiler = {};
+                
+                this.__woBag.profiler["Initialize time"] = time;
+             };
+            
+            wipeout.template.engine.prototype.rewriteTemplate = function(template) {
+                var before = new Date();
+                rewriteTemplate.apply(this, arguments);
+                var time = new Date() - before;
+                
+                var script = document.getElementById(template);
+                if (script instanceof HTMLElement) {
+                    var oldTime = wipeout.utils.domData.get(script, "rewriteTemplateTime");
+                    if(oldTime instanceof Number)
+                        time += oldTime;
+                    
+                    wipeout.utils.domData.set(script, "rewriteTemplateTime", time);
+                }
             };
             
             document.body.appendChild(profileState.infoBox);
@@ -2752,17 +2785,24 @@ Class("wipeout.profile.profile", function () {
     
     var viewVm = new Function("viewModel", "model", "//Use your browser's debugger to inspect the model and view model\ndebugger;");
     
+	var functionName = /^function\s*([^\s(]+)/;
     var buildProfile = function(vm) {
                 
         var div = document.createElement('div');
         wipeout.utils.domData.set(div, wipeout.bindings.wipeout.utils.wipeoutKey, vm);
         
-        var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + (vm.constructor.name || 'unknown vm type') + "</h4>"];
+		// IE doesn't support name
+		var tmp;		
+		var fn = vm.constructor.name ? 
+			vm.constructor.name :
+			((tmp = vm.constructor.toString().match(functionName)) ? tmp[1] : 'unknown vm type');
+			
+        var innerHTML = ["<h4 style='cursor: pointer; margin-bottom: 5px;'>" + fn + (vm.id ? (" #" + vm.id) : "") + "</h4>"];
         if(vm.__woBag.profiler)
             for(var i in vm.__woBag.profiler)
                 innerHTML.push("<label>" + i + ":</label> " + vm.__woBag.profiler[i]);
         
-        div.innerHTML += innerHTML.join("");
+        div.innerHTML += innerHTML.join("<br />");
         
         function listener() {
             viewVm(vm, vm.model());
@@ -2865,18 +2905,20 @@ Class("wipeout.template.engine", function () {
     
     var $find = /\$find/;
     var $call = /\$call/;
+    var $findAndCall = /\$findAndCall/;
     engine.createJavaScriptEvaluatorFunction = function(script) {
         ///<summary>Modify a block of script so that it's running context is bindingContext.$data first and biningContext second</summary>
         ///<param name="script" type="String">The script to modify</param>
         ///<returns type="Function">The compiled script</returns>
         
-        var f = $find.test(script);
-        var find = f ? "\n\tvar $find = wipeout.utils.find.create(bindingContext);" : "";
+        var find = $find.test(script) ? "\n\tvar $find = wipeout.utils.find.create(bindingContext);" : "";
         
-        // reuse existing $find if possible
-        var call = $call.test(script) ? "\n\tvar $call = wipeout.utils.call.create(" + (f ? "$find" : "wipeout.utils.find.create(bindingContext)") + ");" : "";
+        // reuse existing $find
+        var findAndCall = $findAndCall.test(script) ? "\n\tvar $findAndCall = wipeout.utils.findAndCall.create($find);" : "";
         
-        return new Function("bindingContext", "with(bindingContext) {" + find + call + "\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
+        var call = $call.test(script) ? "\n\tvar $call = wipeout.utils.call.create();" : "";
+        
+        return new Function("bindingContext", "with(bindingContext) {" + find + findAndCall + call + "\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
     }
     
     engine.createJavaScriptEvaluatorBlock = function(script) {
@@ -3202,31 +3244,25 @@ Class("wipeout.utils.bindingDomManipulationWorker", function () {
 
 Class("wipeout.utils.call", function () {
     
-    var call = wipeout.base.object.extend(function call(find) {
-        ///<summary>Extends find functionality to call functions with the correct context and custom arguments</summary>
+    var call = wipeout.base.object.extend(function call() {
+        ///<summary>Calls a function with the correct scope</summary>
         ///<param name="find" type="wo.find" optional="false">The find functionality</param>
         
         this._super();
-
-        ///<Summary type="wo.find">The worker used to find the root object</Summary>
-        this.find = find;
     });
     
-    call.prototype.call = function(searchTermOrFilters, filters) {
+    call.prototype.call = function(rootObject) {
         ///<summary>Find an item given a search term and filters. Call a method with it's dot(...) method and pass in custom argument with it's arg(...) method</summary>
-        ///<param name="searchTermOrFilters" type="Any" optional="false">Search term or filters to be passed to find</param>
-        ///<param name="filters" type="Object" optional="true">Filters to be passed to find</param>
+        ///<param name="rootObject" type="Any" optional="false">The object to begin the find from</param>
         ///<returns type="Object">An item to create a function with the correct context and custom arguments</returns>
-        
-        var obj = this.find(searchTermOrFilters, filters);
 
-        if(!obj)
+        if(!rootObject)
             throw "Could not find an object to call function on.";
         
         var dots = [];
         var args = null;
         var output = function() {
-            var current = obj;
+            var current = rootObject;
             var currentFunction = null;
             
             if(dots.length > 0) {            
@@ -3243,10 +3279,10 @@ Class("wipeout.utils.call", function () {
                 
                 currentFunction = current[dots[i]];
             } else {
-                if(obj.constructor !== Function)
-                    throw "Cannot call an object like a functino";
+                if(rootObject.constructor !== Function)
+                    throw "Cannot call an object like a function";
                     
-                currentFunction = obj;
+                currentFunction = rootObject;
             }
             
             if(args) {
@@ -3271,15 +3307,14 @@ Class("wipeout.utils.call", function () {
         return output;
     };
     
-    call.create = function(find) {
+    call.create = function() {
         ///<summary>Get a function wich points directly to (new wo.call(..)).call(...)</summary>
-        ///<param name="find" type="wo.find" optional="false">The find functionality</param>
         ///<returns type="Function">The call function</returns>        
         
-        var f = new wipeout.utils.call(find);
+        var f = new wipeout.utils.call();
 
-        return function(searchTerm, filters) {
-            return f.call(searchTerm, filters);
+        return function(rootObject) {
+            return f.call(rootObject);
         };
     };
     
@@ -3577,6 +3612,40 @@ Class("wipeout.utils.find", function () {
     };
     
     return find;
+});
+
+Class("wipeout.utils.findAndCall", function () {
+    
+    var findAndCall = wipeout.utils.call.extend(function call(find) {
+        ///<summary>Extends find functionality to call functions with the correct context and custom arguments</summary>
+        ///<param name="find" type="wo.find" optional="false">The find functionality</param>
+        this._super();
+        
+        this.find = find;
+    });
+    
+    findAndCall.prototype.call = function(searchTermOrFilters, filters) {
+        ///<summary>Find an item given a search term and filters. Call a method with it's dot(...) method and pass in custom argument with it's arg(...) method</summary>
+        ///<param name="searchTermOrFilters" type="Any" optional="false">Search term or filters to be passed to find</param>
+        ///<param name="filters" type="Object" optional="true">Filters to be passed to find</param>
+        ///<returns type="Object">An item to create a function with the correct context and custom arguments</returns>
+        
+        return this._super(this.find(searchTermOrFilters, filters));
+    };
+    
+    findAndCall.create = function(find) {
+        ///<summary>Get a function wich points directly to (new wo.call(..)).call(...)</summary>
+        ///<param name="find" type="wo.find" optional="false">The find functionality</param>
+        ///<returns type="Function">The call function</returns>
+                
+        var f = new wipeout.utils.findAndCall(find);
+
+        return function(searchTermOrFilters, filters) {
+            return f.call(searchTermOrFilters, filters);
+        };
+    };
+    
+    return findAndCall;
 });
 
 
@@ -3999,7 +4068,7 @@ Class("wipeout.utils.htmlAsync", function () {
 
 Class("wipeout.utils.ko", function () {
         
-    var _ko = function ko() { };
+    var _ko = function _ko() { };
     
     _ko.version = function() {
         ///<summary>Get the current knockout version as an array of numbers</summary>
@@ -4063,7 +4132,7 @@ Class("wipeout.utils.ko", function () {
     
     // copied from knockout
     _ko.isVirtual = function(node) {
-        ///<summary>Whether a html node is a knockout virtual element or not</summary>
+        ///<summary>Determines whether a html node is a knockout virtual element or not</summary>
         ///<param name="node" type="HTMLNode">The node to test</param>
         ///<returns type="Boolean"></returns>
         return node && (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(startCommentRegex);
@@ -4071,7 +4140,7 @@ Class("wipeout.utils.ko", function () {
     
     // copied from knockout
     _ko.isVirtualClosing = function(node) {
-        ///<summary>Whether a html node is a knockout virtual element closing tag</summary>
+        ///<summary>Determines whether a html node is a knockout virtual element closing tag</summary>
         ///<param name="node" type="HTMLNode">The node to test</param>
         ///<returns type="Boolean"></returns>
         return node && (node.nodeType == 8) && (commentNodesHaveTextProperty ? node.text : node.nodeValue).match(endCommentRegex);
