@@ -16,7 +16,7 @@ Class("wipeout.template.engine", function () {
         
         var find = $find.test(script) ? "\n\tvar $find = wipeout.utils.find.create(bindingContext);" : "";
         
-        // reuse existing $find if possible
+        // reuse existing $find
         var findAndCall = $findAndCall.test(script) ? "\n\tvar $findAndCall = wipeout.utils.findAndCall.create($find);" : "";
         
         var call = $call.test(script) ? "\n\tvar $call = wipeout.utils.call.create();" : "";
