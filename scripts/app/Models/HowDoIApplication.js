@@ -218,6 +218,13 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
             }]
         }, {
             header: {
+                text: "Control the view model lifecycle",
+                href: buildHref({article: "control-the-view-model-lifecycle"}),
+                visible: ko.observable(true)
+            },
+            items: []
+        }, {
+            header: {
                 text: "Use the if control",
                 href: buildHref({article: "if-control"}),
                 visible: ko.observable(true)
@@ -272,6 +279,32 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
             header: {
                 text: "Share Parent Scope",
                 href: buildHref({article: "share-parent-scope"}),
+                visible: ko.observable(true)
+            },
+            items: []
+        }, {
+            header: {
+                text: "Disposing of Subscriptions",
+                href: buildHref({article: "disposing-of-subscriptions"}),
+                visible: ko.observable(true)
+            },
+            items: [{
+                text: "Disposing using a callback",
+                href: buildHref({article: "disposing-using-a-callback"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Disposing using a disposable object",
+                href: buildHref({article: "disposing-using-a-disposable-object"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Forcing disposal",
+                href: buildHref({article: "forcing-disposal"}),
+                visible: ko.observable(true)
+            }]
+        }, {
+            header: {
+                text: "Wipeout Utilities",
+                href: buildHref({article: "wipeout-utilities"}),
                 visible: ko.observable(true)
             },
             items: []
