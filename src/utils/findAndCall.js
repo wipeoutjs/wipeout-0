@@ -5,6 +5,7 @@ Class("wipeout.utils.findAndCall", function () {
         ///<param name="find" type="wo.find" optional="false">The find functionality</param>
         this._super();
         
+        ///<Summary type="wo.find">The find helper</Summary>
         this.find = find;
     });
     
