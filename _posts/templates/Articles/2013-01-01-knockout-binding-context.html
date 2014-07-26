@@ -1,0 +1,12 @@
+<h1>The knocout binding context</h1>
+
+<p>The <a href="http://knockoutjs.com/documentation/binding-context.html">knockout binding ocntext</a> is the scope provided by knockout.
+	The general scope will be the view model, however there are several other properties which may be useful within a wipeout application: </p>
+
+<ol>
+	<li><code>$parent</code>: refers to the parent view model. This property is very important when setting the model of view model, as you 
+		will always want to set it to a property on <code>$parent.model()</code>.</li>
+	<li><code>$parents[]</code>: refers to all ancestor view models. So <code>$parents[0] === $parent</code>, <code>$parents[1] === $parent.getParent(true)</code>
+and so on. It is best practice only to refer to parents in the current template script block in this way so keep components from depending on eachother</li>
+	<li><code>$index</code>: refers to the index of an item within an <a href="/wipeout-0/api.html?type=api&amp;className=wo.itemsControl">itemsControl</a>.</li>
+</ol>

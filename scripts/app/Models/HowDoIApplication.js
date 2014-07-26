@@ -308,6 +308,29 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 visible: ko.observable(true)
             },
             items: []
+        }, {
+            header: {
+                text: "Bind to a specific view model",
+                href: buildHref({article: "bind-to-specific-view-model"}),
+                visible: ko.observable(true)
+            },
+            items: [{
+                text: "Knockout binding context",
+                href: buildHref({article: "knockout-binding-context"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Find a view model",
+                href: buildHref({article: "find-a-view-model"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Call a view model method",
+                href: buildHref({article: "call-a-view-model-method"}),
+                visible: ko.observable(true)
+            }, {
+                text: "Find and call a view model method",
+                href: buildHref({article: "find-and-call-a-view-model-method"}),
+                visible: ko.observable(true)
+            }]
         }];
         
         this.flatList = [];
