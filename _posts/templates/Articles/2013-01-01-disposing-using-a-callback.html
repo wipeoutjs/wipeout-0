@@ -1,0 +1,26 @@
+<h1>Disposing using a callback</h1>
+
+<p>The method <a href="/wipeout-0/api.html?type=api&amp;className=wo.visual&amp;functionName=registerDisposeCallback&amp;isStatic=false">registerDisposeCallback</a>
+    is used to register a callback which will be invoked when the view model itself is disposed of.</p>
+
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>var myViewModel = wo.view.extend({
+    constructor: function myViewModel() {
+        this._super();
+    },
+    onModelChanged: function(oldModel, newModel) {
+        this._super(oldModel, newModel);
+        
+        if(newModel) {
+            var eventRegistration = newModel.myObservable.subscribe(function() {
+                // do something
+            });
+        
+            // ensure this event subscription is disposed of when this view model is disposed of
+            this.registerDisposeCallback(function() {
+                eventRegistration.dispose();
+            });
+        }
+    }
+});</code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
