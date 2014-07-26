@@ -1,7 +1,17 @@
 
 compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Docs.ViewModels.Application", function() {
     
+    var apiTemplateId;
+    var staticConstructor= function() {
+        if(apiTemplateId)
+            return;
+        
+        apiTemplateId = wo.contentControl.createAnonymousTemplate('<Wipeout.Docs.ViewModels.Components.DynamicRender model="$find(Wipeout.Docs.ViewModels.HowDoIApplication).apiPlaceholder" />');
+    };
+    
     function HowDoIApplication() {
+        staticConstructor();
+        
         this._super("Wipeout.Docs.ViewModels.HowDoIApplication", "/wipeout-0/how-do-i.html");
         
         this.contentTemplate = ko.observable(wo.contentControl.getBlankTemplateId());
@@ -21,9 +31,14 @@ compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Doc
     };
     
     HowDoIApplication.prototype.route = function(query) { 
-        
+                
         if(query.article) {
             this.openArticle(query.article);
+        } else if (query.type === "api") {
+            this.apiPlaceholder = Wipeout.Docs.Models.ApiApplication.getModel(query);
+            if(this.apiPlaceholder) {
+                this.contentTemplate(apiTemplateId);
+            }
         } else {
             this.contentTemplate(wo.contentControl.getBlankTemplateId());
         }

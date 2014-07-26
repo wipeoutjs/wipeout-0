@@ -200,6 +200,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
     };
     
     ApiApplication.routableUrl = function(item) {
+        staticContructor();
+        
         if(item instanceof Wipeout.Docs.Models.Descriptions.Class)
             output = "type=api&className=" + item.classFullName;
         else if(item instanceof Wipeout.Docs.Models.Descriptions.Event)
@@ -217,6 +219,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
     };
     
     ApiApplication.getModel = function(modelPointer) {
+        staticContructor();
+        
         if(!modelPointer) return null;
                 
         switch (modelPointer.type) {
@@ -232,7 +236,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
     }
     
     ApiApplication.getApiModel = function(modelPointer) {
-        
+        staticContructor();
+                
         var api = modelPointer.className.indexOf("wipeout") === 0 ?
             wipeoutApi :
             (modelPointer.className.indexOf("wo") === 0 ? woApi : null);
@@ -250,7 +255,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
         return _class;        
     };
     
-    ApiApplication.getSubBranches = function(classDescription) {        
+    ApiApplication.getSubBranches = function(classDescription) {   
+        staticContructor();
         
         var output = [];
         
@@ -283,6 +289,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
     };
     
     ApiApplication.treeViewBranchFor = function(api, classFullName) {
+        staticContructor();
+        
         var friendlyName = classFullName.split(".");
         friendlyName = friendlyName[friendlyName.length - 1];
         
@@ -1703,7 +1711,17 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", functio
 
 compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Docs.ViewModels.Application", function() {
     
+    var apiTemplateId;
+    var staticConstructor= function() {
+        if(apiTemplateId)
+            return;
+        
+        apiTemplateId = wo.contentControl.createAnonymousTemplate('<Wipeout.Docs.ViewModels.Components.DynamicRender model="$find(Wipeout.Docs.ViewModels.HowDoIApplication).apiPlaceholder" />');
+    };
+    
     function HowDoIApplication() {
+        staticConstructor();
+        
         this._super("Wipeout.Docs.ViewModels.HowDoIApplication", "/wipeout-0/how-do-i.html");
         
         this.contentTemplate = ko.observable(wo.contentControl.getBlankTemplateId());
@@ -1723,9 +1741,14 @@ compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Doc
     };
     
     HowDoIApplication.prototype.route = function(query) { 
-        
+                
         if(query.article) {
             this.openArticle(query.article);
+        } else if (query.type === "api") {
+            this.apiPlaceholder = Wipeout.Docs.Models.ApiApplication.getModel(query);
+            if(this.apiPlaceholder) {
+                this.contentTemplate(apiTemplateId);
+            }
         } else {
             this.contentTemplate(wo.contentControl.getBlankTemplateId());
         }

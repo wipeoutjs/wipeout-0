@@ -17,6 +17,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
     };
     
     ApiApplication.routableUrl = function(item) {
+        staticContructor();
+        
         if(item instanceof Wipeout.Docs.Models.Descriptions.Class)
             output = "type=api&className=" + item.classFullName;
         else if(item instanceof Wipeout.Docs.Models.Descriptions.Event)
@@ -34,6 +36,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
     };
     
     ApiApplication.getModel = function(modelPointer) {
+        staticContructor();
+        
         if(!modelPointer) return null;
                 
         switch (modelPointer.type) {
@@ -49,7 +53,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
     }
     
     ApiApplication.getApiModel = function(modelPointer) {
-        
+        staticContructor();
+                
         var api = modelPointer.className.indexOf("wipeout") === 0 ?
             wipeoutApi :
             (modelPointer.className.indexOf("wo") === 0 ? woApi : null);
@@ -67,7 +72,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
         return _class;        
     };
     
-    ApiApplication.getSubBranches = function(classDescription) {        
+    ApiApplication.getSubBranches = function(classDescription) {   
+        staticContructor();
         
         var output = [];
         
@@ -100,6 +106,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
     };
     
     ApiApplication.treeViewBranchFor = function(api, classFullName) {
+        staticContructor();
+        
         var friendlyName = classFullName.split(".");
         friendlyName = friendlyName[friendlyName.length - 1];
         
