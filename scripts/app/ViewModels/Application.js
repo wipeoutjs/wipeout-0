@@ -12,6 +12,10 @@ compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", functio
         });
     };
     
+    Application.prototype.onApplicationInitialized = function() {
+        this.appInit = true;
+    };
+    
     Application.prototype.route = function(query) {
         throw "Abstract method must be overridden";
     };

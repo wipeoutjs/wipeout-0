@@ -1,9 +1,9 @@
    
-<div class="leftNav leftNav-width" style="background-color: white">
+<div class="leftNav leftNav-width" style="background-color: white" id="leftNav">
     <div class="staticHeader-height"></div>
     <h2>How do I?</h2>
     
-    <wo.itemsControl itemSource="model().leftHandNav">
+    <wo.itemsControl itemSource="model().leftHandNav" id="articles">
         <template>
             <!-- ko itemsControl: null --><!-- /ko -->
         </template>
@@ -11,11 +11,10 @@
             <div class="list-group">
                 <wo.if condition="model().header &amp;&amp; model().header.visible()">
                     <template>
-                        <!--model().header.visible()-->
-                        <Wipeout.Docs.ViewModels.Components.RouteLink text="model().header.text" href="model().header.href" class="'list-group-item active'" />
+                        <Wipeout.Docs.ViewModels.Components.RouteLink text="model().header.text" href="model().header.href" class="'list-group-item active'" id="header" />
                     </template>
                 </wo.if>
-                <wo.itemsControl itemSource="model().items">
+                <wo.itemsControl itemSource="model().items" id="items">
                     <template>
                         <!-- ko itemsControl: null --><!-- /ko -->
                     </template>
