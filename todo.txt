@@ -1,21 +1,8 @@
 
-Debug code
 document async templates
-document move
-
-document custom filters on find
-document event priority
-
-$model filter on find
 
 bug, put &lt; in anonymous template
 bug, handle null template id better
-
-dataContext
-
-document user settings
-
-If, poke template
 
 changes:    woInvisible -> shareParentScope
             renderedChildren -> null
@@ -27,16 +14,9 @@ changes:    woInvisible -> shareParentScope
             move
             event priority
             registerDisposable -> registerDisposeCallback
-            
-document view.objectParser. note: JSON not avaliable in IE <= 7
-document 2 types of object.extend()
-document useVirtualCache
-document types of register disposable
-document visual.regesteredTags
-document custom find functions
-do a doc on disposal in general
 
-search on API page????
-
-property alieses
-class alieses
+Now:
+Last article
+TODOs
+search ranking
+Licence
