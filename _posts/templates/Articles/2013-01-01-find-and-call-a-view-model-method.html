@@ -1,24 +1,19 @@
-<h1>Cascading models</h1>
+<h1>Find and call</h1>
 
 <p>
-If the model property of a view model is not explicitly set, it recieves the mode of its parent.
+<code>$findAndCall(args)</code> is shorthand for <code>$call($find(args))</code>
 </p>
 
-    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'cascading-models-script-1'">
-        <code>&lt;wo.contentControl model="{ value: 'Hello wipeout!' }">
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>&lt;myViewModel model="'Hello wipeout!'">
     &lt;template>
         &lt;wo.contentControl>
             &lt;template>
-                Binding to a property on a cascaded model: &lt;span data-bind="text: model().value">&lt;/span>
+                &lt;button 
+                    data-bind="$findAndCall({$i: myViewModel}).dot('model').dot('submit').args(true)">
+                    Submit&lt;/button>
             &lt;/template>
         &lt;/wo.contentControl>
     &lt;/template>
-&lt;/wo.contentControl></code>
-    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
-
-    
-    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
-        <code>&lt;wo.view templateId="'cascading-models-script-1'" /></code>
-    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
-<br/>
-<br/>
+&lt;/myViewModel></code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>

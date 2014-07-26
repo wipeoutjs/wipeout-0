@@ -1,5 +1,114 @@
-<h1>Advanced events</h1>
+<h1>Find a View Model</h1>
 
-    <p>The event <a href="/wipeout-0/api.html?type=api&amp;className=wo.event&amp;functionName=register&amp;isStatic=false">register</a> method also accepts other arguments to control the flow of the event.
-        See the <a href="/wipeout-0/api.html?type=api&amp;className=wo.event&amp;functionName=register&amp;isStatic=false">API</a> for more details.
+    <p>You can find a view model with the <code>$find</code> api. The find api accepts many search term types which are customisable. For each find type you can
+    	either it's full name or its alias.
 </p>
+
+<h2>Search for a view model type</h2>
+
+<p>You can select an ancestor view model by passing a view model type into the find block.</p>
+
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>&lt;myViewModel model="'Hello wipeout!'">
+    &lt;template>
+        &lt;wo.contentControl myViewModelAncestor="$find(myViewModel)">
+            &lt;template>
+                &lt;span data-bind="text: myViewModelAncestor.model">&lt;/span>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/myViewModel></code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+<h2>Search for an ancestor</h2>
+
+<p>You can select an ancestor by passing a string into the find block. 
+	The string must be of the form 'parent', 'grandparent', 'greatgrandparent', 'greatgreatgrandparent', etc...</p>
+
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>&lt;myViewModel model="'Hello wipeout!'">
+    &lt;template>
+        &lt;wo.contentControl myViewModelAncestor="$find('parent')">
+            &lt;template>
+                &lt;span data-bind="text: myViewModelAncestor.model">&lt;/span>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/myViewModel></code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+<h2>Using more complex filters</h2>
+
+<p>You can pass a filters object into <code>$call</code> for a targeted search. </p>
+
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>&lt;myViewModel model="'Hello wipeout!'">
+    &lt;template>
+        &lt;wo.contentControl myViewModelAncestor="$find({$instanceof: myViewModel})">
+            &lt;template>
+                &lt;span data-bind="text: myViewModelAncestor.model">&lt;/span>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/myViewModel></code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Search type</th>
+			<th>Alias</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>$instanceof</td>
+			<td>$i</td>
+			<td>Find an object which is an <code>instanceof</code> the given search term. Is the same as passing a view model type into $find</td>
+		</tr>
+		<tr>
+			<td>$type</td>
+			<td>$t</td>
+			<td>An exact type match. Is the same as <code>currentViewModel.constructor === searchTerm</code>.</td>
+		</tr>
+		<tr>
+			<td>$ancestory</td>
+			<td>$a</td>
+			<td>Find the parent, grandparent ect... Is the same as passing a string into the $find() method.</td>
+		</tr>
+		<tr>
+			<td>$number</td>
+			<td>$n</td>
+			<td>Describes when to stop when a view model is found. For example, if <code>$n === 0</code>, return the first match.
+				If <code>$n === 1</code>, return the second match.</td>
+		</tr>
+		<tr>
+			<td>$model</td>
+			<td>$m</td>
+			<td>If set to true, signifies that we are looking for models, not view models.</td>
+		</tr>
+		<tr>
+			<td>anything else</td>
+			<td>none</td>
+			<td>Anything on the search object which is not prefixed with a $ will be treated as a property search. For instance
+			using <code>{ myProperty: "hello"}</code> will return the first view model where <code>myProperty === hello</code> .</td>
+		</tr>
+	</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

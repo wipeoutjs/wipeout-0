@@ -705,6 +705,10 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 href: buildHref({article: "find-a-view-model"}),
                 visible: ko.observable(true)
             }, {
+                text: "Custom $find filters",
+                href: buildHref({article: "custom-find-filters"}),
+                visible: ko.observable(true)
+            }, {
                 text: "Call a view model method",
                 href: buildHref({article: "call-a-view-model-method"}),
                 visible: ko.observable(true)
@@ -713,6 +717,13 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 href: buildHref({article: "find-and-call-a-view-model-method"}),
                 visible: ko.observable(true)
             }]
+        }, {
+            header: {
+                text: "Wipeout native view models",
+                href: buildHref({article: "wipeout-native-classes"}),
+                visible: ko.observable(true)
+            },
+            items: []
         }];
         
         this.flatList = [];
