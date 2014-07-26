@@ -196,7 +196,7 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
                 }
             });     
          
-        woApi = new Wipeout.Docs.Models.Components.ApiBuilder(wo, "wo").build();     
+        woApi = new Wipeout.Docs.Models.Components.ApiBuilder(wo, "wo").build();
     };
     
     ApiApplication.routableUrl = function(item) {
@@ -241,6 +241,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
         var api = modelPointer.className.indexOf("wipeout") === 0 ?
             wipeoutApi :
             (modelPointer.className.indexOf("wo") === 0 ? woApi : null);
+        
+        if(!api) return null;
         
         var _class = api.forClass(modelPointer.className);
         if(_class) {
@@ -515,8 +517,20 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 new articleLink("Call a view model method", "call-a-view-model-method"),
                 new articleLink("Find and call a view model method", "find-and-call-a-view-model-method")
         ]}, {        
-            header: new articleLink("Wipeout native view models", "wipeout-native-classes"),
+            header: new articleLink("Wipeout native classes", "wipeout-native-classes"),
             items: []
+        }, {        
+            header: new articleLink("Reserved Tags", "reserved-tags"),
+            items: []
+        }, {        
+            header: new articleLink("Wipeout namespaces", "wipeout-namespaces"),
+            items: []
+        }, {        
+            header: new articleLink("Overriding functionality (advanced)", "overriding-functionality"),
+            items: [
+                new articleLink("Global Overrides", "global-overrides"),
+                new articleLink("Local Overrides", "local-overrides")
+            ]
         }];
         
         this.flatList = [];
@@ -1643,7 +1657,7 @@ compiler.registerClass("Wipeout.Docs.Models.Pages.LandingPage", "Wipeout.Docs.Mo
 compiler.registerClass("Wipeout.Docs.ViewModels.ApiApplication", "Wipeout.Docs.ViewModels.Application", function() {
     
     function ApiApplication() {
-        this._super("Wipeout.Docs.ViewModels.ApiApplication", "/wipeout-0/api.html");
+        this._super("Wipeout.Docs.ViewModels.ApiApplication");
         
         this.registerDisposable(ko.computed(function() {
             var tmp;
@@ -1677,13 +1691,13 @@ compiler.registerClass("Wipeout.Docs.ViewModels.ApiApplication", "Wipeout.Docs.V
 
 compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", function() {
     
-    function Application(templateId, rootUrl) {
+    function Application(templateId) {
         if(this.constructor === Application) throw "Cannot create an instance of an abstract class";
         
         this._super(templateId);
                 
         var _this = this;
-        crossroads.addRoute(rootUrl + '{?query}', function(query){
+        crossroads.addRoute('/{site}/{page}{?query}', function(site, page, query){
             _this.route(query);
         });
     };
@@ -1723,7 +1737,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Doc
     function HowDoIApplication() {
         staticConstructor();
         
-        this._super("Wipeout.Docs.ViewModels.HowDoIApplication", "/wipeout-0/how-do-i.html");
+        this._super("Wipeout.Docs.ViewModels.HowDoIApplication");
         
         this.contentTemplate = ko.observable(wo.contentControl.getBlankTemplateId());
         

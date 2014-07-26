@@ -13,7 +13,7 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
                 }
             });     
          
-        woApi = new Wipeout.Docs.Models.Components.ApiBuilder(wo, "wo").build();     
+        woApi = new Wipeout.Docs.Models.Components.ApiBuilder(wo, "wo").build();
     };
     
     ApiApplication.routableUrl = function(item) {
@@ -58,6 +58,8 @@ compiler.registerClass("Wipeout.Docs.Models.ApiApplication", "wo.object", functi
         var api = modelPointer.className.indexOf("wipeout") === 0 ?
             wipeoutApi :
             (modelPointer.className.indexOf("wo") === 0 ? woApi : null);
+        
+        if(!api) return null;
         
         var _class = api.forClass(modelPointer.className);
         if(_class) {

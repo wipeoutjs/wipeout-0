@@ -13,7 +13,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Doc
     function HowDoIApplication() {
         staticConstructor();
         
-        this._super("Wipeout.Docs.ViewModels.HowDoIApplication", "/wipeout-0/how-do-i.html");
+        this._super("Wipeout.Docs.ViewModels.HowDoIApplication");
         
         this.contentTemplate = ko.observable(wo.contentControl.getBlankTemplateId());
         

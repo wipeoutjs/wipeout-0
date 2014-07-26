@@ -2,7 +2,7 @@
 compiler.registerClass("Wipeout.Docs.ViewModels.ApiApplication", "Wipeout.Docs.ViewModels.Application", function() {
     
     function ApiApplication() {
-        this._super("Wipeout.Docs.ViewModels.ApiApplication", "/wipeout-0/api.html");
+        this._super("Wipeout.Docs.ViewModels.ApiApplication");
         
         this.registerDisposable(ko.computed(function() {
             var tmp;

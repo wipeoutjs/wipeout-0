@@ -12,7 +12,7 @@ helloWipeout.rootApplication = wo.view.extend(function rootApplication() {
 });</code>
         </Wipeout.Docs.ViewModels.Components.CodeBlock>
 
-<p>Here, we are creating a view model class. The view model has to inherit from <Wipeout.Rl href="'/wipeout-0/how-do-i.html?type=api&amp;className=wo.view'" text="'wo.view'" /> or one of its derived classes. 
+<p>Here, we are creating a view model class. The view model has to inherit from <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.view'" text="'wo.view'" /> or one of its derived classes. 
     The call to <code>_super(...)</code> calls the constructor of the parent class, in this case wo.view. The constructor for a wo.view takes a template id as an argument
 </p>
 
@@ -26,7 +26,7 @@ helloWipeout.rootApplication = wo.view.extend(function rootApplication() {
 &lt;/script></code>
         </Wipeout.Docs.ViewModels.Components.CodeBlock>
 <p>The context or scope of the template is always going to be the view model, in this case a <code>helloWipeout.rootApplication</code> object. Because <code>helloWipeout.rootApplication</code> 
-    inherits from <Wipeout.Rl href="'/wipeout-0/how-do-i.html?type=api&amp;className=wo.view'" text="'wo.view'" />, it has a <code>model</code> proerty which is a 
+    inherits from <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.view'" text="'wo.view'" />, it has a <code>model</code> proerty which is a 
     <a href="http://knockoutjs.com/documentation/observables.html">ko.observable</a>. We are going to bind to the name property on the model.
 </p>
         <h3>Creating the application</h3>

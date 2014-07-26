@@ -125,8 +125,20 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
                 new articleLink("Call a view model method", "call-a-view-model-method"),
                 new articleLink("Find and call a view model method", "find-and-call-a-view-model-method")
         ]}, {        
-            header: new articleLink("Wipeout native view models", "wipeout-native-classes"),
+            header: new articleLink("Wipeout native classes", "wipeout-native-classes"),
             items: []
+        }, {        
+            header: new articleLink("Reserved Tags", "reserved-tags"),
+            items: []
+        }, {        
+            header: new articleLink("Wipeout namespaces", "wipeout-namespaces"),
+            items: []
+        }, {        
+            header: new articleLink("Overriding functionality (advanced)", "overriding-functionality"),
+            items: [
+                new articleLink("Global Overrides", "global-overrides"),
+                new articleLink("Local Overrides", "local-overrides")
+            ]
         }];
         
         this.flatList = [];

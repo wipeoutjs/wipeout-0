@@ -1,13 +1,13 @@
 
 compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", function() {
     
-    function Application(templateId, rootUrl) {
+    function Application(templateId) {
         if(this.constructor === Application) throw "Cannot create an instance of an abstract class";
         
         this._super(templateId);
                 
         var _this = this;
-        crossroads.addRoute(rootUrl + '{?query}', function(query){
+        crossroads.addRoute('/{site}/{page}{?query}', function(site, page, query){
             _this.route(query);
         });
     };
