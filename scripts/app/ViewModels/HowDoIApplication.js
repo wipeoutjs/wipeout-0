@@ -6,7 +6,8 @@ compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Doc
         if(apiTemplateId)
             return;
         
-        apiTemplateId = wo.contentControl.createAnonymousTemplate('<Wipeout.Docs.ViewModels.Components.DynamicRender model="$find(Wipeout.Docs.ViewModels.HowDoIApplication).apiPlaceholder" />');
+        apiTemplateId = wo.contentControl.createAnonymousTemplate('<h1 data-bind="text: $find(Wipeout.Docs.ViewModels.HowDoIApplication).apiPlaceholderName"></h1>\
+<Wipeout.Docs.ViewModels.Components.DynamicRender model="$find(Wipeout.Docs.ViewModels.HowDoIApplication).apiPlaceholder" />');
     };
     
     function HowDoIApplication() {
@@ -15,6 +16,9 @@ compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Doc
         this._super("Wipeout.Docs.ViewModels.HowDoIApplication", "/wipeout-0/how-do-i.html");
         
         this.contentTemplate = ko.observable(wo.contentControl.getBlankTemplateId());
+        
+        this.apiPlaceholder = ko.observable();
+        this.apiPlaceholderName = ko.observable();
         
         var placeholder = document.getElementById("headerText");
         var textbox = wo.html.createElement('<input style="margin-top: 20px;" type="text" placeholder="Search Docs..."></input>');
@@ -35,8 +39,9 @@ compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Doc
         if(query.article) {
             this.openArticle(query.article);
         } else if (query.type === "api") {
-            this.apiPlaceholder = Wipeout.Docs.Models.ApiApplication.getModel(query);
-            if(this.apiPlaceholder) {
+            this.apiPlaceholder(Wipeout.Docs.Models.ApiApplication.getModel(query));
+            if(this.apiPlaceholder()) {
+                this.apiPlaceholderName(this.apiPlaceholder() instanceof Wipeout.Docs.Models.Descriptions.Class ? this.apiPlaceholder().classFullName : "")
                 this.contentTemplate(apiTemplateId);
             }
         } else {
@@ -82,10 +87,7 @@ compiler.registerClass("Wipeout.Docs.ViewModels.HowDoIApplication", "Wipeout.Doc
             }, 500);
         };
         
-       // if(this.appInit)
-         //   _do.call(this);
-        //else
-            setTimeout(_do.bind(this), 100);
+        setTimeout(_do.bind(this), 100);
     };
     
     return HowDoIApplication;

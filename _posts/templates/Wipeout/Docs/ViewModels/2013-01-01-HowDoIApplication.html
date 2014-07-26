@@ -11,7 +11,7 @@
             <div class="list-group">
                 <wo.if condition="model().header &amp;&amp; model().header.visible()">
                     <template>
-                        <Wipeout.Docs.ViewModels.Components.RouteLink text="model().header.text" href="model().header.href" class="'list-group-item active'" id="header" />
+                        <Wipeout.Rl text="model().header.text" href="model().header.href" class="'list-group-item active'" id="header" />
                     </template>
                 </wo.if>
                 <wo.itemsControl itemSource="model().items" id="items">
@@ -21,7 +21,7 @@
                     <itemTemplate>
                         <wo.if condition="model().visible">
                             <template>
-                                <Wipeout.Docs.ViewModels.Components.RouteLink text="model().text" href="model().href" class="'list-group-item'" style="'padding-left: 30px'" />
+                                <Wipeout.Rl text="model().text" href="model().href" class="'list-group-item'" style="'padding-left: 30px'" />
                             </template>
                         </wo.if>
                     </itemTemplate>
