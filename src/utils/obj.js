@@ -162,7 +162,7 @@ Class("wipeout.utils.obj", function () {
     var getObject = function(constructorString, context) {
         ///<summary>Get an object from string</summary>
         ///<param name="constructorString" type="String">A pointer to the object to create</param>
-        ///<param name="context" type="String">The root context</param>
+        ///<param name="context" type="Any" optional="true">The root context. Defaults to window</param>
         ///<returns type="Any">The object</returns>
         if(!context) context = window;
         
@@ -179,7 +179,7 @@ Class("wipeout.utils.obj", function () {
     var createObject = function(constructorString, context) {
         ///<summary>Create an object from string</summary>
         ///<param name="constructorString" type="String">A pointer to the object to create</param>
-        ///<param name="context" type="String">The root context</param>
+        ///<param name="context" type="Any" optional="true">The root context. Defaults to window</param>
         ///<returns type="Any">The created object</returns>
         
         var constructor = getObject(constructorString, context);
@@ -224,7 +224,7 @@ Class("wipeout.utils.obj", function () {
         return Math.floor(Math.random() * max);
     };
     
-    var obj = function() { };
+    var obj = function obj() { };
     obj.ajax = ajax;
     obj.parseBool = parseBool;
     obj.trimToLower = trimToLower;

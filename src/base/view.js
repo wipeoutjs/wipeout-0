@@ -3,7 +3,7 @@ Class("wipeout.base.view", function () {
 
     var modelRoutedEventKey = "wipeout.base.view.modelRoutedEvents";
     
-    var view = wipeout.base.visual.extend(function (templateId, model /*optional*/) {        
+    var view = wipeout.base.visual.extend(function view (templateId, model /*optional*/) {        
         ///<summary>Extends on the visual class to provide expected MVVM functionality, such as a model and bindings</summary>  
         ///<param name="templateId" type="String" optional="true">An initial template id</param>
         ///<param name="model" type="Any" optional="true">An initial model</param>
@@ -27,7 +27,7 @@ Class("wipeout.base.view", function () {
                                 
         ///<Summary type="Object">Placeholder to store binding disposal objects</Summary>
         this.__woBag.bindings = {};
-    }, "view"); 
+    }); 
     
     view.setObservable = function(obj, property, value) {
         ///<summary>Set an observable or non observable property</summary>

@@ -1,25 +1,27 @@
 
 Class("wipeout.template.engine", function () {
     
-    var engine = function() {
+    var engine = function engine() {
         ///<summary>The wipeout template engine, inherits from ko.templateEngine</summary>
     };
     engine.prototype = new ko.templateEngine();
     
     var $find = /\$find/;
     var $call = /\$call/;
+    var $findAndCall = /\$findAndCall/;
     engine.createJavaScriptEvaluatorFunction = function(script) {
         ///<summary>Modify a block of script so that it's running context is bindingContext.$data first and biningContext second</summary>
         ///<param name="script" type="String">The script to modify</param>
         ///<returns type="Function">The compiled script</returns>
         
-        var f = $find.test(script);
-        var find = f ? "\n\tvar $find = wipeout.utils.find.create(bindingContext);" : "";
+        var find = $find.test(script) ? "\n\tvar $find = wipeout.utils.find.create(bindingContext);" : "";
         
-        // reuse existing $find if possible
-        var call = $call.test(script) ? "\n\tvar $call = wipeout.utils.call.create(" + (f ? "$find" : "wipeout.utils.find.create(bindingContext)") + ");" : "";
+        // reuse existing $find
+        var findAndCall = $findAndCall.test(script) ? "\n\tvar $findAndCall = wipeout.utils.findAndCall.create($find);" : "";
         
-        return new Function("bindingContext", "with(bindingContext) {" + find + call + "\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
+        var call = $call.test(script) ? "\n\tvar $call = wipeout.utils.call.create();" : "";
+        
+        return new Function("bindingContext", "with(bindingContext) {" + find + findAndCall + call + "\n\twith($data) {\n\t\treturn " + script + ";\n\t}\n}");
     }
     
     engine.createJavaScriptEvaluatorBlock = function(script) {

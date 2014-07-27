@@ -8,7 +8,7 @@ Class("wipeout.base.itemsControl", function () {
         deafaultTemplateId = wipeout.base.contentControl.createAnonymousTemplate("<div data-bind='itemsControl: null'></div>");
     };
     
-    var itemsControl = wipeout.base.contentControl.extend(function (templateId, itemTemplateId, model) {
+    var itemsControl = wipeout.base.contentControl.extend(function itemsControl(templateId, itemTemplateId, model) {
         ///<summary>Bind a list of models (itemSource) to a list of view models (items) and render accordingly</summary>
         ///<param name="templateId" type="String" optional="true">The template id. If not set, defaults to a div to render items</param>
         ///<param name="itemTemplateId" type="String" optional="true">The initial template id for each item</param>
@@ -51,7 +51,7 @@ Class("wipeout.base.itemsControl", function () {
         this.registerDisposable(d2);
         
         this.registerRoutedEvent(itemsControl.removeItem, this._removeItem, this);
-    }, "itemsControl");
+    });
     
     itemsControl._subscribeV2 = function() {
         ///<summary>Bind items to itemSource for knockout v2. Context must be an itemsControl</summary>

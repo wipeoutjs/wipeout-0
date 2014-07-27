@@ -1,7 +1,7 @@
 
 Class("wipeout.base.object", function () {
     
-    var object = function () {
+    var object = function object() {
         ///<summary>The object class is the base class for all wipeout objects. It has base functionality for inheritance and parent methods</summary>        
     };
     
@@ -99,10 +99,9 @@ Class("wipeout.base.object", function () {
     };
     
     var validFunctionCharacters = /^[a-zA-Z_][a-zA-Z_0-9]*$/;
-    object.extend = function (childClass, className/* optional */) {
+    object.extend = function (childClass) {
         ///<summary>Use prototype inheritance to inherit from this class. Supports "instanceof" checks</summary>
-        ///<param name="childClass" type="Function" optional="false">The constructor of a class to create</param>
-        ///<param name="className" type="String" optional="true">The name of the class for debugger console purposes</param>
+        ///<param name="childClass" type="Function" optional="false">The constructor of a class to create. Name the constructor function to get better debugger information</param>
         ///<returns type="Function">The newly created class</returns>
         
         // if the input is a lonely constructor, convert it into the object format
@@ -132,24 +131,10 @@ Class("wipeout.base.object", function () {
         for (var p in this)
             if (this.hasOwnProperty(p) && this[p] && this[p].constructor === Function && this[p] !== object.clearVirtualCache && childClass.constructor[p] === undefined)
                 childClass.constructor[p] = this[p];
- 
-        // use eval so that browser debugger will get class name
-        if(className) {
-            if(!validFunctionCharacters.test(className)) {
-                throw "Invalid class name. The class name is for debug purposes and can contain alphanumeric characters only";
-            }
-            
-            // or rather, YUI doesn't like eval, use new function
-            new Function("childClass", "parentClass", "\
-            function " + className + "() { this.constructor = childClass; }\
-            " + className + ".prototype = parentClass.prototype;\
-            childClass.prototype = new " + className + "();")(childClass.constructor, this);
-            childClass.constructor.__woName = className;
-        } else {
-            var prototypeTracker = function() { this.constructor = childClass.constructor; }     
-            prototypeTracker.prototype = this.prototype;
-            childClass.constructor.prototype = new prototypeTracker();
-        }
+         
+        var prototypeTracker = function() { this.constructor = childClass.constructor; }     
+        prototypeTracker.prototype = this.prototype;
+        childClass.constructor.prototype = new prototypeTracker();
         
         for(var i in childClass) {
             if(i === "constructor") continue;

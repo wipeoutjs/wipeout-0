@@ -1,7 +1,7 @@
 
 Binding("wipeout", true, function () {
     
-    var _wipeout = wipeout.bindings.render.extend(function(element, type, allBindingsAccessor, viewModel, bindingContext) {  
+    var _wipeout = wipeout.bindings.render.extend(function wipeoutBinding(element, type, allBindingsAccessor, viewModel, bindingContext) {  
         ///<summary>Initialize the render binding</summary> 
         ///<param name="element" type="HTMLElement" optional="false">The to bind to</param>
         ///<param name="type" type="Function" optional="false">The type of the view model to render</param>
@@ -29,7 +29,7 @@ Binding("wipeout", true, function () {
         this.render = function() { throw "Cannont render this binding a second time, use the render binding instead"; };
 
         this.renderedView.onApplicationInitialized();
-    }, "wipeout");
+    });
     
     _wipeout.prototype.dispose = function() {
         ///<summary>Dispose of this binding</summary> 

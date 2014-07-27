@@ -4,7 +4,7 @@ wipeout.base = wipeout.base || {};
 
 Class("wipeout.base.eventRegistration", function () {
     
-    return wipeout.base.disposable.extend(function(callback, context, dispose) {
+    return wipeout.base.disposable.extend(function eventRegistration(callback, context, dispose) {
         ///<summary>On object containing event registration details</summary>
         ///<param name="callback" type="Any" optional="false">The event logic</param>
         ///<param name="context" type="Any" optional="true">The context of the event logic</param>
@@ -17,12 +17,12 @@ Class("wipeout.base.eventRegistration", function () {
         
         ///<Summary type="Any">The context to usse with the callback when the event is triggered</Summary>
         this.context = context;                
-    }, "eventRegistration");
+    });
 });
 
 Class("wipeout.base.event", function () {
     
-    var event = function() {
+    var event = function event() {
         ///<summary>Defines a new event with register and trigger functinality</summary>
         
         // allow for non use of the new key word

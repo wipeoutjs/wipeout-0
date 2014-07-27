@@ -77,7 +77,7 @@ testUtils.testWithUtils("unRender", null, false, function(methods, classes, subj
     wipeout.utils.domData.set(element, wipeout.bindings.wipeout.utils.wipeoutKey, {}); 
     
     var val = {
-        onUnrender: methods.method(),
+        onUnrendered: methods.method(),
         __woBag: {
             rootHtmlElement: element
         },

@@ -1,6 +1,6 @@
 Class("wipeout.profile.highlightVM", function () { 
     
-    var highlightVM = wipeout.base.object.extend(function(vm, cssClass) {
+    var highlightVM = wipeout.base.object.extend(function highlightVM(vm, cssClass) {
         ///<summary>Highlight all of the nodes in a view model.</summary>
         ///<param name="vm" type="wo.view" optional="false">The view model to highlight</param>
         ///<param name="cssClass" type="String" optional="false">The class to use to highlight it</param>
@@ -98,7 +98,7 @@ Class("wipeout.profile.highlighter", function () {
         ///<summary>Get one of the 5 css classes belonging to this object. Classes are chosen sequentially.</summary>
         ///<returns type="String">The class</returns>
         
-        if(this.index >= this.styles.length)
+        if(this.index >= this.styles.length - 1)
             this.index = 0;
         else
             this.index++;

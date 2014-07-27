@@ -1,30 +1,24 @@
 Class("wipeout.utils.call", function () {
     
-    var call = wipeout.base.object.extend(function(find) {
-        ///<summary>Extends find functionality to call functions with the correct context and custom arguments</summary>
+    var call = wipeout.base.object.extend(function call() {
+        ///<summary>Calls a function with the correct scope</summary>
         ///<param name="find" type="wo.find" optional="false">The find functionality</param>
         
         this._super();
-
-        ///<Summary type="wo.find">The worker used to find the root object</Summary>
-        this.find = find;
-    }, "call");
+    });
     
-    call.prototype.call = function(searchTermOrFilters, filters) {
-        ///<summary>Find an item given a search term and filters. Call a method with it's dot(...) method and pass in custom argument with it's arg(...) method</summary>
-        ///<param name="searchTermOrFilters" type="Any" optional="false">Search term or filters to be passed to find</param>
-        ///<param name="filters" type="Object" optional="true">Filters to be passed to find</param>
+    call.prototype.call = function(rootObject) {
+        ///<summary>Call a method with on the root object with dot(...) method and pass in custom argument with it's arg(...) method</summary>
+        ///<param name="rootObject" type="Any" optional="false">The object to begin the find from</param>
         ///<returns type="Object">An item to create a function with the correct context and custom arguments</returns>
-        
-        var obj = this.find(searchTermOrFilters, filters);
 
-        if(!obj)
+        if(!rootObject)
             throw "Could not find an object to call function on.";
         
         var dots = [];
         var args = null;
         var output = function() {
-            var current = obj;
+            var current = rootObject;
             var currentFunction = null;
             
             if(dots.length > 0) {            
@@ -41,10 +35,10 @@ Class("wipeout.utils.call", function () {
                 
                 currentFunction = current[dots[i]];
             } else {
-                if(obj.constructor !== Function)
-                    throw "Cannot call an object like a functino";
+                if(rootObject.constructor !== Function)
+                    throw "Cannot call an object like a function";
                     
-                currentFunction = obj;
+                currentFunction = rootObject;
             }
             
             if(args) {
@@ -69,15 +63,14 @@ Class("wipeout.utils.call", function () {
         return output;
     };
     
-    call.create = function(find) {
+    call.create = function() {
         ///<summary>Get a function wich points directly to (new wo.call(..)).call(...)</summary>
-        ///<param name="find" type="wo.find" optional="false">The find functionality</param>
         ///<returns type="Function">The call function</returns>        
         
-        var f = new wipeout.utils.call(find);
+        var f = new wipeout.utils.call();
 
-        return function(searchTerm, filters) {
-            return f.call(searchTerm, filters);
+        return function(rootObject) {
+            return f.call(rootObject);
         };
     };
     

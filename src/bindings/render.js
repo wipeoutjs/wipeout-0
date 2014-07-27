@@ -1,6 +1,6 @@
 Binding("render", true, function () {
     
-    var render = wipeout.bindings.bindingBase.extend(function(element, value, allBindingsAccessor, bindingContext) { 
+    var render = wipeout.bindings.bindingBase.extend(function render(element, value, allBindingsAccessor, bindingContext) { 
         ///<summary>A knockout binding to render a wo.view</summary>
         ///<param name="element" type="HTMLElement" optional="false">The to bind to</param>
         ///<param name="value" type="wo.view" optional="false">The content to render</param>
@@ -31,7 +31,7 @@ Binding("render", true, function () {
                 }
             }, this);
         }
-    }, "render");
+    });
     
     render.prototype.moved = function(oldParentElement, newParentElement) {
         ///<summary>Perform actions after the element that this binding is on has moved</summary>
@@ -99,7 +99,7 @@ Binding("render", true, function () {
         if(!this.value) return;
 
         this.unTemplate();
-        this.value.onUnrender();
+        this.value.onUnrendered();
         if(this.value.__woBag.rootHtmlElement) {
             // disassociate the visual from its root element and empty the root element
             wipeout.utils.domData.set(this.value.__woBag.rootHtmlElement, wipeout.bindings.wipeout.utils.wipeoutKey, undefined); 

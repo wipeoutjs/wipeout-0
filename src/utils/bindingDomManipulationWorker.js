@@ -1,6 +1,6 @@
 Class("wipeout.utils.bindingDomManipulationWorker", function () { 
     
-    var bindingDomManipulationWorker = wipeout.utils.domManipulationWorkerBase.extend(function() {   
+    var bindingDomManipulationWorker = wipeout.utils.domManipulationWorkerBase.extend(function bindingDomManipulationWorker() {   
         ///<summary>Cleanup wipeout state using a list of registered bindings. This class for legacy browsers which do not support mutation observers</summary>
         
         this._super();

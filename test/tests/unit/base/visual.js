@@ -399,6 +399,11 @@ testUtils.testWithUtils("registerRoutedEvent", "new event", false, function(meth
     strictEqual(actual.dispose.constructor, Function);
 });
 
+testUtils.testWithUtils("triggerRoutedEvent", "no test here. see integration tests instead", false, function(methods, classes, subject, invoker) {
+    // arrange
+    ok(true);
+});
+
 testUtils.testWithUtils("getDefaultTemplateId", null, true, function(methods, classes, subject, invoker) {
     // arrange    
     // act

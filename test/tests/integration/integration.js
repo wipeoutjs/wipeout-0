@@ -89,7 +89,7 @@ test("call", function() {
     
     application.template('<wo.contentControl id="content">\
     <template>\
-        <button id="myButton" data-bind="click: $call({ id: \'' + application.id + '\' }).dot(\'myVal\').dot(\'myFunction\').args(\'aaa\')">\
+        <button id="myButton" data-bind="click: $call($parents[0]).dot(\'myVal\').dot(\'myFunction\').args(\'aaa\')">\
         </button>\
     </template>\
 </wo.contentControl>');    
@@ -117,7 +117,64 @@ test("call with args", function() {
     
     application.template('<wo.contentControl id="content">\
     <template>\
-        <button id="myButton" data-bind="click: $call({ id: \'' + application.id + '\' }).dot(\'myFunction\').args(' + arg1 + ', ' + arg2 + ')">\
+        <button id="myButton" data-bind="click: $call($parents[0]).dot(\'myFunction\').args(' + arg1 + ', ' + arg2 + ')">\
+        </button>\
+    </template>\
+</wo.contentControl>');    
+    
+    // act
+    document.getElementById('myButton').click();
+    
+    // assert
+    mocks.verifyAllExpectations();
+});
+
+test("findAndCall", function() {
+    
+    // arrange        
+    application.id = "ASDASDASDSADASD";
+    var mocks = new testUtils.methodMock();
+    application.myVal = ko.observable({
+        myFunction: mocks.customMethod(function() {
+            strictEqual(this, application.myVal());
+            
+            strictEqual(arguments[0], "aaa");
+            strictEqual(arguments[1], application.templateItems.content);
+            ok(arguments[2]);
+        })
+    });
+    
+    application.template('<wo.contentControl id="content">\
+    <template>\
+        <button id="myButton" data-bind="click: $findAndCall({ id: \'' + application.id + '\' }).dot(\'myVal\').dot(\'myFunction\').args(\'aaa\')">\
+        </button>\
+    </template>\
+</wo.contentControl>');    
+    
+    // act
+    document.getElementById('myButton').click();
+    
+    // assert
+    mocks.verifyAllExpectations();
+});
+
+test("findAndCall with args", function() {
+    
+    // arrange
+    var arg1 = 234234234, arg2 = 4353453;
+        
+    application.id = "ASDASDASDSADASD";
+    var mocks = new testUtils.methodMock();
+    application.myFunction = mocks.customMethod(function() {
+        strictEqual(arguments[0], arg1);
+        strictEqual(arguments[1], arg2);
+        strictEqual(arguments[2], application.templateItems.content);
+        ok(arguments[3]);
+    });
+    
+    application.template('<wo.contentControl id="content">\
+    <template>\
+        <button id="myButton" data-bind="click: $findAndCall({ id: \'' + application.id + '\' }).dot(\'myFunction\').args(' + arg1 + ', ' + arg2 + ')">\
         </button>\
     </template>\
 </wo.contentControl>');    
@@ -315,6 +372,24 @@ test("routed event, from model", function() {
     // assert
     ok(triggered2);
     ok(triggered1);
+});
+
+test("routed event, to model", function() {
+    // arrange
+    var model = new wo.routedEventModel();
+    var aRoutedEvent = new wo.routedEvent();
+    var open = "<wo.contentControl id='item'><template>", close = "</template></wo.contentControl>";
+    application.template(open + open + open + "<div>hi</div>" + close + close + close);
+    application.registerRoutedEvent(aRoutedEvent, function() { this.__caught = true; }, application);
+    model.registerRoutedEvent(aRoutedEvent, function() { this.__caught = true; }, model);
+    application.templateItems.item.model(model);
+    
+    // act
+    application.templateItems.item.templateItems.item.templateItems.item.triggerRoutedEvent(aRoutedEvent, {});
+    
+    // assert
+    ok(application.__caught);
+    ok(model.__caught);
 });
 
 test("basic knockout binding, non observable", function() {
