@@ -1,0 +1,27 @@
+<h1>The wipeout binding</h1>
+
+<p>The wipeout bindig is the root of a wipeout application and will only be used once. It accepts one parameter which is the root view model type.</p>
+    
+Create a view model type
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>
+window.rootApplication = wo.contentControl.extend(function rootApplication() {
+    this._super();
+                
+    this.template("Hello Wipeout!");
+});</code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+Create an application placeholder
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>&lt;div data-bind="wipeout: rootApplication" id="root">&lt;/div></code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+Render the application
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <code>var root = document.getElementById("root");
+ko.applyBindings({}, root);</code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+<p>There is a full example of this application 
+    <Wipeout.Rl text="'here'" href="'/wipeout-0/how-do-i.html?article=get-started-with-hello-world'" />.</p>

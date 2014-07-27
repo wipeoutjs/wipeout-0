@@ -1,0 +1,14 @@
+<h1>The wipeout OO framework</h1>
+
+<p>
+Wipeout leverages a simple, lightweight <a href="http://en.wikipedia.org/wiki/Object-oriented_programming">object oriented model</a>
+which enriches javascript code while not restricting it. This means you can use it to your advantage or you can hack it to bits (Disclaimer, don't hack it to bits)
+without breaking anything you wouldn't expect to break in javascript.</p>
+<p>There are some things to note about the wipeout inheritance model.
+<ul>
+    <li>Javascript is a prototypical language and so it is <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Inheritance_and_the_prototype_chain">prototype inheritance</a> which is used.</li>
+    <li>Wipeout does not embrace the the <a href="http://javascript.crockford.com/private.html">private/privileged</a> js model. There are no private members, however properties which begin with an underscore should be treated as such</li>
+    <li>Inheritance is build to support <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/instanceof">instanceof</a> checks.</li>
+    <li>Rember that setting the property on an object directly rather than it's prototype will override the entier inheritance chain.</li>
+</ul>
+</p>

@@ -1,0 +1,30 @@
+<h1>An alternate extend syntax</h1>
+
+    <p>There is another way to define a class using the 
+        <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.object&amp;functionName=extend&amp;isStatic=true'" text="'extend'" /> method.</p>
+
+    <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <code>var MyClass = wo.object.extend({
+    constructor: function MyClass(balance) {
+        this._super();
+    },
+    myMethod: function() {
+    },
+    statics: {
+        myStaticMethod: function() {
+        }
+    }
+});</code>
+    </Wipeout.Docs.ViewModels.Components.CodeBlock>
+<p>Using this syntax
+    <ul>
+        <li>The <code>constructor</code> property will be the class constructor
+        </li>
+        <li>Other items in the class definition will be appended to the class prototype
+        </li>
+        <li>Items in the <code>statics</code> object will be appended to the constructor
+        </li>
+</ul>
+Note: do not define instance (non static) properties in the object passed into the extend method. 
+They will be appended to the prototype, effectively making them static. Put instance definitions inside the constructor function instead
+    </p>

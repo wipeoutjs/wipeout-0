@@ -1,0 +1,22 @@
+<h1>Call a view model method</h1>
+
+<p>
+Using knockout event bindings always sets the context of your functions to the current scope. However, when using ancestors function, 
+it is generally more useful to have ancestor obect as the scope. The $call API will do this.
+<br />
+You simply spell out what you want to do rather than using the regular js syntax. For example, in order to call the <code>submit</code>
+function on the <code>model</code> of the <code>parent</code> view model, passing in the value of <code>true</code> , you would use:
+<br />
+<code>$call($parent).dot("model").dot("submit").args(true)</code>.
+<br />
+This method will ensure that the context of the <code>submit</code> function will be the <code>model</code> object. It will pass in the specified args as well as
+the expected args (such as the event args) passed in by knockout.
+</p>
+
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>&lt;wo.contentControl>
+    &lt;template>
+        &lt;button data-bind="click: $call($parent).dot('model').dot('submit').args(true)">Submit&lt;/button>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>

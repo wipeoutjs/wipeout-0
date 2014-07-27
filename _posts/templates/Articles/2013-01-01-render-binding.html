@@ -1,0 +1,25 @@
+<h1>Render binding</h1>
+
+<p>The render binding is used internally in wipeout to render view models, and can also be used in application development</p>
+
+<Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+    <code>window.renderVm = wo.contentControl.extend(function renderVm() {
+    this._super();
+        
+    this.innerItem = new wo.contentControl();
+    this.innerItem.template("Hello wipeout!");
+});</code>
+</Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+
+<Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'render-binding-script-1'">
+    <code>&lt;renderVm>
+    &lt;template>
+        &lt;div data-bind="render: innerItem">&lt;/div>
+    &lt;/template>
+&lt;/renderVm></code>
+</Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'render-binding-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock>   

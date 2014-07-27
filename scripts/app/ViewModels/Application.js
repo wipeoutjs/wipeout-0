@@ -1,47 +1,33 @@
 
 compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", function() {
     
-    function application() {
-        this._super("Wipeout.Docs.ViewModels.Application");
+    function Application(templateId) {
+        if(this.constructor === Application) throw "Cannot create an instance of an abstract class";
+        
+        this._super(templateId);
                 
         var _this = this;
-        crossroads.addRoute('/wipeout/api.html{?query}', function(query){
+        crossroads.addRoute('/{site}/{page}{?query}', function(site, page, query){
             _this.route(query);
         });
-        
-        this.registerDisposable(ko.computed(function() {
-            var tmp;
-            if( (tmp = this.model()) &&
-                (tmp = tmp.content()))
-                    $("#headerText").html(tmp.title);
-        }, this));
     };
     
-    application.prototype.routeTo = function(item) {
-        history.pushState(null, '', Wipeout.Docs.Models.Application.routableUrl(item));
-        crossroads.parse(location.pathname + location.search);
+    Application.prototype.onApplicationInitialized = function() {
+        this.appInit = true;
     };
     
-    application.prototype.route = function(query) { 
-        var temp;
-        if (history.state && history.state.owner === this.id)
-            return;
-        
-        if(temp = Wipeout.Docs.Models.Application.getModel(query))
-            this.model().content(temp);
+    Application.prototype.route = function(query) {
+        throw "Abstract method must be overridden";
     };
     
-    application.prototype.onRendered = function() {
+    Application.prototype.onRendered = function() {
         this._super.apply(this, arguments);
         
-        if(this.templateItems.content)
+        if (this.templateItems.content)
             this.registerDisposable(this.templateItems.content.model.subscribe(function() {                
                 window.scrollTo(0,0);
             }));
-        
-        //TODO: this
-        this.templateItems.treeView.select();
     };
     
-    return application;
+    return Application;
 });

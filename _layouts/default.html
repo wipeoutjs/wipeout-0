@@ -2,9 +2,9 @@
 <html>
     <head>
         <title>{{ site.name }}</title>        
-        <link rel="stylesheet" type="text/css" href="/wipeout/content/style/pretify/prettify.css">
-        <link rel="stylesheet" type="text/css" href="/wipeout/content/style/bootstrap/css/bootstrap-lumen.css">        
-        <link rel="stylesheet" type="text/css" href="/wipeout/content/style/style.css">
+        <link rel="stylesheet" type="text/css" href="/wipeout-0/content/style/pretify/prettify.css">
+        <link rel="stylesheet" type="text/css" href="/wipeout-0/content/style/bootstrap/css/bootstrap-lumen.css">        
+        <link rel="stylesheet" type="text/css" href="/wipeout-0/content/style/style.css">
     </head>
     <body>
                 
@@ -16,26 +16,31 @@
                     </a>
                     <h1 style="float: left" id="headerText"></h1>                    
                     <ul class="wo-navbar-right">
-                        <li><a href="/wipeout/api.html"><button>Documentation</button></a></li>
-                        <li><a href="/wipeout/api.html"><button>How do I?</button></a></li>
-                        <li><a href="/wipeout/download.html"><button>Download</button></a></li>
-                        <li><a target="_blank" href="http://github.com/ShaneGH/wipeout"><button>GitHub</button></a></li>
+                        <li><a href="/wipeout-0/api.html"><button>Documentation</button></a></li>
+                        <li><a href="/wipeout-0/how-do-i.html"><button>How do I?</button></a></li>
+                        <li><a href="/wipeout-0/download.html"><button>Download</button></a></li>
+                        <li><a target="_blank" href="http://github.com/wipeoutjs/wipeout-0"><button>GitHub</button></a></li>
                     </ul>
                 </div>
             </div>
         </div>
-        
-        <script type="text/javascript" src="/wipeout/scripts/lib/jquery-1.10.2.min.js"></script>
-        <script type="text/javascript" src="/wipeout/scripts/lib/signals-1.0.0.min.js"></script>
-        <script type="text/javascript" src="/wipeout/scripts/lib/crossroads-0.12.0.min.js"></script>
-        <script type="text/javascript" src="/wipeout/scripts/lib/knockout-2.3.0.debug.js"></script>
-        <script type="text/javascript" src="/wipeout/scripts/lib/wipeout-0.3.1.debug.js"></script>
-        
         <div>
             {{ content }}
         </div>
-                
-        <script type="text/javascript" src="scripts/lib/prettify.js"></script>
         
+        <script type="text/javascript" src="/wipeout-0/scripts/lib/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="/wipeout-0/scripts/lib/signals-1.0.0.min.js"></script>
+        <script type="text/javascript" src="/wipeout-0/scripts/lib/crossroads-0.12.0.min.js"></script>
+        <script type="text/javascript" src="/wipeout-0/scripts/lib/knockout-2.3.0.debug.js"></script>
+        <script type="text/javascript" src="/wipeout-0/scripts/lib/wipeout-0.3.1.debug.js"></script>
+        <script type="text/javascript" src="/wipeout-0/scripts/lib/prettify.js"></script>
+        
+        <script type="text/javascript" src="scripts/build/wipeoutDocs.debug.js"></script>
+        {{ page.sections['scripts'] }}
+        
+        <script type="text/javascript">
+            if (window.bootstrapApplication)
+                bootstrapApplication();
+        </script>
     </body>
 </html>

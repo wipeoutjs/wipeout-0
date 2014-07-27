@@ -1,0 +1,26 @@
+<h1>List item lifecycle</h1>
+
+<p>
+With a custom itemsControl you can control
+    <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.itemsControl&amp;functionName=onItemRendered&amp;isStatic=false'" text="'what happens when list items are added'" />
+    and 
+    <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.itemsControl&amp;functionName=onItemDeleted&amp;isStatic=false'" text="'what happens when list items are removed'" />.
+</p>
+    
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>var myItemsControl = wo.itemsControl.extend({
+    constructor: function myItemsControl() {
+        this._super();
+    },
+    onItemRendered: function(item) {
+        this._super(item);
+        
+        // do initialization logic here
+    },
+    onItemDeleted: function(item) {
+        this._super(item);
+        
+        // do cleanup logic here
+    }
+});</code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>

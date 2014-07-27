@@ -1,0 +1,21 @@
+<h1>Templating a wo.view</h1>
+
+<p>
+    In MVVM application design the view model layer is always necessary, but not always useful. This is generally the case when there is no view logic (dom manipulation) to be done and in 
+    wipeout, is generally the case when you want to template a model or sub model without the overhead of creating a new view model class.
+    <br/>
+    If this is the case you can template a wo.view directly.
+</p>
+
+
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>&lt;wo.contentControl model="{title: 'Hello wipeout', subModel: { ... }}">
+    &lt;template>
+        &lt;wo.view model="$parent.model().subModel" templateId="'myTemplateId'" />
+    &lt;/template>
+&lt;/wo.contentControl></code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+<p>Notice the single quotes surrounding the template id property. Anything defined in a property on a view model or a "data-bind" property on a html element is compiled into javascript, so the single quotes denote a string.</p>
+
+<p>Using this method, you can re-template any view model at any time by setting it's template id.</p>

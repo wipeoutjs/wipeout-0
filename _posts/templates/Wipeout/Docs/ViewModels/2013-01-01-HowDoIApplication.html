@@ -1,0 +1,37 @@
+   
+<div class="leftNav leftNav-width" style="background-color: white" id="leftNav">
+    <div class="staticHeader-height"></div>
+    <h2>How do I?</h2>
+    
+    <wo.itemsControl itemSource="model().leftHandNav" id="articles">
+        <template>
+            <!-- ko itemsControl: null --><!-- /ko -->
+        </template>
+        <itemTemplate>
+            <div class="list-group">
+                <wo.if condition="model().header &amp;&amp; model().header.visible()">
+                    <template>
+                        <Wipeout.Rl text="model().header.text" href="model().header.href" class="'list-group-item active'" id="header" />
+                    </template>
+                </wo.if>
+                <wo.itemsControl itemSource="model().items" id="items">
+                    <template>
+                        <!-- ko itemsControl: null --><!-- /ko -->
+                    </template>
+                    <itemTemplate>
+                        <wo.if condition="model().visible">
+                            <template>
+                                <Wipeout.Rl text="model().text" href="model().href" class="'list-group-item'" style="'padding-left: 30px'" />
+                            </template>
+                        </wo.if>
+                    </itemTemplate>
+                </wo.itemsControl>
+            </div> 
+        </itemTemplate>
+    </wo.itemsControl>
+</div>
+<div>
+    <div style="float: left; margin-left: 320px;">
+        <wo.view templateId="$parent.contentTemplate" />
+    </div>
+</div>

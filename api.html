@@ -3,11 +3,9 @@ title: Wipeout
 layout: default
 ---
 
-<div  data-bind="wipeout: Wipeout.Docs.ViewModels.Application" id="PageRoot">
+<div  data-bind="wipeout: Wipeout.Docs.ViewModels.ApiApplication" id="PageRoot">
     <div style="margin-left: 5px;">Compiling API. Please wait...</div>
 </div>
-
-<script type="text/javascript" src="scripts/build/wipeoutDocs.debug.js"></script>
 
 {% for template in site.posts %}
     {% if template.path contains '_posts/templates/' %}  
@@ -18,9 +16,9 @@ layout: default
 {% endfor %}
 
 <script type="text/javascript">
-    $(function() {
+    window.bootstrapApplication = function() {
         setTimeout(function() {
-            window.model = new Wipeout.Docs.Models.Application();
+            window.model = new Wipeout.Docs.Models.ApiApplication();
             ko.applyBindings(window.model, document.getElementById("PageRoot"));
             
             crossroads.parse(location.pathname + location.search);
@@ -28,5 +26,5 @@ layout: default
                 crossroads.parse(location.pathname + location.search);
             };
         }, 500);
-    });
+    };
 </script>

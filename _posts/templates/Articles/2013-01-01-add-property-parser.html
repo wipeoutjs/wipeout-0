@@ -1,0 +1,33 @@
+<h1>Add a custom parser</h1>
+
+<p>You can also add a custom parser by adding to the <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.view&amp;propertyName=objectParser&amp;isStatic=true'" text="'wo.view.objectParser'" /> object.</p>
+<p>Custom parsers must have names all in lower case.</p>
+
+    <Wipeout.Docs.ViewModels.Components.JsCodeBlock newScriptId="'set-json-property-script-1'">
+        <code>wo.view.objectParser["name"] = function(nameString) {
+    // trim whitespace characters and seperate words by spaces
+    var nameParts = wo.obj.trim(nameString).split(/\s+/);
+    return {
+        firstName: nameParts[0],
+        lastName: nameParts[1]
+    }
+};
+</code>
+    </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'add-a-property-parser-script-1'">
+        <code>&lt;wo.contentControl>
+    &lt;myVal constructor="name">
+        William Wallace
+    &lt;/myVal>
+    &lt;template>
+        First name: &lt;span data-bind="text: myVal.firstName">&lt;/span>, 
+        Last name: &lt;span data-bind="text: myVal.lastName">&lt;/span>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'add-a-property-parser-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 

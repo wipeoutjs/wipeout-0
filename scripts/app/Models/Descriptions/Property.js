@@ -83,6 +83,11 @@ compiler.registerClass("Wipeout.Docs.Models.Descriptions.Property", "Wipeout.Doc
         wo: {},
         wipeout: {
             base: {
+                itemsControl: {
+                    removeItem: {
+                        description: "<summary type=\"wo.routedEvent\">Routed event. Signals that the model in the routed event args is to be removed from the catching itemsControl</summary>"
+                    }
+                },
                 "if": {
                     blankTemplateId: {
                         description: "<summary type=\"Object\">An id for a blank template.</summary>"

@@ -1,0 +1,28 @@
+<h1>Using templates</h1>
+
+<p>
+Wipeout view models alone do not have an appearance, for this we need templates. At it's most basic, a view model inherits from the 
+    <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.view'" text="'wo.view'" /> class and the view class has a 
+    <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.view&amp;propertyName=templateId&amp;isStatic=false'" text="'templateId'" /> property.
+    <br />
+    Template id's reference the id of a html <code>&lt;script>&lt;/script></code> tag with an xml template. It is not strictly html, as
+    <ol>
+        <li>
+            The content must be valid, strict XML.
+        </li>
+        <li>
+            The content can contain wipeout view models which are not html tags.
+        </li>
+</ol>
+</p>
+<p>
+    In most cases, you will not want the the template of a view model to change. For this case you can set the template id in the constructor of the view model.
+    
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>var myViewModel = wo.view.extend(function myViewModel() {
+    this._super('MyTemplateId');
+                
+    // more constructor logic
+});</code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+</p>

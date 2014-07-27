@@ -1,0 +1,93 @@
+<h1>Hello World</h1>
+
+
+        <p>The minimum you need to build a wipeout app is a view model, a html template and some initialization code through knockout</p>
+        <h3>The view model</h3>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>// create a namespace for our application
+window.helloWipeout = {};
+
+helloWipeout.rootApplication = wo.view.extend(function rootApplication() {
+    this._super("helloWipeout.rootApplication");
+});</code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+
+<p>Here, we are creating a view model class. The view model has to inherit from <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.view'" text="'wo.view'" /> or one of its derived classes. 
+    The call to <code>_super(...)</code> calls the constructor of the parent class, in this case wo.view. The constructor for a wo.view takes a template id as an argument
+</p>
+
+
+        <h3>The Template</h3>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;script type="text/xml" id="helloWipeout.rootApplication">
+    &lt;div>
+        Hello &lt;span data-bind="text: model().name">&lt;/span>!
+    &lt;/div>
+&lt;/script></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+<p>The context or scope of the template is always going to be the view model, in this case a <code>helloWipeout.rootApplication</code> object. Because <code>helloWipeout.rootApplication</code> 
+    inherits from <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.view'" text="'wo.view'" />, it has a <code>model</code> proerty which is a 
+    <a href="http://knockoutjs.com/documentation/observables.html">ko.observable</a>. We are going to bind to the name property on the model.
+</p>
+        <h3>Creating the application</h3>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;div id="helloWipeoutApp" data-bind="wipeout: helloWipeout.rootApplication">&lt;/div>
+&lt;script type="text/javascript">
+    var rootApp = document.getElementById("helloWipeoutApp");    
+    ko.applyBindings({ name: "Wipeout" }, rootApp);
+&lt;/script></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+<p>Within the html document, we now specify a placeholder for our application and tell it which view model type to use using the 
+    <Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=wipeout-binding'" text="'wipeout'" /> binding.
+    <br/>
+    Finally, we apply all knockout to the placeholder div and give it the root model.
+</p>
+
+        <p>This will ultimately render:
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;div>
+    Hello &lt;span>Wipeout&lt;/span>!
+&lt;/div></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>
+        </p>
+        <p>When you apply the wipeout binding, it will search for the view model "helloWipeout.rootApplication". An instance of this view model is created and it's model property will be set with the value passed into ko.applyBindings. This is where the "Wipeout" in "Hello Wipeout!" comes from.</p>
+        <h3>So, all together:</h3>
+        <Wipeout.Docs.ViewModels.Components.CodeBlock>
+            <code>&lt;html>
+    &lt;head>
+        &lt;title>Hello Wipeout&lt;/title>
+    &lt;/head>
+    &lt;body>
+        &lt;!-- The application placeholder -->
+        &lt;div data-bind="wipeout: helloWipeout.rootApplication">&lt;/div>
+        
+        &lt;!-- The application view model template-->
+        &lt;script type="text/xml" id="helloWipeout.rootApplication">
+            &lt;div>
+                Hello &lt;span data-bind="text: model">&lt;/span>!
+            &lt;/div>
+        &lt;/script>
+        
+        &lt;!-- Required scripts -->
+        &lt;script type="text/javascript" src="knockout.js">&lt;/script>
+        &lt;script type="text/javascript" src="wipeout.js">&lt;/script>
+        
+        &lt;!-- The application view model -->
+        &lt;script type="text/javascript">
+            // create a namespace for our application
+            window.helloWipeout = {};
+
+            helloWipeout.rootApplication = wo.view.extend(function rootApplication() {
+                // call the base constructor. The constructor for wo.view takes in a template id.
+                this._super("helloWipeout.rootApplication");
+            });
+        &lt;/script>
+        
+        &lt;!-- The application definition-->
+        &lt;script type="text/javascript">
+            var rootApp = document.getElementById("helloWipeoutApp");    
+            ko.applyBindings("Wipeout", rootApp);
+        &lt;/script>
+    &lt;/body>    
+&lt;/html></code>
+        </Wipeout.Docs.ViewModels.Components.CodeBlock>

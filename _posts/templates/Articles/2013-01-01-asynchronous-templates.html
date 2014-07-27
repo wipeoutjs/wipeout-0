@@ -1,0 +1,27 @@
+<h1>Asynchronous Templates</h1>
+
+<p>You do not need to have all templates loaded in to the DOM when your application begins. Wipeout can fetch templates asnynchronusly as static web pages.
+    <br/>
+    To do this, you must set a asynchronus templates to true:
+    
+    <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <code>wipeout.settings.asynchronousTemplates = true;</code>
+    </Wipeout.Docs.ViewModels.Components.CodeBlock>
+</p>
+<p>
+    Afterwards, you just use templates as usual, however you set the template id to a url instead of an id.    
+    <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <code>var myViewModel = wo.view.extend(function myViewModel() {
+    this._super("/templates/myTemplate.html");
+});</code>
+    </Wipeout.Docs.ViewModels.Components.CodeBlock>
+    
+    This method will first, see if the template with the id "/templates/myTemplate.html" exists in the application. If it does, it will use the template rather than sending another ajax request.<br />
+    If the template does not exist, a temporary (placeholder) template will be used, while the specified template is loaded. Once loaded the new template is appliced and appended to the DOM so that it
+    does not need to be loaded a second time
+</p>
+<p>
+    There is a default placeholder template, however, you can override it by overriding
+    <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wipeout.utils.html&amp;functionName=createTemplatePlaceholder&amp;isStatic=true'" text="'createTemplatePlaceholder'" />
+    function with a cusom function
+</p>

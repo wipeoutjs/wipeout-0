@@ -1,0 +1,19 @@
+<h1>Set a date property</h1>
+
+<p>The date parser uses <code>new Date(value)</code> to parse dates. You can override this by <Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=add-property-parser'" text="'overriding the date parser itself'" />.</p>
+
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'set-date-property-script-1'">
+        <code>&lt;wo.contentControl>
+    &lt;myVal constructor="date">
+        2001/01/01
+    &lt;/myVal>
+    &lt;template>
+        Binding to element value: &lt;span data-bind="text: myVal">&lt;/span>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'set-date-property-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 

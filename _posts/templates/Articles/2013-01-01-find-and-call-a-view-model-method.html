@@ -1,0 +1,19 @@
+<h1>Find and call</h1>
+
+<p>
+<code>$findAndCall(args)</code> is shorthand for <code>$call($find(args))</code>
+</p>
+
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>&lt;myViewModel model="'Hello wipeout!'">
+    &lt;template>
+        &lt;wo.contentControl>
+            &lt;template>
+                &lt;button 
+                    data-bind="$findAndCall({$i: myViewModel}).dot('model').dot('submit').args(true)">
+                    Submit&lt;/button>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/myViewModel></code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>

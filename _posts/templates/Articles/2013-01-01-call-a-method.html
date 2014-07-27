@@ -1,0 +1,38 @@
+<h1>Call a method</h1>
+
+    <p>Dom events are handled by standard knockout <a href="http://knockoutjs.com/documentation/introduction.html">event bindings</a>. The context of the event handler will always be the current view model, even if it resides on another object</p>
+
+    <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+        <code>
+window.myType = wo.contentControl.extend(function myType() {
+    this._super();
+            
+    this.name = "My View Model";
+});
+        
+myType.prototype.eventHandler1 = function() {
+    alert(this.name);
+};
+        
+window.aStaticObject = {
+    name: "My Static Object",
+    eventHandler2: function() {
+        alert(this.name);
+    }
+};</code>
+    </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'call-a-method-script-1'">
+        <code>&lt;myType>
+    &lt;template>
+        &lt;button data-bind="click: eventHandler1">Test1&lt;/button>
+        &lt;button data-bind="click: aStaticObject.eventHandler2">Test2&lt;/button>
+    &lt;/template>
+&lt;/myType></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'call-a-method-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+<br/>
+<br/>

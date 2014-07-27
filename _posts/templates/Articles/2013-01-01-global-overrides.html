@@ -1,0 +1,33 @@
+<h1>Global Overrides</h1>
+
+<p>Global overriding is overriding the functionality of a class and every instance of that class.</p>
+<p>Say you want to keep a static running total of all view models created by the system. This is going to involve two existing
+ wipeout functions:
+<ol>
+    <li>A function which initializes wipeout view models (in this case
+        <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.view&amp;functionName=_initialize&amp;isStatic=false'" text="'_initialize'" />).</li>
+    <li>A function which destroys wipeout view models. (in this case
+        <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.view&amp;functionName=dispose&amp;isStatic=false'" text="'dispose'" />).</li>
+</ol></p>
+
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>// Step 1, create running total
+window.totalViewModels = 0;
+        
+// Step 2, cache existing methods
+var _initialize = wo.view.prototype._initialize;
+var dispose = wo.view.prototype.dispose;
+    
+// step 3, override methods, ensureing existing functionality is preserved
+wo.view.prototype._initialize = function() {        
+    window.totalViewModels++;
+        
+    return _initialize.apply(this, arguments);
+};
+    
+wo.view.prototype.dispose = function() {        
+    window.totalViewModels--;
+        
+    return dispose.apply(this, arguments);
+};</code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>

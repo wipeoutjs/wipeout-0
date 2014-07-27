@@ -1,5 +1,5 @@
 
-<h2 data-bind="text: model().fullyQualifiedName"></h2>
+<h2 data-bind="text: $data.title || model().fullyQualifiedName"></h2>
 <div data-bind="html: model().summary"></div>
 <wo.if condition="model().arguments.length">
     <template>
@@ -29,15 +29,12 @@
         </wo.itemsControl>
     </template>
 </wo.if>
-<h2>
+<h2 data-bind="visible: showReturnValue">
     Returns: <span data-bind="text: model().returns.type"></span>
 </h2>
 <span data-bind="text: model().returns.summary"></span>
-<br />
-<br />
-<br />
 <div>
-    <h3 style="display: inline-block">Function definition</h3>
+    <h3 style="display: inline-block" data-bind="text: $data.functionDefinitionText || 'Function definition'"></h3>
     <a href="javascript:void(0)" data-bind="click: function() { showCode(!showCode()); }"><small>(show/hide)</small></a>
     <wo.if condition="showCode">
         <template>

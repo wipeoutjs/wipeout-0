@@ -1,0 +1,15 @@
+<h1>Bind to a specific view model</h1>
+
+    <p>When binding view model properties and event handlers, either using <code>data-bind=""</code> for html elements or setting the properties
+    	on view models, the current scope is the view model itself. So for instance, the setter <code>property1="model().property1"</code>
+    	will bind the property1 to the property1 property of the model of the current view model. 
+    	</p>
+    <p>Often, it is useful to bind to ancestors, especially when using nested anonymous templates (contentControls), and there are
+    	four mechanisms for doing this:
+<ol>
+    <li><Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=knockout-binding-context'" text="'Knockout binding context'" /></li>
+    <li><Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=find-a-view-model'" text="'$find(...)'" /></li>
+    <li><Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=call-a-view-model-method'" text="'$call(...)'" /></li>
+    <li><Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=find-and-call-a-view-model-method'" text="'$findAndCall(...)'" /></li>
+</ol> 
+</p>

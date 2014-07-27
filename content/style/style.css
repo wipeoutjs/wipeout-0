@@ -1,5 +1,9 @@
 body { padding-top: 70px; }
 
+p {
+    max-width: 800px
+}
+
 .staticHeader-height {
     height: 80px;
 }
