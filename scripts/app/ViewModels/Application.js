@@ -1,35 +1,33 @@
 
 compiler.registerClass("Wipeout.Docs.ViewModels.Application", "wo.view", function() {
     
-    function application() {
-        this._super("Wipeout.Docs.ViewModels.Application");
+    function Application(templateId) {
+        if(this.constructor === Application) throw "Cannot create an instance of an abstract class";
         
-        this.registerRoutedEvent(Wipeout.Docs.ViewModels.Components.TreeViewBranch.renderPage, function (args) {
-            this.model().content(args.data);
-        }, this);
-        
-        this.registerDisposable(ko.computed(function() {
-            var tmp = this.model();
-            if(tmp) {
-                tmp = tmp.content();
-                if(tmp)
-                    $("#headerText").html(tmp.title);
-            }
-            
-        }, this).dispose);
+        this._super(templateId);
+                
+        var _this = this;
+        crossroads.addRoute('/{site}/{page}{?query}', function(site, page, query){
+            _this.route(query);
+        });
     };
     
-    application.prototype.onRendered = function() {
+    Application.prototype.onApplicationInitialized = function() {
+        this.appInit = true;
+    };
+    
+    Application.prototype.route = function(query) {
+        throw "Abstract method must be overridden";
+    };
+    
+    Application.prototype.onRendered = function() {
         this._super.apply(this, arguments);
         
-        if(this.templateItems.content)
+        if (this.templateItems.content)
             this.registerDisposable(this.templateItems.content.model.subscribe(function() {                
                 window.scrollTo(0,0);
-            }).dispose);
-        
-        //TODO: this
-        this.templateItems.treeView.select();
+            }));
     };
     
-    return application;
+    return Application;
 });

@@ -1,0 +1,26 @@
+<h1>Inheritance</h1>
+
+    <p>Inheritance in wipeout is done using the 
+        <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.object&amp;functionName=extend&amp;isStatic=true'" text="'extend'" /> method. 
+        The root of all inheritance is the <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.object'" text="'wo.object'" /> class.</p>
+
+    <Wipeout.Docs.ViewModels.Components.JsCodeBlock newScriptId="'bind-to-global-script-1'">
+        <code>var Account = wo.object.extend(function Account(balance) {
+    // call the constructor of the base class (wo.object)
+    this._super();
+            
+    this.balance = balance;
+});
+        
+var CurrentAccount = Account.extend(function CurrentAccount(balance) {
+    // call the constructor of the base class (Account)
+    this._super(balance);
+});
+        
+var account = new CurrentAccount(100);
+console.log(account.balance);</code>
+    </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+<p>Passing in named function is not mandatory, but will help in debugging.</p>
+<p>It is extremely important to always call the constructor of the base class as the first line of code in your new constructor.</p>
+<br/>
+<br/>

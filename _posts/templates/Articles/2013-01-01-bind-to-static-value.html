@@ -1,0 +1,20 @@
+<h1>Bind to a static value</h1>
+
+<p>
+The item you want the template to bind to can be set in the template.
+</p>
+
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'bind-to-static-value-script-1'">
+        <code>&lt;wo.contentControl model="{ value: 'Hello wipeout!' }">
+    &lt;template>
+        Binding to static value: &lt;span data-bind="text: model().value">&lt;/span>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'bind-to-static-value-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+<br/>
+<br/>

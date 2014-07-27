@@ -1,5 +1,9 @@
 body { padding-top: 70px; }
 
+p {
+    max-width: 800px
+}
+
 .staticHeader-height {
     height: 80px;
 }
@@ -33,6 +37,7 @@ body { padding-top: 70px; }
 
 .leftNav li {
     list-style: none;
+    margin-left: -20px;
 }
 
 p {
@@ -75,6 +80,15 @@ ul.wo-navbar-right li {
 
 .columns>* {
     float: left;
+    
+}
+
+.columns:after { /*clearfix*/    
+   content: " ";
+   visibility: hidden;
+   display: block;
+   height: 0;
+   clear: both;
 }
 
 .columns .column-4 {

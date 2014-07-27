@@ -1,0 +1,34 @@
+<h1>Set complex properties</h1>
+
+<p>Complex properties with multiple levels can also be set in xml. If there is no parser to go with the <code>constructor</code> property, then
+the constructor is used as an actual constructor with the <code>new</code> keyword</p>
+
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'set-complex-properties-script-1'">
+        <code>&lt;wo.contentControl> &lt;!-- outer contentControl -->
+    &lt;mvVal constructor="wo.contentControl" innerValue="'Hello wipeout'"> &lt;!-- inner contentControl -->
+        &lt;template>
+            Binding to element value: &lt;span data-bind="text: innerValue">&lt;/span>
+        &lt;/template>
+    &lt;/mvVal>
+    &lt;template>
+        Rendering view model: &lt;div data-bind="render: mvVal">&lt;/div>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'set-complex-properties-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+<p>This is a fairly complex piece of functionality.
+    <ol>
+        <li>We constructed an outer wo.contenentControl</li>
+        <li>We constructed an inner wo.contenentControl</li>
+        <li>We set the innerValue property of the inner contentControl to "Hello Wipeout"</li>
+        <li>We set the template property of the inner contentControl.</li>
+        <li>We set the myVal property of the outer contentControl to the innerContentControl</li>
+        <li>We set the template property of the outer contentControl.</li>
+        <li>Within the template of the outer content conrol, we use the <Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=render-binding'" text="'render'" /> binding to render its myVal property.</li>
+</ol>
+    
+</p>

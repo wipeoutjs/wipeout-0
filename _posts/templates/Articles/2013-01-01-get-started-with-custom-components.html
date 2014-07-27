@@ -1,0 +1,146 @@
+<h1>Custom components</h1>
+
+    <p>Taking the code from <Wipeout.Rl text="'hello wipeout'" href="'/wipeout-0/how-do-i.html?article=get-started-with-hello-world'" />
+        we can create something a little more complex. This time we will embedd a component into the helloWipeout application. The component is going to be a very simple toggle component to show/hide html
+    </p>
+
+    <div class="columns">
+        <div class="column-2 main-example-code">
+            <h3>The collapsible component</h3>
+            <div style="display: none">
+                <!-- define namespace in case it has not been defined previously -->
+                <Wipeout.Docs.ViewModels.Components.JsCodeBlock code="'window.helloWipeout = window.helloWipeout || {}'" />
+            </div>
+            <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+                <code>helloWipeout.collapsible = wo.view.extend({
+    constructor: function collapsible() {
+        this._super("helloWipeout.collapsible");
+
+        this.show = ko.observable(false);
+    },
+    toggleContent: function() {
+        this.show(!this.show());
+    }
+});</code>
+            </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+        </div>
+        <div class="column-2 main-example-code">
+            <h3>The component template</h3>
+            <Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
+                <code>&lt;script type="text/xml" id="helloWipeout.collapsible">
+    &lt;a data-bind="text: model().header, click: toggleContent" href="#">&lt;/a>
+    &lt;div data-bind="text: model().content, visible: show">&lt;/div>
+&lt;/script></code>
+            </Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
+        </div>
+    </div>
+
+    <div class="columns">
+        <div class="column-2 main-example-code">
+            <p>
+                Here, we have:
+                <ul>
+                    <li>
+                        defined a component which inherits from wo.view.
+                    </li>
+                    <li>
+                        given it a default template id
+                    </li>
+                    <li>
+                        given it a property to define whether it is open or closed
+                    </li>
+                    <li>
+                        given it a method to open or close it.
+                    </li>
+                </ul>
+            </p>
+        </div>
+        <div class="column-2 main-example-code">
+            <p>
+                In the template we:
+                <ul>
+                    <li>
+                        Set the id of the script block
+                    </li>
+                    <li>
+                        Bind the header of the model to the clickable item in the collapsible
+                    </li>
+                    <li>
+                        bind the click event on the clickable item to the click function in the view model
+                    </li>
+                    <li>
+                        Bind the text of the content div to the content of the model
+                    </li>
+                    <li>
+                        Bind the visibility of the model to the visible property of the view model
+                    </li>
+                </ul>
+            </p>
+        </div>
+    </div>  
+    <div class="columns">
+        <div class="column-2 main-example-code">            
+            <h3>Modify the template of the root application</h3>
+            <Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
+                <code>&lt;script type="text/xml" id="helloWipeout.rootApplication">
+    &lt;div>
+        Hello &lt;span data-bind="text: model().name">&lt;/span>!
+        &lt;br />
+        &lt;helloWipeout.collapsible 
+            model="$parent.model().collapsibleContent" />
+    &lt;/div>
+&lt;/script></code>       
+            </Wipeout.Docs.ViewModels.Components.TemplateCodeBlock>
+        </div>
+        <div class="column-2 main-example-code">            
+            <h3>Modify the application definition</h3>    
+            <Wipeout.Docs.ViewModels.Components.CodeBlock>
+                <code>&lt;div id="helloWipeoutApp" 
+    data-bind="wipeout: helloWipeout.rootApplication">&lt;/div>
+&lt;script type="text/javascript">
+    var rootApp = document.getElementById("helloWipeoutApp");    
+    ko.applyBindings({ 
+        name: "Wipeout", 
+        collapsibleContent: {
+            header: "Show/Hide",
+            content: "This is the text to show/hide"
+        }
+    }, rootApp);
+&lt;/script></code>       
+            </Wipeout.Docs.ViewModels.Components.CodeBlock>  
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column-2 main-example-code">
+            <p>
+                Now that the component is defined we can add it to the root application template
+                <ul>
+                    <li>
+                        Define the new component as you would any other html element
+                    </li>
+                    <li>
+                        set the model of the new component to be the collapsibleContent of its's parents model
+                    </li>
+                    <li>
+                        The <a href="http://knockoutjs.com/documentation/binding-context.html" target="_blank">$parent</a> definiton
+                        comes from knockout and allows you to refer to ancestors of the view model
+                    </li>
+                </ul>
+            </p>            
+        </div>
+        <div class="column-2 main-example-code">                 
+            <p>
+                Finally, we have to add the new properties which the collapsible is expecting to the model definition
+            </p>     
+        </div>
+    </div>
+            
+            
+        <p>And that is it. Collapsible component added! The resulting content will render like this:</p>
+
+        
+        <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+            <code>&lt;wo.contentControl templateId="'helloWipeout.rootApplication'" model='{ name: "Wipeout", collapsibleContent: { header: "Show/Hide", content: "This is the text to show/hide" } }'>&lt;/wo.contentControl></code>
+        </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+<br/>
+<br/>

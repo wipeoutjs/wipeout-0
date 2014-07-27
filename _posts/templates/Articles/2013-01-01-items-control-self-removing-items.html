@@ -1,0 +1,9 @@
+<h1>Self removing items</h1>
+
+<p>All items controls subscribe to the <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.itemsControl&amp;propertyName=removeItem&amp;isStatic=true'" text="'removeItem'" />
+ <Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=routed-events'" text="'routed event'" />. This means that if a view model in which is a decendent of the itemsControl fires a removeItem routed event with a specic model as the event args, then
+     the model will be removed from the <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.itemsControl&amp;propertyName=itemSource&amp;isStatic=false'" text="'itemSource'" />  of the itemsControl.
+</p>
+<p>
+    If this is likely to happen it is important to bind the itemSource of the itemsControl <Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=bind-two-way'" text="'two ways'" /> so that changes will propogate back up the model chain.
+</p>

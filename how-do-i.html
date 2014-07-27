@@ -1,0 +1,31 @@
+---
+title: Wipeout
+layout: default
+---
+
+
+<div  data-bind="wipeout: Wipeout.Docs.ViewModels.HowDoIApplication" id="PageRoot">
+</div>
+
+{% for template in site.posts %}
+    {% if template.path contains '_posts/templates/' %}  
+        <script type="text/xml" id="{{ template.path | replace: '_posts/templates/', '' | replace: '/', '.' | replace: '/', '.' | replace: '2013-01-01-', '' | replace: '.html', '' }}">
+            {{ template.content }}
+        </script>
+    {% endif %}  
+{% endfor %}
+
+<script type="text/javascript">
+    window.bootstrapApplication = function() {
+               // wipeout.profile.profile();
+        window.model = new Wipeout.Docs.Models.HowDoIApplication();
+        ko.applyBindings(window.model, document.getElementById("PageRoot"));
+
+        crossroads.parse(location.pathname + location.search);
+        window.onpopstate = function() {
+            crossroads.parse(location.pathname + location.search);
+        };
+    };
+</script>
+      
+</div>

@@ -1,0 +1,29 @@
+<h1>Bind to the property of an ancestor</h1>
+
+    <p>There is a helper function which can find ancestors based on their proerties, type, depth or any other custom attribute you need.</p>
+
+    <Wipeout.Docs.ViewModels.Components.JsCodeBlock newScriptId="'bind-to-global-script-1'">
+        <code>// create a custom class to distinguish type
+window.myType = wo.contentControl.extend(function myType() {
+    this._super();
+});</code>
+    </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'bind-to-ancestor-script-1'">
+        <code>&lt;myType model="'Hello wipeout!'">
+    &lt;template>
+        &lt;wo.contentControl model="$find(myType).model">
+            &lt;template>
+                Binding to a specific ancestor: &lt;span data-bind="text: model">&lt;/span>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/myType></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'bind-to-ancestor-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+<br/>
+<br/>
+<p>There is a full customisable api for finding ancestors, documented <Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=bind-to-specific-view-model'" text="'here'" /></p>

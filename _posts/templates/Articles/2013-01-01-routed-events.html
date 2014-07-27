@@ -1,0 +1,54 @@
+<h1>Routed Events</h1>
+
+    <p>Routed events are events which bubble up the the view model stack after being triggered. View models trigger routed events which are passed to their
+parents, grandparents etc... until the event reaches the root view model</p>
+    <p>In this example there is a view model which triggers routed events within a view model which subscribes to routed events. Since the events bubble upwards 
+the ancestor view model will recieve any events triggered by it's decendants</p>
+
+
+<Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+        <code>// this class triggers a custom routed event
+window.triggerEvent = wo.contentControl.extend({
+    constructor: function triggerEvent() {
+        this._super();
+    },
+    trigger: function() {
+        this.triggerRoutedEvent(triggerEvent.routedEvent);
+    },
+    statics: {
+        routedEvent: wo.routedEvent()
+    }
+});
+            
+// this class subscribes to a custom routed event
+window.subscribeToEvent = wo.contentControl.extend({
+    constructor: function subscribeToEvent() {
+        this._super();
+            
+        this.routedEventTriggered = ko.observable(0);
+        this.registerRoutedEvent(triggerEvent.routedEvent, this.onRoutedEvent, this);
+    },
+    onRoutedEvent: function(args) {            
+        this.routedEventTriggered(this.routedEventTriggered() + 1);
+    }
+});</code>
+    </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'routed-events-script-1'">
+        <code>&lt;subscribeToEvent>
+    &lt;template>
+        &lt;div>
+            Routed event triggered: &lt;span data-bind="text: routedEventTriggered">&lt;/span> times
+        &lt;/div>
+        &lt;triggerEvent>            
+            &lt;template>
+                &lt;button data-bind="click: trigger">Trigger routed event&lt;/button>
+            &lt;/template>
+        &lt;/triggerEvent>
+    &lt;/template>
+&lt;/subscribeToEvent></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'routed-events-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 

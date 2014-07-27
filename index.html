@@ -46,7 +46,7 @@ layout: default
             <h4>A collapsible component</h4>
             <div class="columns">
                 <div class="column-2 main-example-code">
-                    View model class<br/><br/>
+                    View model class
                     <pre class="prettyprint" data-script-type="text/javascript">// create a namespace for our application
 window.app = {};
 
@@ -54,84 +54,52 @@ window.app = {};
 app.collapsible = wo.view.extend({
     constructor: function() {
         // call the base constructor with the default template id.
-        this._super("app.collapsible");
-
-        // create a property to set the html template
-        // of the collapsible content
-        this.contentTemplate = ko.observable("");
+        this._super("/app-collapsible.html");
+        
+        // defines whether the content is visible
+        this.show = ko.observable(false);
     },                    
     // a function which will show or hide the collapsible content
     toggleContent: function() {
-        var element = this.templateItems.collapsibleElement;
-        $(element).slideToggle("fast");
+        this.show(!this.show());
     }
 });</pre>
                 </div>
                 <div class="column-2 main-example-code">
-                    View model Template<br/>
-                    (<span class="tag">&lt;script type="text/xml" id="app.collapsible">...&lt;/script></span>)
-                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.collapsible">&lt;div data-bind="click: toggleContent"
-    class="panel-heading"
-    style="cursor: pointer">
+                    View model Template (/app-collapsible.html)<br/>
+                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="/app-collapsible.html">&lt;div   data-bind="click: toggleContent"
+        class="panel-heading"
+        style="cursor: pointer">
     &lt;h3 class="panel-title"
         data-bind="text: model().header">&lt;/h3>
 &lt;/div>
 &lt;div class="panel-body">
-    &lt;div id="collapsibleElement">
-        &lt;!-- Inbuilt wipeout component to display html -->    
-        &lt;wo.contentControl template="contentTemplate"
-            woInvisible="true">
-        &lt;/wo.contentControl>
+    &lt;div data-bind="text: model().content, visible: show">
     &lt;/div>
 &lt;/div></pre>
                 </div>
             </div>
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
+            
+            
             <h4>Root application component</h4>
             <div class="columns">
                 <div class="column-2 main-example-code">
-                    View model class<br /><br />
+                    View model class
                     <pre class="prettyprint" data-script-type="text/javascript">
 // inherit from the wo.view class
 app.rootApplication = wo.view.extend({
     constructor: function () {
         // call the base constructor with the default template id.
-        this._super("app.rootApplication");
+        this._super("/app-rootApplication.html");
     }
 });</pre>
                 </div>
                 <div class="column-2 main-example-code">
-                    View model Template<br />
-                    (<span class="tag">&lt;script type="text/xml" id="app.rootApplication">...&lt;/script></span>)
-                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="app.rootApplication">&lt;div style="width: 300px; margin: 50px"
+                    View model Template (/app-rootApplication.html)<br />
+                    <pre class="prettyprint" data-script-type="text/xml" data-script-id="/app-rootApplication.html">&lt;div style="width: 300px; margin: 50px"
      class="panel panel-primary">
     &lt;h4 data-bind="text: model().applicationName">&lt;/h4>
     &lt;app.collapsible model="$parent.model().collapsibleContent">
-        &lt;!-- remember this is the property defined in the 
-            app.collapsible constructor. We are setting it here-->
-        &lt;contentTemplate>
-            &lt;div data-bind="text: model().content">
-            &lt;/div>
-        &lt;/contentTemplate>
     &lt;/app.collapsible>
 &lt;/div></pre>
                 </div>
@@ -158,18 +126,8 @@ ko.applyBindings(model, rootApp);</pre>
 &lt;/div></pre>
                 </div>
             </div>
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
-                    <br />
+            
+            
                     <div>
                         View this wipeout application definition in action:
                     </div>
@@ -220,24 +178,24 @@ ko.applyBindings(model, rootApp);</pre>
     </div>
 </div>
 <script type="text/javascript">
-    $(function() {
+    window.bootstrapApplication = function() {
         var scriptsAndCss = [{
             tag: "link",
             type: "text/css", 
             rel: "stylesheet", 
-            href: document.location.protocol + "//" + document.location.host + "/wipeout/content/style/bootstrap/lumen/bootstrap.css"
+            href: document.location.protocol + "//" + document.location.host + "/wipeout-0/content/style/bootstrap/css/bootstrap-lumen.css"
         }, {
             tag: "script",
             type: "text/javascript", 
-            src: document.location.protocol + "//" + document.location.host + "/wipeout/scripts/lib/jquery-1.10.2.min.js"
+            src: document.location.protocol + "//" + document.location.host + "/wipeout-0/scripts/lib/jquery-1.10.2.min.js"
         }, {
             tag: "script",
             type: "text/javascript", 
-            src: document.location.protocol + "//" + document.location.host + "/wipeout/scripts/lib/knockout-2.3.0.debug.js"
+            src: document.location.protocol + "//" + document.location.host + "/wipeout-0/scripts/lib/knockout-2.3.0.debug.js"
         }, { 
             tag: "script",
             type: "text/javascript", 
-            src: document.location.protocol + "//" + document.location.host + "/wipeout/scripts/lib/wipeout-0.3.1.debug.js"
+            src: document.location.protocol + "//" + document.location.host + "/wipeout-0/scripts/lib/wipeout-0.3.1.debug.js"
         }];       
         
         $("[data-script-type]").each(function() {
@@ -253,7 +211,6 @@ ko.applyBindings(model, rootApp);</pre>
                 
         $("#example .prettyprint").each(function() { $(this).html(prettyPrintOne($(this).html())); });
         $("[data-script-type='text/xml'] span[class=tag]:contains('app.collapsible')")
-            .add($("[data-script-type='text/xml'] span[class=tag]:contains('wo.contentControl')"))
             .css("font-weight", "bold").css("background", "yellow");
         
         $("#execute").on("click", function() {
@@ -282,5 +239,5 @@ ko.applyBindings(model, rootApp);</pre>
     "</body>\
 </html>")
         });
-    });
+    };
 </script>

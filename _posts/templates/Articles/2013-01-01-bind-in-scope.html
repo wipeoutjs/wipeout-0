@@ -1,0 +1,23 @@
+<h1>Binding to the current view model</h1>
+
+<p>
+You can bind properties of a view model to itself
+</p>
+
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'bind-in-scope-script-1'">
+        <code>&lt;wo.contentControl myValue="{ value: 'Hello wipeout!' }" myInnerValue="myValue.value">
+    &lt;template>
+        Binding to current scope: &lt;span data-bind="text: myInnerValue">&lt;/span>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'bind-in-scope-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+<p>
+    This particular example works because <code>myValue</code> was bound before <code>myInnerValue</code>. Therefore, <code>myInnerValue</code> could point to a property on <code>myValue</code>. 
+    This method is far more useful in binding to properties explicitly defined in the view model constructor.
+    
+</p>

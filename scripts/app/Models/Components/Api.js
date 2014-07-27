@@ -1,6 +1,6 @@
 compiler.registerClass("Wipeout.Docs.Models.Components.Api", "wo.object", function() {    
     
-    var api = function(rootNamespace) {
+    var api = function() {
         this._super();
         
         this.classes = [];

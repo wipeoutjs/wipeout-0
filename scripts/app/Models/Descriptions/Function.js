@@ -1,11 +1,13 @@
 compiler.registerClass("Wipeout.Docs.Models.Descriptions.Function", "Wipeout.Docs.Models.Descriptions.ClassItem", function() {
     
-    var functionDescription = function(theFunction, functionName, classFullName) {
-        this._super(functionName, functionDescription.getFunctionSummary(theFunction));
+    var functionDescription = function(theFunction, functionName, classFullName, isStatic) {
+        this._super(functionName, functionDescription.getFunctionSummary(theFunction), isStatic);
         
         this["function"] = theFunction;
         this.functionName = functionName;
         this.classFullName = classFullName;
+        
+        this.title = this.functionName;
         
         var xmlSummary = this.getXmlSummary();
         

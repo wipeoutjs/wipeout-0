@@ -1,0 +1,32 @@
+<h1>Models</h1>
+
+<p>The role of the model object is generally to hold the business logic and business data of the application. It shold NEVER concern itself with appearence or manipulate the DOM. A definitive guide to the
+role of a model is beyond the scope of this document.</p>
+
+<p>In wipeout, a model manifests as a special property of the view model. It is special in two ways:
+    <ol>
+        <li>
+            Unless explicitely set to null, every view model is gaurenteed to have a model. This is because models cascade downwards. If you do not have the model set on a view model, it will 
+            be assigned the model of it's parent.
+            <Wipeout.Docs.ViewModels.Components.CodeBlock>
+        <code>&lt;wo.contentControl model="'Hello wipeout!'">
+    &lt;template>
+        &lt;wo.contentControl>
+            &lt;template>
+                &lt;div data-bind="text: model">(This text will be replaced by "Hello wipeout!")&lt;/div>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.CodeBlock>
+            In this example the second contentControl has bee automatically given the model of its parent
+        </li>
+        <li>
+            There is a pre defined hook <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.view&amp;functionName=onModelChanged&amp;isStatic=false'" text="'onModelChanged'" /> which 
+            can be overridden in derived view models to get a notification each time a model changes.
+        </li>
+    </ol>
+</p>
+<p>
+    The model is driver of you applicaiton. It is the object passed into the <code>ko.applyBindings(...)</code> function which kicks off the entire wipeout process.
+</p>

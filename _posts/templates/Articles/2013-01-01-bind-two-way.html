@@ -1,0 +1,30 @@
+<h1>Two way bindings</h1>
+
+<p>
+By default, all bindings are one way. This means that the object where the propery 
+    is set will recieve updates when the property changes, however, if the object where the property is set changes the value itself, the original owner of the property will not be notified.
+    This can be remedied by using a two way binding. Two way bindings are suffixed with "-tw".
+</p>
+
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'bind-two-way-script-1'">
+        <code>&lt;wo.contentControl model="{ value: ko.observable('Hello wipeout!') }">
+    &lt;template>
+        &lt;wo.contentControl model-tw="$parent.model().value">
+            &lt;template>
+                Two way bindings: &lt;span data-bind="text: model">&lt;/span>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/wo.contentControl></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'bind-two-way-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+
+    <p>
+        Now if the child content control modifies it's <code>model</code>, the resulting change will reflect in the parent's <code>model.value</code>.
+        Notice how the value is an observable in this case. Two way bindings can only be defined between two observable properties
+</p>
+<br/>
+<br/>

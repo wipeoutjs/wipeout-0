@@ -1,42 +1,44 @@
 
-            <h2 data-bind="text: model().fullyQualifiedName"></h2>
-            <div data-bind="html: model().summary"></div>
-            <wo.if condition="model().arguments.length">
-                <template>
-                    <h3>Arguments</h3>
-                    <wo.itemsControl itemSource="model().arguments">
-                        <template>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Argument</th>
-                                        <th>Summary</th>
-                                        <th>Type</th>
-                                        <th>Optional</th>
-                                    </tr>
-                                </thead>
-                                <tbody data-bind="itemsControl: null"></tbody>
-                            </table>
-                        </template>
-                        <itemTemplate>
-                            <tr>
-                                <td data-bind="text: model().name"></td>
-                                <td data-bind="text: model().description"></td>
-                                <td data-bind="text: model().type"></td>
-                                <td data-bind="text: model().optional ? 'Yes' : 'No'"></td>
-                            </tr>
-                        </itemTemplate>
-                    </wo.itemsControl>
-                </template>
-            </wo.if>
-            <h2>
-                Returns: <span data-bind="text: model().returns.type"></span>
-            </h2>
-            <span data-bind="text: model().returns.summary"></span>
-            <div data-bind="visible: usagesTemplateId() !== wo.contentControl.getBlankTemplateId()">
-                <h2>
-                    <span>Using</span>
-                    <span data-bind="html: model().functionName"></span>
-                </h2>
-                <wo.view templateId="$parent.usagesTemplateId" model="$parent.model().classConstructor" />
-            </div>
+<h2 data-bind="text: $data.title || model().fullyQualifiedName"></h2>
+<div data-bind="html: model().summary"></div>
+<wo.if condition="model().arguments.length">
+    <template>
+        <h3>Arguments</h3>
+        <wo.itemsControl itemSource="model().arguments">
+            <template>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Argument</th>
+                            <th>Summary</th>
+                            <th>Type</th>
+                            <th>Optional</th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind="itemsControl: null"></tbody>
+                </table>
+            </template>
+            <itemTemplate>
+                <tr>
+                    <td data-bind="text: model().name"></td>
+                    <td data-bind="text: model().description"></td>
+                    <td data-bind="text: model().type"></td>
+                    <td data-bind="text: model().optional ? 'Yes' : 'No'"></td>
+                </tr>
+            </itemTemplate>
+        </wo.itemsControl>
+    </template>
+</wo.if>
+<h2 data-bind="visible: showReturnValue">
+    Returns: <span data-bind="text: model().returns.type"></span>
+</h2>
+<span data-bind="text: model().returns.summary"></span>
+<div>
+    <h3 style="display: inline-block" data-bind="text: $data.functionDefinitionText || 'Function definition'"></h3>
+    <a href="javascript:void(0)" data-bind="click: function() { showCode(!showCode()); }"><small>(show/hide)</small></a>
+    <wo.if condition="showCode">
+        <template>
+            <Wipeout.Docs.ViewModels.Components.CodeBlock code="model()['function'].toString()"></Wipeout.Docs.ViewModels.Components.CodeBlock>
+        </template>
+    </wo.if>
+</div>

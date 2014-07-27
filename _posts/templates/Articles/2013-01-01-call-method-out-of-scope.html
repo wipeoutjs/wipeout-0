@@ -1,0 +1,36 @@
+<h1>Call a method of an ancestor</h1>
+
+    <p>Using knockout event bindings always sets the context of your functions to the current scope. However, when using ancestors function, it is 
+    generally more useful to have ancestor obect as the scope. The $call API will do this</p>
+
+    <Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+        <code>// create a custom class to distinguish type
+window.myType = wo.contentControl.extend(function myType() {
+    this._super();
+            
+    this.example = "Call the method of an ancestor: ";
+});
+        
+myType.prototype.click = function(text) {
+    alert(this.example + text);
+};</code>
+    </Wipeout.Docs.ViewModels.Components.JsCodeBlock>
+    <Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock newScriptId="'call-method-out-of-scope-script-1'">
+        <code>&lt;myType model="'Hello wipeout!'">
+    &lt;template>
+        &lt;wo.contentControl>
+            &lt;template>
+                &lt;button data-bind="click: $call(myType).dot('click').args('Hello wipeout!')">Test&lt;/button>
+            &lt;/template>
+        &lt;/wo.contentControl>
+    &lt;/template>
+&lt;/myType></code>
+    </Wipeout.Docs.ViewModels.Components.NewTemplateCodeBlock>
+
+    
+    <Wipeout.Docs.ViewModels.Components.UsageCodeBlock showDefinitionCode="false">
+        <code>&lt;wo.view templateId="'call-method-out-of-scope-script-1'" /></code>
+    </Wipeout.Docs.ViewModels.Components.UsageCodeBlock> 
+There is <code>$call</code>, documented  <Wipeout.Rl href="'/wipeout-0/how-do-i.html?article=call-a-view-model-method'" text="'here'" />.
+<br/>
+<br/>
