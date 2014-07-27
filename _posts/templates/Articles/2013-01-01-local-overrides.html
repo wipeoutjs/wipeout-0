@@ -1,3 +1,78 @@
 <h1>Local overriding</h1>
 
 <p>Local overriding is overriding a specific instance of a class, while leaving other instances untouched.</p>
+
+<p>Say you have a view model which has a child view model, which is a <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.itemsControl'" text="'wo.itemsControl'" />.
+You want each item in the items control to have a method which removes itself.
+There are two options on how to implement this functionality:
+    <ol>
+        <li>Create a new class which inherits from itemsControl and override the 
+            <Wipeout.Rl href="'/wipeout-0/api.html?type=api&amp;className=wo.itemsControl&amp;functionName=createItem&amp;isStatic=false'" text="'create item'" />
+             function</li>
+        <li>Get the instance of the itemsControl and locally override the create item function.</li>
+</ol>
+Using local overrides looks like this:
+</p>
+
+    <div class="columns">
+        <div class="column-2 main-example-code">
+<Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>window.myViewModel = 
+    wo.contentControl.extend(function myViewModel() {
+        this._super();
+    });
+    
+// onRendered is the method
+// to deal with template items
+myViewModel.prototype.onRendered = 
+    function(oldValues, newValues) {
+        this._super(oldValues, newValues);
+
+        // cache the old version of createItem    
+        var cacheCreate = 
+            this.templateItems.list.createItem;
+
+        // override with a new version
+        this.templateItems.list.createItem = 
+            function(model) {
+
+            // create an item in the usual way
+            // ensure the context is correct
+            var output = 
+                cacheCreate.call(this, model);
+
+            // "_this" will be the items control
+            var _this = this;
+
+            // give each new item a remove function
+            output.remove = function () {
+                // "this" will be the item
+                // in the items control
+                _this.items.remove(this);
+            }
+        };
+};</code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+            </div>
+        <div class="column-2 main-example-code">
+            <Wipeout.Docs.ViewModels.Components.CodeBlock>
+    <code>&lt;myViewModel>
+    &lt;template>
+        &lt;!-- provide an id to 
+                be referenced in code -->
+        &lt;wo.itemsControl id="list">
+            &lt;itemsTemplate>
+        &lt;!-- bind to the remove function 
+            added in code -->
+                &lt;span data-bind="click: remove">X
+                &lt;/span>
+
+                &lt;!-- add item template here -->
+
+            &lt;/itemsTemplate>
+        &lt;/wo.itemsControl>
+    &lt;/template>
+&lt;/myViewModel></code>
+</Wipeout.Docs.ViewModels.Components.CodeBlock>
+            </div>
+        </div>

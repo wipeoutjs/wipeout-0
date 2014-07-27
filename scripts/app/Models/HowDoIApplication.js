@@ -136,6 +136,7 @@ compiler.registerClass("Wipeout.Docs.Models.HowDoIApplication", "wo.object", fun
         }, {        
             header: new articleLink("Overriding functionality (advanced)", "overriding-functionality"),
             items: [
+                new articleLink("New global functionality", "new-global-functionality"),
                 new articleLink("Global Overrides", "global-overrides"),
                 new articleLink("Local Overrides", "local-overrides")
             ]
